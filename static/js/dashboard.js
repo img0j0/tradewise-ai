@@ -10,6 +10,14 @@ let dashboardData = {};
 
 // Initialize dashboard
 document.addEventListener('DOMContentLoaded', function() {
+    // Check if we're on a page that requires dashboard functionality
+    // Skip initialization if we're on login or register pages
+    const currentPath = window.location.pathname;
+    if (currentPath === '/login' || currentPath === '/register') {
+        console.log('Skipping dashboard initialization on auth page');
+        return;
+    }
+    
     initializeDashboard();
     setInterval(refreshData, 30000); // Refresh every 30 seconds
 });
@@ -32,10 +40,14 @@ function initializeDashboard() {
 
 // Set up event listeners
 function setupEventListeners() {
-    // Filter form
-    document.getElementById('sector-filter').addEventListener('change', applyFilters);
-    document.getElementById('min-price').addEventListener('input', applyFilters);
-    document.getElementById('max-price').addEventListener('input', applyFilters);
+    // Filter form (check if elements exist first)
+    const sectorFilter = document.getElementById('sector-filter');
+    const minPrice = document.getElementById('min-price');
+    const maxPrice = document.getElementById('max-price');
+    
+    if (sectorFilter) sectorFilter.addEventListener('change', applyFilters);
+    if (minPrice) minPrice.addEventListener('input', applyFilters);
+    if (maxPrice) maxPrice.addEventListener('input', applyFilters);
     
     // Auto-refresh toggle
     document.addEventListener('keydown', function(event) {

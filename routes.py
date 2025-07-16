@@ -1,9 +1,10 @@
-from flask import render_template, jsonify, request, session, redirect, url_for
+from flask import render_template, jsonify, request, session, redirect, url_for, flash
 from app import app, db
-from models import Trade, Portfolio, Alert, UserAccount, Transaction
+from models import Trade, Portfolio, Alert, UserAccount, Transaction, User
 from ai_insights import AIInsightsEngine
 from data_service import DataService
 from stock_search import StockSearchService
+from flask_login import login_user, logout_user, login_required, current_user
 import logging
 import os
 import stripe
@@ -12,8 +13,8 @@ from datetime import datetime
 # Configure Stripe
 stripe.api_key = os.environ.get('STRIPE_SECRET_KEY')
 
-# For demo purposes, create a default user account
-DEFAULT_USER_ID = "demo_user_001"
+# For demo purposes, we'll redirect non-authenticated users to login
+# DEFAULT_USER_ID = "demo_user_001"  # No longer needed
 
 logger = logging.getLogger(__name__)
 
@@ -26,12 +27,15 @@ stock_search_service = StockSearchService()
 stocks_data = data_service.get_all_stocks()
 ai_engine.train_model(stocks_data)
 
-# Initialize default user account
+# Get or create user account for logged in user
 def get_or_create_user_account():
-    """Get or create default user account"""
-    user_account = UserAccount.query.filter_by(user_id=DEFAULT_USER_ID).first()
+    """Get or create user account for current user"""
+    if not current_user.is_authenticated:
+        return None
+    
+    user_account = UserAccount.query.filter_by(user_id=current_user.id).first()
     if not user_account:
-        user_account = UserAccount(user_id=DEFAULT_USER_ID, balance=0.0)
+        user_account = UserAccount(user_id=current_user.id, balance=0.0)
         db.session.add(user_account)
         db.session.commit()
     return user_account
@@ -39,9 +43,12 @@ def get_or_create_user_account():
 @app.route('/')
 def index():
     """Main dashboard page"""
+    if not current_user.is_authenticated:
+        return redirect(url_for('login'))
     return render_template('index.html')
 
 @app.route('/api/dashboard')
+@login_required
 def dashboard_data():
     """Get dashboard data"""
     try:
@@ -78,6 +85,7 @@ def dashboard_data():
         return jsonify({'error': 'Failed to load dashboard data'}), 500
 
 @app.route('/api/stocks')
+@login_required
 def get_stocks():
     """Get filtered stocks data"""
     try:
@@ -105,6 +113,7 @@ def get_stocks():
         return jsonify({'error': 'Failed to load stocks data'}), 500
 
 @app.route('/api/stock/<symbol>')
+@login_required
 def get_stock_details(symbol):
     """Get detailed stock information"""
     try:
@@ -131,6 +140,7 @@ def get_stock_details(symbol):
         return jsonify({'error': 'Failed to load stock details'}), 500
 
 @app.route('/api/alerts')
+@login_required
 def get_alerts():
     """Get trading alerts"""
     try:
@@ -150,6 +160,7 @@ def get_alerts():
         return jsonify({'error': 'Failed to load alerts'}), 500
 
 @app.route('/api/trade', methods=['POST'])
+@login_required
 def execute_trade():
     """Execute a simulated trade"""
     try:
@@ -196,6 +207,7 @@ def execute_trade():
         return jsonify({'error': 'Failed to execute trade'}), 500
 
 @app.route('/api/portfolio')
+@login_required
 def get_portfolio():
     """Get portfolio data"""
     try:
@@ -249,6 +261,7 @@ def get_portfolio():
         return jsonify({'error': 'Failed to load portfolio'}), 500
 
 @app.route('/api/sectors')
+@login_required
 def get_sectors():
     """Get available sectors"""
     try:
@@ -433,6 +446,7 @@ def calculate_portfolio_performance():
 
 # AI Assistant Routes
 @app.route('/api/ai/chat', methods=['POST'])
+@login_required
 def ai_chat():
     """Handle AI assistant chat requests"""
     try:
@@ -586,6 +600,7 @@ def generate_market_analysis(market_data, top_movers):
 # Payment and Fund Management Routes
 
 @app.route('/api/account/balance')
+@login_required
 def get_account_balance():
     """Get user account balance"""
     try:
@@ -600,6 +615,7 @@ def get_account_balance():
         return jsonify({'error': 'Failed to get account balance'}), 500
 
 @app.route('/api/create-deposit-session', methods=['POST'])
+@login_required
 def create_deposit_session():
     """Create Stripe checkout session for deposit"""
     try:
@@ -633,7 +649,7 @@ def create_deposit_session():
             success_url=f'{protocol}://{YOUR_DOMAIN}/deposit/success?session_id={{CHECKOUT_SESSION_ID}}',
             cancel_url=f'{protocol}://{YOUR_DOMAIN}/deposit/cancel',
             metadata={
-                'user_id': DEFAULT_USER_ID,
+                'user_id': current_user.id if current_user.is_authenticated else None,
                 'transaction_type': 'deposit',
                 'amount': str(amount)
             }
@@ -664,7 +680,7 @@ def deposit_success():
             
             # Create transaction record
             transaction = Transaction(
-                user_id=DEFAULT_USER_ID,
+                user_id=current_user.id if current_user.is_authenticated else None,
                 transaction_type='deposit',
                 amount=amount,
                 stripe_payment_intent_id=session.payment_intent,
@@ -688,6 +704,7 @@ def deposit_cancel():
     return render_template('deposit_cancel.html')
 
 @app.route('/api/purchase-stock', methods=['POST'])
+@login_required
 def purchase_stock():
     """Purchase stock with account balance"""
     try:
@@ -723,7 +740,7 @@ def purchase_stock():
         
         # Create transaction record
         transaction = Transaction(
-            user_id=DEFAULT_USER_ID,
+            user_id=current_user.id,
             transaction_type='stock_purchase',
             amount=total_cost,
             symbol=symbol,
@@ -734,6 +751,7 @@ def purchase_stock():
         
         # Create trade record
         trade = Trade(
+            user_id=current_user.id,
             symbol=symbol,
             action='buy',
             quantity=quantity,
@@ -762,6 +780,7 @@ def purchase_stock():
         return jsonify({'error': 'Failed to purchase stock'}), 500
 
 @app.route('/api/sell-stock', methods=['POST'])
+@login_required
 def sell_stock():
     """Sell stock and add to account balance"""
     try:
@@ -798,7 +817,7 @@ def sell_stock():
         
         # Create transaction record
         transaction = Transaction(
-            user_id=DEFAULT_USER_ID,
+            user_id=current_user.id,
             transaction_type='stock_sale',
             amount=total_proceeds,
             symbol=symbol,
@@ -809,6 +828,7 @@ def sell_stock():
         
         # Create trade record
         trade = Trade(
+            user_id=current_user.id,
             symbol=symbol,
             action='sell',
             quantity=quantity,
@@ -837,16 +857,18 @@ def sell_stock():
         return jsonify({'error': 'Failed to sell stock'}), 500
 
 @app.route('/api/transactions')
+@login_required
 def get_transactions():
     """Get user transaction history"""
     try:
-        transactions = Transaction.query.filter_by(user_id=DEFAULT_USER_ID).order_by(Transaction.created_at.desc()).limit(50).all()
+        transactions = Transaction.query.filter_by(user_id=current_user.id).order_by(Transaction.created_at.desc()).limit(50).all()
         return jsonify([transaction.to_dict() for transaction in transactions])
     except Exception as e:
         logger.error(f"Error getting transactions: {e}")
         return jsonify({'error': 'Failed to get transactions'}), 500
 
 @app.route('/api/search-stock', methods=['POST'])
+@login_required
 def search_stock():
     """Search for any stock by symbol with real-time data"""
     try:
@@ -878,6 +900,7 @@ def search_stock():
         return jsonify({'error': 'Failed to search stock'}), 500
 
 @app.route('/api/validate-symbol', methods=['POST'])
+@login_required
 def validate_symbol():
     """Validate if a stock symbol exists"""
     try:
@@ -895,6 +918,7 @@ def validate_symbol():
         return jsonify({'valid': False, 'error': 'Validation failed'}), 500
 
 @app.route('/api/ai-risk-analysis', methods=['POST'])
+@login_required
 def ai_risk_analysis():
     """Get detailed AI risk analysis for any stock"""
     try:
@@ -1111,3 +1135,96 @@ def identify_potential_rewards(stock_data, fundamentals):
         rewards.append(f"Dividend yield of {stock_data['dividend_yield']*100:.2f}%")
     
     return rewards if rewards else ['Potential for capital appreciation']
+
+# Authentication routes
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    """User login"""
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        remember = bool(request.form.get('remember', False))
+        
+        user = User.query.filter_by(username=username).first()
+        
+        if user and user.check_password(password):
+            login_user(user, remember=remember)
+            user.last_login = datetime.utcnow()
+            db.session.commit()
+            
+            # Create user account if it doesn't exist
+            user_account = UserAccount.query.filter_by(user_id=user.id).first()
+            if not user_account:
+                user_account = UserAccount(user_id=user.id, balance=0.0)
+                db.session.add(user_account)
+                db.session.commit()
+            
+            next_page = request.args.get('next')
+            if next_page:
+                return redirect(next_page)
+            return redirect(url_for('index'))
+        else:
+            flash('Invalid username or password', 'error')
+    
+    return render_template('login.html')
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    """User registration"""
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    
+    if request.method == 'POST':
+        username = request.form.get('username')
+        email = request.form.get('email')
+        password = request.form.get('password')
+        confirm_password = request.form.get('confirm_password')
+        
+        # Validation
+        if not username or not email or not password:
+            flash('All fields are required', 'error')
+            return render_template('register.html')
+        
+        if len(password) < 8:
+            flash('Password must be at least 8 characters long', 'error')
+            return render_template('register.html')
+        
+        if password != confirm_password:
+            flash('Passwords do not match', 'error')
+            return render_template('register.html')
+        
+        # Check if user already exists
+        if User.query.filter_by(username=username).first():
+            flash('Username already exists', 'error')
+            return render_template('register.html')
+        
+        if User.query.filter_by(email=email).first():
+            flash('Email already registered', 'error')
+            return render_template('register.html')
+        
+        # Create new user
+        user = User(username=username, email=email)
+        user.set_password(password)
+        db.session.add(user)
+        db.session.commit()
+        
+        # Create user account
+        user_account = UserAccount(user_id=user.id, balance=0.0)
+        db.session.add(user_account)
+        db.session.commit()
+        
+        flash('Registration successful! Please log in.', 'success')
+        return redirect(url_for('login'))
+    
+    return render_template('register.html')
+
+@app.route('/logout')
+@login_required
+def logout():
+    """User logout"""
+    logout_user()
+    flash('You have been logged out.', 'info')
+    return redirect(url_for('login'))
