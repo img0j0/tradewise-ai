@@ -748,6 +748,70 @@ body {
     background: linear-gradient(135deg, rgba(163, 113, 247, 0.2) 0%, rgba(255, 166, 87, 0.1) 100%);
 }
 
+/* Card Style Updates - Remove Gray Backgrounds */
+.top-movers-card {
+    background: linear-gradient(135deg, rgba(74, 158, 255, 0.05) 0%, rgba(22, 27, 34, 0.95) 100%);
+    border: 2px solid rgba(74, 158, 255, 0.2);
+}
+
+.top-movers-card .card-header {
+    background: linear-gradient(135deg, rgba(74, 158, 255, 0.1) 0%, rgba(163, 113, 247, 0.05) 100%);
+}
+
+.recent-trades-card {
+    background: linear-gradient(135deg, rgba(255, 166, 87, 0.05) 0%, rgba(22, 27, 34, 0.95) 100%);
+    border: 2px solid rgba(255, 166, 87, 0.2);
+}
+
+.recent-trades-card .card-header {
+    background: linear-gradient(135deg, rgba(255, 166, 87, 0.1) 0%, rgba(74, 158, 255, 0.05) 100%);
+}
+
+.active-alerts-card {
+    background: linear-gradient(135deg, rgba(255, 71, 87, 0.05) 0%, rgba(22, 27, 34, 0.95) 100%);
+    border: 2px solid rgba(255, 71, 87, 0.2);
+}
+
+.active-alerts-card .card-header {
+    background: linear-gradient(135deg, rgba(255, 71, 87, 0.1) 0%, rgba(255, 166, 87, 0.05) 100%);
+}
+
+.stock-filters-card,
+.stock-scanner-card,
+.trading-alerts-card,
+.portfolio-holdings-card {
+    background: linear-gradient(135deg, rgba(22, 27, 34, 0.98) 0%, rgba(13, 17, 23, 0.98) 100%);
+    border: 2px solid rgba(74, 158, 255, 0.2);
+}
+
+.stock-filters-card .card-header,
+.stock-scanner-card .card-header,
+.trading-alerts-card .card-header,
+.portfolio-holdings-card .card-header {
+    background: linear-gradient(135deg, rgba(74, 158, 255, 0.15) 0%, rgba(163, 113, 247, 0.08) 100%);
+}
+
+/* Form Controls Dark Theme */
+.form-control,
+.form-select {
+    background-color: rgba(22, 27, 34, 0.9);
+    border: 1px solid rgba(74, 158, 255, 0.3);
+    color: var(--text-primary);
+}
+
+.form-control:focus,
+.form-select:focus {
+    background-color: rgba(22, 27, 34, 0.95);
+    border-color: var(--primary-color);
+    color: var(--text-bright);
+    box-shadow: 0 0 0 0.2rem rgba(74, 158, 255, 0.25);
+}
+
+.form-label {
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
 /* Responsive Design for Welcome Banner */
 @media (max-width: 992px) {
     .welcome-banner {
