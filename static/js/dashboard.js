@@ -292,10 +292,27 @@ function updatePerformanceSummary(performance) {
     document.getElementById('total-trades').textContent = performance.total_trades;
     document.getElementById('win-rate').textContent = performance.win_rate.toFixed(1) + '%';
     
-    const pnl = performance.total_pnl;
+    // Total P&L
+    const pnl = performance.total_pnl || 0;
     const pnlElement = document.getElementById('total-pnl');
     pnlElement.textContent = formatCurrency(pnl);
     pnlElement.className = pnl >= 0 ? 'text-success' : 'text-danger';
+    
+    // Realized P&L
+    const realizedPnl = performance.total_realized_pnl || 0;
+    const realizedElement = document.getElementById('realized-pnl');
+    if (realizedElement) {
+        realizedElement.textContent = formatCurrency(realizedPnl);
+        realizedElement.className = realizedPnl >= 0 ? 'text-success' : 'text-danger';
+    }
+    
+    // Unrealized P&L
+    const unrealizedPnl = performance.total_unrealized_pnl || 0;
+    const unrealizedElement = document.getElementById('unrealized-pnl');
+    if (unrealizedElement) {
+        unrealizedElement.textContent = formatCurrency(unrealizedPnl);
+        unrealizedElement.className = unrealizedPnl >= 0 ? 'text-success' : 'text-danger';
+    }
     
     document.getElementById('avg-confidence').textContent = performance.avg_confidence.toFixed(1) + '%';
 }

@@ -284,6 +284,7 @@ def get_sectors():
         return jsonify({'error': 'Failed to load sectors'}), 500
 
 @app.route('/api/performance')
+@login_required
 def get_performance():
     """Get trading performance metrics"""
     try:
@@ -381,7 +382,11 @@ def generate_trading_alerts():
 def calculate_portfolio_performance():
     """Calculate portfolio performance metrics"""
     try:
-        trades = Trade.query.all()
+        # Filter trades by current user
+        trades = Trade.query.filter_by(user_id=current_user.id).all()
+        
+        # Also get portfolio holdings for unrealized P&L
+        portfolio_items = Portfolio.query.filter_by(user_id=current_user.id).all()
         
         if not trades:
             return {
@@ -390,6 +395,8 @@ def calculate_portfolio_performance():
                 'losing_trades': 0,
                 'win_rate': 0,
                 'total_pnl': 0,
+                'total_realized_pnl': 0,
+                'total_unrealized_pnl': 0,
                 'avg_confidence': 0
             }
         
@@ -434,15 +441,41 @@ def calculate_portfolio_performance():
             elif symbol_pnl < 0:
                 losing_trades += 1
         
+        # Calculate unrealized P&L from current holdings
+        total_unrealized_pnl = 0
+        stocks = data_service.get_all_stocks()
+        
+        for item in portfolio_items:
+            # Find current stock price - first try sample data, then real-time
+            current_stock = next((s for s in stocks if s['symbol'] == item.symbol), None)
+            
+            # If not in sample data, fetch real-time price
+            if not current_stock:
+                try:
+                    real_stock = stock_search_service.search_stock(item.symbol)
+                    if real_stock:
+                        current_stock = real_stock
+                except:
+                    pass
+            
+            if current_stock:
+                current_price = float(current_stock.get('current_price', 0))
+                current_value = item.quantity * current_price
+                cost_basis = item.quantity * item.avg_price
+                unrealized_pnl = current_value - cost_basis
+                total_unrealized_pnl += unrealized_pnl
+        
         win_rate = (winning_trades / max(winning_trades + losing_trades, 1)) * 100
-        avg_confidence = total_confidence / total_trades
+        avg_confidence = total_confidence / total_trades if total_trades > 0 else 0
         
         return {
             'total_trades': total_trades,
             'winning_trades': winning_trades,
             'losing_trades': losing_trades,
             'win_rate': win_rate,
-            'total_pnl': total_pnl,
+            'total_pnl': total_pnl + total_unrealized_pnl,
+            'total_realized_pnl': total_pnl,
+            'total_unrealized_pnl': total_unrealized_pnl,
             'avg_confidence': avg_confidence
         }
         
