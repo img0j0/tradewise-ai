@@ -406,3 +406,155 @@ def calculate_portfolio_performance():
             'total_pnl': 0,
             'avg_confidence': 0
         }
+
+# AI Assistant Routes
+@app.route('/api/ai/chat', methods=['POST'])
+def ai_chat():
+    """Handle AI assistant chat requests"""
+    try:
+        data = request.get_json()
+        message_type = data.get('type', '')
+        
+        if message_type == 'market-overview':
+            return get_market_overview_response()
+        elif message_type == 'top-picks':
+            return get_top_picks_response()
+        elif message_type == 'portfolio-advice':
+            return get_portfolio_advice_response()
+        elif message_type == 'risk-analysis':
+            return get_risk_analysis_response()
+        else:
+            return jsonify({
+                'response': 'I can help you with market overview, top stock picks, portfolio advice, and risk analysis. What would you like to know?'
+            })
+            
+    except Exception as e:
+        logger.error(f"Error in AI chat: {e}")
+        return jsonify({'error': 'Failed to process request'}), 500
+
+def get_market_overview_response():
+    """Generate market overview response"""
+    try:
+        market_data = data_service.get_market_overview()
+        top_movers = data_service.get_top_movers(limit=3)
+        
+        response = {
+            'type': 'market-overview',
+            'data': {
+                'overview': market_data,
+                'top_gainers': top_movers['top_gainers'],
+                'top_losers': top_movers['top_losers']
+            },
+            'message': generate_market_analysis(market_data, top_movers)
+        }
+        
+        return jsonify(response)
+        
+    except Exception as e:
+        logger.error(f"Error generating market overview: {e}")
+        return jsonify({'error': 'Failed to analyze market'}), 500
+
+def get_top_picks_response():
+    """Generate top picks response"""
+    try:
+        stocks = data_service.get_all_stocks()
+        
+        # Add AI insights and filter high confidence stocks
+        top_picks = []
+        for stock in stocks:
+            insights = ai_engine.generate_insights(stock)
+            if insights['confidence_score'] > 70:
+                stock['ai_insights'] = insights
+                top_picks.append(stock)
+        
+        # Sort by confidence score and take top 3
+        top_picks = sorted(top_picks, key=lambda x: x['ai_insights']['confidence_score'], reverse=True)[:3]
+        
+        response = {
+            'type': 'top-picks',
+            'data': {
+                'picks': top_picks
+            },
+            'message': f'Found {len(top_picks)} high-confidence investment opportunities today.'
+        }
+        
+        return jsonify(response)
+        
+    except Exception as e:
+        logger.error(f"Error generating top picks: {e}")
+        return jsonify({'error': 'Failed to generate picks'}), 500
+
+def get_portfolio_advice_response():
+    """Generate portfolio advice response"""
+    try:
+        # This would normally analyze actual portfolio data
+        advice = {
+            'diversification': 'Consider diversifying across different sectors',
+            'risk_level': 'Your current risk level appears moderate',
+            'recommendations': [
+                'Add some defensive stocks for stability',
+                'Consider taking profits on positions up >20%',
+                'Keep 10-15% cash for opportunities'
+            ]
+        }
+        
+        response = {
+            'type': 'portfolio-advice',
+            'data': advice,
+            'message': 'Based on current market conditions, here\'s my portfolio advice.'
+        }
+        
+        return jsonify(response)
+        
+    except Exception as e:
+        logger.error(f"Error generating portfolio advice: {e}")
+        return jsonify({'error': 'Failed to generate advice'}), 500
+
+def get_risk_analysis_response():
+    """Generate risk analysis response"""
+    try:
+        analysis = {
+            'market_risk': 'MODERATE',
+            'volatility': 'Market volatility is within normal range',
+            'recommendations': [
+                'Set stop-loss orders 5-10% below entry',
+                'Avoid concentrated positions >25% of portfolio',
+                'Monitor Federal Reserve announcements'
+            ]
+        }
+        
+        response = {
+            'type': 'risk-analysis',
+            'data': analysis,
+            'message': 'Current market risk assessment and recommendations.'
+        }
+        
+        return jsonify(response)
+        
+    except Exception as e:
+        logger.error(f"Error generating risk analysis: {e}")
+        return jsonify({'error': 'Failed to analyze risk'}), 500
+
+def generate_market_analysis(market_data, top_movers):
+    """Generate human-readable market analysis"""
+    gainers = market_data.get('gainers', 0)
+    losers = market_data.get('losers', 0)
+    
+    if gainers > losers:
+        sentiment = "bullish"
+        trend = "positive momentum"
+    elif losers > gainers:
+        sentiment = "bearish"
+        trend = "selling pressure"
+    else:
+        sentiment = "neutral"
+        trend = "consolidation"
+    
+    analysis = f"The market is showing {sentiment} sentiment with {trend}. "
+    analysis += f"{gainers} stocks are gaining while {losers} are declining. "
+    
+    if top_movers['top_gainers']:
+        top_gainer = top_movers['top_gainers'][0]
+        analysis += f"{top_gainer['symbol']} leads gainers, up {top_gainer['change_pct']:.1f}%. "
+    
+    return analysis

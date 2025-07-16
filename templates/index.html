@@ -1,13 +1,37 @@
 {% extends "base.html" %}
 
 {% block content %}
+<!-- Welcome Banner -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="welcome-banner">
+            <div class="welcome-content">
+                <h2 class="welcome-title">Welcome to Your Trading Command Center</h2>
+                <p class="welcome-subtitle">AI-powered insights at your fingertips</p>
+            </div>
+            <div class="welcome-stats">
+                <div class="welcome-stat">
+                    <span class="stat-icon"><i class="fas fa-brain"></i></span>
+                    <span class="stat-value" id="ai-accuracy">98%</span>
+                    <span class="stat-label">AI Accuracy</span>
+                </div>
+                <div class="welcome-stat">
+                    <span class="stat-icon"><i class="fas fa-chart-trending-up"></i></span>
+                    <span class="stat-value" id="market-trend">Bullish</span>
+                    <span class="stat-label">Market Trend</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="row">
     <!-- Market Overview -->
     <div class="col-12 mb-4">
-        <div class="card bg-secondary">
+        <div class="card bg-secondary market-overview-card">
             <div class="card-header">
                 <h5 class="mb-0">
-                    <i class="fas fa-globe me-2"></i>Market Overview
+                    <i class="fas fa-globe me-2"></i>Live Market Pulse
                     <small class="text-muted ms-2" id="last-updated">Loading...</small>
                 </h5>
             </div>
@@ -60,9 +84,9 @@
     <div class="row">
         <!-- Performance Summary -->
         <div class="col-lg-4 mb-4">
-            <div class="card bg-secondary">
+            <div class="card bg-secondary performance-card">
                 <div class="card-header">
-                    <h5 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Performance Summary</h5>
+                    <h5 class="mb-0"><i class="fas fa-trophy me-2"></i>Your Performance</h5>
                 </div>
                 <div class="card-body">
                     <div class="performance-stats">

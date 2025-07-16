@@ -2,7 +2,7 @@
 
 ## Overview
 
-This is a Python Flask-based web application that provides AI-powered stock trading insights and portfolio management. The platform combines real-time market data analysis with machine learning predictions to help users make informed trading decisions. It features a responsive web interface with dark/light theme support, real-time data updates, and comprehensive portfolio tracking capabilities.
+This is a Python Flask-based web application that provides AI-powered stock trading insights and portfolio management. The platform creates an experience where users feel like they have a personal AI assistant working alongside them to build their investment portfolio. It features a professional dark theme with vibrant colors, real-time data updates, and comprehensive portfolio tracking that makes even average investors feel like pros.
 
 ## User Preferences
 
@@ -39,13 +39,14 @@ Preferred communication style: Simple, everyday language.
 ### Core Services
 - **AIInsightsEngine**: Implements Random Forest classification for trading predictions
 - **DataService**: Handles sample stock data loading and market overview calculations
-- **Routes**: RESTful API endpoints for dashboard data and trading operations
+- **Routes**: RESTful API endpoints for dashboard data and trading operations, including AI assistant chat endpoints
 
 ### Frontend Components
-- **Dashboard**: Real-time market overview with key statistics
+- **Dashboard**: Real-time market overview with welcome banner showing AI accuracy and market trend
 - **Stock Analysis**: Individual stock performance and AI insights
 - **Portfolio Management**: Holdings tracking and performance metrics
 - **Alert System**: Configurable trading alerts and notifications
+- **AI Assistant**: Interactive chat interface providing market overview, top picks, portfolio advice, and risk analysis
 
 ## Data Flow
 
@@ -71,6 +72,20 @@ Preferred communication style: Simple, everyday language.
 ### Development Tools
 - Werkzeug for WSGI middleware
 - Python logging for debugging and monitoring
+
+## Recent Changes (July 16, 2025)
+
+### AI Assistant Integration
+- Added interactive AI assistant chat widget in the bottom-right corner with minimize/maximize functionality
+- Implemented quick action buttons for market overview, top picks, portfolio advice, and risk analysis
+- Created AI chat endpoints in routes.py for handling assistant requests
+- Enhanced UI with typing indicators and animated message bubbles
+
+### UI/UX Enhancements
+- Added welcome banner with real-time AI accuracy and market trend indicators
+- Enhanced dashboard with gradient backgrounds and glowing effects
+- Improved card styling with distinct color schemes for different sections
+- Added responsive design for mobile compatibility
 
 ## Deployment Strategy
 

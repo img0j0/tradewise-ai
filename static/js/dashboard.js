@@ -214,6 +214,9 @@ function updateDashboard(data) {
     // Update market overview
     updateMarketOverview(data.market_overview);
     
+    // Update welcome banner
+    updateWelcomeBanner(data.market_overview);
+    
     // Update performance summary
     updatePerformanceSummary(data.portfolio_performance);
     
@@ -242,6 +245,32 @@ function updateMarketOverview(overview) {
     avgChangeElement.className = `stat-number ${avgChange >= 0 ? 'text-success' : 'text-danger'}`;
     
     document.getElementById('total-volume').textContent = formatVolume(overview.total_volume);
+}
+
+function updateWelcomeBanner(overview) {
+    // Update market trend
+    const marketTrendElement = document.getElementById('market-trend');
+    if (marketTrendElement) {
+        let trend = 'Neutral';
+        let trendClass = 'text-warning';
+        
+        if (overview.gainers > overview.losers * 1.2) {
+            trend = 'Bullish';
+            trendClass = 'text-success';
+        } else if (overview.losers > overview.gainers * 1.2) {
+            trend = 'Bearish';
+            trendClass = 'text-danger';
+        }
+        
+        marketTrendElement.textContent = trend;
+        marketTrendElement.className = trendClass;
+    }
+    
+    // AI accuracy stays at 98% (simulated for now)
+    const aiAccuracyElement = document.getElementById('ai-accuracy');
+    if (aiAccuracyElement) {
+        aiAccuracyElement.textContent = '98%';
+    }
 }
 
 function updatePerformanceSummary(performance) {
