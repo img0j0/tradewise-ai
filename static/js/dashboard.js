@@ -534,37 +534,56 @@ function updatePortfolioHoldings(holdings) {
         return;
     }
     
-    container.innerHTML = holdings.map(holding => `
-        <div class="portfolio-item">
-            <div class="portfolio-header">
-                <div class="stock-symbol">${holding.symbol}</div>
-                <div class="text-end">
-                    <div class="stock-price">${formatCurrency(holding.current_price)}</div>
-                    <div class="${holding.pnl >= 0 ? 'text-success' : 'text-danger'}">
-                        ${formatCurrency(holding.pnl)} (${holding.pnl_pct.toFixed(2)}%)
+    container.innerHTML = holdings.map(holding => {
+        const pnlClass = holding.pnl >= 0 ? 'text-success' : 'text-danger';
+        const pnlIcon = holding.pnl >= 0 ? 'fa-arrow-up' : 'fa-arrow-down';
+        
+        return `
+            <div class="portfolio-item">
+                <div class="portfolio-header">
+                    <div>
+                        <div class="stock-symbol">${holding.symbol}</div>
+                        <div class="small text-muted mt-1">
+                            <i class="fas fa-coins me-1"></i>${holding.quantity} shares @ ${formatCurrency(holding.avg_price)}
+                        </div>
+                    </div>
+                    <div class="text-end">
+                        <div class="stock-price">${formatCurrency(holding.current_price)}</div>
+                        <div class="${pnlClass} fw-bold">
+                            <i class="fas ${pnlIcon} me-1"></i>
+                            ${formatCurrency(holding.pnl)} (${holding.pnl_pct.toFixed(2)}%)
+                        </div>
                     </div>
                 </div>
+                <div class="portfolio-details">
+                    <div class="portfolio-metric">
+                        <div class="portfolio-metric-value">${holding.quantity}</div>
+                        <div class="portfolio-metric-label">Shares Owned</div>
+                    </div>
+                    <div class="portfolio-metric">
+                        <div class="portfolio-metric-value">${formatCurrency(holding.avg_price)}</div>
+                        <div class="portfolio-metric-label">Purchase Price</div>
+                    </div>
+                    <div class="portfolio-metric">
+                        <div class="portfolio-metric-value ${pnlClass}">${formatCurrency(holding.current_value)}</div>
+                        <div class="portfolio-metric-label">Market Value</div>
+                    </div>
+                    <div class="portfolio-metric">
+                        <div class="portfolio-metric-value">${formatCurrency(holding.cost_basis)}</div>
+                        <div class="portfolio-metric-label">Total Invested</div>
+                    </div>
+                </div>
+                <div class="mt-3 d-flex justify-content-between align-items-center">
+                    <button class="btn btn-sm btn-outline-success" onclick="showBuyModal('${holding.symbol}')">
+                        <i class="fas fa-plus me-1"></i>Buy More
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger" onclick="showSellModal('${holding.symbol}')">
+                        <i class="fas fa-minus me-1"></i>Sell
+                    </button>
+                </div>
             </div>
-            <div class="portfolio-details">
-                <div class="portfolio-metric">
-                    <div class="portfolio-metric-value">${holding.quantity}</div>
-                    <div class="portfolio-metric-label">Shares</div>
-                </div>
-                <div class="portfolio-metric">
-                    <div class="portfolio-metric-value">${formatCurrency(holding.avg_price)}</div>
-                    <div class="portfolio-metric-label">Avg Price</div>
-                </div>
-                <div class="portfolio-metric">
-                    <div class="portfolio-metric-value">${formatCurrency(holding.current_value)}</div>
-                    <div class="portfolio-metric-label">Current Value</div>
-                </div>
-                <div class="portfolio-metric">
-                    <div class="portfolio-metric-value">${formatCurrency(holding.cost_basis)}</div>
-                    <div class="portfolio-metric-label">Cost Basis</div>
-                </div>
-            </div>
-        </div>
-    `).join('');
+        `;
+    }).join('');
 }
 
 function updateTimestamp(timestamp) {
@@ -935,24 +954,38 @@ async function executeBuy() {
     }
 }
 
-function showSellModal() {
+function showSellModal(symbol = null) {
     const modal = new bootstrap.Modal(document.getElementById('sellModal'));
     
     // Populate portfolio options
     const stockSelect = document.getElementById('sell-symbol');
     stockSelect.innerHTML = '<option value="">Select a stock...</option>';
     
-    portfolioData.forEach(holding => {
+    // Get portfolio data from dashboard data
+    const holdings = dashboardData.portfolio?.portfolio_items || [];
+    
+    holdings.forEach(holding => {
         const option = document.createElement('option');
         option.value = holding.symbol;
-        option.textContent = `${holding.symbol} - ${holding.quantity} shares`;
+        option.textContent = `${holding.symbol} - ${holding.quantity} shares @ ${formatCurrency(holding.current_price)}`;
         option.dataset.quantity = holding.quantity;
+        option.dataset.price = holding.current_price;
         stockSelect.appendChild(option);
     });
+    
+    // If symbol is provided, select it
+    if (symbol) {
+        stockSelect.value = symbol;
+    }
     
     // Set up event listeners
     stockSelect.addEventListener('change', updateSellCalculations);
     document.getElementById('sell-quantity').addEventListener('input', updateSellCalculations);
+    
+    // Trigger calculation if symbol was pre-selected
+    if (symbol) {
+        updateSellCalculations();
+    }
     
     modal.show();
 }
@@ -969,25 +1002,33 @@ function updateSellCalculations() {
     const quantity = parseInt(quantityInput.value) || 0;
     
     if (symbol) {
-        // Find current price from stocks data
-        const stockData = stocksData.find(stock => stock.symbol === symbol);
-        const price = stockData ? stockData.price : 0;
+        // Get price from the selected option's dataset
+        const price = parseFloat(selectedOption.dataset.price) || 0;
         const owned = parseInt(selectedOption.dataset.quantity) || 0;
         
         priceElement.textContent = price > 0 ? formatCurrency(price) : '-';
         totalElement.textContent = formatCurrency(price * quantity);
         ownedElement.textContent = owned;
         
+        // Update max attribute
+        quantityInput.max = owned;
+        
         // Validate quantity
         if (quantity > owned) {
             quantityInput.setCustomValidity('Quantity exceeds owned shares');
+            document.getElementById('sell-btn').disabled = true;
+        } else if (quantity <= 0) {
+            quantityInput.setCustomValidity('');
+            document.getElementById('sell-btn').disabled = true;
         } else {
             quantityInput.setCustomValidity('');
+            document.getElementById('sell-btn').disabled = false;
         }
     } else {
         priceElement.textContent = '-';
         totalElement.textContent = '$0.00';
         ownedElement.textContent = '0';
+        document.getElementById('sell-btn').disabled = true;
     }
 }
 
