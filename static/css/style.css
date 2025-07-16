@@ -1079,3 +1079,44 @@ body {
     right: 20px;
     z-index: 1000;
 }
+
+/* Compact Layout Styles */
+.welcome-banner.compact {
+    padding: 1rem 1.5rem;
+    margin-bottom: 0;
+}
+
+.welcome-banner.compact .welcome-title {
+    font-size: 1.5rem;
+    margin-bottom: 0.25rem;
+}
+
+.welcome-banner.compact .welcome-subtitle {
+    font-size: 0.9rem;
+}
+
+.card.compact .card-body {
+    padding: 1rem;
+}
+
+.balance-display.compact {
+    text-align: center;
+}
+
+.balance-display.compact .balance-amount {
+    font-size: 1.5rem;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.stat-card.compact {
+    padding: 0.5rem;
+}
+
+.stat-card.compact .stat-number {
+    font-size: 1.1rem;
+}
+
+.stat-card.compact .stat-label {
+    font-size: 0.75rem;
+}

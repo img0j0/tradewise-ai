@@ -1,137 +1,95 @@
 {% extends "base.html" %}
 
 {% block content %}
-<!-- Welcome Banner -->
-<div class="row mb-4">
-    <div class="col-12">
-        <div class="welcome-banner">
-            <div class="welcome-content">
-                <h2 class="welcome-title">Welcome to Your Trading Command Center</h2>
-                <p class="welcome-subtitle">AI-powered insights at your fingertips</p>
-            </div>
-            <div class="welcome-stats">
-                <div class="welcome-stat">
-                    <span class="stat-icon"><i class="fas fa-brain"></i></span>
-                    <span class="stat-value" id="ai-accuracy">98%</span>
-                    <span class="stat-label">AI Accuracy</span>
-                </div>
-                <div class="welcome-stat">
-                    <span class="stat-icon"><i class="fas fa-chart-trending-up"></i></span>
-                    <span class="stat-value" id="market-trend">Bullish</span>
-                    <span class="stat-label">Market Trend</span>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Account Balance Section -->
-<div class="row mb-4">
-    <div class="col-md-6">
-        <div class="card bg-dark account-balance-card">
-            <div class="card-header">
-                <h5 class="mb-0">
-                    <i class="fas fa-wallet me-2"></i>Account Balance
-                </h5>
-            </div>
-            <div class="card-body">
-                <div class="balance-display">
-                    <div class="current-balance">
-                        <span class="balance-amount" id="account-balance">$0.00</span>
-                        <span class="balance-label">Available Balance</span>
-                    </div>
-                    <div class="balance-actions mt-3">
-                        <button class="btn btn-success" onclick="showDepositModal()">
-                            <i class="fas fa-plus me-2"></i>Deposit Funds
-                        </button>
-                        <button class="btn btn-outline-info" onclick="showTransactionHistory()">
-                            <i class="fas fa-history me-2"></i>Transaction History
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-6">
-        <div class="card bg-dark quick-actions-card">
-            <div class="card-header">
-                <h5 class="mb-0">
-                    <i class="fas fa-bolt me-2"></i>Quick Actions
-                </h5>
-            </div>
-            <div class="card-body">
-                <div class="quick-actions">
-                    <button class="btn btn-primary mb-2" onclick="showBuyModal()">
-                        <i class="fas fa-shopping-cart me-2"></i>Buy Stocks
-                    </button>
-                    <button class="btn btn-warning mb-2" onclick="showSellModal()">
-                        <i class="fas fa-money-bill-wave me-2"></i>Sell Stocks
-                    </button>
-                    <button class="btn btn-info mb-2" onclick="showSection('portfolio')">
-                        <i class="fas fa-briefcase me-2"></i>View Portfolio
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="row">
-    <!-- Market Overview -->
-    <div class="col-12 mb-4">
-        <div class="card bg-secondary market-overview-card">
-            <div class="card-header">
-                <h5 class="mb-0">
-                    <i class="fas fa-globe me-2"></i>Live Market Pulse
-                    <small class="text-muted ms-2" id="last-updated">Loading...</small>
-                </h5>
-            </div>
-            <div class="card-body">
-                <div class="row text-center">
-                    <div class="col-md-2">
-                        <div class="stat-card">
-                            <div class="stat-number text-primary" id="total-stocks">-</div>
-                            <div class="stat-label">Total Stocks</div>
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="stat-card">
-                            <div class="stat-number text-success" id="gainers">-</div>
-                            <div class="stat-label">Gainers</div>
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="stat-card">
-                            <div class="stat-number text-danger" id="losers">-</div>
-                            <div class="stat-label">Losers</div>
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="stat-card">
-                            <div class="stat-number text-warning" id="unchanged">-</div>
-                            <div class="stat-label">Unchanged</div>
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="stat-card">
-                            <div class="stat-number" id="avg-change">-</div>
-                            <div class="stat-label">Avg Change</div>
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="stat-card">
-                            <div class="stat-number text-info" id="total-volume">-</div>
-                            <div class="stat-label">Total Volume</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
 <!-- Main Content Sections -->
 <div id="dashboard-section">
+    <!-- Welcome Banner -->
+    <div class="row mb-3">
+        <div class="col-12">
+            <div class="welcome-banner compact">
+                <div class="welcome-content">
+                    <h2 class="welcome-title">Welcome to Your Trading Command Center</h2>
+                    <p class="welcome-subtitle">AI-powered insights at your fingertips</p>
+                </div>
+                <div class="welcome-stats">
+                    <div class="welcome-stat">
+                        <span class="stat-icon"><i class="fas fa-brain"></i></span>
+                        <span class="stat-value" id="ai-accuracy">98%</span>
+                        <span class="stat-label">AI Accuracy</span>
+                    </div>
+                    <div class="welcome-stat">
+                        <span class="stat-icon"><i class="fas fa-chart-trending-up"></i></span>
+                        <span class="stat-value" id="market-trend">Bullish</span>
+                        <span class="stat-label">Market Trend</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Account Balance and Market Overview Row -->
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <div class="card bg-dark account-balance-card compact">
+                <div class="card-body">
+                    <h6 class="mb-2"><i class="fas fa-wallet me-2"></i>Account Balance</h6>
+                    <div class="balance-display compact">
+                        <span class="balance-amount" id="account-balance">$0.00</span>
+                        <div class="balance-actions mt-2">
+                            <button class="btn btn-sm btn-success" onclick="showDepositModal()">
+                                <i class="fas fa-plus"></i> Deposit
+                            </button>
+                            <button class="btn btn-sm btn-outline-info" onclick="showTransactionHistory()">
+                                <i class="fas fa-history"></i> History
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="card bg-secondary market-overview-card compact">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h6 class="mb-0"><i class="fas fa-globe me-2"></i>Live Market Pulse</h6>
+                        <small class="text-muted" id="last-updated">Loading...</small>
+                    </div>
+                    <div class="row text-center">
+                        <div class="col">
+                            <div class="stat-card compact">
+                                <div class="stat-number text-primary" id="total-stocks">-</div>
+                                <div class="stat-label">Stocks</div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="stat-card compact">
+                                <div class="stat-number text-success" id="gainers">-</div>
+                                <div class="stat-label">Gainers</div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="stat-card compact">
+                                <div class="stat-number text-danger" id="losers">-</div>
+                                <div class="stat-label">Losers</div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="stat-card compact">
+                                <div class="stat-number" id="avg-change">-</div>
+                                <div class="stat-label">Avg Change</div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="stat-card compact">
+                                <div class="stat-number text-info" id="total-volume">-</div>
+                                <div class="stat-label">Volume</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="row">
         <!-- Performance Summary -->
         <div class="col-lg-4 mb-4">

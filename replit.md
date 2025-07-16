@@ -126,6 +126,15 @@ Preferred communication style: Simple, everyday language.
   - Added insufficient funds warning with disabled buy button
 - User successfully purchased 100 shares of RMBS stock
 
+### Major UX Improvements (Latest - July 16, 2025)
+- Moved AI assistant from intrusive chat widget to small floating robot icon in bottom-right corner
+- AI assistant now appears only when clicked, providing better screen real estate
+- Reorganized dashboard layout with compact welcome banner and inline account balance
+- Combined account balance and market overview in single row for less scrolling
+- Made all cards more compact with reduced padding and smaller font sizes
+- Enhanced visual hierarchy to fit more content above the fold
+- Improved tab separation to create distinct sections without excessive scrolling
+
 ## Deployment Strategy
 
 ### Environment Configuration

@@ -5,16 +5,14 @@ let messageId = 1;
 // Toggle assistant visibility
 function toggleAssistant() {
     const assistant = document.getElementById('ai-assistant');
-    const toggleBtn = assistant.querySelector('.ai-assistant-header button i');
+    const button = document.getElementById('ai-assistant-button');
     
-    assistantMinimized = !assistantMinimized;
-    
-    if (assistantMinimized) {
-        assistant.classList.add('minimized');
-        toggleBtn.className = 'fas fa-plus';
+    if (assistant.style.display === 'none' || assistant.style.display === '') {
+        assistant.style.display = 'block';
+        button.style.display = 'none';
     } else {
-        assistant.classList.remove('minimized');
-        toggleBtn.className = 'fas fa-minus';
+        assistant.style.display = 'none';
+        button.style.display = 'flex';
     }
 }
 

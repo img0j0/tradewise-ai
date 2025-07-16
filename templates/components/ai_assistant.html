@@ -1,5 +1,10 @@
+<!-- AI Assistant Button -->
+<button id="ai-assistant-button" class="ai-assistant-button" onclick="toggleAssistant()">
+    <i class="fas fa-robot"></i>
+</button>
+
 <!-- AI Assistant Chat Widget -->
-<div id="ai-assistant" class="ai-assistant-container">
+<div id="ai-assistant" class="ai-assistant-container" style="display: none;">
     <div class="ai-assistant-header">
         <div class="ai-avatar">
             <i class="fas fa-robot"></i>
@@ -11,7 +16,7 @@
             </span>
         </div>
         <button class="btn btn-sm btn-link text-light" onclick="toggleAssistant()">
-            <i class="fas fa-minus"></i>
+            <i class="fas fa-times"></i>
         </button>
     </div>
     
@@ -215,12 +220,46 @@
     font-weight: 600;
 }
 
-.ai-assistant-container.minimized {
-    height: auto;
+/* AI Assistant Button */
+.ai-assistant-button {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #4a9eff 0%, #a371f7 100%);
+    border: none;
+    box-shadow: 0 4px 20px rgba(74, 158, 255, 0.4);
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.ai-assistant-container.minimized .ai-assistant-body {
-    display: none;
+.ai-assistant-button:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 30px rgba(74, 158, 255, 0.6);
+}
+
+.ai-assistant-button i {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
+    100% {
+        opacity: 1;
+    }
 }
 
 /* Responsive design */
@@ -230,6 +269,13 @@
         bottom: 10px;
         right: 20px;
         left: 20px;
+    }
+    
+    .ai-assistant-button {
+        bottom: 20px;
+        right: 20px;
+        width: 50px;
+        height: 50px;
     }
 }
 </style>
