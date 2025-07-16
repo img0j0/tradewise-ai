@@ -59,3 +59,49 @@ class Alert(db.Model):
             'is_active': self.is_active,
             'created_at': self.created_at.isoformat()
         }
+
+class UserAccount(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.String(50), nullable=False, unique=True)  # For future user system
+    balance = db.Column(db.Float, default=0.0)
+    total_deposited = db.Column(db.Float, default=0.0)
+    total_withdrawn = db.Column(db.Float, default=0.0)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'user_id': self.user_id,
+            'balance': self.balance,
+            'total_deposited': self.total_deposited,
+            'total_withdrawn': self.total_withdrawn,
+            'created_at': self.created_at.isoformat(),
+            'updated_at': self.updated_at.isoformat()
+        }
+
+class Transaction(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.String(50), nullable=False)
+    transaction_type = db.Column(db.String(20), nullable=False)  # 'deposit', 'withdrawal', 'stock_purchase', 'stock_sale'
+    amount = db.Column(db.Float, nullable=False)
+    symbol = db.Column(db.String(10), nullable=True)  # For stock transactions
+    quantity = db.Column(db.Integer, nullable=True)  # For stock transactions
+    price_per_share = db.Column(db.Float, nullable=True)  # For stock transactions
+    stripe_payment_intent_id = db.Column(db.String(255), nullable=True)
+    status = db.Column(db.String(20), default='pending')  # 'pending', 'completed', 'failed'
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'user_id': self.user_id,
+            'transaction_type': self.transaction_type,
+            'amount': self.amount,
+            'symbol': self.symbol,
+            'quantity': self.quantity,
+            'price_per_share': self.price_per_share,
+            'stripe_payment_intent_id': self.stripe_payment_intent_id,
+            'status': self.status,
+            'created_at': self.created_at.isoformat()
+        }

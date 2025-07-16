@@ -859,3 +859,152 @@ body {
         font-size: 1.5rem;
     }
 }
+
+/* Account Balance Section */
+.account-balance-card {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border: 1px solid #2d3748;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.account-balance-card .card-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-bottom: 1px solid #2d3748;
+}
+
+.balance-display {
+    text-align: center;
+    padding: 20px 0;
+}
+
+.balance-amount {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #00ff88;
+    text-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+    display: block;
+    margin-bottom: 5px;
+}
+
+.balance-label {
+    color: #a0aec0;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.balance-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.balance-actions .btn {
+    min-width: 140px;
+    transition: all 0.3s ease;
+}
+
+.balance-actions .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Quick Actions Section */
+.quick-actions-card {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border: 1px solid #2d3748;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.quick-actions-card .card-header {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    border-bottom: 1px solid #2d3748;
+}
+
+.quick-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.quick-actions .btn {
+    width: 100%;
+    padding: 12px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.quick-actions .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Modal Enhancements */
+.modal-content {
+    border-radius: 12px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.modal-header {
+    border-bottom: 1px solid #2d3748;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.modal-body {
+    padding: 30px;
+}
+
+.modal-footer {
+    border-top: 1px solid #2d3748;
+    background: rgba(26, 26, 46, 0.5);
+}
+
+.transaction-item {
+    background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+    border: 1px solid #4a5568 !important;
+    transition: all 0.3s ease;
+}
+
+.transaction-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Success/Error page styles */
+.success-card {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border: 1px solid #2d3748;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.error-card {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border: 1px solid #2d3748;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.cancel-card {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border: 1px solid #2d3748;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.success-icon,
+.error-icon,
+.cancel-icon {
+    margin-bottom: 1rem;
+}
+
+/* AI Assistant Styles */
+.ai-assistant {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+}

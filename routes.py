@@ -1,10 +1,18 @@
-from flask import render_template, jsonify, request, session
+from flask import render_template, jsonify, request, session, redirect, url_for
 from app import app, db
-from models import Trade, Portfolio, Alert
+from models import Trade, Portfolio, Alert, UserAccount, Transaction
 from ai_insights import AIInsightsEngine
 from data_service import DataService
 import logging
+import os
+import stripe
 from datetime import datetime
+
+# Configure Stripe
+stripe.api_key = os.environ.get('STRIPE_SECRET_KEY')
+
+# For demo purposes, create a default user account
+DEFAULT_USER_ID = "demo_user_001"
 
 logger = logging.getLogger(__name__)
 
@@ -15,6 +23,16 @@ ai_engine = AIInsightsEngine()
 # Train AI model on startup
 stocks_data = data_service.get_all_stocks()
 ai_engine.train_model(stocks_data)
+
+# Initialize default user account
+def get_or_create_user_account():
+    """Get or create default user account"""
+    user_account = UserAccount.query.filter_by(user_id=DEFAULT_USER_ID).first()
+    if not user_account:
+        user_account = UserAccount(user_id=DEFAULT_USER_ID, balance=0.0)
+        db.session.add(user_account)
+        db.session.commit()
+    return user_account
 
 @app.route('/')
 def index():
@@ -37,6 +55,9 @@ def dashboard_data():
         # Get active alerts
         active_alerts = Alert.query.filter_by(is_active=True).order_by(Alert.created_at.desc()).limit(5).all()
         
+        # Get user account balance
+        user_account = get_or_create_user_account()
+        
         # Calculate portfolio performance
         portfolio_performance = calculate_portfolio_performance()
         
@@ -46,6 +67,7 @@ def dashboard_data():
             'recent_trades': [trade.to_dict() for trade in recent_trades],
             'active_alerts': [alert.to_dict() for alert in active_alerts],
             'portfolio_performance': portfolio_performance,
+            'user_account': user_account.to_dict(),
             'timestamp': datetime.now().isoformat()
         })
         
@@ -558,3 +580,252 @@ def generate_market_analysis(market_data, top_movers):
         analysis += f"{top_gainer['symbol']} leads gainers, up {top_gainer['change_pct']:.1f}%. "
     
     return analysis
+
+# Payment and Fund Management Routes
+
+@app.route('/api/account/balance')
+def get_account_balance():
+    """Get user account balance"""
+    try:
+        user_account = get_or_create_user_account()
+        return jsonify({
+            'balance': user_account.balance,
+            'total_deposited': user_account.total_deposited,
+            'total_withdrawn': user_account.total_withdrawn
+        })
+    except Exception as e:
+        logger.error(f"Error getting account balance: {e}")
+        return jsonify({'error': 'Failed to get account balance'}), 500
+
+@app.route('/api/create-deposit-session', methods=['POST'])
+def create_deposit_session():
+    """Create Stripe checkout session for deposit"""
+    try:
+        data = request.get_json()
+        amount = float(data.get('amount', 0))
+        
+        if amount <= 0:
+            return jsonify({'error': 'Invalid amount'}), 400
+        
+        # Create Stripe checkout session
+        YOUR_DOMAIN = os.environ.get('REPLIT_DEV_DOMAIN', 'localhost:5000')
+        if os.environ.get('REPLIT_DEPLOYMENT'):
+            YOUR_DOMAIN = os.environ.get('REPLIT_DOMAINS', '').split(',')[0]
+        
+        protocol = 'https' if os.environ.get('REPLIT_DEPLOYMENT') else 'http'
+        
+        checkout_session = stripe.checkout.Session.create(
+            payment_method_types=['card'],
+            line_items=[{
+                'price_data': {
+                    'currency': 'usd',
+                    'product_data': {
+                        'name': 'Account Deposit',
+                        'description': f'Deposit ${amount:.2f} to trading account'
+                    },
+                    'unit_amount': int(amount * 100),  # Convert to cents
+                },
+                'quantity': 1,
+            }],
+            mode='payment',
+            success_url=f'{protocol}://{YOUR_DOMAIN}/deposit/success?session_id={{CHECKOUT_SESSION_ID}}',
+            cancel_url=f'{protocol}://{YOUR_DOMAIN}/deposit/cancel',
+            metadata={
+                'user_id': DEFAULT_USER_ID,
+                'transaction_type': 'deposit',
+                'amount': str(amount)
+            }
+        )
+        
+        return jsonify({'checkout_url': checkout_session.url})
+        
+    except Exception as e:
+        logger.error(f"Error creating deposit session: {e}")
+        return jsonify({'error': 'Failed to create deposit session'}), 500
+
+@app.route('/deposit/success')
+def deposit_success():
+    """Handle successful deposit"""
+    try:
+        session_id = request.args.get('session_id')
+        
+        # Retrieve the session to get payment details
+        session = stripe.checkout.Session.retrieve(session_id)
+        
+        if session.payment_status == 'paid':
+            # Update user account balance
+            user_account = get_or_create_user_account()
+            amount = float(session.metadata['amount'])
+            
+            user_account.balance += amount
+            user_account.total_deposited += amount
+            
+            # Create transaction record
+            transaction = Transaction(
+                user_id=DEFAULT_USER_ID,
+                transaction_type='deposit',
+                amount=amount,
+                stripe_payment_intent_id=session.payment_intent,
+                status='completed'
+            )
+            
+            db.session.add(transaction)
+            db.session.commit()
+            
+            return render_template('deposit_success.html', amount=amount)
+        else:
+            return render_template('deposit_error.html')
+            
+    except Exception as e:
+        logger.error(f"Error handling deposit success: {e}")
+        return render_template('deposit_error.html')
+
+@app.route('/deposit/cancel')
+def deposit_cancel():
+    """Handle cancelled deposit"""
+    return render_template('deposit_cancel.html')
+
+@app.route('/api/purchase-stock', methods=['POST'])
+def purchase_stock():
+    """Purchase stock with account balance"""
+    try:
+        data = request.get_json()
+        symbol = data.get('symbol')
+        quantity = int(data.get('quantity', 0))
+        
+        if not symbol or quantity <= 0:
+            return jsonify({'error': 'Invalid stock symbol or quantity'}), 400
+        
+        # Get stock data
+        stock_data = data_service.get_stock_by_symbol(symbol)
+        if not stock_data:
+            return jsonify({'error': 'Stock not found'}), 404
+        
+        price = stock_data['price']
+        total_cost = price * quantity
+        
+        # Check account balance
+        user_account = get_or_create_user_account()
+        if user_account.balance < total_cost:
+            return jsonify({'error': 'Insufficient funds'}), 400
+        
+        # Deduct from account balance
+        user_account.balance -= total_cost
+        
+        # Create transaction record
+        transaction = Transaction(
+            user_id=DEFAULT_USER_ID,
+            transaction_type='stock_purchase',
+            amount=total_cost,
+            symbol=symbol,
+            quantity=quantity,
+            price_per_share=price,
+            status='completed'
+        )
+        
+        # Create trade record
+        trade = Trade(
+            symbol=symbol,
+            action='buy',
+            quantity=quantity,
+            price=price,
+            confidence_score=0.8,  # Default confidence for manual purchases
+            is_simulated=False
+        )
+        
+        db.session.add(transaction)
+        db.session.add(trade)
+        
+        # Update portfolio
+        update_portfolio(trade)
+        
+        db.session.commit()
+        
+        return jsonify({
+            'success': True,
+            'message': f'Successfully purchased {quantity} shares of {symbol}',
+            'transaction_id': transaction.id,
+            'remaining_balance': user_account.balance
+        })
+        
+    except Exception as e:
+        logger.error(f"Error purchasing stock: {e}")
+        return jsonify({'error': 'Failed to purchase stock'}), 500
+
+@app.route('/api/sell-stock', methods=['POST'])
+def sell_stock():
+    """Sell stock and add to account balance"""
+    try:
+        data = request.get_json()
+        symbol = data.get('symbol')
+        quantity = int(data.get('quantity', 0))
+        
+        if not symbol or quantity <= 0:
+            return jsonify({'error': 'Invalid stock symbol or quantity'}), 400
+        
+        # Check portfolio holdings
+        portfolio_item = Portfolio.query.filter_by(symbol=symbol).first()
+        if not portfolio_item or portfolio_item.quantity < quantity:
+            return jsonify({'error': 'Insufficient shares to sell'}), 400
+        
+        # Get current stock price
+        stock_data = data_service.get_stock_by_symbol(symbol)
+        if not stock_data:
+            return jsonify({'error': 'Stock not found'}), 404
+        
+        price = stock_data['price']
+        total_proceeds = price * quantity
+        
+        # Add to account balance
+        user_account = get_or_create_user_account()
+        user_account.balance += total_proceeds
+        
+        # Create transaction record
+        transaction = Transaction(
+            user_id=DEFAULT_USER_ID,
+            transaction_type='stock_sale',
+            amount=total_proceeds,
+            symbol=symbol,
+            quantity=quantity,
+            price_per_share=price,
+            status='completed'
+        )
+        
+        # Create trade record
+        trade = Trade(
+            symbol=symbol,
+            action='sell',
+            quantity=quantity,
+            price=price,
+            confidence_score=0.8,  # Default confidence for manual sales
+            is_simulated=False
+        )
+        
+        db.session.add(transaction)
+        db.session.add(trade)
+        
+        # Update portfolio
+        update_portfolio(trade)
+        
+        db.session.commit()
+        
+        return jsonify({
+            'success': True,
+            'message': f'Successfully sold {quantity} shares of {symbol}',
+            'transaction_id': transaction.id,
+            'new_balance': user_account.balance
+        })
+        
+    except Exception as e:
+        logger.error(f"Error selling stock: {e}")
+        return jsonify({'error': 'Failed to sell stock'}), 500
+
+@app.route('/api/transactions')
+def get_transactions():
+    """Get user transaction history"""
+    try:
+        transactions = Transaction.query.filter_by(user_id=DEFAULT_USER_ID).order_by(Transaction.created_at.desc()).limit(50).all()
+        return jsonify([transaction.to_dict() for transaction in transactions])
+    except Exception as e:
+        logger.error(f"Error getting transactions: {e}")
+        return jsonify({'error': 'Failed to get transactions'}), 500

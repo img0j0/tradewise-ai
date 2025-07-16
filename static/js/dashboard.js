@@ -217,6 +217,9 @@ function updateDashboard(data) {
     // Update welcome banner
     updateWelcomeBanner(data.market_overview);
     
+    // Update account balance
+    updateAccountBalance(data.user_account);
+    
     // Update performance summary
     updatePerformanceSummary(data.portfolio_performance);
     
@@ -283,6 +286,13 @@ function updatePerformanceSummary(performance) {
     pnlElement.className = pnl >= 0 ? 'text-success' : 'text-danger';
     
     document.getElementById('avg-confidence').textContent = performance.avg_confidence.toFixed(1) + '%';
+}
+
+function updateAccountBalance(userAccount) {
+    const balanceElement = document.getElementById('account-balance');
+    if (balanceElement && userAccount) {
+        balanceElement.textContent = formatCurrency(userAccount.balance);
+    }
 }
 
 function updateTopMovers(topMovers) {
@@ -758,6 +768,272 @@ async function dismissAlert(alertId) {
     }
 }
 
+// Payment and Trading Functions
+
+function showDepositModal() {
+    const modal = new bootstrap.Modal(document.getElementById('depositModal'));
+    modal.show();
+}
+
+async function processDeposit() {
+    const amount = parseFloat(document.getElementById('deposit-amount').value);
+    const depositBtn = document.getElementById('deposit-btn');
+    
+    if (!amount || amount <= 0) {
+        showError('Please enter a valid deposit amount');
+        return;
+    }
+    
+    try {
+        depositBtn.disabled = true;
+        depositBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processing...';
+        
+        const response = await fetch('/api/create-deposit-session', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ amount: amount })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+            // Redirect to Stripe checkout
+            window.location.href = data.checkout_url;
+        } else {
+            showError(data.error || 'Failed to create deposit session');
+        }
+    } catch (error) {
+        console.error('Error processing deposit:', error);
+        showError('Failed to process deposit');
+    } finally {
+        depositBtn.disabled = false;
+        depositBtn.innerHTML = '<i class="fas fa-credit-card me-2"></i>Proceed to Payment';
+    }
+}
+
+function showBuyModal() {
+    const modal = new bootstrap.Modal(document.getElementById('buyModal'));
+    
+    // Populate stock options
+    const stockSelect = document.getElementById('buy-symbol');
+    stockSelect.innerHTML = '<option value="">Select a stock...</option>';
+    
+    stocksData.forEach(stock => {
+        const option = document.createElement('option');
+        option.value = stock.symbol;
+        option.textContent = `${stock.symbol} - ${stock.name}`;
+        option.dataset.price = stock.price;
+        stockSelect.appendChild(option);
+    });
+    
+    // Set up event listeners
+    stockSelect.addEventListener('change', updateBuyCalculations);
+    document.getElementById('buy-quantity').addEventListener('input', updateBuyCalculations);
+    
+    modal.show();
+}
+
+function updateBuyCalculations() {
+    const stockSelect = document.getElementById('buy-symbol');
+    const quantityInput = document.getElementById('buy-quantity');
+    const priceElement = document.getElementById('buy-current-price');
+    const totalElement = document.getElementById('buy-total-cost');
+    const balanceElement = document.getElementById('buy-available-balance');
+    
+    const selectedOption = stockSelect.options[stockSelect.selectedIndex];
+    const price = selectedOption.dataset.price ? parseFloat(selectedOption.dataset.price) : 0;
+    const quantity = parseInt(quantityInput.value) || 0;
+    
+    priceElement.textContent = price > 0 ? formatCurrency(price) : '-';
+    totalElement.textContent = formatCurrency(price * quantity);
+    
+    // Update available balance from dashboard data
+    if (dashboardData.user_account) {
+        balanceElement.textContent = formatCurrency(dashboardData.user_account.balance);
+    }
+}
+
+async function executeBuy() {
+    const symbol = document.getElementById('buy-symbol').value;
+    const quantity = parseInt(document.getElementById('buy-quantity').value);
+    const buyBtn = document.getElementById('buy-btn');
+    
+    if (!symbol || !quantity || quantity <= 0) {
+        showError('Please select a stock and enter a valid quantity');
+        return;
+    }
+    
+    try {
+        buyBtn.disabled = true;
+        buyBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processing...';
+        
+        const response = await fetch('/api/purchase-stock', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ symbol: symbol, quantity: quantity })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+            showSuccess(data.message);
+            bootstrap.Modal.getInstance(document.getElementById('buyModal')).hide();
+            refreshData(); // Refresh dashboard data
+        } else {
+            showError(data.error || 'Failed to purchase stock');
+        }
+    } catch (error) {
+        console.error('Error purchasing stock:', error);
+        showError('Failed to purchase stock');
+    } finally {
+        buyBtn.disabled = false;
+        buyBtn.innerHTML = '<i class="fas fa-shopping-cart me-2"></i>Buy Stock';
+    }
+}
+
+function showSellModal() {
+    const modal = new bootstrap.Modal(document.getElementById('sellModal'));
+    
+    // Populate portfolio options
+    const stockSelect = document.getElementById('sell-symbol');
+    stockSelect.innerHTML = '<option value="">Select a stock...</option>';
+    
+    portfolioData.forEach(holding => {
+        const option = document.createElement('option');
+        option.value = holding.symbol;
+        option.textContent = `${holding.symbol} - ${holding.quantity} shares`;
+        option.dataset.quantity = holding.quantity;
+        stockSelect.appendChild(option);
+    });
+    
+    // Set up event listeners
+    stockSelect.addEventListener('change', updateSellCalculations);
+    document.getElementById('sell-quantity').addEventListener('input', updateSellCalculations);
+    
+    modal.show();
+}
+
+function updateSellCalculations() {
+    const stockSelect = document.getElementById('sell-symbol');
+    const quantityInput = document.getElementById('sell-quantity');
+    const priceElement = document.getElementById('sell-current-price');
+    const totalElement = document.getElementById('sell-total-proceeds');
+    const ownedElement = document.getElementById('sell-shares-owned');
+    
+    const selectedOption = stockSelect.options[stockSelect.selectedIndex];
+    const symbol = stockSelect.value;
+    const quantity = parseInt(quantityInput.value) || 0;
+    
+    if (symbol) {
+        // Find current price from stocks data
+        const stockData = stocksData.find(stock => stock.symbol === symbol);
+        const price = stockData ? stockData.price : 0;
+        const owned = parseInt(selectedOption.dataset.quantity) || 0;
+        
+        priceElement.textContent = price > 0 ? formatCurrency(price) : '-';
+        totalElement.textContent = formatCurrency(price * quantity);
+        ownedElement.textContent = owned;
+        
+        // Validate quantity
+        if (quantity > owned) {
+            quantityInput.setCustomValidity('Quantity exceeds owned shares');
+        } else {
+            quantityInput.setCustomValidity('');
+        }
+    } else {
+        priceElement.textContent = '-';
+        totalElement.textContent = '$0.00';
+        ownedElement.textContent = '0';
+    }
+}
+
+async function executeSell() {
+    const symbol = document.getElementById('sell-symbol').value;
+    const quantity = parseInt(document.getElementById('sell-quantity').value);
+    const sellBtn = document.getElementById('sell-btn');
+    
+    if (!symbol || !quantity || quantity <= 0) {
+        showError('Please select a stock and enter a valid quantity');
+        return;
+    }
+    
+    try {
+        sellBtn.disabled = true;
+        sellBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processing...';
+        
+        const response = await fetch('/api/sell-stock', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ symbol: symbol, quantity: quantity })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+            showSuccess(data.message);
+            bootstrap.Modal.getInstance(document.getElementById('sellModal')).hide();
+            refreshData(); // Refresh dashboard data
+        } else {
+            showError(data.error || 'Failed to sell stock');
+        }
+    } catch (error) {
+        console.error('Error selling stock:', error);
+        showError('Failed to sell stock');
+    } finally {
+        sellBtn.disabled = false;
+        sellBtn.innerHTML = '<i class="fas fa-money-bill-wave me-2"></i>Sell Stock';
+    }
+}
+
+async function showTransactionHistory() {
+    const modal = new bootstrap.Modal(document.getElementById('transactionModal'));
+    const historyContainer = document.getElementById('transaction-history');
+    
+    try {
+        historyContainer.innerHTML = '<div class="text-center text-muted">Loading transactions...</div>';
+        
+        const response = await fetch('/api/transactions');
+        const transactions = await response.json();
+        
+        if (response.ok) {
+            if (transactions.length === 0) {
+                historyContainer.innerHTML = '<div class="text-center text-muted">No transactions found</div>';
+            } else {
+                historyContainer.innerHTML = transactions.map(tx => `
+                    <div class="transaction-item mb-3 p-3 border rounded">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="fw-bold">${tx.transaction_type.replace('_', ' ').toUpperCase()}</span>
+                                ${tx.symbol ? `<span class="text-muted ms-2">${tx.symbol}</span>` : ''}
+                            </div>
+                            <div class="text-end">
+                                <div class="fw-bold ${tx.transaction_type === 'deposit' || tx.transaction_type === 'stock_sale' ? 'text-success' : 'text-danger'}">
+                                    ${tx.transaction_type === 'deposit' || tx.transaction_type === 'stock_sale' ? '+' : '-'}${formatCurrency(tx.amount)}
+                                </div>
+                                <small class="text-muted">${formatDateTime(tx.created_at)}</small>
+                            </div>
+                        </div>
+                        ${tx.quantity ? `<div class="text-muted small">Quantity: ${tx.quantity} shares @ ${formatCurrency(tx.price_per_share)}</div>` : ''}
+                    </div>
+                `).join('');
+            }
+        } else {
+            historyContainer.innerHTML = '<div class="text-center text-danger">Failed to load transactions</div>';
+        }
+    } catch (error) {
+        console.error('Error loading transactions:', error);
+        historyContainer.innerHTML = '<div class="text-center text-danger">Failed to load transactions</div>';
+    }
+    
+    modal.show();
+}
+
 // Export functions for global access
 window.showSection = showSection;
 window.toggleTheme = toggleTheme;
@@ -765,3 +1041,10 @@ window.applyFilters = applyFilters;
 window.showTradeModal = showTradeModal;
 window.executeTrade = executeTrade;
 window.dismissAlert = dismissAlert;
+window.showDepositModal = showDepositModal;
+window.processDeposit = processDeposit;
+window.showBuyModal = showBuyModal;
+window.executeBuy = executeBuy;
+window.showSellModal = showSellModal;
+window.executeSell = executeSell;
+window.showTransactionHistory = showTransactionHistory;
