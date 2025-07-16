@@ -212,7 +212,7 @@ def execute_trade():
 def get_portfolio():
     """Get portfolio data"""
     try:
-        portfolio_items = Portfolio.query.all()
+        portfolio_items = Portfolio.query.filter_by(user_id=current_user.id).all()
         stocks = data_service.get_all_stocks()
         
         # Calculate current values
@@ -284,7 +284,7 @@ def get_performance():
 
 def update_portfolio(trade):
     """Update portfolio based on trade"""
-    portfolio_item = Portfolio.query.filter_by(symbol=trade.symbol).first()
+    portfolio_item = Portfolio.query.filter_by(user_id=trade.user_id, symbol=trade.symbol).first()
     
     if trade.action == 'buy':
         if portfolio_item:
@@ -297,6 +297,7 @@ def update_portfolio(trade):
         else:
             # Create new position
             portfolio_item = Portfolio(
+                user_id=trade.user_id,
                 symbol=trade.symbol,
                 quantity=trade.quantity,
                 avg_price=trade.price
@@ -795,7 +796,7 @@ def sell_stock():
             return jsonify({'error': 'Invalid stock symbol or quantity'}), 400
         
         # Check portfolio holdings
-        portfolio_item = Portfolio.query.filter_by(symbol=symbol).first()
+        portfolio_item = Portfolio.query.filter_by(user_id=current_user.id, symbol=symbol).first()
         if not portfolio_item or portfolio_item.quantity < quantity:
             return jsonify({'error': 'Insufficient shares to sell'}), 400
         
