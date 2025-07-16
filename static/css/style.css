@@ -150,12 +150,13 @@ body {
 
 /* Stock list styles */
 .stock-item {
-    background: linear-gradient(135deg, rgba(22, 27, 34, 0.9) 0%, rgba(13, 17, 23, 0.9) 100%);
-    border: 1px solid rgba(74, 158, 255, 0.2);
-    border-radius: 8px;
-    padding: 1rem;
+    background: linear-gradient(135deg, rgba(22, 27, 34, 0.98) 0%, rgba(13, 17, 23, 0.98) 100%);
+    border: 2px solid rgba(74, 158, 255, 0.3);
+    border-radius: 12px;
+    padding: 1.25rem;
     margin-bottom: 1rem;
     transition: all 0.3s ease;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
 }
 
 .stock-item:hover {
@@ -170,6 +171,8 @@ body {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 0.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
 }
 
 .stock-symbol {
@@ -183,6 +186,9 @@ body {
     color: var(--accent-orange);
     font-size: 0.9rem;
     font-weight: 500;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    max-width: 300px;
 }
 
 .stock-price {
@@ -226,6 +232,7 @@ body {
     font-size: 0.95rem;
     color: var(--text-bright);
     font-weight: 500;
+    flex-wrap: wrap;
 }
 
 .stock-info span {
@@ -558,11 +565,21 @@ body {
     .stock-header {
         flex-direction: column;
         align-items: flex-start;
+        gap: 0.5rem;
     }
     
     .stock-details {
         flex-direction: column;
         gap: 0.5rem;
+    }
+    
+    .stock-info {
+        gap: 1rem;
+        font-size: 0.85rem;
+    }
+    
+    .stock-name {
+        max-width: 100%;
     }
     
     .portfolio-details {
