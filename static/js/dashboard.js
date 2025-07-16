@@ -816,11 +816,8 @@ async function processDeposit() {
 function showBuyModal() {
     const modal = new bootstrap.Modal(document.getElementById('buyModal'));
     
-    // Populate stock options
-    const stockSelect = document.getElementById('buy-symbol');
-    stockSelect.innerHTML = '<option value="">Select a stock...</option>';
-    
     // Clear previous search results
+    currentSearchedStock = null;
     document.getElementById('stock-search-result').style.display = 'none';
     document.getElementById('ai-risk-analysis').style.display = 'none';
     document.getElementById('buy-symbol-search').value = '';
