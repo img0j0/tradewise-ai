@@ -928,10 +928,14 @@ def ai_risk_analysis():
             'potential_rewards': identify_potential_rewards(stock_data, fundamentals)
         }
         
-        return jsonify(risk_analysis)
+        # Convert any numpy types to Python native types
+        import json
+        risk_analysis_json = json.loads(json.dumps(risk_analysis, default=str))
+        
+        return jsonify(risk_analysis_json)
         
     except Exception as e:
-        logger.error(f"Error in AI risk analysis: {str(e)}")
+        logger.error(f"Error in AI risk analysis: {str(e)}", exc_info=True)
         return jsonify({'error': 'Failed to generate risk analysis'}), 500
 
 def calculate_risk_score(stock_data, fundamentals):
@@ -1008,7 +1012,7 @@ def analyze_market_position(stock_data):
     
     return {
         'trend': position,
-        'above_ma20': current > ma_20,
+        'above_ma20': bool(current > ma_20),
         'percent_from_52w_high': round((1 - current/week_52_high) * 100, 2) if week_52_high > 0 else 0,
         'percent_from_52w_low': round((current/week_52_low - 1) * 100, 2) if week_52_low > 0 else 0
     }

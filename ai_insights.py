@@ -117,9 +117,9 @@ class AIInsightsEngine:
             prob = self.model.predict_proba(features_scaled)[0]
             
             # Convert to confidence score (0-100)
-            confidence = prob[1] * 100  # Probability of positive class
+            confidence = float(prob[1]) * 100  # Probability of positive class
             
-            return min(max(confidence, 0), 100)  # Clamp between 0-100
+            return int(min(max(confidence, 0), 100))  # Clamp between 0-100
             
         except Exception as e:
             logger.error(f"Error generating confidence score: {e}")
@@ -130,9 +130,15 @@ class AIInsightsEngine:
         score = 50  # Base score
         
         try:
+            # Get values with defaults
+            current_price = float(stock_info.get('current_price', 0))
+            previous_close = float(stock_info.get('previous_close', current_price))
+            
             # Price momentum
-            price_change_pct = ((stock_info['current_price'] - stock_info['previous_close']) / 
-                               stock_info['previous_close']) * 100
+            if previous_close > 0:
+                price_change_pct = ((current_price - previous_close) / previous_close) * 100
+            else:
+                price_change_pct = 0
             
             if price_change_pct > 5:
                 score += 20
@@ -144,13 +150,16 @@ class AIInsightsEngine:
                 score -= 10
             
             # Volume analysis
-            volume_ratio = stock_info['volume'] / stock_info['avg_volume']
-            if volume_ratio > 1.5:
-                score += 15
-            elif volume_ratio > 1.2:
-                score += 10
-            elif volume_ratio < 0.5:
-                score -= 10
+            volume = float(stock_info.get('volume', 0))
+            avg_volume = float(stock_info.get('avg_volume', 1))
+            if avg_volume > 0:
+                volume_ratio = volume / avg_volume
+                if volume_ratio > 1.5:
+                    score += 15
+                elif volume_ratio > 1.2:
+                    score += 10
+                elif volume_ratio < 0.5:
+                    score -= 10
             
             # Market cap consideration
             if stock_info['market_cap'] > 10000000000:  # Large cap
