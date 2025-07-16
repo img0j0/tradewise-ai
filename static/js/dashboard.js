@@ -249,17 +249,29 @@ function updateDashboard(data) {
 }
 
 function updateMarketOverview(overview) {
-    document.getElementById('total-stocks').textContent = overview.total_stocks;
-    document.getElementById('gainers').textContent = overview.gainers;
-    document.getElementById('losers').textContent = overview.losers;
-    document.getElementById('unchanged').textContent = overview.unchanged;
+    if (document.getElementById('total-stocks')) {
+        document.getElementById('total-stocks').textContent = overview.total_stocks;
+    }
+    if (document.getElementById('gainers')) {
+        document.getElementById('gainers').textContent = overview.gainers;
+    }
+    if (document.getElementById('losers')) {
+        document.getElementById('losers').textContent = overview.losers;
+    }
+    if (document.getElementById('unchanged')) {
+        document.getElementById('unchanged').textContent = overview.unchanged;
+    }
     
     const avgChange = overview.avg_change;
     const avgChangeElement = document.getElementById('avg-change');
-    avgChangeElement.textContent = formatCurrency(avgChange);
-    avgChangeElement.className = `stat-number ${avgChange >= 0 ? 'text-success' : 'text-danger'}`;
+    if (avgChangeElement) {
+        avgChangeElement.textContent = formatCurrency(avgChange);
+        avgChangeElement.className = `stat-number ${avgChange >= 0 ? 'text-success' : 'text-danger'}`;
+    }
     
-    document.getElementById('total-volume').textContent = formatVolume(overview.total_volume);
+    if (document.getElementById('total-volume')) {
+        document.getElementById('total-volume').textContent = formatVolume(overview.total_volume);
+    }
 }
 
 function updateWelcomeBanner(overview) {
