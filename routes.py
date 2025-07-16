@@ -301,7 +301,7 @@ def generate_trading_alerts():
                         symbol=stock['symbol'],
                         alert_type='buy',
                         message=f"Strong buy signal for {stock['symbol']} - {insights['analysis'][:100]}...",
-                        confidence_score=confidence
+                        confidence_score=float(confidence)
                     )
                     db.session.add(alert)
             
@@ -318,7 +318,7 @@ def generate_trading_alerts():
                         symbol=stock['symbol'],
                         alert_type='sell',
                         message=f"Sell signal for {stock['symbol']} - {insights['analysis'][:100]}...",
-                        confidence_score=confidence
+                        confidence_score=float(confidence)
                     )
                     db.session.add(alert)
         

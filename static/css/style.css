@@ -114,12 +114,23 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 0.85rem 1rem;
-    background: linear-gradient(135deg, rgba(163, 113, 247, 0.1) 0%, rgba(74, 158, 255, 0.05) 100%);
+    background: rgba(22, 27, 34, 0.6);
     border: 1px solid rgba(163, 113, 247, 0.2);
     border-radius: 8px;
     font-size: 1rem;
     font-weight: 500;
     transition: all 0.3s ease;
+    color: var(--text-secondary);
+}
+
+.stat-row:hover {
+    background: linear-gradient(135deg, rgba(163, 113, 247, 0.08) 0%, rgba(22, 27, 34, 0.8) 100%);
+    border-color: rgba(163, 113, 247, 0.4);
+}
+
+.stat-row span:last-child {
+    font-weight: 700;
+    font-size: 1.1rem;
 }
 
 .stat-row:hover {
@@ -740,12 +751,17 @@ body {
 
 /* Performance Card Enhancement */
 .performance-card {
-    background: linear-gradient(135deg, rgba(163, 113, 247, 0.1) 0%, rgba(255, 166, 87, 0.05) 100%);
+    background: linear-gradient(135deg, rgba(22, 27, 34, 0.98) 0%, rgba(13, 17, 23, 0.98) 100%);
     border: 2px solid rgba(163, 113, 247, 0.3);
 }
 
 .performance-card .card-header {
-    background: linear-gradient(135deg, rgba(163, 113, 247, 0.2) 0%, rgba(255, 166, 87, 0.1) 100%);
+    background: linear-gradient(135deg, rgba(163, 113, 247, 0.15) 0%, rgba(255, 166, 87, 0.08) 100%);
+    border-bottom: 1px solid rgba(163, 113, 247, 0.2);
+}
+
+.performance-card .card-body {
+    background: transparent;
 }
 
 /* Card Style Updates - Remove Gray Backgrounds */
