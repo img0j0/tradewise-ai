@@ -14,7 +14,7 @@ Preferred communication style: Simple, everyday language.
 
 ### Backend Architecture
 - **Framework**: Flask (Python web framework)
-- **Database**: SQLite with SQLAlchemy ORM (configurable to PostgreSQL via DATABASE_URL)
+- **Database**: PostgreSQL with SQLAlchemy ORM (connected via DATABASE_URL)
 - **AI/ML**: scikit-learn with Random Forest classifier for trading predictions
 - **Data Processing**: pandas and numpy for data manipulation and analysis
 
@@ -75,14 +75,15 @@ Preferred communication style: Simple, everyday language.
 ## Deployment Strategy
 
 ### Environment Configuration
-- Configurable database URL (defaults to SQLite, supports PostgreSQL)
+- PostgreSQL database connected via DATABASE_URL environment variable
 - Environment-based secret key management
 - Proxy-aware WSGI configuration for production deployment
 
 ### Database Setup
-- Automatic table creation on application startup
-- SQLAlchemy migrations supported through Flask-Migrate (can be added)
-- Connection pooling and health checks configured
+- PostgreSQL database with automatic table creation on application startup
+- Database tables: Trade, Portfolio, and Alert for comprehensive trading data management
+- Connection pooling and health checks configured for optimal performance
+- SQLAlchemy ORM for database operations with support for complex queries
 
 ### Production Considerations
 - WSGI server compatibility (Gunicorn, uWSGI)
