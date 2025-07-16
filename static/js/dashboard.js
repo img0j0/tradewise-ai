@@ -820,30 +820,32 @@ function showBuyModal() {
     const stockSelect = document.getElementById('buy-symbol');
     stockSelect.innerHTML = '<option value="">Select a stock...</option>';
     
-    stocksData.forEach(stock => {
-        const option = document.createElement('option');
-        option.value = stock.symbol;
-        option.textContent = `${stock.symbol} - ${stock.name}`;
-        option.dataset.price = stock.price;
-        stockSelect.appendChild(option);
-    });
+    // Clear previous search results
+    document.getElementById('stock-search-result').style.display = 'none';
+    document.getElementById('ai-risk-analysis').style.display = 'none';
+    document.getElementById('buy-symbol-search').value = '';
+    document.getElementById('buy-quantity').value = '';
+    updateBuyCalculations();
     
-    // Set up event listeners
-    stockSelect.addEventListener('change', updateBuyCalculations);
+    // Set up event listener for quantity changes
     document.getElementById('buy-quantity').addEventListener('input', updateBuyCalculations);
     
     modal.show();
 }
 
 function updateBuyCalculations() {
-    const stockSelect = document.getElementById('buy-symbol');
     const quantityInput = document.getElementById('buy-quantity');
     const priceElement = document.getElementById('buy-current-price');
     const totalElement = document.getElementById('buy-total-cost');
     const balanceElement = document.getElementById('buy-available-balance');
     
-    const selectedOption = stockSelect.options[stockSelect.selectedIndex];
-    const price = selectedOption.dataset.price ? parseFloat(selectedOption.dataset.price) : 0;
+    let price = 0;
+    
+    // Check if we have a searched stock
+    if (currentSearchedStock) {
+        price = currentSearchedStock.current_price || 0;
+    }
+    
     const quantity = parseInt(quantityInput.value) || 0;
     
     priceElement.textContent = price > 0 ? formatCurrency(price) : '-';
@@ -856,14 +858,15 @@ function updateBuyCalculations() {
 }
 
 async function executeBuy() {
-    const symbol = document.getElementById('buy-symbol').value;
     const quantity = parseInt(document.getElementById('buy-quantity').value);
     const buyBtn = document.getElementById('buy-btn');
     
-    if (!symbol || !quantity || quantity <= 0) {
-        showError('Please select a stock and enter a valid quantity');
+    if (!currentSearchedStock || !quantity || quantity <= 0) {
+        showError('Please search for a stock and enter a valid quantity');
         return;
     }
+    
+    const symbol = currentSearchedStock.symbol;
     
     try {
         buyBtn.disabled = true;
@@ -1034,6 +1037,110 @@ async function showTransactionHistory() {
     modal.show();
 }
 
+// Global variable to store current searched stock data
+let currentSearchedStock = null;
+
+async function searchStock() {
+    const symbolInput = document.getElementById('buy-symbol-search');
+    const symbol = symbolInput.value.trim().toUpperCase();
+    
+    if (!symbol) {
+        showError('Please enter a stock symbol');
+        return;
+    }
+    
+    try {
+        // Show loading state
+        const searchBtn = symbolInput.nextElementSibling;
+        searchBtn.disabled = true;
+        searchBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Searching...';
+        
+        // Search for the stock
+        const response = await fetch('/api/search-stock', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ symbol: symbol })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+            currentSearchedStock = data;
+            displayStockInfo(data);
+            
+            // Get AI risk analysis
+            const riskResponse = await fetch('/api/ai-risk-analysis', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ symbol: symbol })
+            });
+            
+            if (riskResponse.ok) {
+                const riskData = await riskResponse.json();
+                displayRiskAnalysis(riskData);
+            }
+            
+            // Update calculations
+            updateBuyCalculations();
+            
+        } else {
+            showError(data.error || 'Stock not found');
+            currentSearchedStock = null;
+            document.getElementById('stock-search-result').style.display = 'none';
+            document.getElementById('ai-risk-analysis').style.display = 'none';
+        }
+        
+    } catch (error) {
+        console.error('Error searching stock:', error);
+        showError('Failed to search stock');
+    } finally {
+        const searchBtn = symbolInput.nextElementSibling;
+        searchBtn.disabled = false;
+        searchBtn.innerHTML = '<i class="fas fa-search"></i> Search';
+    }
+}
+
+function displayStockInfo(stock) {
+    document.getElementById('stock-info-name').textContent = `${stock.symbol} - ${stock.name}`;
+    document.getElementById('stock-info-sector').textContent = stock.sector;
+    document.getElementById('stock-info-marketcap').textContent = formatMarketCap(stock.market_cap);
+    document.getElementById('stock-search-result').style.display = 'block';
+}
+
+function displayRiskAnalysis(riskData) {
+    // Set risk level badge
+    const riskBadge = document.getElementById('risk-level-badge');
+    riskBadge.textContent = riskData.risk_level;
+    riskBadge.className = 'badge bg-' + (
+        riskData.risk_level === 'Low' ? 'success' :
+        riskData.risk_level === 'Moderate' ? 'warning' :
+        riskData.risk_level === 'High' ? 'danger' : 'danger'
+    );
+    
+    // Display key risks
+    const risksList = document.getElementById('key-risks-list');
+    risksList.innerHTML = riskData.key_risks.map(risk => `<li>${risk}</li>`).join('');
+    
+    // Display potential rewards
+    const rewardsList = document.getElementById('potential-rewards-list');
+    rewardsList.innerHTML = riskData.potential_rewards.map(reward => `<li>${reward}</li>`).join('');
+    
+    // Set AI recommendation badge
+    const recBadge = document.getElementById('ai-recommendation-badge');
+    recBadge.textContent = `AI Recommendation: ${riskData.ai_recommendation.action} (${riskData.ai_recommendation.confidence}% confidence)`;
+    recBadge.className = 'badge bg-' + (
+        riskData.ai_recommendation.action === 'BUY' ? 'success' :
+        riskData.ai_recommendation.action === 'CONSIDER' ? 'info' :
+        riskData.ai_recommendation.action === 'HOLD' ? 'warning' : 'danger'
+    );
+    
+    document.getElementById('ai-risk-analysis').style.display = 'block';
+}
+
 // Export functions for global access
 window.showSection = showSection;
 window.toggleTheme = toggleTheme;
@@ -1048,3 +1155,4 @@ window.executeBuy = executeBuy;
 window.showSellModal = showSellModal;
 window.executeSell = executeSell;
 window.showTransactionHistory = showTransactionHistory;
+window.searchStock = searchStock;

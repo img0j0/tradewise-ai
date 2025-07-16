@@ -3,6 +3,7 @@ from app import app, db
 from models import Trade, Portfolio, Alert, UserAccount, Transaction
 from ai_insights import AIInsightsEngine
 from data_service import DataService
+from stock_search import StockSearchService
 import logging
 import os
 import stripe
@@ -19,6 +20,7 @@ logger = logging.getLogger(__name__)
 # Initialize services
 data_service = DataService()
 ai_engine = AIInsightsEngine()
+stock_search_service = StockSearchService()
 
 # Train AI model on startup
 stocks_data = data_service.get_all_stocks()
@@ -696,12 +698,19 @@ def purchase_stock():
         if not symbol or quantity <= 0:
             return jsonify({'error': 'Invalid stock symbol or quantity'}), 400
         
-        # Get stock data
+        # Get stock data - first try from data service, then search real-time
         stock_data = data_service.get_stock_by_symbol(symbol)
         if not stock_data:
-            return jsonify({'error': 'Stock not found'}), 404
+            # Try searching for the stock in real-time
+            stock_data = stock_search_service.search_stock(symbol)
+            if not stock_data:
+                return jsonify({'error': 'Stock not found'}), 404
         
-        price = stock_data['price']
+        # Get the current price
+        price = stock_data.get('current_price') or stock_data.get('price', 0)
+        if price <= 0:
+            return jsonify({'error': 'Invalid stock price'}), 400
+            
         total_cost = price * quantity
         
         # Check account balance
@@ -768,12 +777,19 @@ def sell_stock():
         if not portfolio_item or portfolio_item.quantity < quantity:
             return jsonify({'error': 'Insufficient shares to sell'}), 400
         
-        # Get current stock price
+        # Get current stock price - first try from data service, then search real-time
         stock_data = data_service.get_stock_by_symbol(symbol)
         if not stock_data:
-            return jsonify({'error': 'Stock not found'}), 404
+            # Try searching for the stock in real-time
+            stock_data = stock_search_service.search_stock(symbol)
+            if not stock_data:
+                return jsonify({'error': 'Stock not found'}), 404
         
-        price = stock_data['price']
+        # Get the current price
+        price = stock_data.get('current_price') or stock_data.get('price', 0)
+        if price <= 0:
+            return jsonify({'error': 'Invalid stock price'}), 400
+            
         total_proceeds = price * quantity
         
         # Add to account balance
@@ -829,3 +845,265 @@ def get_transactions():
     except Exception as e:
         logger.error(f"Error getting transactions: {e}")
         return jsonify({'error': 'Failed to get transactions'}), 500
+
+@app.route('/api/search-stock', methods=['POST'])
+def search_stock():
+    """Search for any stock by symbol with real-time data"""
+    try:
+        data = request.json
+        symbol = data.get('symbol', '').strip().upper()
+        
+        if not symbol:
+            return jsonify({'error': 'Stock symbol is required'}), 400
+        
+        # Search for stock data
+        stock_data = stock_search_service.search_stock(symbol)
+        
+        if not stock_data:
+            return jsonify({'error': f'Stock symbol {symbol} not found'}), 404
+        
+        # Generate AI insights for the stock
+        ai_insights = ai_engine.generate_insights(stock_data)
+        stock_data['ai_insights'] = ai_insights
+        
+        # Get additional fundamentals for risk analysis
+        fundamentals = stock_search_service.get_stock_fundamentals(symbol)
+        if fundamentals:
+            stock_data['fundamentals'] = fundamentals
+        
+        return jsonify(stock_data)
+        
+    except Exception as e:
+        logger.error(f"Error searching stock: {str(e)}")
+        return jsonify({'error': 'Failed to search stock'}), 500
+
+@app.route('/api/validate-symbol', methods=['POST'])
+def validate_symbol():
+    """Validate if a stock symbol exists"""
+    try:
+        data = request.json
+        symbol = data.get('symbol', '').strip().upper()
+        
+        if not symbol:
+            return jsonify({'valid': False, 'error': 'Symbol is required'}), 400
+        
+        is_valid = stock_search_service.validate_symbol(symbol)
+        return jsonify({'valid': is_valid, 'symbol': symbol})
+        
+    except Exception as e:
+        logger.error(f"Error validating symbol: {str(e)}")
+        return jsonify({'valid': False, 'error': 'Validation failed'}), 500
+
+@app.route('/api/ai-risk-analysis', methods=['POST'])
+def ai_risk_analysis():
+    """Get detailed AI risk analysis for any stock"""
+    try:
+        data = request.json
+        symbol = data.get('symbol', '').strip().upper()
+        
+        if not symbol:
+            return jsonify({'error': 'Stock symbol is required'}), 400
+        
+        # Get stock data
+        stock_data = stock_search_service.search_stock(symbol)
+        if not stock_data:
+            return jsonify({'error': f'Stock symbol {symbol} not found'}), 404
+        
+        # Get fundamentals
+        fundamentals = stock_search_service.get_stock_fundamentals(symbol)
+        
+        # Calculate risk metrics
+        risk_score = calculate_risk_score(stock_data, fundamentals)
+        
+        # Generate detailed risk analysis
+        risk_analysis = {
+            'symbol': symbol,
+            'risk_score': risk_score,
+            'risk_level': get_risk_level(risk_score),
+            'volatility': calculate_volatility(stock_data),
+            'market_position': analyze_market_position(stock_data),
+            'fundamental_health': analyze_fundamental_health(fundamentals),
+            'ai_recommendation': generate_ai_recommendation(stock_data, fundamentals, risk_score),
+            'key_risks': identify_key_risks(stock_data, fundamentals),
+            'potential_rewards': identify_potential_rewards(stock_data, fundamentals)
+        }
+        
+        return jsonify(risk_analysis)
+        
+    except Exception as e:
+        logger.error(f"Error in AI risk analysis: {str(e)}")
+        return jsonify({'error': 'Failed to generate risk analysis'}), 500
+
+def calculate_risk_score(stock_data, fundamentals):
+    """Calculate overall risk score (0-100, higher is riskier)"""
+    risk_score = 50  # Base score
+    
+    # Volatility factor
+    if stock_data.get('beta', 1) > 1.5:
+        risk_score += 15
+    elif stock_data.get('beta', 1) < 0.8:
+        risk_score -= 10
+    
+    # Price position factor
+    current = stock_data.get('current_price', 0)
+    week_52_high = stock_data.get('week_52_high', current)
+    week_52_low = stock_data.get('week_52_low', current)
+    
+    if week_52_high > 0:
+        price_position = (current - week_52_low) / (week_52_high - week_52_low)
+        if price_position > 0.9:  # Near 52-week high
+            risk_score += 10
+        elif price_position < 0.2:  # Near 52-week low
+            risk_score -= 5
+    
+    # Fundamental factors
+    if fundamentals:
+        if fundamentals.get('debt_to_equity', 0) > 2:
+            risk_score += 10
+        if fundamentals.get('current_ratio', 1) < 1:
+            risk_score += 10
+        if fundamentals.get('profit_margin', 0) < 0:
+            risk_score += 15
+    
+    return max(0, min(100, risk_score))
+
+def get_risk_level(risk_score):
+    """Convert risk score to risk level"""
+    if risk_score < 30:
+        return 'Low'
+    elif risk_score < 50:
+        return 'Moderate'
+    elif risk_score < 70:
+        return 'High'
+    else:
+        return 'Very High'
+
+def calculate_volatility(stock_data):
+    """Calculate volatility metrics"""
+    beta = stock_data.get('beta', 1.0)
+    daily_range = stock_data.get('high', 0) - stock_data.get('low', 0)
+    price = stock_data.get('current_price', 1)
+    daily_volatility = (daily_range / price * 100) if price > 0 else 0
+    
+    return {
+        'beta': beta,
+        'daily_range_percent': round(daily_volatility, 2),
+        'volatility_level': 'High' if beta > 1.3 else 'Moderate' if beta > 0.8 else 'Low'
+    }
+
+def analyze_market_position(stock_data):
+    """Analyze stock's market position"""
+    current = stock_data.get('current_price', 0)
+    ma_20 = stock_data.get('moving_avg_20', current)
+    week_52_high = stock_data.get('week_52_high', current)
+    week_52_low = stock_data.get('week_52_low', current)
+    
+    position = 'Neutral'
+    if current > ma_20 * 1.05:
+        position = 'Strong Uptrend'
+    elif current > ma_20:
+        position = 'Uptrend'
+    elif current < ma_20 * 0.95:
+        position = 'Downtrend'
+    
+    return {
+        'trend': position,
+        'above_ma20': current > ma_20,
+        'percent_from_52w_high': round((1 - current/week_52_high) * 100, 2) if week_52_high > 0 else 0,
+        'percent_from_52w_low': round((current/week_52_low - 1) * 100, 2) if week_52_low > 0 else 0
+    }
+
+def analyze_fundamental_health(fundamentals):
+    """Analyze fundamental health"""
+    if not fundamentals:
+        return {'status': 'Unknown', 'score': 50}
+    
+    score = 50
+    factors = []
+    
+    if fundamentals.get('profit_margin', 0) > 0.15:
+        score += 10
+        factors.append('Strong profit margins')
+    elif fundamentals.get('profit_margin', 0) < 0:
+        score -= 20
+        factors.append('Negative profit margins')
+    
+    if fundamentals.get('debt_to_equity', 100) < 1:
+        score += 10
+        factors.append('Low debt levels')
+    elif fundamentals.get('debt_to_equity', 0) > 2:
+        score -= 10
+        factors.append('High debt levels')
+    
+    if fundamentals.get('revenue_growth', 0) > 0.1:
+        score += 10
+        factors.append('Strong revenue growth')
+    
+    return {
+        'status': 'Excellent' if score > 70 else 'Good' if score > 50 else 'Fair' if score > 30 else 'Poor',
+        'score': score,
+        'key_factors': factors
+    }
+
+def generate_ai_recommendation(stock_data, fundamentals, risk_score):
+    """Generate AI-powered recommendation"""
+    confidence = ai_engine.generate_confidence_score(stock_data)
+    
+    recommendation = 'HOLD'
+    if confidence > 70 and risk_score < 50:
+        recommendation = 'BUY'
+    elif confidence < 30 or risk_score > 70:
+        recommendation = 'AVOID'
+    elif confidence > 60 and risk_score < 60:
+        recommendation = 'CONSIDER'
+    
+    return {
+        'action': recommendation,
+        'confidence': confidence,
+        'reasoning': f"Based on AI analysis with {confidence}% confidence and {get_risk_level(risk_score).lower()} risk level"
+    }
+
+def identify_key_risks(stock_data, fundamentals):
+    """Identify key risks"""
+    risks = []
+    
+    if stock_data.get('beta', 1) > 1.5:
+        risks.append('High volatility compared to market')
+    
+    current = stock_data.get('current_price', 0)
+    week_52_high = stock_data.get('week_52_high', current)
+    if current > week_52_high * 0.95:
+        risks.append('Trading near 52-week high')
+    
+    if fundamentals:
+        if fundamentals.get('debt_to_equity', 0) > 2:
+            risks.append('High debt levels')
+        if fundamentals.get('profit_margin', 0) < 0:
+            risks.append('Currently unprofitable')
+    
+    if stock_data.get('pe_ratio', 0) > 30:
+        risks.append('High valuation (P/E > 30)')
+    
+    return risks if risks else ['Standard market risks apply']
+
+def identify_potential_rewards(stock_data, fundamentals):
+    """Identify potential rewards"""
+    rewards = []
+    
+    current = stock_data.get('current_price', 0)
+    week_52_low = stock_data.get('week_52_low', current)
+    if current < week_52_low * 1.2:
+        rewards.append('Trading near 52-week low - potential value opportunity')
+    
+    if fundamentals:
+        if fundamentals.get('revenue_growth', 0) > 0.15:
+            rewards.append('Strong revenue growth')
+        if fundamentals.get('profit_margin', 0) > 0.2:
+            rewards.append('Excellent profit margins')
+        if fundamentals.get('recommendation_key') == 'buy':
+            rewards.append('Positive analyst sentiment')
+    
+    if stock_data.get('dividend_yield', 0) > 0.02:
+        rewards.append(f"Dividend yield of {stock_data['dividend_yield']*100:.2f}%")
+    
+    return rewards if rewards else ['Potential for capital appreciation']
