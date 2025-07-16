@@ -181,11 +181,12 @@ def execute_trade():
         
         # Create trade record
         trade = Trade(
+            user_id=current_user.id,
             symbol=data['symbol'].upper(),
             action=data['action'].lower(),
             quantity=data['quantity'],
-            price=stock['current_price'],
-            confidence_score=insights['confidence_score'],
+            price=float(stock['current_price']),  # Convert to Python float
+            confidence_score=float(insights['confidence_score']),  # Convert to Python float
             is_simulated=True
         )
         
@@ -723,12 +724,14 @@ def purchase_stock():
             if not stock_data:
                 return jsonify({'error': 'Stock not found'}), 404
         
-        # Get the current price
+        # Get the current price and ensure it's a regular Python float
         price = stock_data.get('current_price') or stock_data.get('price', 0)
+        # Convert numpy types to Python native types
+        price = float(price)
         if price <= 0:
             return jsonify({'error': 'Invalid stock price'}), 400
             
-        total_cost = price * quantity
+        total_cost = float(price * quantity)
         
         # Check account balance
         user_account = get_or_create_user_account()
@@ -804,12 +807,14 @@ def sell_stock():
             if not stock_data:
                 return jsonify({'error': 'Stock not found'}), 404
         
-        # Get the current price
+        # Get the current price and ensure it's a regular Python float
         price = stock_data.get('current_price') or stock_data.get('price', 0)
+        # Convert numpy types to Python native types
+        price = float(price)
         if price <= 0:
             return jsonify({'error': 'Invalid stock price'}), 400
             
-        total_proceeds = price * quantity
+        total_proceeds = float(price * quantity)
         
         # Add to account balance
         user_account = get_or_create_user_account()
