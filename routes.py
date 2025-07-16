@@ -221,10 +221,21 @@ def get_portfolio():
         total_cost = 0
         
         for item in portfolio_items:
-            # Find current stock price
+            # Find current stock price - first try sample data, then real-time
             current_stock = next((s for s in stocks if s['symbol'] == item.symbol), None)
+            
+            # If not in sample data, fetch real-time price
+            if not current_stock:
+                try:
+                    real_stock = stock_search_service.search_stock(item.symbol)
+                    if real_stock:
+                        current_stock = real_stock
+                except:
+                    pass
+            
             if current_stock:
-                current_value = item.quantity * current_stock['current_price']
+                current_price = float(current_stock.get('current_price', 0))
+                current_value = item.quantity * current_price
                 cost_basis = item.quantity * item.avg_price
                 pnl = current_value - cost_basis
                 pnl_pct = (pnl / cost_basis) * 100 if cost_basis > 0 else 0
@@ -233,7 +244,7 @@ def get_portfolio():
                     'symbol': item.symbol,
                     'quantity': item.quantity,
                     'avg_price': item.avg_price,
-                    'current_price': current_stock['current_price'],
+                    'current_price': current_price,
                     'current_value': current_value,
                     'cost_basis': cost_basis,
                     'pnl': pnl,

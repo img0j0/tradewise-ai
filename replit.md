@@ -113,6 +113,19 @@ Preferred communication style: Simple, everyday language.
 - Fixed JSON serialization issues with numpy types in AI risk analysis
 - Successfully tested with real stocks (AAPL, NVDA) - confirmed working by user
 
+### Bug Fixes and UI Improvements (July 16, 2025)
+- Fixed numpy float64 type conversion issues preventing stock purchases
+- Added float() conversion for all stock prices in purchase_stock, sell_stock, and execute_trade functions
+- Fixed portfolio user_id null constraint violation by properly filtering and creating portfolio entries with user_id
+- Updated get_portfolio to fetch real-time prices for stocks not in sample data
+- Enhanced buy modal UI with clearer labels:
+  - "Number of Shares to Buy" instead of just "Quantity"
+  - "Price per Share" instead of "Current Price"
+  - "Total Purchase Cost" with bold warning text
+  - Added purchase summary showing "You are buying X shares for $Y"
+  - Added insufficient funds warning with disabled buy button
+- User successfully purchased 100 shares of RMBS stock
+
 ## Deployment Strategy
 
 ### Environment Configuration

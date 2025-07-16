@@ -847,6 +847,11 @@ function updateBuyCalculations() {
     const priceElement = document.getElementById('buy-current-price');
     const totalElement = document.getElementById('buy-total-cost');
     const balanceElement = document.getElementById('buy-available-balance');
+    const summaryElement = document.getElementById('buy-purchase-summary');
+    const sharesCountElement = document.getElementById('buy-shares-count');
+    const totalAmountElement = document.getElementById('buy-total-amount');
+    const insufficientFundsElement = document.getElementById('buy-insufficient-funds');
+    const buyBtn = document.getElementById('buy-btn');
     
     let price = 0;
     
@@ -856,13 +861,36 @@ function updateBuyCalculations() {
     }
     
     const quantity = parseInt(quantityInput.value) || 0;
+    const totalCost = price * quantity;
     
     priceElement.textContent = price > 0 ? formatCurrency(price) : '-';
-    totalElement.textContent = formatCurrency(price * quantity);
+    totalElement.textContent = formatCurrency(totalCost);
     
     // Update available balance from dashboard data
+    let availableBalance = 0;
     if (dashboardData.user_account) {
-        balanceElement.textContent = formatCurrency(dashboardData.user_account.balance);
+        availableBalance = dashboardData.user_account.balance;
+        balanceElement.textContent = formatCurrency(availableBalance);
+    }
+    
+    // Show purchase summary if quantity is entered
+    if (quantity > 0 && price > 0) {
+        summaryElement.style.display = 'block';
+        sharesCountElement.textContent = quantity;
+        totalAmountElement.textContent = formatCurrency(totalCost);
+        
+        // Check if sufficient funds
+        if (totalCost > availableBalance) {
+            insufficientFundsElement.style.display = 'block';
+            buyBtn.disabled = true;
+        } else {
+            insufficientFundsElement.style.display = 'none';
+            buyBtn.disabled = false;
+        }
+    } else {
+        summaryElement.style.display = 'none';
+        insufficientFundsElement.style.display = 'none';
+        buyBtn.disabled = quantity <= 0;
     }
 }
 

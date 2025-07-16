@@ -473,20 +473,27 @@
                     </div>
                     
                     <div class="mb-3">
-                        <label for="buy-quantity" class="form-label">Quantity</label>
+                        <label for="buy-quantity" class="form-label">Number of Shares to Buy</label>
                         <input type="number" class="form-control" id="buy-quantity" min="1" required>
+                        <div class="form-text">Enter the number of shares you want to purchase</div>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Current Price</label>
+                        <label class="form-label">Price per Share</label>
                         <div class="form-control-plaintext" id="buy-current-price">-</div>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Total Cost</label>
-                        <div class="form-control-plaintext" id="buy-total-cost">$0.00</div>
+                        <label class="form-label">Total Purchase Cost</label>
+                        <div class="form-control-plaintext fw-bold text-warning" id="buy-total-cost">$0.00</div>
+                        <div class="form-text" id="buy-purchase-summary" style="display: none;">
+                            You are buying <span id="buy-shares-count">0</span> shares for <span id="buy-total-amount">$0.00</span>
+                        </div>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Available Balance</label>
+                        <label class="form-label">Your Available Balance</label>
                         <div class="form-control-plaintext text-success" id="buy-available-balance">$0.00</div>
+                        <div class="form-text text-danger" id="buy-insufficient-funds" style="display: none;">
+                            Insufficient funds! Please deposit more money or reduce quantity.
+                        </div>
                     </div>
                 </form>
             </div>
