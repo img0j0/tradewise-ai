@@ -72,7 +72,12 @@ class PortfolioOptimizer:
             end_date = datetime.now()
             start_date = end_date - timedelta(days=self.lookback_period * 1.5)
 
-            data = yf.download(symbols, start=start_date, end=end_date, progress=False)['Adj Close']
+            data = yf.download(symbols, start=start_date, end=end_date, progress=False)
+            if 'Adj Close' in data.columns:
+                data = data['Adj Close']
+            else:
+                # Handle single symbol case
+                data = data.iloc[:, 3]  # Close column
 
             if isinstance(data, pd.Series):
                 data = data.to_frame()

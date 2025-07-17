@@ -44,6 +44,7 @@ class Trade(db.Model):
     confidence_score = db.Column(db.Float, nullable=False)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
     is_simulated = db.Column(db.Boolean, default=True)
+    profit_loss = db.Column(db.Float, default=0.0)
     
     def to_dict(self):
         return {
@@ -54,7 +55,8 @@ class Trade(db.Model):
             'price': self.price,
             'confidence_score': self.confidence_score,
             'timestamp': self.timestamp.isoformat(),
-            'is_simulated': self.is_simulated
+            'is_simulated': self.is_simulated,
+            'profit_loss': self.profit_loss
         }
 
 class Portfolio(db.Model):

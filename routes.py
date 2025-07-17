@@ -2612,3 +2612,43 @@ def get_unified_ai_recommendations():
     except Exception as e:
         logger.error(f"Error getting unified AI recommendations: {e}")
         return jsonify({'error': str(e)}), 500
+
+@app.route('/health')
+def health_check():
+    """Health check endpoint for deployment monitoring"""
+    try:
+        # Check database connectivity
+        from sqlalchemy import text
+        db.session.execute(text('SELECT 1'))
+        
+        # Check AI services
+        ai_status = {
+            'ai_engine': bool(ai_engine),
+            'order_manager': bool(order_manager),
+            'market_intelligence': bool(market_intelligence),
+            'deep_learning_engine': bool(deep_learning_engine),
+            'performance_optimizer': bool(performance_optimizer)
+        }
+        
+        return jsonify({
+            'status': 'healthy',
+            'timestamp': datetime.now().isoformat(),
+            'database': 'connected',
+            'ai_services': ai_status,
+            'version': '1.0.0',
+            'features': [
+                'advanced_orders',
+                'market_intelligence', 
+                'deep_learning',
+                'performance_optimization',
+                'error_recovery',
+                'real_time_updates'
+            ]
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'status': 'unhealthy',
+            'error': str(e),
+            'timestamp': datetime.now().isoformat()
+        }), 500
