@@ -1,0 +1,298 @@
+<!-- Simple AI-Powered Stock Analysis Section -->
+<div class="container-fluid py-4">
+    <!-- AI Stock Search -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card bg-dark border-0 shadow-lg">
+                <div class="card-body text-center py-5">
+                    <h1 class="display-4 text-white mb-3">
+                        <i class="fas fa-robot text-primary me-3"></i>
+                        AI Stock Advisor
+                    </h1>
+                    <p class="lead text-light mb-4">
+                        Get instant AI-powered investment insights on any stock
+                    </p>
+                    
+                    <!-- Search Bar -->
+                    <div class="row justify-content-center">
+                        <div class="col-md-8 col-lg-6">
+                            <div class="input-group input-group-lg">
+                                <span class="input-group-text bg-primary border-0">
+                                    <i class="fas fa-search text-white"></i>
+                                </span>
+                                <input 
+                                    type="text" 
+                                    class="form-control border-0" 
+                                    id="stock-search-input" 
+                                    placeholder="Enter stock symbol (e.g., AAPL, TSLA, MSFT)"
+                                    onkeypress="if(event.key==='Enter') searchStockAI()"
+                                >
+                                <button 
+                                    class="btn btn-success btn-lg px-4" 
+                                    onclick="searchStockAI()"
+                                    id="search-btn"
+                                >
+                                    <i class="fas fa-brain me-2"></i>Analyze
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Stock Suggestions -->
+                    <div class="mt-4">
+                        <small class="text-muted">Popular: </small>
+                        <button class="btn btn-outline-light btn-sm me-2" onclick="quickSearch('AAPL')">AAPL</button>
+                        <button class="btn btn-outline-light btn-sm me-2" onclick="quickSearch('TSLA')">TSLA</button>
+                        <button class="btn btn-outline-light btn-sm me-2" onclick="quickSearch('MSFT')">MSFT</button>
+                        <button class="btn btn-outline-light btn-sm me-2" onclick="quickSearch('NVDA')">NVDA</button>
+                        <button class="btn btn-outline-light btn-sm me-2" onclick="quickSearch('GOOGL')">GOOGL</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Analysis Results -->
+    <div class="row" id="ai-analysis-results" style="display: none;">
+        <div class="col-12">
+            <div class="card bg-dark border-0 shadow">
+                <div class="card-body">
+                    <!-- Stock Header -->
+                    <div class="row align-items-center mb-4">
+                        <div class="col-md-6">
+                            <h3 class="text-white mb-1" id="stock-name">-</h3>
+                            <div class="text-muted">
+                                <span id="stock-symbol">-</span> • 
+                                <span id="stock-sector">-</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6 text-md-end">
+                            <div class="h2 text-white mb-1" id="stock-price">$0.00</div>
+                            <div id="stock-change" class="h6">
+                                <span class="text-success">+0.00 (0.00%)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- AI Analysis Cards -->
+                    <div class="row g-3">
+                        <!-- AI Recommendation -->
+                        <div class="col-lg-4">
+                            <div class="ai-card bg-gradient-primary">
+                                <div class="ai-card-header">
+                                    <i class="fas fa-robot"></i>
+                                    <h5>AI Recommendation</h5>
+                                </div>
+                                <div class="ai-card-body">
+                                    <div class="recommendation-badge" id="ai-recommendation">
+                                        <span class="badge bg-success">STRONG BUY</span>
+                                    </div>
+                                    <div class="confidence-score mt-2">
+                                        <small class="text-white-50">Confidence: </small>
+                                        <span class="text-white" id="ai-confidence">85%</span>
+                                    </div>
+                                    <p class="ai-insight mt-3" id="ai-insight">
+                                        AI analysis in progress...
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Risk Analysis -->
+                        <div class="col-lg-4">
+                            <div class="ai-card bg-gradient-warning">
+                                <div class="ai-card-header">
+                                    <i class="fas fa-shield-alt"></i>
+                                    <h5>Risk Assessment</h5>
+                                </div>
+                                <div class="ai-card-body">
+                                    <div class="risk-level" id="risk-level">
+                                        <span class="badge bg-warning">MODERATE</span>
+                                    </div>
+                                    <div class="risk-score mt-2">
+                                        <small class="text-white-50">Risk Score: </small>
+                                        <span class="text-white" id="risk-score">6/10</span>
+                                    </div>
+                                    <div class="risk-factors mt-3">
+                                        <h6 class="text-white-50">Key Risks:</h6>
+                                        <ul class="risk-list" id="risk-factors">
+                                            <li>Analyzing...</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Price Prediction -->
+                        <div class="col-lg-4">
+                            <div class="ai-card bg-gradient-success">
+                                <div class="ai-card-header">
+                                    <i class="fas fa-chart-line"></i>
+                                    <h5>Price Target</h5>
+                                </div>
+                                <div class="ai-card-body">
+                                    <div class="price-target">
+                                        <div class="target-price" id="target-price">$0.00</div>
+                                        <div class="target-range mt-2">
+                                            <small class="text-white-50">Range: </small>
+                                            <span class="text-white" id="price-range">$0.00 - $0.00</span>
+                                        </div>
+                                    </div>
+                                    <div class="expected-return mt-3">
+                                        <small class="text-white-50">Expected Return: </small>
+                                        <span class="text-white" id="expected-return">+0.00%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- AI Insights Text -->
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="card bg-secondary border-0">
+                                <div class="card-body">
+                                    <h5 class="text-white mb-3">
+                                        <i class="fas fa-lightbulb text-warning me-2"></i>
+                                        AI Investment Insights
+                                    </h5>
+                                    <div class="ai-insights-text" id="ai-insights-text">
+                                        <div class="text-center py-4">
+                                            <div class="spinner-border text-primary" role="status">
+                                                <span class="visually-hidden">Loading...</span>
+                                            </div>
+                                            <p class="text-muted mt-2">AI is analyzing this stock...</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="row mt-4">
+                        <div class="col-12 text-center">
+                            <button class="btn btn-success btn-lg me-3" onclick="showBuyModal()" id="buy-stock-btn">
+                                <i class="fas fa-shopping-cart me-2"></i>Buy This Stock
+                            </button>
+                            <button class="btn btn-outline-info btn-lg" onclick="addToWatchlist()" id="watchlist-btn">
+                                <i class="fas fa-eye me-2"></i>Add to Watchlist
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading State -->
+    <div class="row" id="search-loading" style="display: none;">
+        <div class="col-12">
+            <div class="card bg-dark border-0 shadow">
+                <div class="card-body text-center py-5">
+                    <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <h5 class="text-white">AI is analyzing your stock...</h5>
+                    <p class="text-muted">This may take a few moments while our AI processes market data, news, and technical indicators.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.ai-card {
+    border-radius: 15px;
+    padding: 1.5rem;
+    height: 100%;
+}
+
+.ai-card-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.ai-card-header i {
+    font-size: 1.5rem;
+    margin-right: 0.5rem;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.ai-card-header h5 {
+    margin: 0;
+    color: white;
+    font-weight: 600;
+}
+
+.ai-card-body {
+    color: white;
+}
+
+.recommendation-badge .badge {
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
+}
+
+.confidence-score {
+    font-size: 1.1rem;
+}
+
+.ai-insight {
+    font-size: 0.9rem;
+    line-height: 1.4;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.risk-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.risk-list li {
+    padding: 0.2rem 0;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.risk-list li:before {
+    content: "• ";
+    color: rgba(255, 255, 255, 0.6);
+    margin-right: 0.5rem;
+}
+
+.target-price {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: white;
+}
+
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.bg-gradient-warning {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.bg-gradient-success {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.ai-insights-text {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+#stock-search-input {
+    font-size: 1.1rem;
+    padding: 0.75rem 1rem;
+}
+
+#stock-search-input:focus {
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+</style>

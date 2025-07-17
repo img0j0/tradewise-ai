@@ -186,54 +186,7 @@
 
 <!-- Stocks Section -->
 <div id="stocks-section" style="display: none;">
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card bg-dark stock-filters-card">
-                <div class="card-header">
-                    <h5 class="mb-0"><i class="fas fa-filter me-2"></i>Stock Filters</h5>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-3">
-                            <label for="sector-filter" class="form-label">Sector</label>
-                            <select class="form-select" id="sector-filter">
-                                <option value="">All Sectors</option>
-                            </select>
-                        </div>
-                        <div class="col-md-3">
-                            <label for="min-price" class="form-label">Min Price</label>
-                            <input type="number" class="form-control" id="min-price" placeholder="0.00" step="0.01">
-                        </div>
-                        <div class="col-md-3">
-                            <label for="max-price" class="form-label">Max Price</label>
-                            <input type="number" class="form-control" id="max-price" placeholder="1000.00" step="0.01">
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label">&nbsp;</label>
-                            <button class="btn btn-primary d-block w-100" onclick="applyFilters()">
-                                <i class="fas fa-search me-1"></i>Apply Filters
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <div class="row">
-        <div class="col-12">
-            <div class="card bg-dark stock-scanner-card">
-                <div class="card-header">
-                    <h5 class="mb-0"><i class="fas fa-chart-area me-2"></i>Stock Ticker Scanner</h5>
-                </div>
-                <div class="card-body">
-                    <div id="stocks-list">
-                        <div class="text-center text-muted">Loading stocks...</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    {% include 'simple_stocks.html' %}
 </div>
 
 <!-- Alerts Section -->

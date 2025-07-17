@@ -2008,13 +2008,26 @@ def get_technical_indicators(symbol):
         logger.error(f"Error getting technical indicators: {e}")
         return jsonify({'error': 'Failed to get technical indicators'}), 500
 
-@app.route('/api/ai-predictions/<symbol>')
+@app.route('/api/search-stock/<symbol>')
 @login_required
-def get_ai_predictions(symbol):
-    """Get AI-powered predictions and signals for a symbol"""
+def search_stock_api(symbol):
+    """Search for stock data using the StockSearchService"""
     try:
-        period = request.args.get('period', '1mo')
+        stock_data = stock_search_service.search_stock(symbol)
+        if not stock_data:
+            return jsonify({'error': 'Stock not found'}), 404
         
+        return jsonify(stock_data)
+        
+    except Exception as e:
+        logger.error(f"Error searching for stock {symbol}: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/ai-analysis/<symbol>')
+@login_required
+def get_ai_analysis(symbol):
+    """Get comprehensive AI analysis for a stock"""
+    try:
         # Get real-time stock data
         stock_data = stock_search_service.search_stock(symbol)
         if not stock_data:
@@ -2023,84 +2036,64 @@ def get_ai_predictions(symbol):
         # Get AI insights
         ai_insights = ai_engine.get_insights(symbol, stock_data)
         
-        # Generate AI signals based on current conditions
-        signals = []
-        confidence = ai_insights.get('confidence', 0)
-        
-        # Buy/Sell signals based on AI confidence
-        if confidence > 0.7:
-            signals.append({
-                'type': 'BUY',
-                'strength': 'STRONG',
-                'reason': 'AI model shows high confidence in upward movement',
-                'timestamp': datetime.now().isoformat(),
-                'confidence': confidence
-            })
-        elif confidence < 0.3:
-            signals.append({
-                'type': 'SELL',
-                'strength': 'MODERATE',
-                'reason': 'AI model indicates potential downward pressure',
-                'timestamp': datetime.now().isoformat(),
-                'confidence': confidence
-            })
-        
-        # Technical pattern recognition
-        if ai_insights.get('expected_return', 0) > 0.05:
-            signals.append({
-                'type': 'BREAKOUT',
-                'strength': 'STRONG',
-                'reason': 'AI detects potential breakout pattern',
-                'timestamp': datetime.now().isoformat(),
-                'probability': 0.85
-            })
-        
-        # Volume analysis
-        if stock_data.get('volume', 0) > stock_data.get('avg_volume', 0) * 1.5:
-            signals.append({
-                'type': 'VOLUME_SPIKE',
-                'strength': 'MODERATE',
-                'reason': 'Unusual volume activity detected',
-                'timestamp': datetime.now().isoformat(),
-                'volume_ratio': stock_data.get('volume', 0) / stock_data.get('avg_volume', 1)
-            })
-        
-        # Risk assessment
-        risk_level = 'LOW' if confidence > 0.6 else 'MEDIUM' if confidence > 0.4 else 'HIGH'
-        
-        # Price predictions
-        current_price = stock_data.get('current_price', 0)
+        confidence = ai_insights.get('confidence', 0.5)
         expected_return = ai_insights.get('expected_return', 0)
         
-        predictions = {
-            'price_target': current_price * (1 + expected_return),
-            'price_range': {
-                'low': current_price * (1 + expected_return - 0.05),
-                'high': current_price * (1 + expected_return + 0.05)
-            },
-            'trend_direction': 'BULLISH' if expected_return > 0 else 'BEARISH',
-            'trend_strength': abs(expected_return) * 10,
-            'volatility_forecast': ai_insights.get('volatility', 0.2),
+        # Generate recommendation
+        recommendation = 'HOLD'
+        if confidence > 0.7 and expected_return > 0.05:
+            recommendation = 'STRONG BUY'
+        elif confidence > 0.6 and expected_return > 0.02:
+            recommendation = 'BUY'
+        elif confidence < 0.3 and expected_return < -0.05:
+            recommendation = 'STRONG SELL'
+        elif confidence < 0.4 and expected_return < -0.02:
+            recommendation = 'SELL'
+        
+        # Risk assessment
+        risk_score = int((1 - confidence) * 10)
+        risk_level = 'LOW' if risk_score < 4 else 'MEDIUM' if risk_score < 7 else 'HIGH'
+        
+        # Generate key risks
+        key_risks = []
+        if stock_data.get('beta', 1.0) > 1.5:
+            key_risks.append('High volatility (Beta > 1.5)')
+        if stock_data.get('pe_ratio', 0) > 30:
+            key_risks.append('High P/E ratio indicating potential overvaluation')
+        if expected_return < 0:
+            key_risks.append('Negative expected return based on AI analysis')
+        if not key_risks:
+            key_risks = ['Standard market risks', 'Sector-specific risks']
+        
+        # Generate insight text
+        insight = f"AI analysis of {symbol} shows {confidence*100:.0f}% confidence. "
+        if expected_return > 0:
+            insight += f"The model predicts positive momentum with {expected_return*100:.1f}% expected return. "
+        else:
+            insight += f"The model indicates potential downside with {expected_return*100:.1f}% expected return. "
+        
+        insight += f"Risk level is assessed as {risk_level.lower()} based on current market conditions and technical indicators."
+        
+        # Calculate price target
+        current_price = stock_data.get('current_price', 0)
+        price_target = current_price * (1 + expected_return)
+        
+        analysis = {
+            'recommendation': recommendation,
+            'confidence': int(confidence * 100),
             'risk_level': risk_level,
-            'time_horizon': period,
-            'ml_accuracy': ai_insights.get('model_accuracy', 0.85),
-            'momentum_score': confidence * 100,
-            'support_level': current_price * 0.95,
-            'resistance_level': current_price * 1.05
+            'risk_score': risk_score,
+            'insight': insight,
+            'price_target': price_target,
+            'expected_return': expected_return * 100,
+            'key_risks': key_risks,
+            'timestamp': datetime.now().isoformat()
         }
         
-        return jsonify({
-            'predictions': predictions,
-            'signals': signals,
-            'confidence': confidence,
-            'ai_score': confidence * 100,
-            'timestamp': datetime.now().isoformat(),
-            'symbol': symbol,
-            'period': period
-        })
+        return jsonify(analysis)
         
     except Exception as e:
-        logger.error(f"Error generating AI predictions for {symbol}: {e}")
+        logger.error(f"Error generating AI analysis for {symbol}: {e}")
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/portfolio-analytics')
