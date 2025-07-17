@@ -166,7 +166,10 @@ function displayStockAnalysis(stockData, aiAnalysis) {
     
     // Update AI insights text
     const insightsText = generateDetailedInsights(stockData, aiAnalysis);
-    document.getElementById('ai-insights-text').innerHTML = insightsText;
+    const insightsElement = document.getElementById('ai-insights-text');
+    if (insightsElement) {
+        insightsElement.innerHTML = insightsText;
+    }
     
     // Update buy button
     const buyButton = document.getElementById('buy-stock-btn');
@@ -282,6 +285,15 @@ function showError(message) {
     } else {
         alert(message);
     }
+}
+
+// Quick search function for popular stocks
+function quickSearch(symbol) {
+    const input = document.getElementById('stock-symbol-input');
+    if (input) {
+        input.value = symbol;
+    }
+    searchStock(symbol);
 }
 
 // Reset search button on page load
