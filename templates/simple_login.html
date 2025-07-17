@@ -36,6 +36,11 @@
     <div class="login-card">
         <h2 class="text-center mb-4">Trading Analytics Login</h2>
         
+        <div class="alert alert-info mb-3">
+            <strong>Quick Access:</strong><br>
+            <a href="/login-bypass" class="btn btn-sm btn-primary mt-2">Click here for bypass login page</a>
+        </div>
+        
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
