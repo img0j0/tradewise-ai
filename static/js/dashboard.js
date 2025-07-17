@@ -26,24 +26,42 @@ document.addEventListener('DOMContentLoaded', function() {
 function initializeDashboard() {
     console.log('Initializing Trading Analytics Dashboard...');
     
-    // Show loading state
-    showMainLoadingState();
-    
-    // Load theme preference
-    const savedTheme = localStorage.getItem('theme') || 'dark';
-    setTheme(savedTheme);
-    
-    // Load initial data
-    loadDashboardData();
-    loadSectors();
-    
-    // Set up event listeners
-    setupEventListeners();
-    
-    // Hide loading state after initial load
-    setTimeout(() => {
-        hideMainLoadingState();
-    }, 1000);
+    try {
+        // Initialize notification manager
+        window.notificationManager = new NotificationManager();
+        
+        // Show loading state
+        showMainLoadingState();
+        
+        // Load theme preference
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        setTheme(savedTheme);
+        
+        // Load initial data with error handling
+        Promise.all([
+            loadDashboardData(),
+            loadSectors()
+        ]).catch(error => {
+            console.error('Error loading initial data:', error);
+            if (window.notificationManager) {
+                notificationManager.showError('Failed to load dashboard data. Please refresh the page.');
+            }
+        });
+        
+        // Set up event listeners
+        setupEventListeners();
+        
+        // Hide loading state after initial load
+        setTimeout(() => {
+            hideMainLoadingState();
+        }, 1000);
+        
+    } catch (error) {
+        console.error('Error initializing dashboard:', error);
+        if (window.notificationManager) {
+            notificationManager.showError('Dashboard initialization failed. Please refresh the page.');
+        }
+    }
 }
 
 // Set up event listeners
@@ -328,43 +346,48 @@ function updateWelcomeBanner(overview) {
 }
 
 function updatePerformanceSummary(performance) {
-    const totalTradesElement = document.getElementById('total-trades');
-    if (totalTradesElement) {
-        totalTradesElement.textContent = performance.total_trades;
-    }
-    
-    const winRateElement = document.getElementById('win-rate');
-    if (winRateElement) {
-        winRateElement.textContent = performance.win_rate.toFixed(1) + '%';
-    }
-    
-    // Total P&L
-    const pnl = performance.total_pnl || 0;
-    const pnlElement = document.getElementById('total-pnl');
-    if (pnlElement) {
-        pnlElement.textContent = formatCurrency(pnl);
-        pnlElement.className = pnl >= 0 ? 'text-success' : 'text-danger';
-    }
-    
-    // Realized P&L
-    const realizedPnl = performance.total_realized_pnl || 0;
-    const realizedElement = document.getElementById('realized-pnl');
-    if (realizedElement) {
-        realizedElement.textContent = formatCurrency(realizedPnl);
-        realizedElement.className = realizedPnl >= 0 ? 'text-success' : 'text-danger';
-    }
-    
-    // Unrealized P&L
-    const unrealizedPnl = performance.total_unrealized_pnl || 0;
-    const unrealizedElement = document.getElementById('unrealized-pnl');
-    if (unrealizedElement) {
-        unrealizedElement.textContent = formatCurrency(unrealizedPnl);
-        unrealizedElement.className = unrealizedPnl >= 0 ? 'text-success' : 'text-danger';
-    }
-    
-    const avgConfidenceElement = document.getElementById('avg-confidence');
-    if (avgConfidenceElement) {
-        avgConfidenceElement.textContent = performance.avg_confidence.toFixed(1) + '%';
+    try {
+        const totalTradesElement = document.getElementById('total-trades');
+        if (totalTradesElement) {
+            totalTradesElement.textContent = performance.total_trades;
+        }
+        
+        const winRateElement = document.getElementById('win-rate');
+        if (winRateElement) {
+            winRateElement.textContent = performance.win_rate.toFixed(1) + '%';
+        }
+        
+        // Total P&L
+        const pnl = performance.total_pnl || 0;
+        const pnlElement = document.getElementById('total-pnl');
+        if (pnlElement) {
+            pnlElement.textContent = formatCurrency(pnl);
+            pnlElement.className = pnl >= 0 ? 'text-success' : 'text-danger';
+        }
+        
+        // Realized P&L
+        const realizedPnl = performance.total_realized_pnl || 0;
+        const realizedElement = document.getElementById('realized-pnl');
+        if (realizedElement) {
+            realizedElement.textContent = formatCurrency(realizedPnl);
+            realizedElement.className = realizedPnl >= 0 ? 'text-success' : 'text-danger';
+        }
+        
+        // Unrealized P&L
+        const unrealizedPnl = performance.total_unrealized_pnl || 0;
+        const unrealizedElement = document.getElementById('unrealized-pnl');
+        if (unrealizedElement) {
+            unrealizedElement.textContent = formatCurrency(unrealizedPnl);
+            unrealizedElement.className = unrealizedPnl >= 0 ? 'text-success' : 'text-danger';
+        }
+        
+        const avgConfidenceElement = document.getElementById('avg-confidence');
+        if (avgConfidenceElement) {
+            avgConfidenceElement.textContent = performance.avg_confidence.toFixed(1) + '%';
+        }
+    } catch (error) {
+        console.error('Error in updatePerformanceSummary:', error);
+        throw error;
     }
 }
 
