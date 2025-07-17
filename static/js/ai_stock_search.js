@@ -226,8 +226,10 @@ function showSearchLoading() {
     
     // Update search button
     const searchBtn = document.getElementById('search-btn');
-    searchBtn.disabled = true;
-    searchBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Analyzing...';
+    if (searchBtn) {
+        searchBtn.disabled = true;
+        searchBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Analyzing...';
+    }
 }
 
 // Show search error
@@ -237,12 +239,16 @@ function showSearchError(message) {
     
     // Reset search button
     const searchBtn = document.getElementById('search-btn');
-    searchBtn.disabled = false;
-    searchBtn.innerHTML = '<i class="fas fa-brain me-2"></i>Analyze';
+    if (searchBtn) {
+        searchBtn.disabled = false;
+        searchBtn.innerHTML = '<i class="fas fa-brain me-2"></i>Analyze';
+    }
     
     // Show error
     if (window.notificationManager) {
         window.notificationManager.showError(`Stock search failed: ${message}`);
+    } else {
+        alert(`Stock search failed: ${message}`);
     }
 }
 
