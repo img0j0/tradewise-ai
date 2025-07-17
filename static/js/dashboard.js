@@ -105,6 +105,8 @@ function setTheme(theme) {
 
 // Section management
 function showSection(sectionName) {
+    console.log('showSection called with:', sectionName);
+    
     // Hide all sections
     const sections = ['dashboard', 'stocks', 'alerts', 'portfolio', 'advanced'];
     sections.forEach(section => {
@@ -131,6 +133,7 @@ function showSection(sectionName) {
     }
     
     currentSection = sectionName;
+    console.log('currentSection set to:', currentSection);
     
     // Load section-specific data
     switch (sectionName) {
@@ -269,7 +272,11 @@ async function loadSectors() {
 // Update UI functions
 function updateDashboard(data) {
     // Only update dashboard elements if we're on the dashboard tab
-    if (currentSection !== 'dashboard') return;
+    console.log('updateDashboard called. currentSection:', currentSection);
+    if (currentSection !== 'dashboard') {
+        console.log('Not on dashboard tab, skipping update');
+        return;
+    }
     
     console.log('Updating dashboard with data:', data);
     
