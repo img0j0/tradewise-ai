@@ -5,6 +5,8 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
 from werkzeug.middleware.proxy_fix import ProxyFix
 from flask_login import LoginManager
+from flask_caching import Cache
+from flask_compress import Compress
 
 # Set up logging
 logging.basicConfig(level=logging.DEBUG)
@@ -35,6 +37,12 @@ app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
 
 # initialize the app with the extension
 db.init_app(app)
+
+# Initialize caching for better performance
+cache = Cache(app, config={'CACHE_TYPE': 'simple'})
+
+# Initialize compression
+compress = Compress(app)
 
 # Initialize Flask-Login
 login_manager = LoginManager()
