@@ -44,13 +44,7 @@ def load_user(user_id):
     from models import User
     return User.query.get(int(user_id))
 
-with app.app_context():
-    # Import models and routes
-    import models
-    import routes
-    
-    # Create all tables
-    db.create_all()
+# Don't import at module level to avoid circular imports
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
