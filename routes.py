@@ -1213,6 +1213,33 @@ def test_direct_login():
     """Direct login test page"""
     return render_template('test_direct_login.html')
 
+@app.route('/login-debug')
+def login_debug():
+    """Login debug page"""
+    return render_template('login_debug.html')
+
+@app.route('/quick-login/<username>')
+def quick_login(username):
+    """Quick login for testing - bypasses form submission"""
+    from flask_login import login_user
+    
+    # Map test usernames to passwords
+    test_accounts = {
+        'trader1': 'TradingPro2025',
+        'testuser': 'password123'
+    }
+    
+    if username in test_accounts:
+        user = User.query.filter_by(username=username).first()
+        if user and user.check_password(test_accounts[username]):
+            login_user(user)
+            user.last_login = datetime.utcnow()
+            db.session.commit()
+            session.permanent = True
+            return redirect(url_for('index'))
+    
+    return redirect(url_for('login'))
+
 @app.route('/debug-auth')
 def debug_auth():
     """Debug authentication status"""
