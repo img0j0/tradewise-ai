@@ -174,13 +174,8 @@ async function loadDashboardData() {
 
         dashboardData = data;
 
-        // Safely update dashboard with proper error handling
-        try {
-            updateDashboard(data);
-        } catch (updateError) {
-            console.error('Error updating dashboard UI:', updateError);
-            showError('Failed to update dashboard display: ' + updateError.message);
-        }
+        // Update dashboard
+        updateDashboard(data);
 
     } catch (error) {
         console.error('Error loading dashboard data:', error);
@@ -1042,11 +1037,20 @@ function showToast(toast) {
 
 async function dismissAlert(alertId) {
     try {
-        // In a real implementation, this would make an API call to dismiss the alert
-        console.log('Dismissing alert:', alertId);
+        const response = await fetch(`/api/alerts/${alertId}/dismiss`, {
+            method: 'POST',
+            credentials: 'include'
+        });
 
-        // For now, just refresh the alerts
+        const data = await response.json();
+        
+        if (data.error) {
+            throw new Error(data.error);
+        }
+
+        // Refresh the alerts
         loadAlerts();
+        showSuccess('Alert dismissed');
 
     } catch (error) {
         console.error('Error dismissing alert:', error);
@@ -1905,7 +1909,7 @@ async function trainAIModel() {
             loadAIPerformance();
         } else {
             statusDiv.innerHTML = '<div class="alert alert-danger"><i class="fas fa-exclamation-triangle me-2"></i>Failed to train model</div>';
-        }        }
+        }
     } catch (error) {
         console.error('Error training AI model:', error);
         statusDiv.innerHTML = '<div class="alert alert-danger"><i class="fas fa-exclamation-triangle me-2"></i>Error training model</div>';
