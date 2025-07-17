@@ -289,12 +289,15 @@ function showError(message) {
 
 // Quick search function for popular stocks
 function quickSearch(symbol) {
-    const input = document.getElementById('stock-symbol-input');
+    const input = document.getElementById('stock-search-input');
     if (input) {
         input.value = symbol;
     }
-    searchStock(symbol);
+    searchStockAI();
 }
+
+// Alternative function name for compatibility
+window.quickSearch = quickSearch;
 
 // Reset search button on page load
 document.addEventListener('DOMContentLoaded', function() {
