@@ -6,8 +6,8 @@ from data_service import DataService
 from stock_search import StockSearchService
 from cache_service import cache
 from portfolio_optimizer import PortfolioOptimizer
-from social_trading import SocialTradingManager, TradingSignalGenerator
-from gamification import AchievementSystem, ChallengeSystem
+from social_trading import SocialTradingEngine
+from gamification import GamificationEngine
 from flask_login import login_user, logout_user, login_required, current_user
 import logging
 import os
@@ -30,10 +30,8 @@ data_service = DataService()
 ai_engine = AIInsightsEngine()
 stock_search_service = StockSearchService()
 portfolio_optimizer = PortfolioOptimizer()
-social_trading_manager = SocialTradingManager()
-signal_generator = TradingSignalGenerator()
-achievement_system = AchievementSystem()
-challenge_system = ChallengeSystem()
+social_trading_engine = SocialTradingEngine()
+gamification_engine = GamificationEngine()
 
 # Train AI model on startup
 stocks_data = data_service.get_all_stocks()
@@ -1432,18 +1430,9 @@ def get_top_traders():
         timeframe = request.args.get('timeframe', 'month')
         limit = int(request.args.get('limit', 10))
         
-        top_traders = social_trading_manager.get_top_traders(
-            limit=limit, 
-            timeframe=timeframe
-        )
+        result = social_trading_engine.get_top_traders(limit=limit)
         
-        # Generate trading signals
-        signals = signal_generator.generate_signals(top_traders)
-        
-        return jsonify({
-            'top_traders': top_traders,
-            'signals': signals
-        }), 200
+        return jsonify(result), 200
         
     except Exception as e:
         logger.error(f"Error getting top traders: {e}")
@@ -1454,10 +1443,12 @@ def get_top_traders():
 def get_trader_profile(trader_id):
     """Get detailed profile of a specific trader"""
     try:
-        profile = social_trading_manager.get_trader_profile(trader_id)
+        # For now, return a simple trader profile
+        traders = social_trading_engine.get_top_traders(limit=10)['traders']
+        trader = next((t for t in traders if t['rank'] == trader_id), None)
         
-        if profile:
-            return jsonify(profile), 200
+        if trader:
+            return jsonify(trader), 200
         else:
             return jsonify({'error': 'Trader not found'}), 404
             
@@ -1482,12 +1473,13 @@ def simulate_copy_trade():
         if user_account.balance < amount:
             return jsonify({'error': 'Insufficient balance'}), 400
         
-        # Simulate copy trade
-        result = social_trading_manager.simulate_copy_trade(
-            current_user.id,
-            trader_id,
-            amount
-        )
+        # For now, return a simulated result
+        result = {
+            'success': True,
+            'message': f'Successfully allocated ${amount:,.2f} to copy trader {trader_id}',
+            'trades_copied': 5,
+            'expected_return': amount * 0.15  # 15% expected return
+        }
         
         return jsonify(result), 200
         
@@ -1500,16 +1492,10 @@ def simulate_copy_trade():
 def get_achievements():
     """Get user achievements and progress"""
     try:
-        # Check for new achievements
-        new_achievements = achievement_system.check_achievements(current_user.id)
+        # Get achievements from gamification engine
+        result = gamification_engine.get_user_achievements(current_user.id)
         
-        # Get user stats
-        user_stats = achievement_system.get_user_stats(current_user.id)
-        
-        return jsonify({
-            'new_achievements': new_achievements,
-            'user_stats': user_stats
-        }), 200
+        return jsonify(result), 200
         
     except Exception as e:
         logger.error(f"Error getting achievements: {e}")
@@ -1523,12 +1509,9 @@ def get_leaderboard():
         timeframe = request.args.get('timeframe', 'all')
         limit = int(request.args.get('limit', 10))
         
-        leaderboard = achievement_system.get_leaderboard(
-            timeframe=timeframe,
-            limit=limit
-        )
+        result = gamification_engine.get_leaderboard(timeframe=timeframe)
         
-        return jsonify({'leaderboard': leaderboard}), 200
+        return jsonify(result), 200
         
     except Exception as e:
         logger.error(f"Error getting leaderboard: {e}")
@@ -1539,9 +1522,9 @@ def get_leaderboard():
 def get_challenges():
     """Get active trading challenges"""
     try:
-        challenges = challenge_system.get_active_challenges()
+        result = gamification_engine.get_active_challenges(current_user.id)
         
-        return jsonify({'challenges': challenges}), 200
+        return jsonify(result), 200
         
     except Exception as e:
         logger.error(f"Error getting challenges: {e}")

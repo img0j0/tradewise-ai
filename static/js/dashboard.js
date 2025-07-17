@@ -1533,18 +1533,18 @@ function updateAdvancedFeaturesUI(data) {
     }
     
     // Update Achievements
-    if (data.achievements && data.achievements.user_stats) {
-        updateAchievementsUI(data.achievements);
+    if (data.achievements) {
+        updateAchievementsDisplay(data.achievements);
     }
     
     // Update Leaderboard
-    if (data.leaderboard && data.leaderboard.leaderboard) {
-        updateLeaderboardUI(data.leaderboard.leaderboard);
+    if (data.leaderboard) {
+        updateLeaderboardDisplay(data.leaderboard);
     }
     
     // Update Challenges
-    if (data.challenges && data.challenges.challenges) {
-        updateChallengesUI(data.challenges.challenges);
+    if (data.challenges) {
+        updateChallengesDisplay(data.challenges);
     }
 }
 
@@ -2315,6 +2315,89 @@ async function optimizeStrategy(strategyId) {
     } finally {
         button.disabled = false;
         button.innerHTML = '<i class="fas fa-magic"></i>';
+    }
+}
+
+// Functions for Advanced tab display
+function updateAchievementsDisplay(data) {
+    const container = document.getElementById('achievements-list');
+    if (!container) return;
+    
+    if (data.achievements && data.achievements.length > 0) {
+        let html = '';
+        data.achievements.forEach(achievement => {
+            const completedClass = achievement.completed ? 'completed' : '';
+            html += `
+                <div class="achievement-item ${completedClass}">
+                    <i class="${achievement.icon}"></i>
+                    <div class="achievement-info">
+                        <div class="achievement-name">${achievement.name}</div>
+                        <div class="achievement-progress">
+                            <div class="progress" style="height: 4px;">
+                                <div class="progress-bar bg-warning" style="width: ${achievement.progress}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        container.innerHTML = html;
+    }
+}
+
+function updateLeaderboardDisplay(data) {
+    const container = document.getElementById('top-traders-list');
+    if (!container) return;
+    
+    if (data.traders && data.traders.length > 0) {
+        let html = '';
+        data.traders.forEach(trader => {
+            html += `
+                <div class="trader-item">
+                    <div class="trader-rank">#${trader.rank}</div>
+                    <div class="trader-info">
+                        <div class="trader-name">${trader.username}</div>
+                        <div class="trader-stats">
+                            <span class="text-success">${trader.return_percentage.toFixed(1)}%</span>
+                            <span class="text-muted">${trader.trades} trades</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        container.innerHTML = html;
+    }
+}
+
+function updateChallengesDisplay(data) {
+    const container = document.getElementById('challenges-list');
+    if (!container) return;
+    
+    if (data.challenges && data.challenges.length > 0) {
+        let html = '';
+        data.challenges.forEach(challenge => {
+            html += `
+                <div class="challenge-card">
+                    <div class="challenge-header">
+                        <i class="${challenge.icon} text-warning"></i>
+                        <h6>${challenge.name}</h6>
+                    </div>
+                    <p class="challenge-desc">${challenge.description}</p>
+                    <div class="challenge-progress">
+                        <div class="progress">
+                            <div class="progress-bar bg-success" style="width: ${challenge.progress}%">
+                                ${challenge.progress}%
+                            </div>
+                        </div>
+                    </div>
+                    <div class="challenge-footer">
+                        <span class="reward">${challenge.reward}</span>
+                        <span class="participants">${challenge.participants} participants</span>
+                    </div>
+                </div>
+            `;
+        });
+        container.innerHTML = html;
     }
 }
 

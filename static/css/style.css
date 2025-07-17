@@ -1524,3 +1524,278 @@ body {
 .stat-card.compact .stat-label {
     font-size: 0.75rem;
 }
+
+/* Advanced AI Section Styles */
+.advanced-header {
+    background: linear-gradient(135deg, rgba(0, 255, 136, 0.1) 0%, rgba(74, 144, 226, 0.1) 100%);
+    padding: 30px;
+    border-radius: 16px;
+    border: 1px solid rgba(74, 144, 226, 0.3);
+}
+
+.ai-status-indicator .badge {
+    font-size: 0.9rem;
+    padding: 8px 16px;
+}
+
+.pulse-animation {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(0, 255, 136, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(0, 255, 136, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(0, 255, 136, 0);
+    }
+}
+
+/* AI Feature Cards with Gradients */
+.bg-gradient-ai {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    border: none;
+}
+
+.bg-gradient-strategy {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    border: none;
+}
+
+.bg-gradient-model {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    border: none;
+}
+
+.bg-gradient-predictions {
+    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+    border: none;
+}
+
+.bg-gradient-optimize {
+    background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);
+    border: none;
+}
+
+/* Feature Icon Wrapper */
+.feature-icon-wrapper {
+    width: 48px;
+    height: 48px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+/* AI Metrics */
+.ai-metrics .metric-item {
+    background: rgba(0, 0, 0, 0.2);
+    padding: 12px;
+    border-radius: 8px;
+}
+
+.ai-metrics .metric-label {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.9rem;
+}
+
+.progress {
+    height: 6px;
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.progress-bar {
+    transition: width 0.6s ease;
+}
+
+/* Prediction Interface */
+.prediction-interface .input-group {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.prediction-interface .form-control {
+    background: transparent;
+    border: none;
+    color: white;
+}
+
+.prediction-interface .form-control::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.prediction-interface .btn {
+    border: none;
+}
+
+/* Strategy Builder Interface */
+.strategy-builder-interface {
+    background: rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    border-radius: 12px;
+}
+
+.strategy-list, .backtest-display {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 15px;
+    border-radius: 8px;
+    min-height: 120px;
+}
+
+/* Achievement Grid */
+.achievement-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+/* Trader Leaderboard */
+.trader-leaderboard {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+/* Challenges Grid */
+.challenges-grid {
+    display: grid;
+    gap: 15px;
+}
+
+/* Achievement Item Styles */
+.achievement-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    margin-bottom: 8px;
+    transition: all 0.3s ease;
+}
+
+.achievement-item.completed {
+    background: rgba(0, 255, 136, 0.1);
+}
+
+.achievement-item i {
+    font-size: 1.5rem;
+    color: var(--warning-color);
+    margin-right: 12px;
+}
+
+.achievement-item.completed i {
+    color: var(--success-color);
+}
+
+.achievement-info {
+    flex: 1;
+}
+
+.achievement-name {
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.achievement-progress {
+    margin-top: 6px;
+}
+
+/* Trader Item Styles */
+.trader-item {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    margin-bottom: 10px;
+    transition: all 0.3s ease;
+}
+
+.trader-item:hover {
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.trader-rank {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--warning-color);
+    margin-right: 15px;
+    min-width: 40px;
+}
+
+.trader-info {
+    flex: 1;
+}
+
+.trader-name {
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.trader-stats span {
+    margin-right: 10px;
+    font-size: 0.9rem;
+}
+
+/* Challenge Card Styles */
+.challenge-card {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 12px;
+    padding: 20px;
+    transition: all 0.3s ease;
+}
+
+.challenge-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.challenge-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.challenge-header i {
+    font-size: 1.5rem;
+    margin-right: 10px;
+}
+
+.challenge-header h6 {
+    margin: 0;
+    font-weight: 600;
+}
+
+.challenge-desc {
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 15px;
+    font-size: 0.9rem;
+}
+
+.challenge-progress {
+    margin-bottom: 15px;
+}
+
+.challenge-progress .progress {
+    height: 10px;
+}
+
+.challenge-footer {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+}
+
+.challenge-footer .reward {
+    color: var(--success-color);
+    font-weight: 600;
+}
+
+.challenge-footer .participants {
+    color: rgba(255, 255, 255, 0.6);
+}
