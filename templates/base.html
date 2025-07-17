@@ -84,6 +84,17 @@
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
+    <!-- Inline script to handle navigation before dashboard.js loads -->
+    <script>
+        // Define showSection early to prevent errors
+        if (typeof showSection === 'undefined') {
+            window.showSection = function(sectionName) {
+                // Store the section to show after page loads
+                window.pendingSection = sectionName;
+            }
+        }
+    </script>
+    
     <!-- Scripts -->
     {% block scripts %}{% endblock %}
 </body>

@@ -37,8 +37,14 @@ function initializeDashboard() {
         const savedTheme = localStorage.getItem('theme') || 'dark';
         setTheme(savedTheme);
 
-        // Show dashboard section by default
-        showSection('dashboard');
+        // Check if there's a pending section from early navigation click
+        if (window.pendingSection) {
+            showSection(window.pendingSection);
+            window.pendingSection = null;
+        } else {
+            // Show dashboard section by default
+            showSection('dashboard');
+        }
 
         // Load sectors data (needed for stocks filter)
         loadSectors().catch(error => {
