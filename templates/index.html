@@ -299,229 +299,192 @@
 
 <!-- Advanced Section -->
 <div id="advanced-section" style="display: none;">
-    <!-- AI-Powered Header -->
-    <div class="advanced-header mb-4">
-        <div class="row align-items-center">
-            <div class="col-md-8">
-                <h2 class="mb-0 d-flex align-items-center">
-                    <i class="fas fa-microchip me-3 text-primary"></i>
-                    AI Command Center
-                </h2>
-                <p class="text-muted mb-0">Cutting-edge artificial intelligence powering your investment decisions</p>
-            </div>
-            <div class="col-md-4 text-end">
-                <div class="ai-status-indicator">
-                    <span class="badge bg-success pulse-animation">
-                        <i class="fas fa-robot me-1"></i>AI Systems Active
-                    </span>
-                </div>
-            </div>
-        </div>
+    <!-- Simple Header -->
+    <div class="mb-4">
+        <h2 class="text-white mb-2">
+            <i class="fas fa-rocket me-2 text-success"></i>
+            Advanced AI Features
+        </h2>
+        <p class="text-muted">Two powerful AI tools to transform your investing approach</p>
     </div>
     
-    <!-- AI Features Grid -->
-    <div class="ai-features-grid">
-        <!-- Row 1: Main AI Features -->
-        <div class="row mb-4">
-            <!-- Personalized AI Assistant -->
-            <div class="col-lg-6 mb-4">
-                <div class="card bg-gradient-ai h-100">
-                    <div class="card-header border-0 bg-transparent">
-                        <h5 class="mb-0 text-white d-flex align-items-center">
-                            <div class="feature-icon-wrapper me-3">
-                                <i class="fas fa-user-robot"></i>
-                            </div>
-                            Personalized AI Assistant
-                        </h5>
-                        <p class="text-white-50 small mb-0">Your AI learns from every trade you make</p>
-                    </div>
-                    <div class="card-body">
-                        <!-- Real-time Status Bar -->
-                        <div class="row mb-3">
-                            <div class="col-12">
-                                <div class="real-time-status-bar p-2 rounded" style="background: rgba(0, 255, 136, 0.1);">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div class="d-flex align-items-center">
-                                            <span class="status-indicator me-2"></span>
-                                            <small class="text-success">Live Market Data</small>
-                                        </div>
-                                        <div class="market-time small text-muted" id="market-time">
-                                            Market Open
-                                        </div>
-                                        <div class="connection-quality small">
-                                            <i class="fas fa-signal text-success"></i>
-                                            <span class="text-success">Excellent</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="row">
-                            <div class="col-md-6 border-end border-secondary">
-                                <h6 class="text-info mb-3">
-                                    <i class="fas fa-fingerprint me-2"></i>Your Trading DNA
-                                </h6>
-                                <div id="trading-profile" class="ai-profile-card">
-                                    <div class="text-center text-muted">
-                                        <i class="fas fa-spinner fa-spin me-2"></i>Analyzing your patterns...
-                                    </div>
-                                </div>
-                                <button class="btn btn-sm btn-outline-light mt-3 w-100" onclick="learnTradingPatterns()">
-                                    <i class="fas fa-brain me-2"></i>Learn from My Trades
-                                </button>
-                            </div>
-                            <div class="col-md-6">
-                                <h6 class="text-success mb-3">
-                                    <i class="fas fa-lightbulb me-2"></i>AI Recommendations
-                                </h6>
-                                <div id="personalized-recommendations" class="ai-recommendations">
-                                    <div class="text-center text-muted">
-                                        <i class="fas fa-spinner fa-spin me-2"></i>Generating insights...
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+    <!-- Main Feature Cards -->
+    <div class="row">
+        <!-- Feature 1: Personal AI Investment Coach -->
+        <div class="col-lg-6 mb-4">
+            <div class="card bg-gradient-primary h-100">
+                <div class="card-header border-0 bg-transparent">
+                    <h4 class="mb-0 text-white">
+                        <i class="fas fa-user-tie me-2"></i>
+                        Personal AI Investment Coach
+                    </h4>
+                    <p class="text-white-50 mb-0">AI that learns your style and gives personalized guidance</p>
                 </div>
-            </div>
-            
-            <!-- AI Strategy Builder -->
-            <div class="col-lg-6 mb-4">
-                <div class="card bg-gradient-strategy h-100">
-                    <div class="card-header border-0 bg-transparent">
-                        <h5 class="mb-0 text-white d-flex align-items-center">
-                            <div class="feature-icon-wrapper me-3">
-                                <i class="fas fa-puzzle-piece"></i>
+                <div class="card-body">
+                    <!-- Your Investment Profile -->
+                    <div class="mb-4">
+                        <h6 class="text-warning mb-3">
+                            <i class="fas fa-chart-line me-2"></i>Your Investment Profile
+                        </h6>
+                        <div id="trading-profile" class="profile-display bg-dark p-3 rounded">
+                            <div class="text-center text-muted">
+                                <i class="fas fa-spinner fa-spin me-2"></i>Analyzing your patterns...
                             </div>
-                            AI Strategy Builder
-                        </h5>
-                        <p class="text-white-50 small mb-0">Create & optimize trading strategies with AI</p>
+                        </div>
+                        <button class="btn btn-sm btn-outline-light mt-3" onclick="learnTradingPatterns()">
+                            <i class="fas fa-sync-alt me-2"></i>Update Profile from Trades
+                        </button>
                     </div>
-                    <div class="card-body">
-                        <div class="strategy-builder-interface">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <h6 class="text-warning mb-0">
-                                    <i class="fas fa-magic me-2"></i>Strategy Workshop
-                                </h6>
-                                <button class="btn btn-success btn-sm" onclick="showStrategyBuilder()">
-                                    <i class="fas fa-plus-circle me-2"></i>Create Strategy
-                                </button>
+                    
+                    <!-- AI Recommendations -->
+                    <div class="mb-4">
+                        <h6 class="text-success mb-3">
+                            <i class="fas fa-lightbulb me-2"></i>Personalized Recommendations
+                        </h6>
+                        <div id="personalized-recommendations" class="recommendations-display bg-dark p-3 rounded">
+                            <div class="text-center text-muted">
+                                <i class="fas fa-spinner fa-spin me-2"></i>Generating insights...
                             </div>
-                            
-                            <div id="strategy-builder-form" style="display: none;" class="mb-3">
-                                <!-- Strategy builder form will be populated here -->
-                            </div>
-                            
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <h6 class="text-info small">Active Strategies</h6>
-                                    <div id="user-strategies" class="strategy-list">
-                                        <div class="text-center text-muted small">
-                                            <i class="fas fa-spinner fa-spin me-2"></i>Loading strategies...
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <h6 class="text-success small">Backtest Performance</h6>
-                                    <div id="backtest-results" class="backtest-display">
-                                        <div class="text-center text-muted small">
-                                            <i class="fas fa-chart-area me-2"></i>Select a strategy
-                                        </div>
-                                    </div>
+                        </div>
+                    </div>
+                    
+                    <!-- AI Performance -->
+                    <div class="ai-performance-compact">
+                        <h6 class="text-info mb-3">
+                            <i class="fas fa-brain me-2"></i>AI Intelligence
+                        </h6>
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <div class="text-center">
+                                    <div class="badge bg-success" id="price-accuracy">-</div>
+                                    <small class="text-muted d-block">Accuracy</small>
                                 </div>
                             </div>
+                            <div class="col-6">
+                                <div class="text-center">
+                                    <div class="badge bg-secondary" id="training-samples">-</div>
+                                    <small class="text-muted d-block">Data Points</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <button class="btn btn-sm btn-success me-2" onclick="trainAIModel()">
+                                <i class="fas fa-graduation-cap me-1"></i>Train AI
+                            </button>
+                            <button class="btn btn-sm btn-info" onclick="triggerContinuousLearning()">
+                                <i class="fas fa-sync-alt me-1"></i>Learn More
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
         
-        <!-- Row 2: AI Intelligence & Analytics -->
-        <div class="row mb-4">
-            <!-- AI Model Performance -->
-            <div class="col-lg-4 mb-4">
-                <div class="card bg-gradient-model h-100">
-                    <div class="card-header border-0 bg-transparent">
-                        <h5 class="mb-0 text-white">
-                            <i class="fas fa-brain me-2"></i>AI Model Intelligence
-                        </h5>
-                    </div>
-                    <div class="card-body">
-                        <div id="ai-performance-metrics" class="ai-metrics">
-                            <div class="metric-item mb-3">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <span class="metric-label">Price Prediction</span>
-                                    <span class="badge bg-success" id="price-accuracy">-</span>
-                                </div>
-                                <div class="progress progress-sm mt-1">
-                                    <div class="progress-bar bg-success" style="width: 0%"></div>
-                                </div>
-                            </div>
-                            <div class="metric-item mb-3">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <span class="metric-label">Trend Analysis</span>
-                                    <span class="badge bg-info" id="trend-accuracy">-</span>
-                                </div>
-                                <div class="progress progress-sm mt-1">
-                                    <div class="progress-bar bg-info" style="width: 0%"></div>
-                                </div>
-                            </div>
-                            <div class="metric-item mb-3">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <span class="metric-label">Risk Assessment</span>
-                                    <span class="badge bg-warning" id="volatility-accuracy">-</span>
-                                </div>
-                                <div class="progress progress-sm mt-1">
-                                    <div class="progress-bar bg-warning" style="width: 0%"></div>
-                                </div>
-                            </div>
-                            <div class="metric-item">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <span class="metric-label">Data Points</span>
-                                    <span class="badge bg-secondary" id="training-samples">-</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="d-grid gap-2 mt-3">
-                            <button class="btn btn-sm btn-success" onclick="trainAIModel()">
-                                <i class="fas fa-graduation-cap me-2"></i>Train AI Model
-                            </button>
-                            <button class="btn btn-sm btn-info" onclick="triggerContinuousLearning()">
-                                <i class="fas fa-sync-alt me-2"></i>Learn from Trades
-                            </button>
-                        </div>
-                    </div>
+        <!-- Feature 2: AI Strategy Builder -->
+        <div class="col-lg-6 mb-4">
+            <div class="card bg-gradient-success h-100">
+                <div class="card-header border-0 bg-transparent">
+                    <h4 class="mb-0 text-white">
+                        <i class="fas fa-magic me-2"></i>
+                        AI Strategy Builder
+                    </h4>
+                    <p class="text-white-50 mb-0">Create, test, and optimize trading strategies with AI</p>
                 </div>
-            </div>
-            
-            <!-- AI Market Predictions -->
-            <div class="col-lg-4 mb-4">
-                <div class="card bg-gradient-predictions h-100">
-                    <div class="card-header border-0 bg-transparent">
-                        <h5 class="mb-0 text-white">
-                            <i class="fas fa-crystal-ball me-2"></i>AI Predictions
-                        </h5>
+                <div class="card-body">
+                    <!-- Strategy Creation -->
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="text-warning mb-0">
+                                <i class="fas fa-cogs me-2"></i>Strategy Workshop
+                            </h6>
+                            <button class="btn btn-warning btn-sm" onclick="showStrategyBuilder()">
+                                <i class="fas fa-plus-circle me-2"></i>Create Strategy
+                            </button>
+                        </div>
+                        
+                        <div id="strategy-builder-form" style="display: none;" class="mb-3">
+                            <!-- Strategy builder form will be populated here -->
+                        </div>
                     </div>
-                    <div class="card-body">
-                        <div class="prediction-interface">
-                            <div class="input-group mb-3">
-                                <input type="text" class="form-control" id="prediction-symbol" 
-                                       placeholder="Enter stock symbol">
-                                <button class="btn btn-primary" onclick="getPredictions()">
-                                    <i class="fas fa-search"></i>
-                                </button>
+                    
+                    <!-- Your Strategies -->
+                    <div class="mb-4">
+                        <h6 class="text-primary mb-3">
+                            <i class="fas fa-list me-2"></i>Your Strategies
+                        </h6>
+                        <div id="user-strategies" class="strategy-list bg-dark p-3 rounded">
+                            <div class="text-center text-muted">
+                                <i class="fas fa-spinner fa-spin me-2"></i>Loading strategies...
                             </div>
-                            <div id="market-predictions" class="predictions-display">
-                                <div class="text-center text-muted">
-                                    <i class="fas fa-chart-line me-2"></i>
-                                    Enter a symbol for AI analysis
-                                </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Performance Results -->
+                    <div class="mb-4">
+                        <h6 class="text-success mb-3">
+                            <i class="fas fa-chart-area me-2"></i>Performance Test Results
+                        </h6>
+                        <div id="backtest-results" class="backtest-display bg-dark p-3 rounded">
+                            <div class="text-center text-muted">
+                                <i class="fas fa-info-circle me-2"></i>Select a strategy to see results
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Quick AI Predictions -->
+                    <div class="ai-predictions-compact">
+                        <h6 class="text-info mb-3">
+                            <i class="fas fa-crystal-ball me-2"></i>Quick AI Analysis
+                        </h6>
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control" id="prediction-symbol" 
+                                   placeholder="Enter stock symbol">
+                            <button class="btn btn-info" onclick="getPredictions()">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                        <div id="market-predictions" class="predictions-display bg-dark p-2 rounded">
+                            <div class="text-center text-muted">
+                                <i class="fas fa-chart-line me-2"></i>
+                                Enter symbol for analysis
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.ai-performance-compact .metric-compact {
+    text-align: center;
+    padding: 0.5rem;
+}
+
+.ai-performance-compact .badge {
+    font-size: 0.9rem;
+    padding: 0.5rem 0.75rem;
+    display: block;
+    margin-bottom: 0.25rem;
+}
+
+.strategy-list, .backtest-display, .predictions-display, .profile-display, .recommendations-display {
+    min-height: 80px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.card.bg-gradient-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.card.bg-gradient-success {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+}
+</style>
+
+<!-- Deposit Funds Modal -->
             
             <!-- Portfolio Optimization -->
             <div class="col-lg-4 mb-4">
