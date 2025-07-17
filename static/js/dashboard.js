@@ -28,10 +28,7 @@ function initializeDashboard() {
     console.log('Initializing Trading Analytics Dashboard...');
 
     try {
-        // Initialize notification manager if not already exists
-        if (!window.notificationManager) {
-            window.notificationManager = new NotificationManager();
-        }
+        // Notification manager is initialized in init.js
 
         // Show loading state (disabled to prevent content replacement)
         // showMainLoadingState();

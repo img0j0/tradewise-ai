@@ -1,12 +1,12 @@
 // Enhanced notification system for the trading platform
 
-if (!window.NotificationManager) {
-    window.NotificationManager = class {
+class NotificationManager {
     constructor() {
         this.notifications = [];
         this.maxNotifications = 5;
         this.defaultDuration = 5000; // 5 seconds
         this.container = this.createContainer();
+        this.addStyles();
     }
 
     createContainer() {
@@ -15,6 +15,104 @@ if (!window.NotificationManager) {
         container.className = 'notification-container';
         document.body.appendChild(container);
         return container;
+    }
+
+    addStyles() {
+        if (!document.querySelector('#notification-styles')) {
+            const style = document.createElement('style');
+            style.id = 'notification-styles';
+            style.textContent = `
+                .notification-container {
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    z-index: 10000;
+                    pointer-events: none;
+                }
+                
+                .notification {
+                    margin-bottom: 10px;
+                    padding: 15px;
+                    border-radius: 8px;
+                    color: white;
+                    min-width: 300px;
+                    max-width: 400px;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                    opacity: 0;
+                    transform: translateX(100%);
+                    transition: all 0.3s ease;
+                    pointer-events: auto;
+                }
+                
+                .notification.show {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+                
+                .notification.hide {
+                    opacity: 0;
+                    transform: translateX(100%);
+                }
+                
+                .notification-success { background: linear-gradient(135deg, #28a745, #20c997); }
+                .notification-error { background: linear-gradient(135deg, #dc3545, #fd7e14); }
+                .notification-warning { background: linear-gradient(135deg, #ffc107, #fd7e14); }
+                .notification-info { background: linear-gradient(135deg, #17a2b8, #6f42c1); }
+                .notification-trade { background: linear-gradient(135deg, #6f42c1, #e83e8c); }
+                
+                .notification-header {
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                }
+                
+                .notification-header i {
+                    font-size: 16px;
+                    flex-shrink: 0;
+                }
+                
+                .notification-message {
+                    flex-grow: 1;
+                    font-size: 14px;
+                    line-height: 1.4;
+                }
+                
+                .notification-close {
+                    background: none;
+                    border: none;
+                    color: white;
+                    font-size: 14px;
+                    cursor: pointer;
+                    padding: 0;
+                    width: 20px;
+                    height: 20px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    border-radius: 50%;
+                    opacity: 0.7;
+                    transition: opacity 0.2s;
+                }
+                
+                .notification-close:hover {
+                    opacity: 1;
+                    background: rgba(255,255,255,0.1);
+                }
+                
+                .notification-actions {
+                    margin-top: 10px;
+                    display: flex;
+                    gap: 8px;
+                }
+                
+                .notification-actions .btn {
+                    font-size: 12px;
+                    padding: 4px 8px;
+                    border-radius: 4px;
+                }
+            `;
+            document.head.appendChild(style);
+        }
     }
 
     show(message, type = 'info', duration = this.defaultDuration, actions = null) {
@@ -78,19 +176,14 @@ if (!window.NotificationManager) {
             </div>
         `;
         
-        return {
-            element,
-            type,
-            message,
-            timestamp: Date.now()
-        };
+        return { element, id: Date.now() + Math.random() };
     }
 
     getIcon(type) {
         const icons = {
             success: 'fas fa-check-circle',
-            error: 'fas fa-exclamation-triangle',
-            warning: 'fas fa-exclamation-circle',
+            error: 'fas fa-exclamation-circle',
+            warning: 'fas fa-exclamation-triangle',
             info: 'fas fa-info-circle',
             trade: 'fas fa-chart-line'
         };
@@ -98,15 +191,21 @@ if (!window.NotificationManager) {
     }
 
     remove(notification) {
-        if (notification && notification.element) {
-            notification.element.classList.add('removing');
-            setTimeout(() => {
-                if (notification.element.parentNode) {
-                    notification.element.parentNode.removeChild(notification.element);
-                }
-                this.notifications = this.notifications.filter(n => n !== notification);
-            }, 300);
-        }
+        if (!notification || !notification.element) return;
+        
+        notification.element.classList.remove('show');
+        notification.element.classList.add('hide');
+        
+        setTimeout(() => {
+            if (notification.element.parentNode) {
+                notification.element.parentNode.removeChild(notification.element);
+            }
+            
+            const index = this.notifications.indexOf(notification);
+            if (index > -1) {
+                this.notifications.splice(index, 1);
+            }
+        }, 300);
     }
 
     removeElement(element) {

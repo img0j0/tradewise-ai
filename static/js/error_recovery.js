@@ -535,8 +535,8 @@ class CircuitBreaker {
 window.errorRecovery = new ErrorRecovery();
 
 // Add CSS for offline mode and notifications
-const style = document.createElement('style');
-style.textContent = `
+const errorRecoveryStyle = document.createElement('style');
+errorRecoveryStyle.textContent = `
     @keyframes slideIn {
         from { transform: translateX(100%); opacity: 0; }
         to { transform: translateX(0); opacity: 1; }
@@ -597,7 +597,7 @@ style.textContent = `
     }
 `;
 
-document.head.appendChild(style);
+document.head.appendChild(errorRecoveryStyle);
 
 // Export for use in other modules
 window.ErrorRecovery = ErrorRecovery;
