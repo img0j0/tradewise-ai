@@ -40,15 +40,9 @@ function initializeDashboard() {
         // Show dashboard section by default
         showSection('dashboard');
         
-        // Load initial data with error handling
-        Promise.all([
-            loadDashboardData(),
-            loadSectors()
-        ]).catch(error => {
-            console.error('Error loading initial data:', error);
-            if (window.notificationManager) {
-                notificationManager.showError('Failed to load dashboard data. Please refresh the page.');
-            }
+        // Load sectors data (needed for stocks filter)
+        loadSectors().catch(error => {
+            console.error('Error loading sectors:', error);
         });
         
         // Set up event listeners
@@ -853,8 +847,15 @@ function refreshData() {
         case 'portfolio':
             loadPromise = loadPortfolio();
             break;
-        default:
+        case 'advanced':
+            loadPromise = loadAdvancedFeatures();
+            break;
+        case 'dashboard':
             loadPromise = loadDashboardData();
+            break;
+        default:
+            // Don't load anything if section is unknown
+            loadPromise = Promise.resolve();
     }
     
     if (loadPromise && loadPromise.then) {
