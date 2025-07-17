@@ -1,5 +1,6 @@
 // Advanced Portfolio Analytics Dashboard
-class PortfolioAnalytics {
+if (!window.PortfolioAnalytics) {
+    window.PortfolioAnalytics = class {
     constructor() {
         this.portfolioData = null;
         this.analyticsCharts = {};
@@ -664,4 +665,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // Export for use in other modules
-window.PortfolioAnalytics = PortfolioAnalytics;
+if (!window.PortfolioAnalytics) {
+    window.PortfolioAnalytics = PortfolioAnalytics;
+}

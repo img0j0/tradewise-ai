@@ -1,5 +1,6 @@
 // Advanced charting functionality with professional features
-class AdvancedChart {
+if (!window.AdvancedChart) {
+    window.AdvancedChart = class {
     constructor() {
         this.currentSymbol = null;
         this.charts = {};
@@ -967,7 +968,10 @@ class AdvancedChart {
             }, 300);
         }, 3000);
     }
+    }
 }
 
 // Initialize advanced chart
-window.advancedChart = new AdvancedChart();
+if (!window.advancedChart) {
+    window.advancedChart = new AdvancedChart();
+}

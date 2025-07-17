@@ -1,12 +1,13 @@
 // Trading Analytics Platform JavaScript
 
-// Global variables
-let currentTheme = 'dark';
-let currentSection = 'dashboard';
-let stocksData = [];
-let alertsData = [];
-let portfolioData = [];
-let dashboardData = {};
+// Global variables (only initialize if not already defined)
+if (!window.currentTheme) window.currentTheme = 'dark';
+if (!window.currentSection) window.currentSection = 'dashboard';
+if (!window.stocksData) window.stocksData = [];
+if (!window.alertsData) window.alertsData = [];
+if (!window.portfolioData) window.portfolioData = [];
+if (!window.dashboardData) window.dashboardData = {};
+if (!window.lastDataTimestamp) window.lastDataTimestamp = 0;
 
 // Initialize dashboard
 document.addEventListener('DOMContentLoaded', function() {
@@ -27,8 +28,10 @@ function initializeDashboard() {
     console.log('Initializing Trading Analytics Dashboard...');
 
     try {
-        // Initialize notification manager
-        window.notificationManager = new NotificationManager();
+        // Initialize notification manager if not already exists
+        if (!window.notificationManager) {
+            window.notificationManager = new NotificationManager();
+        }
 
         // Show loading state (disabled to prevent content replacement)
         // showMainLoadingState();
@@ -1853,6 +1856,136 @@ function viewTraderProfile(traderId) {
     // This could open a modal or navigate to a trader profile page
     console.log('Viewing trader profile:', traderId);
     // Implementation can be added later
+}
+
+// Chart functionality
+function showAdvancedChart(symbol) {
+    // Ensure advanced chart modal exists
+    let chartModal = document.getElementById('advanced-chart-modal');
+    if (!chartModal) {
+        // Create the advanced chart modal
+        const modalHTML = `
+            <div class="modal fade" id="advanced-chart-modal" tabindex="-1" aria-labelledby="advanced-chart-title" aria-hidden="true">
+                <div class="modal-dialog modal-xl">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="advanced-chart-title">Advanced Chart - <span id="chart-symbol">${symbol}</span></h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <div class="chart-header">
+                                        <h4 id="chart-price">Loading...</h4>
+                                        <span id="chart-change" class="badge">Loading...</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="chart-controls">
+                                        <select id="chart-period" class="form-select form-select-sm d-inline-block w-auto me-2">
+                                            <option value="1D">1 Day</option>
+                                            <option value="1W">1 Week</option>
+                                            <option value="1M" selected>1 Month</option>
+                                            <option value="3M">3 Months</option>
+                                            <option value="1Y">1 Year</option>
+                                        </select>
+                                        <select id="chart-type" class="form-select form-select-sm d-inline-block w-auto">
+                                            <option value="line">Line</option>
+                                            <option value="candlestick">Candlestick</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-9">
+                                    <div class="chart-container">
+                                        <canvas id="advanced-chart" width="800" height="400"></canvas>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="indicators-panel">
+                                        <h6>Technical Indicators</h6>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="indicator-sma" checked>
+                                            <label class="form-check-label" for="indicator-sma">SMA (20)</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="indicator-sma50">
+                                            <label class="form-check-label" for="indicator-sma50">SMA (50)</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="indicator-ema">
+                                            <label class="form-check-label" for="indicator-ema">EMA (12)</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="indicator-ema26">
+                                            <label class="form-check-label" for="indicator-ema26">EMA (26)</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="indicator-bb">
+                                            <label class="form-check-label" for="indicator-bb">Bollinger Bands</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="indicator-rsi">
+                                            <label class="form-check-label" for="indicator-rsi">RSI</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="indicator-macd">
+                                            <label class="form-check-label" for="indicator-macd">MACD</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="indicator-volume">
+                                            <label class="form-check-label" for="indicator-volume">Volume</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" onclick="exportChart()">Export Chart</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+        chartModal = document.getElementById('advanced-chart-modal');
+        
+        // Initialize advanced chart functionality
+        if (typeof AdvancedChart === 'undefined') {
+            console.error('AdvancedChart class not loaded');
+            return;
+        }
+        
+        if (!window.advancedChart) {
+            window.advancedChart = new AdvancedChart();
+        }
+    }
+    
+    // Update chart symbol and show modal
+    document.getElementById('chart-symbol').textContent = symbol;
+    
+    // Show the modal
+    const modal = new bootstrap.Modal(chartModal);
+    modal.show();
+    
+    // Load chart data
+    if (window.advancedChart) {
+        window.advancedChart.loadChartData(symbol);
+    }
+}
+
+// Export chart function
+function exportChart() {
+    const canvas = document.getElementById('advanced-chart');
+    if (canvas) {
+        const url = canvas.toDataURL('image/png');
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `chart-${document.getElementById('chart-symbol').textContent}-${new Date().toISOString().split('T')[0]}.png`;
+        a.click();
+    }
 }
 
 // AI Training Functions

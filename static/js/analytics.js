@@ -1,6 +1,7 @@
 // Advanced Analytics and Performance Monitoring for Trading Platform
 
-class AnalyticsManager {
+if (!window.AnalyticsManager) {
+    window.AnalyticsManager = class {
     constructor() {
         this.metrics = {
             pageLoads: 0,
@@ -293,15 +294,15 @@ class PortfolioAnalytics {
         
         return (positionScore + concentrationScore) / 2;
     }
+    }
 }
 
 // Initialize analytics
-const analyticsManager = new AnalyticsManager();
-const portfolioAnalytics = new PortfolioAnalytics();
+if (!window.analyticsManager) {
+    window.analyticsManager = new AnalyticsManager();
+}
 
 // Start performance monitoring
-analyticsManager.startPerformanceMonitoring();
-
-// Export for use in other scripts
-window.analyticsManager = analyticsManager;
-window.portfolioAnalytics = portfolioAnalytics;
+if (window.analyticsManager) {
+    window.analyticsManager.startPerformanceMonitoring();
+}

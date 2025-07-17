@@ -1,5 +1,6 @@
 // Real-time price updates handler
-class RealtimeUpdates {
+if (!window.RealtimeUpdates) {
+    window.RealtimeUpdates = class {
     constructor() {
         this.socket = null;
         this.subscribedSymbols = new Set();
@@ -171,7 +172,9 @@ class RealtimeUpdates {
 }
 
 // Initialize real-time updates
-window.realtimeUpdates = new RealtimeUpdates();
+if (!window.realtimeUpdates) {
+    window.realtimeUpdates = new RealtimeUpdates();
+}
 
 // Add CSS for price flash effects
 const style = document.createElement('style');

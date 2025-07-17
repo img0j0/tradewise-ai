@@ -1,5 +1,6 @@
 // Mobile-First Responsive Design Optimization
-class MobileOptimization {
+if (!window.MobileOptimization) {
+    window.MobileOptimization = class {
     constructor() {
         this.isMobile = window.innerWidth <= 768;
         this.isTablet = window.innerWidth > 768 && window.innerWidth <= 1024;
@@ -250,8 +251,12 @@ class MobileOptimization {
 
 // Initialize mobile optimization
 document.addEventListener('DOMContentLoaded', () => {
-    window.mobileOptimization = new MobileOptimization();
+    if (!window.mobileOptimization) {
+        window.mobileOptimization = new MobileOptimization();
+    }
 });
 
 // Export for use in other modules
-window.MobileOptimization = MobileOptimization;
+if (!window.MobileOptimization) {
+    window.MobileOptimization = MobileOptimization;
+}

@@ -1,6 +1,7 @@
 // Enhanced notification system for the trading platform
 
-class NotificationManager {
+if (!window.NotificationManager) {
+    window.NotificationManager = class {
     constructor() {
         this.notifications = [];
         this.maxNotifications = 5;
@@ -142,7 +143,6 @@ class NotificationManager {
 }
 
 // Initialize global notification manager
-const notificationManager = new NotificationManager();
-
-// Export for use in other scripts
-window.notificationManager = notificationManager;
+if (!window.notificationManager) {
+    window.notificationManager = new NotificationManager();
+}
