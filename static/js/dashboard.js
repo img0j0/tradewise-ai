@@ -37,6 +37,9 @@ function initializeDashboard() {
         const savedTheme = localStorage.getItem('theme') || 'dark';
         setTheme(savedTheme);
         
+        // Show dashboard section by default
+        showSection('dashboard');
+        
         // Load initial data with error handling
         Promise.all([
             loadDashboardData(),
