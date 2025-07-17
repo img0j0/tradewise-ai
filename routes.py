@@ -14,6 +14,8 @@ import os
 import stripe
 from datetime import datetime
 from ai_training import ai_trainer
+from personalized_ai import personalized_ai
+from strategy_builder import strategy_builder
 
 # Configure Stripe
 stripe.api_key = os.environ.get('STRIPE_SECRET_KEY')
@@ -1694,4 +1696,88 @@ def trigger_continuous_learning():
         
     except Exception as e:
         logger.error(f"Error in continuous learning: {e}")
+        return jsonify({'error': str(e)}), 500
+
+# Personalized AI Routes
+@app.route('/api/ai/personalized/learn', methods=['POST'])
+@login_required
+def learn_user_patterns():
+    """Learn from user's trading patterns"""
+    try:
+        result = personalized_ai.learn_from_user_trades(current_user.id)
+        return jsonify(result)
+    except Exception as e:
+        logger.error(f"Error learning user patterns: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/ai/personalized/recommendations')
+@login_required
+def get_personalized_recommendations():
+    """Get personalized AI recommendations"""
+    try:
+        # Get current market data
+        market_data = {}
+        stocks = data_service.get_all_stocks()
+        for stock in stocks:
+            market_data[stock['symbol']] = {
+                'current_price': stock.get('current_price', 100),
+                'expected_return': stock.get('ai_insights', {}).get('expected_return', 0),
+                'volatility': stock.get('volatility', 0.15)
+            }
+        
+        result = personalized_ai.get_personalized_recommendations(current_user.id, market_data)
+        return jsonify(result)
+    except Exception as e:
+        logger.error(f"Error getting personalized recommendations: {e}")
+        return jsonify({'error': str(e)}), 500
+
+# Strategy Builder Routes
+@app.route('/api/strategies', methods=['GET'])
+@login_required
+def get_user_strategies():
+    """Get all strategies for current user"""
+    try:
+        result = strategy_builder.get_user_strategies(current_user.id)
+        return jsonify(result)
+    except Exception as e:
+        logger.error(f"Error getting strategies: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/strategies', methods=['POST'])
+@login_required
+def create_strategy():
+    """Create a new trading strategy"""
+    try:
+        strategy_config = request.json
+        result = strategy_builder.create_strategy(current_user.id, strategy_config)
+        return jsonify(result)
+    except Exception as e:
+        logger.error(f"Error creating strategy: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/strategies/<strategy_id>/backtest', methods=['POST'])
+@login_required
+def backtest_user_strategy(strategy_id):
+    """Backtest a strategy"""
+    try:
+        data = request.json or {}
+        start_date = data.get('start_date')
+        end_date = data.get('end_date')
+        symbols = data.get('symbols')
+        
+        result = strategy_builder.backtest_strategy(strategy_id, start_date, end_date, symbols)
+        return jsonify(result)
+    except Exception as e:
+        logger.error(f"Error backtesting strategy: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/strategies/<strategy_id>/optimize', methods=['POST'])
+@login_required
+def optimize_strategy(strategy_id):
+    """Optimize strategy with AI"""
+    try:
+        result = strategy_builder.optimize_strategy_with_ai(strategy_id)
+        return jsonify(result)
+    except Exception as e:
+        logger.error(f"Error optimizing strategy: {e}")
         return jsonify({'error': str(e)}), 500

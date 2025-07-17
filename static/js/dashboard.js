@@ -1459,6 +1459,8 @@ async function loadAdvancedFeatures() {
         
         // Load AI performance data
         loadAIPerformance();
+        loadPersonalizedAI();
+        loadUserStrategies();
     } catch (error) {
         console.error('Error loading advanced features:', error);
         showError('Failed to load advanced features');
@@ -2005,3 +2007,323 @@ window.viewTraderProfile = viewTraderProfile;
 window.trainAIModel = trainAIModel;
 window.triggerContinuousLearning = triggerContinuousLearning;
 window.getPredictions = getPredictions;
+
+// Personalized AI Functions
+async function loadPersonalizedAI() {
+    try {
+        // Load personalized recommendations
+        const response = await fetch('/api/ai/personalized/recommendations');
+        const data = await response.json();
+        
+        const container = document.getElementById('personalized-recommendations');
+        if (!container) return;
+        
+        if (data.status === 'no_profile') {
+            container.innerHTML = `
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    ${data.message}
+                </div>
+            `;
+            document.getElementById('trading-profile').innerHTML = `
+                <p class="text-muted">No trading profile yet. Make some trades to build your profile!</p>
+            `;
+            return;
+        }
+        
+        if (data.status === 'success') {
+            // Show trading profile
+            const profileHtml = `
+                <div class="trading-style mb-3">
+                    <strong>Your Style:</strong> ${data.insights.trading_style}
+                </div>
+                <div class="risk-profile mb-3">
+                    <strong>Risk Profile:</strong> 
+                    <span class="badge bg-${data.insights.risk_profile === 'conservative' ? 'success' : data.insights.risk_profile === 'moderate' ? 'warning' : 'danger'}">
+                        ${data.insights.risk_profile}
+                    </span>
+                </div>
+                <div class="suggestions">
+                    <strong>AI Suggestions:</strong>
+                    <ul class="small">
+                        ${data.insights.suggestions.map(s => `<li>${s}</li>`).join('')}
+                    </ul>
+                </div>
+            `;
+            document.getElementById('trading-profile').innerHTML = profileHtml;
+            
+            // Show recommendations
+            let recsHtml = '<div class="personalized-recs">';
+            data.recommendations.forEach(rec => {
+                recsHtml += `
+                    <div class="recommendation-card mb-2 p-2 bg-dark rounded">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>${rec.symbol}</strong>
+                                <span class="badge bg-${rec.action === 'buy' ? 'success' : 'warning'} ms-2">
+                                    ${rec.action.toUpperCase()}
+                                </span>
+                            </div>
+                            <div class="text-end">
+                                <div class="score">Match: ${(rec.score * 100).toFixed(0)}%</div>
+                            </div>
+                        </div>
+                        <div class="reason text-muted small mt-1">${rec.reason}</div>
+                    </div>
+                `;
+            });
+            recsHtml += '</div>';
+            container.innerHTML = recsHtml;
+        }
+    } catch (error) {
+        console.error('Error loading personalized AI:', error);
+    }
+}
+
+async function learnTradingPatterns() {
+    const button = event.target;
+    button.disabled = true;
+    button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Learning...';
+    
+    try {
+        const response = await fetch('/api/ai/personalized/learn', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        });
+        const data = await response.json();
+        
+        if (data.status === 'success') {
+            showNotification('Trading patterns analyzed successfully!', 'success');
+            await loadPersonalizedAI();
+        } else {
+            showNotification(data.message || 'Failed to analyze patterns', 'error');
+        }
+    } catch (error) {
+        console.error('Error learning patterns:', error);
+        showNotification('Error analyzing trading patterns', 'error');
+    } finally {
+        button.disabled = false;
+        button.innerHTML = '<i class="fas fa-graduation-cap me-2"></i>Update Profile from Trades';
+    }
+}
+
+// Strategy Builder Functions
+async function loadUserStrategies() {
+    try {
+        const response = await fetch('/api/strategies');
+        const data = await response.json();
+        
+        const container = document.getElementById('user-strategies');
+        if (!container) return;
+        
+        if (data.status === 'success' && data.strategies.length > 0) {
+            let html = '<div class="strategies-list">';
+            data.strategies.forEach(strategy => {
+                html += `
+                    <div class="strategy-item mb-2 p-2 bg-dark rounded">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>${strategy.name}</strong>
+                                ${strategy.ai_optimized ? '<span class="badge bg-success ms-2">AI Optimized</span>' : ''}
+                            </div>
+                            <div>
+                                <button class="btn btn-sm btn-outline-primary" onclick="backtestStrategy('${strategy.id}')">
+                                    <i class="fas fa-chart-line"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-success" onclick="optimizeStrategy('${strategy.id}')">
+                                    <i class="fas fa-magic"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="text-muted small">${strategy.description || 'No description'}</div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            container.innerHTML = html;
+        } else {
+            container.innerHTML = '<p class="text-muted">No strategies created yet</p>';
+        }
+    } catch (error) {
+        console.error('Error loading strategies:', error);
+    }
+}
+
+function showStrategyBuilder() {
+    const form = document.getElementById('strategy-builder-form');
+    if (form.style.display === 'none') {
+        form.style.display = 'block';
+        form.innerHTML = `
+            <div class="strategy-form">
+                <input type="text" class="form-control mb-2" id="strategy-name" placeholder="Strategy Name">
+                <textarea class="form-control mb-2" id="strategy-description" rows="2" placeholder="Description"></textarea>
+                
+                <h6 class="text-info mt-3">Add Rules</h6>
+                <div id="strategy-rules">
+                    <div class="rule-item mb-2">
+                        <select class="form-select form-select-sm mb-1" id="rule-type">
+                            <option value="price_above_ma">Price Above Moving Average</option>
+                            <option value="rsi">RSI Condition</option>
+                            <option value="volume">Volume Spike</option>
+                        </select>
+                        <input type="number" class="form-control form-control-sm mb-1" placeholder="Parameter (e.g., 20 for MA20)">
+                        <select class="form-select form-select-sm">
+                            <option value="buy">Action: Buy</option>
+                            <option value="sell">Action: Sell</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <button class="btn btn-success btn-sm mt-2" onclick="createStrategy()">
+                    <i class="fas fa-save me-2"></i>Create Strategy
+                </button>
+                <button class="btn btn-secondary btn-sm mt-2" onclick="hideStrategyBuilder()">
+                    Cancel
+                </button>
+            </div>
+        `;
+    } else {
+        form.style.display = 'none';
+    }
+}
+
+function hideStrategyBuilder() {
+    document.getElementById('strategy-builder-form').style.display = 'none';
+}
+
+async function createStrategy() {
+    const name = document.getElementById('strategy-name').value;
+    const description = document.getElementById('strategy-description').value;
+    
+    if (!name) {
+        showNotification('Please enter a strategy name', 'error');
+        return;
+    }
+    
+    const strategyConfig = {
+        name: name,
+        description: description,
+        rules: [
+            {
+                condition: {
+                    type: document.getElementById('rule-type').value,
+                    period: 20
+                },
+                action: 'buy'
+            }
+        ],
+        indicators: ['ma', 'rsi'],
+        risk_params: {
+            stop_loss: 0.05,
+            take_profit: 0.10
+        }
+    };
+    
+    try {
+        const response = await fetch('/api/strategies', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(strategyConfig)
+        });
+        const data = await response.json();
+        
+        if (data.status === 'success') {
+            showNotification('Strategy created successfully!', 'success');
+            hideStrategyBuilder();
+            await loadUserStrategies();
+        } else {
+            showNotification(data.message || 'Failed to create strategy', 'error');
+        }
+    } catch (error) {
+        console.error('Error creating strategy:', error);
+        showNotification('Error creating strategy', 'error');
+    }
+}
+
+async function backtestStrategy(strategyId) {
+    const resultsContainer = document.getElementById('backtest-results');
+    resultsContainer.innerHTML = '<div class="text-center"><i class="fas fa-spinner fa-spin"></i> Running backtest...</div>';
+    
+    try {
+        const response = await fetch(`/api/strategies/${strategyId}/backtest`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({})
+        });
+        const data = await response.json();
+        
+        if (data.status === 'success') {
+            const results = data.results;
+            resultsContainer.innerHTML = `
+                <div class="backtest-results">
+                    <div class="metric mb-2">
+                        <strong>Total Return:</strong> 
+                        <span class="${results.total_return > 0 ? 'text-success' : 'text-danger'}">
+                            ${results.total_return.toFixed(2)}%
+                        </span>
+                    </div>
+                    <div class="metric mb-2">
+                        <strong>Win Rate:</strong> ${results.win_rate.toFixed(1)}%
+                    </div>
+                    <div class="metric mb-2">
+                        <strong>Max Drawdown:</strong> 
+                        <span class="text-danger">${results.max_drawdown.toFixed(1)}%</span>
+                    </div>
+                    <div class="metric mb-2">
+                        <strong>Sharpe Ratio:</strong> ${results.sharpe_ratio.toFixed(2)}
+                    </div>
+                    ${results.ai_suggestions.length > 0 ? `
+                        <div class="ai-suggestions mt-3">
+                            <strong class="text-warning">AI Suggestions:</strong>
+                            <ul class="small">
+                                ${results.ai_suggestions.map(s => `<li>${s.message}</li>`).join('')}
+                            </ul>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        } else {
+            resultsContainer.innerHTML = `<div class="alert alert-danger">${data.message || 'Backtest failed'}</div>`;
+        }
+    } catch (error) {
+        console.error('Error backtesting strategy:', error);
+        resultsContainer.innerHTML = '<div class="alert alert-danger">Error running backtest</div>';
+    }
+}
+
+async function optimizeStrategy(strategyId) {
+    const button = event.target.closest('button');
+    button.disabled = true;
+    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+    
+    try {
+        const response = await fetch(`/api/strategies/${strategyId}/optimize`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        });
+        const data = await response.json();
+        
+        if (data.status === 'success') {
+            showNotification(`Strategy optimized! Expected improvement: ${data.expected_improvement.toFixed(1)}%`, 'success');
+            await loadUserStrategies();
+        } else {
+            showNotification(data.message || 'Optimization failed', 'error');
+        }
+    } catch (error) {
+        console.error('Error optimizing strategy:', error);
+        showNotification('Error optimizing strategy', 'error');
+    } finally {
+        button.disabled = false;
+        button.innerHTML = '<i class="fas fa-magic"></i>';
+    }
+}
+
+// Export new functions
+window.loadPersonalizedAI = loadPersonalizedAI;
+window.learnTradingPatterns = learnTradingPatterns;
+window.loadUserStrategies = loadUserStrategies;
+window.showStrategyBuilder = showStrategyBuilder;
+window.hideStrategyBuilder = hideStrategyBuilder;
+window.createStrategy = createStrategy;
+window.backtestStrategy = backtestStrategy;
+window.optimizeStrategy = optimizeStrategy;

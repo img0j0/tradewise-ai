@@ -385,7 +385,7 @@
     </div>
     
     <!-- AI Training Row -->
-    <div class="row">
+    <div class="row mb-4">
         <div class="col-12">
             <div class="card bg-dark">
                 <div class="card-header">
@@ -423,6 +423,72 @@
                                 </button>
                             </div>
                             <div id="market-predictions"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Personalized AI Assistant Row -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card bg-dark">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-user-robot me-2"></i>Personalized AI Assistant</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="text-info">Your Trading Profile</h6>
+                            <div id="trading-profile">
+                                <div class="text-center text-muted">Loading your trading profile...</div>
+                            </div>
+                            <button class="btn btn-sm btn-outline-primary mt-3" onclick="learnTradingPatterns()">
+                                <i class="fas fa-graduation-cap me-2"></i>Update Profile from Trades
+                            </button>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-success">Personalized Recommendations</h6>
+                            <div id="personalized-recommendations">
+                                <div class="text-center text-muted">Loading personalized recommendations...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- AI Strategy Builder Row -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card bg-dark">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-puzzle-piece me-2"></i>AI Strategy Builder</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <h6 class="text-warning">Create Strategy</h6>
+                            <button class="btn btn-success btn-sm" onclick="showStrategyBuilder()">
+                                <i class="fas fa-plus me-2"></i>New Strategy
+                            </button>
+                            <div id="strategy-builder-form" style="display: none;" class="mt-3">
+                                <!-- Strategy builder form will be populated here -->
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <h6 class="text-info">Your Strategies</h6>
+                            <div id="user-strategies">
+                                <div class="text-center text-muted">Loading strategies...</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <h6 class="text-success">Backtest Results</h6>
+                            <div id="backtest-results">
+                                <div class="text-center text-muted">Select a strategy to backtest</div>
+                            </div>
                         </div>
                     </div>
                 </div>
