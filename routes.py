@@ -1939,13 +1939,21 @@ def get_technical_indicators(symbol):
         
         # Calculate all indicators
         sma_20 = indicators.calculate_sma(prices, 20)
+        sma_50 = indicators.calculate_sma(prices, 50)
         ema_12 = indicators.calculate_ema(prices, 12)
+        ema_26 = indicators.calculate_ema(prices, 26)
         rsi = indicators.calculate_rsi(prices)
         macd_data = indicators.calculate_macd(prices)
         bollinger = indicators.calculate_bollinger_bands(prices, 20, 2.0)
         stochastic = indicators.calculate_stochastic(highs, lows, prices)
         vwap = indicators.calculate_vwap(prices, volumes)
         support_resistance = indicators.find_support_resistance(prices)
+        
+        # Calculate additional indicators
+        additional_indicators = indicators.calculate_additional_indicators(prices, volumes)
+        
+        # Calculate volume indicators
+        volume_indicators = indicators.calculate_volume_indicators(volumes, prices) if hasattr(indicators, 'calculate_volume_indicators') else {}
         
         # Calculate additional market data
         current_price = prices[-1] if prices else 0
@@ -1957,21 +1965,29 @@ def get_technical_indicators(symbol):
             'symbol': symbol,
             'dates': dates,
             'prices': prices,
+            'highs': highs,
+            'lows': lows,
             'volume': volumes,
             'sma_20': sma_20,
+            'sma_50': sma_50,
             'ema_12': ema_12,
+            'ema_26': ema_26,
             'rsi': rsi,
             'macd': macd_data,
             'bollinger': bollinger,
             'stochastic': stochastic,
             'vwap': vwap,
             'support_resistance': support_resistance,
+            'additional_indicators': additional_indicators,
+            'volume_indicators': volume_indicators,
             'market_data': {
                 'current_price': current_price,
                 'daily_high': daily_high,
                 'daily_low': daily_low,
                 'current_volume': volumes[-1] if volumes else 0,
-                'avg_volume': avg_volume
+                'avg_volume': avg_volume,
+                'price_change': current_price - prices[-2] if len(prices) > 1 else 0,
+                'price_change_percent': ((current_price - prices[-2]) / prices[-2] * 100) if len(prices) > 1 and prices[-2] != 0 else 0
             }
         })
         

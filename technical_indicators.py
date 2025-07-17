@@ -207,54 +207,123 @@ class TechnicalIndicators:
             'support': support_levels[:3],  # Top 3 support levels
             'resistance': resistance_levels[:3]  # Top 3 resistance levels
         }
-        ema_12 = TechnicalIndicators.calculate_ema(prices, 12)
-        ema_26 = TechnicalIndicators.calculate_ema(prices, 26)
+    
+    @staticmethod
+    def calculate_additional_indicators(prices: List[float], volumes: List[float]) -> Dict:
+        """Calculate additional technical indicators"""
+        if len(prices) < 50:
+            return {}
+            
+        # Average True Range (ATR)
+        atr = TechnicalIndicators.calculate_atr(prices, 14)
         
-        # MACD line
-        macd = []
-        for i in range(len(ema_26)):
-            macd.append(ema_12[i + 14] - ema_26[i])
+        # Commodity Channel Index (CCI)
+        cci = TechnicalIndicators.calculate_cci(prices, 20)
         
-        # Signal line (9-day EMA of MACD)
-        signal = TechnicalIndicators.calculate_ema(macd, 9) if len(macd) >= 9 else []
+        # Williams %R
+        williams_r = TechnicalIndicators.calculate_williams_r(prices, 14)
         
-        # MACD histogram
-        histogram = []
-        for i in range(len(signal)):
-            histogram.append(macd[i + 8] - signal[i])
+        # Money Flow Index (MFI)
+        mfi = TechnicalIndicators.calculate_mfi(prices, volumes, 14)
         
         return {
-            'macd': macd,
-            'signal': signal,
-            'histogram': histogram
+            'atr': atr,
+            'cci': cci,
+            'williams_r': williams_r,
+            'mfi': mfi
         }
     
     @staticmethod
-    def calculate_bollinger_bands(prices: List[float], period: int = 20, std_dev: int = 2) -> Dict[str, List[float]]:
-        """Calculate Bollinger Bands"""
+    def calculate_atr(prices: List[float], period: int = 14) -> List[float]:
+        """Calculate Average True Range"""
+        if len(prices) < period + 1:
+            return []
+        
+        true_ranges = []
+        for i in range(1, len(prices)):
+            high_low = prices[i] - prices[i-1] if i > 0 else 0
+            high_close = abs(prices[i] - prices[i-1])
+            low_close = abs(prices[i-1] - prices[i-1])
+            true_range = max(high_low, high_close, low_close)
+            true_ranges.append(true_range)
+        
+        return TechnicalIndicators.calculate_sma(true_ranges, period)
+    
+    @staticmethod
+    def calculate_cci(prices: List[float], period: int = 20) -> List[float]:
+        """Calculate Commodity Channel Index"""
         if len(prices) < period:
-            return {'upper': [], 'middle': [], 'lower': []}
+            return []
         
-        sma = TechnicalIndicators.calculate_sma(prices, period)
-        
-        upper_band = []
-        lower_band = []
-        
-        for i in range(len(sma)):
-            # Calculate standard deviation
-            start_idx = i
-            end_idx = i + period
-            price_slice = prices[start_idx:end_idx]
-            std = np.std(price_slice)
+        cci_values = []
+        for i in range(period - 1, len(prices)):
+            slice_prices = prices[i - period + 1:i + 1]
+            typical_price = sum(slice_prices) / period
+            mean_deviation = sum(abs(price - typical_price) for price in slice_prices) / period
             
-            upper_band.append(sma[i] + (std_dev * std))
-            lower_band.append(sma[i] - (std_dev * std))
+            if mean_deviation != 0:
+                cci = (typical_price - sum(slice_prices) / period) / (0.015 * mean_deviation)
+            else:
+                cci = 0
+            
+            cci_values.append(cci)
         
-        return {
-            'upper': upper_band,
-            'middle': sma,
-            'lower': lower_band
-        }
+        return cci_values
+    
+    @staticmethod
+    def calculate_williams_r(prices: List[float], period: int = 14) -> List[float]:
+        """Calculate Williams %R"""
+        if len(prices) < period:
+            return []
+        
+        williams_r_values = []
+        for i in range(period - 1, len(prices)):
+            slice_prices = prices[i - period + 1:i + 1]
+            highest_high = max(slice_prices)
+            lowest_low = min(slice_prices)
+            
+            if highest_high != lowest_low:
+                williams_r = ((highest_high - prices[i]) / (highest_high - lowest_low)) * -100
+            else:
+                williams_r = 0
+            
+            williams_r_values.append(williams_r)
+        
+        return williams_r_values
+    
+    @staticmethod
+    def calculate_mfi(prices: List[float], volumes: List[float], period: int = 14) -> List[float]:
+        """Calculate Money Flow Index"""
+        if len(prices) < period + 1 or len(volumes) < period + 1:
+            return []
+        
+        mfi_values = []
+        for i in range(period, len(prices)):
+            positive_flow = 0
+            negative_flow = 0
+            
+            for j in range(i - period + 1, i + 1):
+                if j > 0:
+                    typical_price = prices[j]
+                    prev_typical_price = prices[j-1]
+                    money_flow = typical_price * volumes[j]
+                    
+                    if typical_price > prev_typical_price:
+                        positive_flow += money_flow
+                    elif typical_price < prev_typical_price:
+                        negative_flow += money_flow
+            
+            if negative_flow == 0:
+                mfi = 100
+            elif positive_flow == 0:
+                mfi = 0
+            else:
+                money_flow_ratio = positive_flow / negative_flow
+                mfi = 100 - (100 / (1 + money_flow_ratio))
+            
+            mfi_values.append(mfi)
+        
+        return mfi_values
     
     @staticmethod
     def calculate_volume_indicators(volumes: List[float], prices: List[float]) -> Dict[str, List[float]]:

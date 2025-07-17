@@ -16,7 +16,7 @@ class AdvancedChart {
         document.getElementById('chart-type').addEventListener('change', () => this.updateChart());
         
         // Indicator toggles
-        ['sma', 'ema', 'bb', 'volume', 'rsi', 'macd', 'vwap', 'stoch'].forEach(indicator => {
+        ['sma', 'sma50', 'ema', 'ema26', 'bb', 'volume', 'rsi', 'macd', 'vwap', 'stoch', 'support', 'resistance', 'atr', 'mfi'].forEach(indicator => {
             const element = document.getElementById(`indicator-${indicator}`);
             if (element) {
                 element.addEventListener('change', () => this.updateChart());
@@ -31,9 +31,12 @@ class AdvancedChart {
     }
 
     setupDrawingTools() {
-        // Add drawing functionality for trendlines, etc.
+        // Enhanced drawing tools with professional features
         this.drawingMode = false;
         this.drawings = [];
+        this.currentDrawingTool = null;
+        this.isDrawing = false;
+        this.startPoint = null;
     }
 
     setupKeyboardShortcuts() {
@@ -51,6 +54,36 @@ class AdvancedChart {
                 }
             }
         });
+    }
+
+    exportChart() {
+        if (!this.charts.price) return;
+        
+        const canvas = document.getElementById('advanced-price-chart');
+        const link = document.createElement('a');
+        link.download = `${this.currentSymbol}_chart_${new Date().toISOString().split('T')[0]}.png`;
+        link.href = canvas.toDataURL();
+        link.click();
+    }
+    
+    resetChart() {
+        this.drawings = [];
+        this.currentDrawingTool = null;
+        this.isDrawing = false;
+        
+        // Reset all indicators
+        ['sma', 'sma50', 'ema', 'ema26', 'bb', 'volume', 'rsi', 'macd', 'vwap', 'stoch', 'support', 'resistance', 'atr', 'mfi'].forEach(indicator => {
+            const element = document.getElementById(`indicator-${indicator}`);
+            if (element) {
+                element.checked = ['volume', 'rsi', 'macd'].includes(indicator);
+            }
+        });
+        
+        // Reset chart period and type
+        document.getElementById('chart-period').value = '1mo';
+        document.getElementById('chart-type').value = 'line';
+        
+        this.loadChartData();
     }
 
     async showChart(symbol) {
@@ -281,6 +314,65 @@ class AdvancedChart {
                 pointRadius: 0,
                 fill: false,
                 borderDash: [10, 5]
+            });
+        }
+        
+        // Add SMA 50 if available
+        if (document.getElementById('indicator-sma50')?.checked && this.chartData.sma_50) {
+            datasets.push({
+                label: 'SMA 50',
+                data: this.padIndicator(this.chartData.sma_50, 49),
+                type: 'line',
+                borderColor: '#9966ff',
+                borderWidth: 2,
+                pointRadius: 0,
+                fill: false,
+                borderDash: [12, 6]
+            });
+        }
+        
+        // Add EMA 26 if available
+        if (document.getElementById('indicator-ema26')?.checked && this.chartData.ema_26) {
+            datasets.push({
+                label: 'EMA 26',
+                data: this.padIndicator(this.chartData.ema_26, 25),
+                type: 'line',
+                borderColor: '#34495e',
+                borderWidth: 1.5,
+                pointRadius: 0,
+                fill: false,
+                borderDash: [6, 3]
+            });
+        }
+        
+        // Add support and resistance levels
+        if (this.chartData.support_resistance) {
+            this.chartData.support_resistance.support.forEach((level, index) => {
+                datasets.push({
+                    label: `Support ${index + 1}`,
+                    data: Array(this.chartData.prices.length).fill(level),
+                    type: 'line',
+                    borderColor: '#27ae60',
+                    backgroundColor: 'rgba(39, 174, 96, 0.1)',
+                    borderWidth: 1,
+                    pointRadius: 0,
+                    fill: false,
+                    borderDash: [2, 8]
+                });
+            });
+            
+            this.chartData.support_resistance.resistance.forEach((level, index) => {
+                datasets.push({
+                    label: `Resistance ${index + 1}`,
+                    data: Array(this.chartData.prices.length).fill(level),
+                    type: 'line',
+                    borderColor: '#e74c3c',
+                    backgroundColor: 'rgba(231, 76, 60, 0.1)',
+                    borderWidth: 1,
+                    pointRadius: 0,
+                    fill: false,
+                    borderDash: [2, 8]
+                });
             });
         }
         
