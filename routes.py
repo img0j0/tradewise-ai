@@ -5,6 +5,9 @@ from ai_insights import AIInsightsEngine
 from data_service import DataService
 from stock_search import StockSearchService
 from cache_service import cache
+from portfolio_optimizer import PortfolioOptimizer
+from social_trading import SocialTradingManager, TradingSignalGenerator
+from gamification import AchievementSystem, ChallengeSystem
 from flask_login import login_user, logout_user, login_required, current_user
 import logging
 import os
@@ -23,6 +26,11 @@ logger = logging.getLogger(__name__)
 data_service = DataService()
 ai_engine = AIInsightsEngine()
 stock_search_service = StockSearchService()
+portfolio_optimizer = PortfolioOptimizer()
+social_trading_manager = SocialTradingManager()
+signal_generator = TradingSignalGenerator()
+achievement_system = AchievementSystem()
+challenge_system = ChallengeSystem()
 
 # Train AI model on startup
 stocks_data = data_service.get_all_stocks()
@@ -1377,3 +1385,188 @@ def analytics():
     except Exception as e:
         logger.error(f"Error receiving analytics data: {e}")
         return jsonify({'error': 'Failed to process analytics data'}), 500
+
+# New innovative feature endpoints
+
+@app.route('/api/portfolio/optimize', methods=['POST'])
+@login_required
+def optimize_portfolio():
+    """AI-powered portfolio optimization"""
+    try:
+        data = request.json
+        symbols = data.get('symbols', [])
+        risk_tolerance = data.get('risk_tolerance', 'moderate')
+        
+        if not symbols:
+            # Get user's current portfolio symbols
+            portfolio = Portfolio.query.filter_by(user_id=current_user.id).all()
+            symbols = [p.symbol for p in portfolio]
+        
+        if not symbols:
+            return jsonify({'error': 'No stocks in portfolio to optimize'}), 400
+        
+        # Run portfolio optimization
+        optimization_result = portfolio_optimizer.optimize_portfolio(
+            symbols, 
+            risk_tolerance=risk_tolerance
+        )
+        
+        if optimization_result:
+            return jsonify(optimization_result), 200
+        else:
+            return jsonify({'error': 'Failed to optimize portfolio'}), 500
+            
+    except Exception as e:
+        logger.error(f"Error optimizing portfolio: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/social/top-traders')
+@login_required
+def get_top_traders():
+    """Get top performing traders for social trading"""
+    try:
+        timeframe = request.args.get('timeframe', 'month')
+        limit = int(request.args.get('limit', 10))
+        
+        top_traders = social_trading_manager.get_top_traders(
+            limit=limit, 
+            timeframe=timeframe
+        )
+        
+        # Generate trading signals
+        signals = signal_generator.generate_signals(top_traders)
+        
+        return jsonify({
+            'top_traders': top_traders,
+            'signals': signals
+        }), 200
+        
+    except Exception as e:
+        logger.error(f"Error getting top traders: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/social/trader/<int:trader_id>')
+@login_required
+def get_trader_profile(trader_id):
+    """Get detailed profile of a specific trader"""
+    try:
+        profile = social_trading_manager.get_trader_profile(trader_id)
+        
+        if profile:
+            return jsonify(profile), 200
+        else:
+            return jsonify({'error': 'Trader not found'}), 404
+            
+    except Exception as e:
+        logger.error(f"Error getting trader profile: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/social/copy-trade', methods=['POST'])
+@login_required
+def simulate_copy_trade():
+    """Simulate copying another trader's portfolio"""
+    try:
+        data = request.json
+        trader_id = data.get('trader_id')
+        amount = float(data.get('amount', 1000))
+        
+        if not trader_id:
+            return jsonify({'error': 'Trader ID required'}), 400
+        
+        # Check user balance
+        user_account = get_or_create_user_account()
+        if user_account.balance < amount:
+            return jsonify({'error': 'Insufficient balance'}), 400
+        
+        # Simulate copy trade
+        result = social_trading_manager.simulate_copy_trade(
+            current_user.id,
+            trader_id,
+            amount
+        )
+        
+        return jsonify(result), 200
+        
+    except Exception as e:
+        logger.error(f"Error simulating copy trade: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/gamification/achievements')
+@login_required
+def get_achievements():
+    """Get user achievements and progress"""
+    try:
+        # Check for new achievements
+        new_achievements = achievement_system.check_achievements(current_user.id)
+        
+        # Get user stats
+        user_stats = achievement_system.get_user_stats(current_user.id)
+        
+        return jsonify({
+            'new_achievements': new_achievements,
+            'user_stats': user_stats
+        }), 200
+        
+    except Exception as e:
+        logger.error(f"Error getting achievements: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/gamification/leaderboard')
+@login_required
+def get_leaderboard():
+    """Get trading leaderboard"""
+    try:
+        timeframe = request.args.get('timeframe', 'all')
+        limit = int(request.args.get('limit', 10))
+        
+        leaderboard = achievement_system.get_leaderboard(
+            timeframe=timeframe,
+            limit=limit
+        )
+        
+        return jsonify({'leaderboard': leaderboard}), 200
+        
+    except Exception as e:
+        logger.error(f"Error getting leaderboard: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/gamification/challenges')
+@login_required
+def get_challenges():
+    """Get active trading challenges"""
+    try:
+        challenges = challenge_system.get_active_challenges()
+        
+        return jsonify({'challenges': challenges}), 200
+        
+    except Exception as e:
+        logger.error(f"Error getting challenges: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/backtest', methods=['POST'])
+@login_required
+def backtest_strategy():
+    """Backtest a trading strategy"""
+    try:
+        data = request.json
+        symbols = data.get('symbols', [])
+        start_date = data.get('start_date', '2024-01-01')
+        end_date = data.get('end_date', '2024-12-31')
+        initial_capital = float(data.get('initial_capital', 10000))
+        
+        if not symbols:
+            return jsonify({'error': 'Symbols required for backtesting'}), 400
+        
+        # Run backtest
+        backtest_result = portfolio_optimizer.backtest_strategy(
+            symbols,
+            start_date,
+            end_date,
+            initial_capital
+        )
+        
+        return jsonify(backtest_result), 200
+        
+    except Exception as e:
+        logger.error(f"Error running backtest: {e}")
+        return jsonify({'error': str(e)}), 500

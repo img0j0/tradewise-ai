@@ -112,7 +112,7 @@ function setTheme(theme) {
 // Section management
 function showSection(sectionName) {
     // Hide all sections
-    const sections = ['dashboard', 'stocks', 'alerts', 'portfolio'];
+    const sections = ['dashboard', 'stocks', 'alerts', 'portfolio', 'advanced'];
     sections.forEach(section => {
         const element = document.getElementById(section + '-section');
         if (element) {
@@ -138,6 +138,9 @@ function showSection(sectionName) {
             break;
         case 'portfolio':
             loadPortfolio();
+            break;
+        case 'advanced':
+            loadAdvancedFeatures();
             break;
         default:
             loadDashboardData();
@@ -1434,6 +1437,365 @@ function displayRiskAnalysis(riskData) {
     document.getElementById('ai-risk-analysis').style.display = 'block';
 }
 
+// Advanced Features Functions
+async function loadAdvancedFeatures() {
+    try {
+        // Load all advanced features data in parallel
+        const [portfolioOptimization, topTraders, achievements, leaderboard, challenges] = await Promise.all([
+            loadPortfolioOptimization(),
+            loadTopTraders(),
+            loadAchievements(),
+            loadLeaderboard(),
+            loadChallenges()
+        ]);
+        
+        updateAdvancedFeaturesUI({
+            portfolioOptimization,
+            topTraders,
+            achievements,
+            leaderboard,
+            challenges
+        });
+    } catch (error) {
+        console.error('Error loading advanced features:', error);
+        showError('Failed to load advanced features');
+    }
+}
+
+async function loadPortfolioOptimization() {
+    try {
+        const response = await fetch('/api/portfolio/optimize', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ risk_tolerance: 'moderate' })
+        });
+        return await response.json();
+    } catch (error) {
+        console.error('Error loading portfolio optimization:', error);
+        return null;
+    }
+}
+
+async function loadTopTraders() {
+    try {
+        const response = await fetch('/api/social/top-traders?limit=5');
+        return await response.json();
+    } catch (error) {
+        console.error('Error loading top traders:', error);
+        return null;
+    }
+}
+
+async function loadAchievements() {
+    try {
+        const response = await fetch('/api/gamification/achievements');
+        return await response.json();
+    } catch (error) {
+        console.error('Error loading achievements:', error);
+        return null;
+    }
+}
+
+async function loadLeaderboard() {
+    try {
+        const response = await fetch('/api/gamification/leaderboard?limit=5');
+        return await response.json();
+    } catch (error) {
+        console.error('Error loading leaderboard:', error);
+        return null;
+    }
+}
+
+async function loadChallenges() {
+    try {
+        const response = await fetch('/api/gamification/challenges');
+        return await response.json();
+    } catch (error) {
+        console.error('Error loading challenges:', error);
+        return null;
+    }
+}
+
+function updateAdvancedFeaturesUI(data) {
+    // Update Portfolio Optimization
+    if (data.portfolioOptimization && data.portfolioOptimization.weights) {
+        updatePortfolioOptimizationUI(data.portfolioOptimization);
+    }
+    
+    // Update Social Trading
+    if (data.topTraders && data.topTraders.top_traders) {
+        updateTopTradersUI(data.topTraders);
+    }
+    
+    // Update Achievements
+    if (data.achievements && data.achievements.user_stats) {
+        updateAchievementsUI(data.achievements);
+    }
+    
+    // Update Leaderboard
+    if (data.leaderboard && data.leaderboard.leaderboard) {
+        updateLeaderboardUI(data.leaderboard.leaderboard);
+    }
+    
+    // Update Challenges
+    if (data.challenges && data.challenges.challenges) {
+        updateChallengesUI(data.challenges.challenges);
+    }
+}
+
+function updatePortfolioOptimizationUI(optimization) {
+    const container = document.getElementById('portfolio-optimization');
+    if (!container) return;
+    
+    if (optimization.error) {
+        container.innerHTML = `<div class="alert alert-warning">${optimization.error}</div>`;
+        return;
+    }
+    
+    let html = `
+        <div class="optimization-results">
+            <h6>Recommended Allocation</h6>
+            <div class="allocation-chart mb-3">
+    `;
+    
+    // Display weights
+    for (const [symbol, weight] of Object.entries(optimization.weights)) {
+        const percentage = (weight * 100).toFixed(1);
+        html += `
+            <div class="allocation-row mb-2">
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="symbol">${symbol}</span>
+                    <span class="percentage">${percentage}%</span>
+                </div>
+                <div class="progress" style="height: 20px;">
+                    <div class="progress-bar bg-success" style="width: ${percentage}%"></div>
+                </div>
+            </div>
+        `;
+    }
+    
+    // Display metrics
+    if (optimization.metrics) {
+        html += `
+            <div class="metrics mt-3">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="metric-card">
+                            <div class="metric-value">${(optimization.metrics.return * 100).toFixed(1)}%</div>
+                            <div class="metric-label">Expected Return</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="metric-card">
+                            <div class="metric-value">${(optimization.metrics.volatility * 100).toFixed(1)}%</div>
+                            <div class="metric-label">Volatility</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="metric-card">
+                            <div class="metric-value">${optimization.metrics.sharpe_ratio.toFixed(2)}</div>
+                            <div class="metric-label">Sharpe Ratio</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    
+    // Display recommendations
+    if (optimization.recommendations && optimization.recommendations.length > 0) {
+        html += `
+            <div class="recommendations mt-3">
+                <h6>AI Recommendations</h6>
+                <ul class="list-unstyled">
+        `;
+        optimization.recommendations.forEach(rec => {
+            html += `<li><i class="fas fa-check-circle text-success me-2"></i>${rec}</li>`;
+        });
+        html += `</ul></div>`;
+    }
+    
+    html += `</div>`;
+    container.innerHTML = html;
+}
+
+function updateTopTradersUI(data) {
+    const container = document.getElementById('top-traders');
+    if (!container) return;
+    
+    let html = '<div class="traders-list">';
+    
+    if (data.top_traders && data.top_traders.length > 0) {
+        data.top_traders.forEach((trader, index) => {
+            html += `
+                <div class="trader-card mb-3 p-3 bg-dark rounded">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-1">
+                                <span class="rank">#${index + 1}</span>
+                                ${trader.username}
+                            </h6>
+                            <div class="trader-stats">
+                                <span class="badge bg-success me-2">${trader.win_rate.toFixed(0)}% Win Rate</span>
+                                <span class="badge bg-info me-2">${trader.total_trades} Trades</span>
+                                <span class="badge bg-warning">Risk: ${trader.risk_score.toFixed(0)}/100</span>
+                            </div>
+                        </div>
+                        <div class="text-end">
+                            <div class="profit-display ${trader.profit_loss >= 0 ? 'text-success' : 'text-danger'}">
+                                ${trader.profit_loss >= 0 ? '+' : ''}$${Math.abs(trader.profit_loss).toFixed(2)}
+                            </div>
+                            <button class="btn btn-sm btn-outline-primary mt-2" onclick="viewTraderProfile(${trader.user_id})">
+                                View Profile
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+    } else {
+        html += '<p class="text-muted">No top traders data available</p>';
+    }
+    
+    html += '</div>';
+    container.innerHTML = html;
+}
+
+function updateAchievementsUI(data) {
+    const container = document.getElementById('achievements');
+    if (!container) return;
+    
+    if (!data.user_stats) {
+        container.innerHTML = '<p class="text-muted">No achievements data available</p>';
+        return;
+    }
+    
+    const stats = data.user_stats;
+    let html = `
+        <div class="achievement-summary mb-4">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="stat-value">${stats.total_points}</div>
+                        <div class="stat-label">Total Points</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="stat-value">Level ${stats.current_level}</div>
+                        <div class="stat-label">${stats.level_name}</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="stat-value">${stats.achievements_earned}/${stats.achievements_total}</div>
+                        <div class="stat-label">Achievements</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="stat-value">${stats.progress_to_next.toFixed(0)}%</div>
+                        <div class="stat-label">Next Level</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Display achievements grid
+    if (stats.achievement_list && stats.achievement_list.length > 0) {
+        html += '<div class="achievements-grid row">';
+        stats.achievement_list.forEach(achievement => {
+            const earnedClass = achievement.earned ? 'earned' : 'locked';
+            html += `
+                <div class="col-md-4 mb-3">
+                    <div class="achievement-card ${earnedClass}">
+                        <div class="achievement-icon">
+                            <i class="${achievement.icon}"></i>
+                        </div>
+                        <h6>${achievement.name}</h6>
+                        <p class="achievement-desc">${achievement.description}</p>
+                        <div class="achievement-points">+${achievement.points} points</div>
+                    </div>
+                </div>
+            `;
+        });
+        html += '</div>';
+    }
+    
+    container.innerHTML = html;
+}
+
+function updateLeaderboardUI(leaderboard) {
+    const container = document.getElementById('leaderboard');
+    if (!container) return;
+    
+    if (!leaderboard || leaderboard.length === 0) {
+        container.innerHTML = '<p class="text-muted">No leaderboard data available</p>';
+        return;
+    }
+    
+    let html = '<div class="leaderboard-list">';
+    leaderboard.forEach((user, index) => {
+        const medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '';
+        html += `
+            <div class="leaderboard-row d-flex justify-content-between align-items-center p-2 mb-2 bg-dark rounded">
+                <div class="d-flex align-items-center">
+                    <span class="rank me-3">${medal || '#' + (index + 1)}</span>
+                    <div>
+                        <strong>${user.username}</strong>
+                        <div class="small text-muted">Level ${user.level} • ${user.achievements} achievements</div>
+                    </div>
+                </div>
+                <div class="text-end">
+                    <div class="points">${user.points} pts</div>
+                    <div class="small text-muted">${user.trades} trades</div>
+                </div>
+            </div>
+        `;
+    });
+    html += '</div>';
+    container.innerHTML = html;
+}
+
+function updateChallengesUI(challenges) {
+    const container = document.getElementById('challenges');
+    if (!container) return;
+    
+    if (!challenges || challenges.length === 0) {
+        container.innerHTML = '<p class="text-muted">No active challenges</p>';
+        return;
+    }
+    
+    let html = '<div class="challenges-list">';
+    challenges.forEach(challenge => {
+        html += `
+            <div class="challenge-card mb-3 p-3 bg-dark rounded">
+                <h6>${challenge.name}</h6>
+                <p class="mb-2">${challenge.description}</p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="badge bg-success">${challenge.reward} points</span>
+                        <span class="badge bg-info">${challenge.participants} participants</span>
+                    </div>
+                    <div class="text-muted">
+                        Ends in ${challenge.ends_in}
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+    html += '</div>';
+    container.innerHTML = html;
+}
+
+// Helper function to view trader profile
+function viewTraderProfile(traderId) {
+    // This could open a modal or navigate to a trader profile page
+    console.log('Viewing trader profile:', traderId);
+    // Implementation can be added later
+}
+
 // Export functions for global access
 window.showSection = showSection;
 window.toggleTheme = toggleTheme;
@@ -1449,3 +1811,4 @@ window.showSellModal = showSellModal;
 window.executeSell = executeSell;
 window.showTransactionHistory = showTransactionHistory;
 window.searchStock = searchStock;
+window.viewTraderProfile = viewTraderProfile;

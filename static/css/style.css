@@ -1366,6 +1366,116 @@ body {
     }
 }
 
+/* Advanced Features Styles */
+.achievement-card {
+    background: rgba(40, 40, 40, 0.6);
+    border: 1px solid rgba(0, 255, 136, 0.3);
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.achievement-card.earned {
+    background: rgba(0, 255, 136, 0.1);
+    border-color: #00ff88;
+}
+
+.achievement-card.locked {
+    opacity: 0.6;
+    filter: grayscale(50%);
+}
+
+.achievement-icon {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    color: #00ff88;
+}
+
+.achievement-desc {
+    font-size: 0.875rem;
+    color: #aaa;
+    margin-bottom: 10px;
+}
+
+.achievement-points {
+    font-size: 0.875rem;
+    color: #00ff88;
+    font-weight: 600;
+}
+
+.trader-card {
+    background: rgba(40, 40, 40, 0.8);
+    border-left: 4px solid #00ff88;
+    transition: all 0.3s ease;
+}
+
+.trader-card:hover {
+    transform: translateX(5px);
+    box-shadow: 0 4px 15px rgba(0, 255, 136, 0.3);
+}
+
+.trader-card .rank {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #00ff88;
+    margin-right: 10px;
+}
+
+.leaderboard-row {
+    transition: all 0.3s ease;
+}
+
+.leaderboard-row:hover {
+    background: rgba(0, 255, 136, 0.1) !important;
+    transform: translateX(5px);
+}
+
+.challenge-card {
+    background: rgba(40, 40, 40, 0.8);
+    border: 1px solid rgba(0, 255, 136, 0.3);
+    transition: all 0.3s ease;
+}
+
+.challenge-card:hover {
+    border-color: #00ff88;
+    box-shadow: 0 4px 15px rgba(0, 255, 136, 0.2);
+}
+
+.optimization-results .allocation-row {
+    margin-bottom: 15px;
+}
+
+.optimization-results .symbol {
+    font-weight: 600;
+    color: #00ff88;
+}
+
+.optimization-results .percentage {
+    font-weight: 700;
+    color: #fff;
+}
+
+.optimization-results .metric-card {
+    background: rgba(40, 40, 40, 0.6);
+    border: 1px solid rgba(0, 255, 136, 0.3);
+    border-radius: 10px;
+    padding: 15px;
+    text-align: center;
+}
+
+.optimization-results .metric-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #00ff88;
+}
+
+.optimization-results .metric-label {
+    font-size: 0.875rem;
+    color: #aaa;
+    margin-top: 5px;
+}
+
 /* AI Assistant Styles */
 .ai-assistant {
     position: fixed;
