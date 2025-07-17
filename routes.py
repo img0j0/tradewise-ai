@@ -16,6 +16,7 @@ from datetime import datetime
 from ai_training import ai_trainer
 from personalized_ai import personalized_ai
 from strategy_builder import strategy_builder
+from color_palette import ColorPalette, get_trading_color, get_confidence_color, get_profit_loss_color, generate_chart_colors
 
 # Configure Stripe
 stripe.api_key = os.environ.get('STRIPE_SECRET_KEY')
@@ -32,6 +33,7 @@ stock_search_service = StockSearchService()
 portfolio_optimizer = PortfolioOptimizer()
 social_trading_engine = SocialTradingEngine()
 gamification_engine = GamificationEngine()
+color_palette = ColorPalette()
 
 # Train AI model on startup
 stocks_data = data_service.get_all_stocks()
@@ -1841,4 +1843,69 @@ def optimize_strategy(strategy_id):
         return jsonify(result)
     except Exception as e:
         logger.error(f"Error optimizing strategy: {e}")
+        return jsonify({'error': str(e)}), 500
+
+# Color Palette API Routes
+@app.route('/api/color-palette')
+def get_color_palette():
+    """Get the unified color palette in JSON format"""
+    try:
+        return jsonify({
+            'base_colors': color_palette.base_colors,
+            'trading_colors': color_palette.trading_colors,
+            'confidence_colors': color_palette.confidence_colors,
+            'gradients': {
+                'primary': color_palette.generate_gradient(color_palette.base_colors['primary_dark'], color_palette.base_colors['primary']),
+                'success': color_palette.generate_gradient(color_palette.base_colors['success_dark'], color_palette.base_colors['success']),
+                'warning': color_palette.generate_gradient(color_palette.base_colors['warning_dark'], color_palette.base_colors['warning']),
+                'danger': color_palette.generate_gradient(color_palette.base_colors['danger_dark'], color_palette.base_colors['danger']),
+            }
+        })
+    except Exception as e:
+        logger.error(f"Error getting color palette: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/color-palette/css')
+def get_color_palette_css():
+    """Get the color palette as CSS variables"""
+    try:
+        css_content = color_palette.generate_css_variables()
+        return css_content, 200, {'Content-Type': 'text/css'}
+    except Exception as e:
+        logger.error(f"Error generating CSS: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/color-palette/chart-colors/<int:count>')
+def get_chart_colors(count):
+    """Get a list of colors for charts"""
+    try:
+        colors = generate_chart_colors(count)
+        return jsonify({'colors': colors})
+    except Exception as e:
+        logger.error(f"Error getting chart colors: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/color-palette/semantic/<color_type>')
+def get_semantic_color(color_type):
+    """Get color for specific semantic use case"""
+    try:
+        if color_type == 'confidence':
+            confidence = float(request.args.get('value', 50))
+            color = get_confidence_color(confidence)
+        elif color_type == 'profit-loss':
+            value = float(request.args.get('value', 0))
+            color = get_profit_loss_color(value)
+        elif color_type == 'trading':
+            action = request.args.get('action', 'hold')
+            color = get_trading_color(action)
+        else:
+            return jsonify({'error': 'Invalid color type'}), 400
+            
+        return jsonify({
+            'type': color_type,
+            'color': color,
+            'variants': color_palette.get_color_variants(color)
+        })
+    except Exception as e:
+        logger.error(f"Error getting semantic color: {e}")
         return jsonify({'error': str(e)}), 500
