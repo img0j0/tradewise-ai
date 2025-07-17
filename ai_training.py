@@ -6,7 +6,7 @@ Implements continuous learning, pattern recognition, and adaptive market analysi
 import numpy as np
 import pandas as pd
 from datetime import datetime, timedelta
-from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, GradientBoostingRegressor, VotingClassifier
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, VotingClassifier
 from sklearn.neural_network import MLPClassifier
 from sklearn.preprocessing import StandardScaler, RobustScaler
 from sklearn.model_selection import train_test_split, cross_val_score
@@ -31,7 +31,7 @@ class AdvancedAITrainingSystem:
 
     def __init__(self):
         self.models = {
-            'price_prediction': GradientBoostingRegressor(n_estimators=200, learning_rate=0.1, max_depth=5),
+            'price_prediction': MLPClassifier(hidden_layer_sizes=(100, 50), max_iter=1000),
             'trend_classifier': RandomForestClassifier(n_estimators=150, max_depth=10),
             'volatility_predictor': MLPClassifier(hidden_layer_sizes=(100, 50), max_iter=1000),
             'sentiment_analyzer': RandomForestClassifier(n_estimators=100)
