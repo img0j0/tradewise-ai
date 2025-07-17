@@ -6,7 +6,7 @@ Implements continuous learning, pattern recognition, and adaptive market analysi
 import numpy as np
 import pandas as pd
 from datetime import datetime, timedelta
-from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, VotingClassifier
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, GradientBoostingRegressor, VotingClassifier
 from sklearn.neural_network import MLPClassifier
 from sklearn.preprocessing import StandardScaler, RobustScaler
 from sklearn.model_selection import train_test_split, cross_val_score
