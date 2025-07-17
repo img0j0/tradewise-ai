@@ -256,35 +256,64 @@ async function loadSectors() {
 
 // Update UI functions
 function updateDashboard(data) {
+    console.log('Updating dashboard with data:', data);
+    
+    // Update each section with individual error handling
     try {
-        // Update market overview
-        updateMarketOverview(data.market_overview);
-        
-        // Update welcome banner
-        updateWelcomeBanner(data.market_overview);
-        
-        // Update account balance
-        updateAccountBalance(data.user_account);
-        
-        // Update performance summary
-        updatePerformanceSummary(data.portfolio_performance);
-        
-        // Update top movers
-        updateTopMovers(data.top_movers);
-        
-        // Update recent trades
-        updateRecentTrades(data.recent_trades);
-        
-        // Update active alerts
-        updateActiveAlerts(data.active_alerts);
-        
-        // Update timestamp
-        updateTimestamp(data.timestamp);
-        
+        if (data.market_overview) {
+            updateMarketOverview(data.market_overview);
+            updateWelcomeBanner(data.market_overview);
+        }
     } catch (error) {
-        console.error('Error in updateDashboard:', error);
-        console.error('Stack trace:', error.stack);
-        throw error; // Re-throw to be caught by the caller
+        console.error('Error updating market overview:', error);
+    }
+    
+    try {
+        if (data.user_account) {
+            updateAccountBalance(data.user_account);
+        }
+    } catch (error) {
+        console.error('Error updating account balance:', error);
+    }
+    
+    try {
+        if (data.portfolio_performance) {
+            updatePerformanceSummary(data.portfolio_performance);
+        }
+    } catch (error) {
+        console.error('Error updating performance summary:', error);
+    }
+    
+    try {
+        if (data.top_movers) {
+            updateTopMovers(data.top_movers);
+        }
+    } catch (error) {
+        console.error('Error updating top movers:', error);
+    }
+    
+    try {
+        if (data.recent_trades) {
+            updateRecentTrades(data.recent_trades);
+        }
+    } catch (error) {
+        console.error('Error updating recent trades:', error);
+    }
+    
+    try {
+        if (data.active_alerts) {
+            updateActiveAlerts(data.active_alerts);
+        }
+    } catch (error) {
+        console.error('Error updating active alerts:', error);
+    }
+    
+    try {
+        if (data.timestamp) {
+            updateTimestamp(data.timestamp);
+        }
+    } catch (error) {
+        console.error('Error updating timestamp:', error);
     }
 }
 
@@ -354,7 +383,8 @@ function updatePerformanceSummary(performance) {
         
         const winRateElement = document.getElementById('win-rate');
         if (winRateElement) {
-            winRateElement.textContent = performance.win_rate.toFixed(1) + '%';
+            const winRate = performance.win_rate || 0;
+            winRateElement.textContent = winRate.toFixed(1) + '%';
         }
         
         // Total P&L
@@ -383,7 +413,8 @@ function updatePerformanceSummary(performance) {
         
         const avgConfidenceElement = document.getElementById('avg-confidence');
         if (avgConfidenceElement) {
-            avgConfidenceElement.textContent = performance.avg_confidence.toFixed(1) + '%';
+            const avgConfidence = performance.avg_confidence || 0;
+            avgConfidenceElement.textContent = avgConfidence.toFixed(1) + '%';
         }
     } catch (error) {
         console.error('Error in updatePerformanceSummary:', error);

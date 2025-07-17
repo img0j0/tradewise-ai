@@ -1198,6 +1198,21 @@ def identify_potential_rewards(stock_data, fundamentals):
     return rewards if rewards else ['Potential for capital appreciation']
 
 # Authentication routes
+@app.route('/test-login')
+def test_login():
+    """Test login page"""
+    return render_template('test_login.html')
+
+@app.route('/debug-auth')
+def debug_auth():
+    """Debug authentication status"""
+    return jsonify({
+        'authenticated': current_user.is_authenticated,
+        'user_id': current_user.id if current_user.is_authenticated else None,
+        'username': current_user.username if current_user.is_authenticated else None,
+        'session': dict(session)
+    })
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     """User login"""
