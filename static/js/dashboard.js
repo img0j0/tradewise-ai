@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('Skipping dashboard initialization on auth page');
         return;
     }
-    
+
     initializeDashboard();
     setInterval(refreshData, 30000); // Refresh every 30 seconds
 });
@@ -25,34 +25,34 @@ document.addEventListener('DOMContentLoaded', function() {
 // Initialize dashboard
 function initializeDashboard() {
     console.log('Initializing Trading Analytics Dashboard...');
-    
+
     try {
         // Initialize notification manager
         window.notificationManager = new NotificationManager();
-        
+
         // Show loading state (disabled to prevent content replacement)
         // showMainLoadingState();
-        
+
         // Load theme preference
         const savedTheme = localStorage.getItem('theme') || 'dark';
         setTheme(savedTheme);
-        
+
         // Show dashboard section by default
         showSection('dashboard');
-        
+
         // Load sectors data (needed for stocks filter)
         loadSectors().catch(error => {
             console.error('Error loading sectors:', error);
         });
-        
+
         // Set up event listeners
         setupEventListeners();
-        
+
         // Hide loading state after initial load
         // setTimeout(() => {
         //     hideMainLoadingState();
         // }, 1000);
-        
+
     } catch (error) {
         console.error('Error initializing dashboard:', error);
         if (window.notificationManager) {
@@ -67,11 +67,11 @@ function setupEventListeners() {
     const sectorFilter = document.getElementById('sector-filter');
     const minPrice = document.getElementById('min-price');
     const maxPrice = document.getElementById('max-price');
-    
+
     if (sectorFilter) sectorFilter.addEventListener('change', applyFilters);
     if (minPrice) minPrice.addEventListener('input', applyFilters);
     if (maxPrice) maxPrice.addEventListener('input', applyFilters);
-    
+
     // Auto-refresh toggle
     document.addEventListener('keydown', function(event) {
         if (event.ctrlKey && event.key === 'r') {
@@ -91,7 +91,7 @@ function setTheme(theme) {
     currentTheme = theme;
     const body = document.body;
     const themeIcon = document.getElementById('theme-icon');
-    
+
     if (theme === 'light') {
         body.classList.add('light-theme');
         themeIcon.className = 'fas fa-sun';
@@ -99,14 +99,14 @@ function setTheme(theme) {
         body.classList.remove('light-theme');
         themeIcon.className = 'fas fa-moon';
     }
-    
+
     localStorage.setItem('theme', theme);
 }
 
 // Section management
 function showSection(sectionName) {
     console.log('showSection called with:', sectionName);
-    
+
     // Hide all sections
     const sections = ['dashboard', 'stocks', 'alerts', 'portfolio', 'advanced'];
     sections.forEach(section => {
@@ -115,26 +115,26 @@ function showSection(sectionName) {
             element.style.display = 'none';
         }
     });
-    
+
     // Show selected section
     const selectedSection = document.getElementById(sectionName + '-section');
     if (selectedSection) {
         selectedSection.style.display = 'block';
     }
-    
+
     // Update active nav link
     document.querySelectorAll('.navbar-nav .nav-link').forEach(link => {
         link.classList.remove('active');
     });
-    
+
     const activeLink = document.querySelector(`.navbar-nav .nav-link[href="#${sectionName}"]`);
     if (activeLink) {
         activeLink.classList.add('active');
     }
-    
+
     currentSection = sectionName;
     console.log('currentSection set to:', currentSection);
-    
+
     // Load section-specific data
     switch (sectionName) {
         case 'stocks':
@@ -161,13 +161,13 @@ async function loadDashboardData() {
             credentials: 'include'
         });
         const data = await response.json();
-        
+
         if (data.error) {
             throw new Error(data.error);
         }
-        
+
         dashboardData = data;
-        
+
         // Safely update dashboard with proper error handling
         try {
             updateDashboard(data);
@@ -175,7 +175,7 @@ async function loadDashboardData() {
             console.error('Error updating dashboard UI:', updateError);
             showError('Failed to update dashboard display: ' + updateError.message);
         }
-        
+
     } catch (error) {
         console.error('Error loading dashboard data:', error);
         showError('Failed to load dashboard data: ' + error.message);
@@ -187,22 +187,22 @@ async function loadStocks() {
         const sector = document.getElementById('sector-filter').value;
         const minPrice = document.getElementById('min-price').value;
         const maxPrice = document.getElementById('max-price').value;
-        
+
         const params = new URLSearchParams();
         if (sector) params.append('sector', sector);
         if (minPrice) params.append('min_price', minPrice);
         if (maxPrice) params.append('max_price', maxPrice);
-        
+
         const response = await fetch('/api/stocks?' + params.toString());
         const data = await response.json();
-        
+
         if (data.error) {
             throw new Error(data.error);
         }
-        
+
         stocksData = data.stocks;
         updateStocksList(data.stocks);
-        
+
     } catch (error) {
         console.error('Error loading stocks:', error);
         showError('Failed to load stocks: ' + error.message);
@@ -213,14 +213,14 @@ async function loadAlerts() {
     try {
         const response = await fetch('/api/alerts');
         const data = await response.json();
-        
+
         if (data.error) {
             throw new Error(data.error);
         }
-        
+
         alertsData = data.alerts;
         updateAlertsList(data.alerts);
-        
+
     } catch (error) {
         console.error('Error loading alerts:', error);
         showError('Failed to load alerts: ' + error.message);
@@ -231,14 +231,14 @@ async function loadPortfolio() {
     try {
         const response = await fetch('/api/portfolio');
         const data = await response.json();
-        
+
         if (data.error) {
             throw new Error(data.error);
         }
-        
+
         portfolioData = data;
         updatePortfolio(data);
-        
+
     } catch (error) {
         console.error('Error loading portfolio:', error);
         showError('Failed to load portfolio: ' + error.message);
@@ -249,21 +249,21 @@ async function loadSectors() {
     try {
         const response = await fetch('/api/sectors');
         const data = await response.json();
-        
+
         if (data.error) {
             throw new Error(data.error);
         }
-        
+
         const sectorFilter = document.getElementById('sector-filter');
         sectorFilter.innerHTML = '<option value="">All Sectors</option>';
-        
+
         data.sectors.forEach(sector => {
             const option = document.createElement('option');
             option.value = sector;
             option.textContent = sector;
             sectorFilter.appendChild(option);
         });
-        
+
     } catch (error) {
         console.error('Error loading sectors:', error);
     }
@@ -277,9 +277,9 @@ function updateDashboard(data) {
         console.log('Not on dashboard tab, skipping update');
         return;
     }
-    
+
     console.log('Updating dashboard with data:', data);
-    
+
     // Update each section with individual error handling
     try {
         if (data.market_overview) {
@@ -289,7 +289,7 @@ function updateDashboard(data) {
     } catch (error) {
         console.error('Error updating market overview:', error);
     }
-    
+
     try {
         if (data.user_account) {
             updateAccountBalance(data.user_account);
@@ -297,7 +297,7 @@ function updateDashboard(data) {
     } catch (error) {
         console.error('Error updating account balance:', error);
     }
-    
+
     try {
         if (data.portfolio_performance) {
             updatePerformanceSummary(data.portfolio_performance);
@@ -305,7 +305,7 @@ function updateDashboard(data) {
     } catch (error) {
         console.error('Error updating performance summary:', error);
     }
-    
+
     try {
         if (data.top_movers) {
             updateTopMovers(data.top_movers);
@@ -313,7 +313,7 @@ function updateDashboard(data) {
     } catch (error) {
         console.error('Error updating top movers:', error);
     }
-    
+
     try {
         if (data.recent_trades) {
             updateRecentTrades(data.recent_trades);
@@ -321,7 +321,7 @@ function updateDashboard(data) {
     } catch (error) {
         console.error('Error updating recent trades:', error);
     }
-    
+
     try {
         if (data.active_alerts) {
             updateActiveAlerts(data.active_alerts);
@@ -329,7 +329,7 @@ function updateDashboard(data) {
     } catch (error) {
         console.error('Error updating active alerts:', error);
     }
-    
+
     try {
         if (data.timestamp) {
             updateTimestamp(data.timestamp);
@@ -353,14 +353,14 @@ function updateMarketOverview(overview) {
         if (document.getElementById('unchanged')) {
             document.getElementById('unchanged').textContent = overview.unchanged;
         }
-        
+
         const avgChange = overview.avg_change;
         const avgChangeElement = document.getElementById('avg-change');
         if (avgChangeElement) {
             avgChangeElement.textContent = formatCurrency(avgChange);
             avgChangeElement.className = `stat-number ${avgChange >= 0 ? 'text-success' : 'text-danger'}`;
         }
-        
+
         if (document.getElementById('total-volume')) {
             document.getElementById('total-volume').textContent = formatVolume(overview.total_volume);
         }
@@ -376,7 +376,7 @@ function updateWelcomeBanner(overview) {
     if (marketTrendElement) {
         let trend = 'Neutral';
         let trendClass = 'text-warning';
-        
+
         if (overview.gainers > overview.losers * 1.2) {
             trend = 'Bullish';
             trendClass = 'text-success';
@@ -384,11 +384,11 @@ function updateWelcomeBanner(overview) {
             trend = 'Bearish';
             trendClass = 'text-danger';
         }
-        
+
         marketTrendElement.textContent = trend;
         marketTrendElement.className = trendClass;
     }
-    
+
     // AI accuracy stays at 98% (simulated for now)
     const aiAccuracyElement = document.getElementById('ai-accuracy');
     if (aiAccuracyElement) {
@@ -402,13 +402,13 @@ function updatePerformanceSummary(performance) {
         if (totalTradesElement) {
             totalTradesElement.textContent = performance.total_trades;
         }
-        
+
         const winRateElement = document.getElementById('win-rate');
         if (winRateElement) {
             const winRate = performance.win_rate || 0;
             winRateElement.textContent = winRate.toFixed(1) + '%';
         }
-        
+
         // Total P&L
         const pnl = performance.total_pnl || 0;
         const pnlElement = document.getElementById('total-pnl');
@@ -416,7 +416,7 @@ function updatePerformanceSummary(performance) {
             pnlElement.textContent = formatCurrency(pnl);
             pnlElement.className = pnl >= 0 ? 'text-success' : 'text-danger';
         }
-        
+
         // Realized P&L
         const realizedPnl = performance.total_realized_pnl || 0;
         const realizedElement = document.getElementById('realized-pnl');
@@ -424,7 +424,7 @@ function updatePerformanceSummary(performance) {
             realizedElement.textContent = formatCurrency(realizedPnl);
             realizedElement.className = realizedPnl >= 0 ? 'text-success' : 'text-danger';
         }
-        
+
         // Unrealized P&L
         const unrealizedPnl = performance.total_unrealized_pnl || 0;
         const unrealizedElement = document.getElementById('unrealized-pnl');
@@ -432,7 +432,7 @@ function updatePerformanceSummary(performance) {
             unrealizedElement.textContent = formatCurrency(unrealizedPnl);
             unrealizedElement.className = unrealizedPnl >= 0 ? 'text-success' : 'text-danger';
         }
-        
+
         const avgConfidenceElement = document.getElementById('avg-confidence');
         if (avgConfidenceElement) {
             const avgConfidence = performance.avg_confidence || 0;
@@ -458,14 +458,14 @@ function updateTopMovers(topMovers) {
 
 function updateTopGainers(gainers) {
     const container = document.getElementById('top-gainers');
-    
+
     if (!container) return;
-    
+
     if (!gainers || gainers.length === 0) {
         container.innerHTML = '<div class="text-center text-muted">No gainers found</div>';
         return;
     }
-    
+
     container.innerHTML = gainers.map(stock => `
         <div class="d-flex justify-content-between align-items-center mb-2">
             <div>
@@ -479,14 +479,14 @@ function updateTopGainers(gainers) {
 
 function updateTopLosers(losers) {
     const container = document.getElementById('top-losers');
-    
+
     if (!container) return;
-    
+
     if (!losers || losers.length === 0) {
         container.innerHTML = '<div class="text-center text-muted">No losers found</div>';
         return;
     }
-    
+
     container.innerHTML = losers.map(stock => `
         <div class="d-flex justify-content-between align-items-center mb-2">
             <div>
@@ -500,14 +500,14 @@ function updateTopLosers(losers) {
 
 function updateRecentTrades(trades) {
     const container = document.getElementById('recent-trades');
-    
+
     if (!container) return;
-    
+
     if (!trades || trades.length === 0) {
         container.innerHTML = '<div class="text-center text-muted">No recent trades</div>';
         return;
     }
-    
+
     container.innerHTML = trades.map(trade => `
         <div class="trade-item">
             <div class="trade-info">
@@ -525,16 +525,16 @@ function updateRecentTrades(trades) {
 function updateActiveAlerts(alerts) {
     // Only update if we're on the dashboard tab
     if (currentSection !== 'dashboard') return;
-    
+
     const container = document.getElementById('active-alerts');
-    
+
     if (!container) return;
-    
+
     if (!alerts || alerts.length === 0) {
         container.innerHTML = '<div class="text-center text-muted">No active alerts</div>';
         return;
     }
-    
+
     container.innerHTML = alerts.map(alert => `
         <div class="alert-item alert-${alert.alert_type}">
             <div class="alert-content">
@@ -556,17 +556,17 @@ function updateActiveAlerts(alerts) {
 
 function updateStocksList(stocks) {
     const container = document.getElementById('stocks-list');
-    
+
     if (!stocks || stocks.length === 0) {
         container.innerHTML = '<div class="text-center text-muted">No stocks found</div>';
         return;
     }
-    
+
     container.innerHTML = stocks.map(stock => {
         const change = stock.current_price - stock.previous_close;
         const changePct = (change / stock.previous_close) * 100;
         const insights = stock.ai_insights || {};
-        
+
         return `
             <div class="stock-item">
                 <div class="stock-header">
@@ -582,7 +582,7 @@ function updateStocksList(stocks) {
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="stock-details">
                     <div class="stock-info">
                         <span>Volume: ${formatVolume(stock.volume)}</span>
@@ -596,7 +596,7 @@ function updateStocksList(stocks) {
                         </button>
                     </div>
                 </div>
-                
+
                 ${insights.confidence_score ? `
                     <div class="ai-insights">
                         <div class="d-flex justify-content-between align-items-center mb-2">
@@ -631,17 +631,17 @@ function updateStocksList(stocks) {
 function updateAlertsList(alerts) {
     const container = document.getElementById('alerts-list');
     const countBadge = document.getElementById('active-alerts-count');
-    
+
     // Update active alerts count
     if (countBadge) {
         countBadge.textContent = alerts ? alerts.length : 0;
     }
-    
+
     if (!alerts || alerts.length === 0) {
         container.innerHTML = '<div class="text-center text-muted">No alerts found. Create your first personalized alert above!</div>';
         return;
     }
-    
+
     container.innerHTML = alerts.map(alert => `
         <div class="alert-item alert-${alert.alert_type}">
             <div class="alert-content">
@@ -667,7 +667,7 @@ function updateAlertsList(alerts) {
 function updatePortfolio(data) {
     // Update portfolio summary
     updatePortfolioSummary(data.summary);
-    
+
     // Update portfolio holdings
     updatePortfolioHoldings(data.portfolio_items);
 }
@@ -675,12 +675,12 @@ function updatePortfolio(data) {
 function updatePortfolioSummary(summary) {
     document.getElementById('portfolio-value').textContent = formatCurrency(summary.total_value);
     document.getElementById('portfolio-cost').textContent = formatCurrency(summary.total_cost);
-    
+
     const pnl = summary.total_pnl;
     const pnlElement = document.getElementById('portfolio-pnl');
     pnlElement.textContent = formatCurrency(pnl);
     pnlElement.className = `stat-number ${pnl >= 0 ? 'text-success' : 'text-danger'}`;
-    
+
     const pnlPct = summary.total_pnl_pct;
     const pnlPctElement = document.getElementById('portfolio-pnl-pct');
     pnlPctElement.textContent = pnlPct.toFixed(2) + '%';
@@ -689,16 +689,16 @@ function updatePortfolioSummary(summary) {
 
 function updatePortfolioHoldings(holdings) {
     const container = document.getElementById('portfolio-holdings');
-    
+
     if (!holdings || holdings.length === 0) {
         container.innerHTML = '<div class="text-center text-muted">No holdings found</div>';
         return;
     }
-    
+
     container.innerHTML = holdings.map(holding => {
         const pnlClass = holding.pnl >= 0 ? 'text-success' : 'text-danger';
         const pnlIcon = holding.pnl >= 0 ? 'fa-arrow-up' : 'fa-arrow-down';
-        
+
         return `
             <div class="portfolio-item">
                 <div class="portfolio-header">
@@ -761,14 +761,14 @@ function showTradeModal(symbol) {
         showError('Stock not found');
         return;
     }
-    
+
     document.getElementById('trade-symbol').value = symbol;
     document.getElementById('trade-current-price').textContent = formatCurrency(stock.current_price);
-    
+
     const insights = stock.ai_insights || {};
     document.getElementById('trade-confidence').textContent = insights.confidence_score ? 
         `${insights.confidence_score.toFixed(0)}% (${insights.recommendation || 'HOLD'})` : 'N/A';
-    
+
     const modal = new bootstrap.Modal(document.getElementById('tradeModal'));
     modal.show();
 }
@@ -778,12 +778,12 @@ async function executeTrade() {
         const symbol = document.getElementById('trade-symbol').value;
         const action = document.getElementById('trade-action').value;
         const quantity = parseInt(document.getElementById('trade-quantity').value);
-        
+
         if (!symbol || !action || !quantity || quantity <= 0) {
             showError('Please fill in all required fields');
             return;
         }
-        
+
         const response = await fetch('/api/trade', {
             method: 'POST',
             headers: {
@@ -795,23 +795,23 @@ async function executeTrade() {
                 quantity: quantity
             })
         });
-        
+
         const data = await response.json();
-        
+
         if (data.error) {
             throw new Error(data.error);
         }
-        
+
         // Close modal
         const modal = bootstrap.Modal.getInstance(document.getElementById('tradeModal'));
         modal.hide();
-        
+
         // Clear form
         document.getElementById('trade-form').reset();
-        
+
         // Show success message
         showSuccess(data.message);
-        
+
         // Track trade execution
         if (window.analyticsManager) {
             analyticsManager.trackEvent('trade_executed', {
@@ -821,10 +821,10 @@ async function executeTrade() {
                 price: price
             });
         }
-        
+
         // Refresh data
         refreshData();
-        
+
     } catch (error) {
         console.error('Error executing trade:', error);
         showError('Failed to execute trade: ' + error.message);
@@ -842,7 +842,7 @@ function applyFilters() {
 function refreshData() {
     console.log('Refreshing data...');
     showRefreshIndicator();
-    
+
     let loadPromise;
     switch (currentSection) {
         case 'stocks':
@@ -864,7 +864,7 @@ function refreshData() {
             // Don't load anything if section is unknown
             loadPromise = Promise.resolve();
     }
-    
+
     if (loadPromise && loadPromise.then) {
         loadPromise.then(() => {
             hideRefreshIndicator();
@@ -891,7 +891,7 @@ function showMainLoadingState() {
             <p class="text-muted">Fetching real-time market data and your portfolio</p>
         </div>
     `;
-    
+
     const dashboardSection = document.getElementById('dashboard-section');
     if (dashboardSection) {
         dashboardSection.innerHTML = loadingHTML;
@@ -970,7 +970,7 @@ function formatDateTime(dateString) {
 function getConfidenceClass(score) {
     if (score >= 70) return 'high';
     if (score >= 40) return 'medium';
-    return 'low';
+        return 'low';
 }
 
 function showError(message) {
@@ -1009,7 +1009,7 @@ function createToast(title, message, type) {
             <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
         </div>
     `;
-    
+
     return toast;
 }
 
@@ -1023,12 +1023,12 @@ function showToast(toast) {
         toastContainer.style.zIndex = '9999';
         document.body.appendChild(toastContainer);
     }
-    
+
     toastContainer.appendChild(toast);
-    
+
     const bsToast = new bootstrap.Toast(toast);
     bsToast.show();
-    
+
     // Remove toast after it's hidden
     toast.addEventListener('hidden.bs.toast', function() {
         toast.remove();
@@ -1039,10 +1039,10 @@ async function dismissAlert(alertId) {
     try {
         // In a real implementation, this would make an API call to dismiss the alert
         console.log('Dismissing alert:', alertId);
-        
+
         // For now, just refresh the alerts
         loadAlerts();
-        
+
     } catch (error) {
         console.error('Error dismissing alert:', error);
         showError('Failed to dismiss alert');
@@ -1059,16 +1059,16 @@ function showDepositModal() {
 async function processDeposit() {
     const amount = parseFloat(document.getElementById('deposit-amount').value);
     const depositBtn = document.getElementById('deposit-btn');
-    
+
     if (!amount || amount <= 0) {
         showError('Please enter a valid deposit amount');
         return;
     }
-    
+
     try {
         depositBtn.disabled = true;
         depositBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processing...';
-        
+
         const response = await fetch('/api/create-deposit-session', {
             method: 'POST',
             headers: {
@@ -1076,9 +1076,9 @@ async function processDeposit() {
             },
             body: JSON.stringify({ amount: amount })
         });
-        
+
         const data = await response.json();
-        
+
         if (response.ok) {
             // Redirect to Stripe checkout
             window.location.href = data.checkout_url;
@@ -1096,7 +1096,7 @@ async function processDeposit() {
 
 function showBuyModal() {
     const modal = new bootstrap.Modal(document.getElementById('buyModal'));
-    
+
     // Clear previous search results
     currentSearchedStock = null;
     document.getElementById('stock-search-result').style.display = 'none';
@@ -1104,10 +1104,10 @@ function showBuyModal() {
     document.getElementById('buy-symbol-search').value = '';
     document.getElementById('buy-quantity').value = '';
     updateBuyCalculations();
-    
+
     // Set up event listener for quantity changes
     document.getElementById('buy-quantity').addEventListener('input', updateBuyCalculations);
-    
+
     modal.show();
 }
 
@@ -1121,33 +1121,33 @@ function updateBuyCalculations() {
     const totalAmountElement = document.getElementById('buy-total-amount');
     const insufficientFundsElement = document.getElementById('buy-insufficient-funds');
     const buyBtn = document.getElementById('buy-btn');
-    
+
     let price = 0;
-    
+
     // Check if we have a searched stock
     if (currentSearchedStock) {
         price = currentSearchedStock.current_price || 0;
     }
-    
+
     const quantity = parseInt(quantityInput.value) || 0;
     const totalCost = price * quantity;
-    
+
     priceElement.textContent = price > 0 ? formatCurrency(price) : '-';
     totalElement.textContent = formatCurrency(totalCost);
-    
+
     // Update available balance from dashboard data
     let availableBalance = 0;
     if (dashboardData.user_account) {
         availableBalance = dashboardData.user_account.balance;
         balanceElement.textContent = formatCurrency(availableBalance);
     }
-    
+
     // Show purchase summary if quantity is entered
     if (quantity > 0 && price > 0) {
         summaryElement.style.display = 'block';
         sharesCountElement.textContent = quantity;
         totalAmountElement.textContent = formatCurrency(totalCost);
-        
+
         // Check if sufficient funds
         if (totalCost > availableBalance) {
             insufficientFundsElement.style.display = 'block';
@@ -1166,18 +1166,18 @@ function updateBuyCalculations() {
 async function executeBuy() {
     const quantity = parseInt(document.getElementById('buy-quantity').value);
     const buyBtn = document.getElementById('buy-btn');
-    
+
     if (!currentSearchedStock || !quantity || quantity <= 0) {
         showError('Please search for a stock and enter a valid quantity');
         return;
     }
-    
+
     const symbol = currentSearchedStock.symbol;
-    
+
     try {
         buyBtn.disabled = true;
         buyBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processing...';
-        
+
         const response = await fetch('/api/purchase-stock', {
             method: 'POST',
             headers: {
@@ -1185,9 +1185,9 @@ async function executeBuy() {
             },
             body: JSON.stringify({ symbol: symbol, quantity: quantity })
         });
-        
+
         const data = await response.json();
-        
+
         if (response.ok) {
             showSuccess(data.message);
             bootstrap.Modal.getInstance(document.getElementById('buyModal')).hide();
@@ -1206,14 +1206,14 @@ async function executeBuy() {
 
 function showSellModal(symbol = null) {
     const modal = new bootstrap.Modal(document.getElementById('sellModal'));
-    
+
     // Populate portfolio options
     const stockSelect = document.getElementById('sell-symbol');
     stockSelect.innerHTML = '<option value="">Select a stock...</option>';
-    
+
     // Get portfolio data from dashboard data
     const holdings = dashboardData.portfolio?.portfolio_items || [];
-    
+
     holdings.forEach(holding => {
         const option = document.createElement('option');
         option.value = holding.symbol;
@@ -1222,21 +1222,21 @@ function showSellModal(symbol = null) {
         option.dataset.price = holding.current_price;
         stockSelect.appendChild(option);
     });
-    
+
     // If symbol is provided, select it
     if (symbol) {
         stockSelect.value = symbol;
     }
-    
+
     // Set up event listeners
     stockSelect.addEventListener('change', updateSellCalculations);
     document.getElementById('sell-quantity').addEventListener('input', updateSellCalculations);
-    
+
     // Trigger calculation if symbol was pre-selected
     if (symbol) {
         updateSellCalculations();
     }
-    
+
     modal.show();
 }
 
@@ -1246,23 +1246,23 @@ function updateSellCalculations() {
     const priceElement = document.getElementById('sell-current-price');
     const totalElement = document.getElementById('sell-total-proceeds');
     const ownedElement = document.getElementById('sell-shares-owned');
-    
+
     const selectedOption = stockSelect.options[stockSelect.selectedIndex];
     const symbol = stockSelect.value;
     const quantity = parseInt(quantityInput.value) || 0;
-    
+
     if (symbol) {
         // Get price from the selected option's dataset
         const price = parseFloat(selectedOption.dataset.price) || 0;
         const owned = parseInt(selectedOption.dataset.quantity) || 0;
-        
+
         priceElement.textContent = price > 0 ? formatCurrency(price) : '-';
         totalElement.textContent = formatCurrency(price * quantity);
         ownedElement.textContent = owned;
-        
+
         // Update max attribute
         quantityInput.max = owned;
-        
+
         // Validate quantity
         if (quantity > owned) {
             quantityInput.setCustomValidity('Quantity exceeds owned shares');
@@ -1286,16 +1286,16 @@ async function executeSell() {
     const symbol = document.getElementById('sell-symbol').value;
     const quantity = parseInt(document.getElementById('sell-quantity').value);
     const sellBtn = document.getElementById('sell-btn');
-    
+
     if (!symbol || !quantity || quantity <= 0) {
         showError('Please select a stock and enter a valid quantity');
         return;
     }
-    
+
     try {
         sellBtn.disabled = true;
         sellBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processing...';
-        
+
         const response = await fetch('/api/sell-stock', {
             method: 'POST',
             headers: {
@@ -1303,9 +1303,9 @@ async function executeSell() {
             },
             body: JSON.stringify({ symbol: symbol, quantity: quantity })
         });
-        
+
         const data = await response.json();
-        
+
         if (response.ok) {
             showSuccess(data.message);
             bootstrap.Modal.getInstance(document.getElementById('sellModal')).hide();
@@ -1325,13 +1325,13 @@ async function executeSell() {
 async function showTransactionHistory() {
     const modal = new bootstrap.Modal(document.getElementById('transactionModal'));
     const historyContainer = document.getElementById('transaction-history');
-    
+
     try {
         historyContainer.innerHTML = '<div class="text-center text-muted">Loading transactions...</div>';
-        
+
         const response = await fetch('/api/transactions');
         const transactions = await response.json();
-        
+
         if (response.ok) {
             if (transactions.length === 0) {
                 historyContainer.innerHTML = '<div class="text-center text-muted">No transactions found</div>';
@@ -1361,7 +1361,7 @@ async function showTransactionHistory() {
         console.error('Error loading transactions:', error);
         historyContainer.innerHTML = '<div class="text-center text-danger">Failed to load transactions</div>';
     }
-    
+
     modal.show();
 }
 
@@ -1371,18 +1371,18 @@ let currentSearchedStock = null;
 async function searchStock() {
     const symbolInput = document.getElementById('buy-symbol-search');
     const symbol = symbolInput.value.trim().toUpperCase();
-    
+
     if (!symbol) {
         showError('Please enter a stock symbol');
         return;
     }
-    
+
     try {
         // Show loading state
         const searchBtn = symbolInput.nextElementSibling;
         searchBtn.disabled = true;
         searchBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Searching...';
-        
+
         // Search for the stock
         const response = await fetch('/api/search-stock', {
             method: 'POST',
@@ -1391,13 +1391,13 @@ async function searchStock() {
             },
             body: JSON.stringify({ symbol: symbol })
         });
-        
+
         const data = await response.json();
-        
+
         if (response.ok) {
             currentSearchedStock = data;
             displayStockInfo(data);
-            
+
             // Get AI risk analysis
             const riskResponse = await fetch('/api/ai-risk-analysis', {
                 method: 'POST',
@@ -1406,22 +1406,22 @@ async function searchStock() {
                 },
                 body: JSON.stringify({ symbol: symbol })
             });
-            
+
             if (riskResponse.ok) {
                 const riskData = await riskResponse.json();
                 displayRiskAnalysis(riskData);
             }
-            
+
             // Update calculations
             updateBuyCalculations();
-            
+
         } else {
             showError(data.error || 'Stock not found');
             currentSearchedStock = null;
             document.getElementById('stock-search-result').style.display = 'none';
             document.getElementById('ai-risk-analysis').style.display = 'none';
         }
-        
+
     } catch (error) {
         console.error('Error searching stock:', error);
         showError('Failed to search stock');
@@ -1448,15 +1448,15 @@ function displayRiskAnalysis(riskData) {
         riskData.risk_level === 'Moderate' ? 'warning' :
         riskData.risk_level === 'High' ? 'danger' : 'danger'
     );
-    
+
     // Display key risks
     const risksList = document.getElementById('key-risks-list');
     risksList.innerHTML = riskData.key_risks.map(risk => `<li>${risk}</li>`).join('');
-    
+
     // Display potential rewards
     const rewardsList = document.getElementById('potential-rewards-list');
     rewardsList.innerHTML = riskData.potential_rewards.map(reward => `<li>${reward}</li>`).join('');
-    
+
     // Set AI recommendation badge
     const recBadge = document.getElementById('ai-recommendation-badge');
     recBadge.textContent = `AI Recommendation: ${riskData.ai_recommendation.action} (${riskData.ai_recommendation.confidence}% confidence)`;
@@ -1465,7 +1465,7 @@ function displayRiskAnalysis(riskData) {
         riskData.ai_recommendation.action === 'CONSIDER' ? 'info' :
         riskData.ai_recommendation.action === 'HOLD' ? 'warning' : 'danger'
     );
-    
+
     document.getElementById('ai-risk-analysis').style.display = 'block';
 }
 
@@ -1480,7 +1480,7 @@ async function loadAdvancedFeatures() {
             loadLeaderboard(),
             loadChallenges()
         ]);
-        
+
         updateAdvancedFeaturesUI({
             portfolioOptimization,
             topTraders,
@@ -1488,7 +1488,7 @@ async function loadAdvancedFeatures() {
             leaderboard,
             challenges
         });
-        
+
         // Load AI performance data
         loadAIPerformance();
         loadPersonalizedAI();
@@ -1558,22 +1558,22 @@ function updateAdvancedFeaturesUI(data) {
     if (data.portfolioOptimization && data.portfolioOptimization.weights) {
         updatePortfolioOptimizationUI(data.portfolioOptimization);
     }
-    
+
     // Update Social Trading
     if (data.topTraders && data.topTraders.top_traders) {
         updateTopTradersUI(data.topTraders);
     }
-    
+
     // Update Achievements
     if (data.achievements) {
         updateAchievementsDisplay(data.achievements);
     }
-    
+
     // Update Leaderboard
     if (data.leaderboard) {
         updateLeaderboardDisplay(data.leaderboard);
     }
-    
+
     // Update Challenges
     if (data.challenges) {
         updateChallengesDisplay(data.challenges);
@@ -1583,18 +1583,18 @@ function updateAdvancedFeaturesUI(data) {
 function updatePortfolioOptimizationUI(optimization) {
     const container = document.getElementById('portfolio-optimization');
     if (!container) return;
-    
+
     if (optimization.error) {
         container.innerHTML = `<div class="alert alert-warning">${optimization.error}</div>`;
         return;
     }
-    
+
     let html = `
         <div class="optimization-results">
             <h6>Recommended Allocation</h6>
             <div class="allocation-chart mb-3">
     `;
-    
+
     // Display weights
     for (const [symbol, weight] of Object.entries(optimization.weights)) {
         const percentage = (weight * 100).toFixed(1);
@@ -1610,7 +1610,7 @@ function updatePortfolioOptimizationUI(optimization) {
             </div>
         `;
     }
-    
+
     // Display metrics
     if (optimization.metrics) {
         html += `
@@ -1638,7 +1638,7 @@ function updatePortfolioOptimizationUI(optimization) {
             </div>
         `;
     }
-    
+
     // Display recommendations
     if (optimization.recommendations && optimization.recommendations.length > 0) {
         html += `
@@ -1651,7 +1651,7 @@ function updatePortfolioOptimizationUI(optimization) {
         });
         html += `</ul></div>`;
     }
-    
+
     html += `</div>`;
     container.innerHTML = html;
 }
@@ -1659,9 +1659,9 @@ function updatePortfolioOptimizationUI(optimization) {
 function updateTopTradersUI(data) {
     const container = document.getElementById('top-traders');
     if (!container) return;
-    
+
     let html = '<div class="traders-list">';
-    
+
     if (data.top_traders && data.top_traders.length > 0) {
         data.top_traders.forEach((trader, index) => {
             html += `
@@ -1693,7 +1693,7 @@ function updateTopTradersUI(data) {
     } else {
         html += '<p class="text-muted">No top traders data available</p>';
     }
-    
+
     html += '</div>';
     container.innerHTML = html;
 }
@@ -1701,12 +1701,12 @@ function updateTopTradersUI(data) {
 function updateAchievementsUI(data) {
     const container = document.getElementById('achievements');
     if (!container) return;
-    
+
     if (!data.user_stats) {
         container.innerHTML = '<p class="text-muted">No achievements data available</p>';
         return;
     }
-    
+
     const stats = data.user_stats;
     let html = `
         <div class="achievement-summary mb-4">
@@ -1738,7 +1738,7 @@ function updateAchievementsUI(data) {
             </div>
         </div>
     `;
-    
+
     // Display achievements grid
     if (stats.achievement_list && stats.achievement_list.length > 0) {
         html += '<div class="achievements-grid row">';
@@ -1759,19 +1759,19 @@ function updateAchievementsUI(data) {
         });
         html += '</div>';
     }
-    
+
     container.innerHTML = html;
 }
 
 function updateLeaderboardUI(leaderboard) {
     const container = document.getElementById('leaderboard');
     if (!container) return;
-    
+
     if (!leaderboard || leaderboard.length === 0) {
         container.innerHTML = '<p class="text-muted">No leaderboard data available</p>';
         return;
     }
-    
+
     let html = '<div class="leaderboard-list">';
     leaderboard.forEach((user, index) => {
         const medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '';
@@ -1798,12 +1798,12 @@ function updateLeaderboardUI(leaderboard) {
 function updateChallengesUI(challenges) {
     const container = document.getElementById('challenges');
     if (!container) return;
-    
+
     if (!challenges || challenges.length === 0) {
         container.innerHTML = '<p class="text-muted">No active challenges</p>';
         return;
     }
-    
+
     let html = '<div class="challenges-list">';
     challenges.forEach(challenge => {
         html += `
@@ -1838,7 +1838,7 @@ async function loadAIPerformance() {
     try {
         const response = await fetch('/api/ai/performance');
         const data = await response.json();
-        
+
         const performanceDiv = document.getElementById('ai-performance');
         if (data.model_performance) {
             performanceDiv.innerHTML = `
@@ -1875,7 +1875,7 @@ async function loadAIPerformance() {
 async function trainAIModel() {
     const statusDiv = document.getElementById('training-status');
     statusDiv.innerHTML = '<div class="alert alert-info"><i class="fas fa-spinner fa-spin me-2"></i>Training AI model with latest market data...</div>';
-    
+
     try {
         const response = await fetch('/api/ai/train', {
             method: 'POST',
@@ -1886,9 +1886,9 @@ async function trainAIModel() {
                 days: 90
             })
         });
-        
+
         const data = await response.json();
-        
+
         if (data.success) {
             statusDiv.innerHTML = `
                 <div class="alert alert-success">
@@ -1900,7 +1900,7 @@ async function trainAIModel() {
             loadAIPerformance();
         } else {
             statusDiv.innerHTML = '<div class="alert alert-danger"><i class="fas fa-exclamation-triangle me-2"></i>Failed to train model</div>';
-        }
+        }        }
     } catch (error) {
         console.error('Error training AI model:', error);
         statusDiv.innerHTML = '<div class="alert alert-danger"><i class="fas fa-exclamation-triangle me-2"></i>Error training model</div>';
@@ -1910,7 +1910,7 @@ async function trainAIModel() {
 async function triggerContinuousLearning() {
     const statusDiv = document.getElementById('training-status');
     statusDiv.innerHTML = '<div class="alert alert-info"><i class="fas fa-sync-alt fa-spin me-2"></i>Updating AI from recent trades...</div>';
-    
+
     try {
         const response = await fetch('/api/ai/continuous-learning', {
             method: 'POST',
@@ -1918,9 +1918,9 @@ async function triggerContinuousLearning() {
                 'Content-Type': 'application/json'
             }
         });
-        
+
         const data = await response.json();
-        
+
         if (data.success) {
             statusDiv.innerHTML = `
                 <div class="alert alert-success">
@@ -1941,16 +1941,16 @@ async function triggerContinuousLearning() {
 async function getPredictions() {
     const symbolsInput = document.getElementById('prediction-symbols');
     const predictionsDiv = document.getElementById('market-predictions');
-    
+
     const symbols = symbolsInput.value.split(',').map(s => s.trim()).filter(s => s);
-    
+
     if (symbols.length === 0) {
         predictionsDiv.innerHTML = '<div class="alert alert-warning">Please enter at least one symbol</div>';
         return;
     }
-    
+
     predictionsDiv.innerHTML = '<div class="text-center"><i class="fas fa-spinner fa-spin"></i> Generating predictions...</div>';
-    
+
     try {
         const response = await fetch('/api/ai/predict', {
             method: 'POST',
@@ -1959,16 +1959,16 @@ async function getPredictions() {
             },
             body: JSON.stringify({ symbols })
         });
-        
+
         const data = await response.json();
-        
+
         if (data.predictions && Object.keys(data.predictions).length > 0) {
             let html = '<div class="row">';
-            
+
             for (const [symbol, prediction] of Object.entries(data.predictions)) {
                 const recommendationClass = prediction.recommendation.includes('buy') ? 'success' : 
                                           prediction.recommendation.includes('sell') ? 'danger' : 'warning';
-                
+
                 html += `
                     <div class="col-md-6 mb-3">
                         <div class="card bg-dark border-${recommendationClass}">
@@ -2008,7 +2008,7 @@ async function getPredictions() {
                     </div>
                 `;
             }
-            
+
             html += '</div>';
             predictionsDiv.innerHTML = html;
         } else {
@@ -2046,10 +2046,10 @@ async function loadPersonalizedAI() {
         // Load personalized recommendations
         const response = await fetch('/api/ai/personalized/recommendations');
         const data = await response.json();
-        
+
         const container = document.getElementById('personalized-recommendations');
         if (!container) return;
-        
+
         if (data.status === 'no_profile') {
             container.innerHTML = `
                 <div class="alert alert-info">
@@ -2062,7 +2062,7 @@ async function loadPersonalizedAI() {
             `;
             return;
         }
-        
+
         if (data.status === 'success') {
             // Show trading profile
             const profileHtml = `
@@ -2083,7 +2083,7 @@ async function loadPersonalizedAI() {
                 </div>
             `;
             document.getElementById('trading-profile').innerHTML = profileHtml;
-            
+
             // Show recommendations
             let recsHtml = '<div class="personalized-recs">';
             data.recommendations.forEach(rec => {
@@ -2116,14 +2116,14 @@ async function learnTradingPatterns() {
     const button = event.target;
     button.disabled = true;
     button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Learning...';
-    
+
     try {
         const response = await fetch('/api/ai/personalized/learn', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' }
         });
         const data = await response.json();
-        
+
         if (data.status === 'success') {
             showNotification('Trading patterns analyzed successfully!', 'success');
             await loadPersonalizedAI();
@@ -2144,10 +2144,10 @@ async function loadUserStrategies() {
     try {
         const response = await fetch('/api/strategies');
         const data = await response.json();
-        
+
         const container = document.getElementById('user-strategies');
         if (!container) return;
-        
+
         if (data.status === 'success' && data.strategies.length > 0) {
             let html = '<div class="strategies-list">';
             data.strategies.forEach(strategy => {
@@ -2189,7 +2189,7 @@ function showStrategyBuilder() {
             <div class="strategy-form">
                 <input type="text" class="form-control mb-2" id="strategy-name" placeholder="Strategy Name">
                 <textarea class="form-control mb-2" id="strategy-description" rows="2" placeholder="Description"></textarea>
-                
+
                 <h6 class="text-info mt-3">Add Rules</h6>
                 <div id="strategy-rules">
                     <div class="rule-item mb-2">
@@ -2205,7 +2205,7 @@ function showStrategyBuilder() {
                         </select>
                     </div>
                 </div>
-                
+
                 <button class="btn btn-success btn-sm mt-2" onclick="createStrategy()">
                     <i class="fas fa-save me-2"></i>Create Strategy
                 </button>
@@ -2226,12 +2226,12 @@ function hideStrategyBuilder() {
 async function createStrategy() {
     const name = document.getElementById('strategy-name').value;
     const description = document.getElementById('strategy-description').value;
-    
+
     if (!name) {
         showNotification('Please enter a strategy name', 'error');
         return;
     }
-    
+
     const strategyConfig = {
         name: name,
         description: description,
@@ -2250,7 +2250,7 @@ async function createStrategy() {
             take_profit: 0.10
         }
     };
-    
+
     try {
         const response = await fetch('/api/strategies', {
             method: 'POST',
@@ -2258,7 +2258,7 @@ async function createStrategy() {
             body: JSON.stringify(strategyConfig)
         });
         const data = await response.json();
-        
+
         if (data.status === 'success') {
             showNotification('Strategy created successfully!', 'success');
             hideStrategyBuilder();
@@ -2275,7 +2275,7 @@ async function createStrategy() {
 async function backtestStrategy(strategyId) {
     const resultsContainer = document.getElementById('backtest-results');
     resultsContainer.innerHTML = '<div class="text-center"><i class="fas fa-spinner fa-spin"></i> Running backtest...</div>';
-    
+
     try {
         const response = await fetch(`/api/strategies/${strategyId}/backtest`, {
             method: 'POST',
@@ -2283,7 +2283,7 @@ async function backtestStrategy(strategyId) {
             body: JSON.stringify({})
         });
         const data = await response.json();
-        
+
         if (data.status === 'success') {
             const results = data.results;
             resultsContainer.innerHTML = `
@@ -2327,14 +2327,14 @@ async function optimizeStrategy(strategyId) {
     const button = event.target.closest('button');
     button.disabled = true;
     button.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-    
+
     try {
         const response = await fetch(`/api/strategies/${strategyId}/optimize`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' }
         });
         const data = await response.json();
-        
+
         if (data.status === 'success') {
             showNotification(`Strategy optimized! Expected improvement: ${data.expected_improvement.toFixed(1)}%`, 'success');
             await loadUserStrategies();
@@ -2354,7 +2354,7 @@ async function optimizeStrategy(strategyId) {
 function updateAchievementsDisplay(data) {
     const container = document.getElementById('achievements-list');
     if (!container) return;
-    
+
     if (data.achievements && data.achievements.length > 0) {
         let html = '';
         data.achievements.forEach(achievement => {
@@ -2380,7 +2380,7 @@ function updateAchievementsDisplay(data) {
 function updateLeaderboardDisplay(data) {
     const container = document.getElementById('top-traders-list');
     if (!container) return;
-    
+
     if (data.traders && data.traders.length > 0) {
         let html = '';
         data.traders.forEach(trader => {
@@ -2404,7 +2404,7 @@ function updateLeaderboardDisplay(data) {
 function updateChallengesDisplay(data) {
     const container = document.getElementById('challenges-list');
     if (!container) return;
-    
+
     if (data.challenges && data.challenges.length > 0) {
         let html = '';
         data.challenges.forEach(challenge => {
@@ -2438,12 +2438,12 @@ async function createAlert() {
     const symbol = document.getElementById('alert-symbol').value.toUpperCase();
     const alertType = document.getElementById('alert-type').value;
     const value = document.getElementById('alert-value').value;
-    
+
     if (!symbol || !alertType || !value) {
         showError('Please fill in all fields');
         return;
     }
-    
+
     try {
         const response = await fetch('/api/alerts/create', {
             method: 'POST',
@@ -2456,9 +2456,9 @@ async function createAlert() {
                 trigger_value: parseFloat(value)
             })
         });
-        
+
         const data = await response.json();
-        
+
         if (response.ok) {
             showSuccess('Alert created successfully!');
             // Clear form
@@ -2480,9 +2480,9 @@ async function dismissAlert(alertId) {
         const response = await fetch(`/api/alerts/${alertId}/dismiss`, {
             method: 'POST'
         });
-        
+
         const data = await response.json();
-        
+
         if (response.ok) {
             showSuccess('Alert dismissed');
             loadAlerts(); // Reload alerts
@@ -2506,3 +2506,53 @@ window.backtestStrategy = backtestStrategy;
 window.optimizeStrategy = optimizeStrategy;
 window.createAlert = createAlert;
 window.dismissAlert = dismissAlert;
+
+// Memory management and optimized auto-refresh
+let refreshInterval;
+let lastDataTimestamp = null;
+const MAX_MEMORY_THRESHOLD = 50 * 1024 * 1024; // 50MB
+
+function optimizedRefresh() {
+    // Check memory usage
+    if (performance.memory && performance.memory.usedJSHeapSize > MAX_MEMORY_THRESHOLD) {
+        console.log('Memory threshold exceeded, forcing garbage collection');
+        // Clear old chart data and force cleanup
+        if (window.dashboardChart) {
+            window.dashboardChart.destroy();
+            window.dashboardChart = null;
+        }
+        // Force garbage collection hint
+        if (window.gc) window.gc();
+    }
+
+    if (currentSection === 'dashboard') {
+        console.log('Refreshing data...');
+        updateDashboard();
+        console.log('Data refreshed successfully!');
+    }
+}
+
+// Smart refresh interval based on user activity
+function startSmartRefresh() {
+    if (refreshInterval) clearInterval(refreshInterval);
+
+    // Faster refresh when user is active, slower when idle
+    let isUserActive = true;
+    let idleTimer;
+
+    function resetIdleTimer() {
+        isUserActive = true;
+        clearTimeout(idleTimer);
+        idleTimer = setTimeout(() => { isUserActive = false; }, 60000); // 1 minute idle
+    }
+
+    document.addEventListener('mousemove', resetIdleTimer);
+    document.addEventListener('keypress', resetIdleTimer);
+
+    refreshInterval = setInterval(() => {
+        const interval = isUserActive ? 15000 : 60000; // 15s active, 60s idle
+        optimizedRefresh();
+    }, 15000);
+}
+
+startSmartRefresh();

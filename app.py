@@ -38,6 +38,13 @@ app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
 # initialize the app with the extension
 db.init_app(app)
 
+# Initialize WebSocket support
+try:
+    from websocket_service import init_websocket
+    socketio = init_websocket(app)
+except ImportError:
+    socketio = None
+
 # Initialize caching for better performance
 cache = Cache(app, config={'CACHE_TYPE': 'simple'})
 
