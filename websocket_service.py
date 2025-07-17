@@ -1,10 +1,11 @@
 
-import asyncio
 import json
 import logging
+import time
 from datetime import datetime
 from flask_socketio import SocketIO, emit, join_room, leave_room
 from flask_login import current_user
+from flask import request
 from data_service import DataService
 from ai_insights import AIInsightsEngine
 
@@ -131,11 +132,11 @@ class WebSocketService:
                                     'timestamp': datetime.now().isoformat()
                                 }, room=f'user_{user_id}')
                     
-                    asyncio.sleep(5)  # Update every 5 seconds
+                    time.sleep(5)  # Update every 5 seconds
                     
                 except Exception as e:
                     logger.error(f"Error in market data stream: {e}")
-                    asyncio.sleep(10)  # Wait longer on error
+                    time.sleep(10)  # Wait longer on error
         
         # Start background thread
         import threading
