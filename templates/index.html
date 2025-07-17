@@ -882,4 +882,24 @@
 <script src="{{ url_for('static', filename='js/analytics.js') }}?v={{ range(1000, 9999) | random }}"></script>
 <script src="{{ url_for('static', filename='js/dashboard.js') }}?v={{ range(1000, 9999) | random }}"></script>
 <script src="{{ url_for('static', filename='js/ai_assistant.js') }}?v={{ range(1000, 9999) | random }}"></script>
+
+<!-- Fix for dashboard showing on all tabs -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Hide all sections initially
+    const sections = ['dashboard', 'stocks', 'alerts', 'portfolio', 'advanced'];
+    sections.forEach(section => {
+        const element = document.getElementById(section + '-section');
+        if (element) {
+            element.style.display = 'none';
+        }
+    });
+    
+    // Show only dashboard section on initial load
+    const dashboardSection = document.getElementById('dashboard-section');
+    if (dashboardSection) {
+        dashboardSection.style.display = 'block';
+    }
+});
+</script>
 {% endblock %}
