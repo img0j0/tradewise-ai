@@ -118,7 +118,7 @@ class WebSocketService:
                     self.socketio.emit('market_overview_update', {
                         'data': market_overview,
                         'timestamp': datetime.now().isoformat()
-                    }, broadcast=True)
+                    }, namespace='/')
                     
                     # Update subscribed stocks
                     for user_id, connection in self.active_connections.items():
