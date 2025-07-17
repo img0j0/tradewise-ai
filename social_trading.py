@@ -16,7 +16,7 @@ class SocialTradingManager:
     """Manages social trading features including trader rankings and copy trading"""
     
     def __init__(self):
-        self.min_trades_for_ranking = 10
+        self.min_trades_for_ranking = 1  # Lowered for demonstration
         self.performance_window_days = 30
         
     def get_top_traders(self, limit=10, timeframe='month'):

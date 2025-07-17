@@ -1403,7 +1403,8 @@ def optimize_portfolio():
             symbols = [p.symbol for p in portfolio]
         
         if not symbols:
-            return jsonify({'error': 'No stocks in portfolio to optimize'}), 400
+            # Use sample diversified portfolio if user has no holdings
+            symbols = ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'JPM', 'JNJ', 'PG', 'XOM']
         
         # Run portfolio optimization
         optimization_result = portfolio_optimizer.optimize_portfolio(
