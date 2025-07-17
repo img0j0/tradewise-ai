@@ -126,6 +126,16 @@ function showSection(sectionName) {
         selectedSection.style.display = 'block';
     }
     
+    // Update active nav link
+    document.querySelectorAll('.navbar-nav .nav-link').forEach(link => {
+        link.classList.remove('active');
+    });
+    
+    const activeLink = document.querySelector(`.navbar-nav .nav-link[href="#${sectionName}"]`);
+    if (activeLink) {
+        activeLink.classList.add('active');
+    }
+    
     currentSection = sectionName;
     
     // Load section-specific data
@@ -611,9 +621,15 @@ function updateStocksList(stocks) {
 
 function updateAlertsList(alerts) {
     const container = document.getElementById('alerts-list');
+    const countBadge = document.getElementById('active-alerts-count');
+    
+    // Update active alerts count
+    if (countBadge) {
+        countBadge.textContent = alerts ? alerts.length : 0;
+    }
     
     if (!alerts || alerts.length === 0) {
-        container.innerHTML = '<div class="text-center text-muted">No alerts found</div>';
+        container.innerHTML = '<div class="text-center text-muted">No alerts found. Create your first personalized alert above!</div>';
         return;
     }
     
@@ -2401,6 +2417,68 @@ function updateChallengesDisplay(data) {
     }
 }
 
+// Alert Management Functions
+async function createAlert() {
+    const symbol = document.getElementById('alert-symbol').value.toUpperCase();
+    const alertType = document.getElementById('alert-type').value;
+    const value = document.getElementById('alert-value').value;
+    
+    if (!symbol || !alertType || !value) {
+        showError('Please fill in all fields');
+        return;
+    }
+    
+    try {
+        const response = await fetch('/api/alerts/create', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                symbol: symbol,
+                alert_type: alertType,
+                trigger_value: parseFloat(value)
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+            showSuccess('Alert created successfully!');
+            // Clear form
+            document.getElementById('alert-symbol').value = '';
+            document.getElementById('alert-value').value = '';
+            // Reload alerts
+            loadAlerts();
+        } else {
+            showError(data.error || 'Failed to create alert');
+        }
+    } catch (error) {
+        console.error('Error creating alert:', error);
+        showError('Failed to create alert');
+    }
+}
+
+async function dismissAlert(alertId) {
+    try {
+        const response = await fetch(`/api/alerts/${alertId}/dismiss`, {
+            method: 'POST'
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+            showSuccess('Alert dismissed');
+            loadAlerts(); // Reload alerts
+        } else {
+            showError(data.error || 'Failed to dismiss alert');
+        }
+    } catch (error) {
+        console.error('Error dismissing alert:', error);
+        showError('Failed to dismiss alert');
+    }
+}
+
 // Export new functions
 window.loadPersonalizedAI = loadPersonalizedAI;
 window.learnTradingPatterns = learnTradingPatterns;
@@ -2410,3 +2488,5 @@ window.hideStrategyBuilder = hideStrategyBuilder;
 window.createStrategy = createStrategy;
 window.backtestStrategy = backtestStrategy;
 window.optimizeStrategy = optimizeStrategy;
+window.createAlert = createAlert;
+window.dismissAlert = dismissAlert;

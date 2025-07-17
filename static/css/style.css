@@ -1799,3 +1799,44 @@ body {
 .challenge-footer .participants {
     color: rgba(255, 255, 255, 0.6);
 }
+
+/* Create Alert Card */
+.create-alert-card {
+    background: linear-gradient(135deg, #1e2a3a 0%, #1a2332 100%);
+    border: 2px solid #4a9eff;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(74, 158, 255, 0.2);
+    margin-bottom: 20px;
+}
+
+.create-alert-card .card-header {
+    background: linear-gradient(135deg, #4a9eff 0%, #0d6efd 100%);
+    border-bottom: 2px solid #4a9eff;
+    color: #ffffff;
+}
+
+.create-alert-card .card-header h5 {
+    color: #ffffff !important;
+    font-weight: 700;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Trading Alerts Card */
+.trading-alerts-card {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border: 1px solid #2d3748;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.trading-alerts-card .card-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-bottom: 1px solid #2d3748;
+    color: #ffffff;
+}
+
+.trading-alerts-card .card-header h5 {
+    color: #ffffff !important;
+    font-weight: 700;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}

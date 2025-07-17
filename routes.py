@@ -169,6 +169,84 @@ def get_alerts():
         logger.error(f"Error getting alerts: {e}")
         return jsonify({'error': 'Failed to load alerts'}), 500
 
+@app.route('/api/alerts/create', methods=['POST'])
+@login_required
+def create_alert():
+    """Create a personalized alert"""
+    try:
+        data = request.get_json()
+        
+        # Validate required fields
+        required_fields = ['symbol', 'alert_type', 'trigger_value']
+        if not all(field in data for field in required_fields):
+            return jsonify({'error': 'Missing required fields'}), 400
+        
+        # Get current stock data to generate meaningful message
+        stock = data_service.get_stock_by_symbol(data['symbol'])
+        if not stock:
+            # Try real-time data
+            try:
+                stock = stock_search_service.search_stock(data['symbol'])
+                if not stock:
+                    return jsonify({'error': 'Stock not found'}), 404
+            except:
+                return jsonify({'error': 'Stock not found'}), 404
+        
+        # Create alert message based on type
+        alert_messages = {
+            'price_above': f"Alert: {data['symbol']} rises above ${data['trigger_value']}",
+            'price_below': f"Alert: {data['symbol']} falls below ${data['trigger_value']}",
+            'percent_change': f"Alert: {data['symbol']} moves {data['trigger_value']}% from current price",
+            'volume_spike': f"Alert: {data['symbol']} volume exceeds {data['trigger_value']}x average"
+        }
+        
+        message = alert_messages.get(data['alert_type'], f"Custom alert for {data['symbol']}")
+        
+        # Create alert
+        alert = Alert(
+            user_id=current_user.id,
+            symbol=data['symbol'].upper(),
+            alert_type=data['alert_type'],
+            message=message,
+            confidence_score=50.0,  # Default confidence for user-created alerts
+            is_active=True
+        )
+        
+        db.session.add(alert)
+        db.session.commit()
+        
+        return jsonify({
+            'alert': alert.to_dict(),
+            'message': 'Alert created successfully'
+        })
+        
+    except Exception as e:
+        logger.error(f"Error creating alert: {e}")
+        db.session.rollback()
+        return jsonify({'error': 'Failed to create alert'}), 500
+
+@app.route('/api/alerts/<int:alert_id>/dismiss', methods=['POST'])
+@login_required
+def dismiss_alert(alert_id):
+    """Dismiss an alert"""
+    try:
+        alert = Alert.query.filter_by(id=alert_id, user_id=current_user.id).first()
+        
+        if not alert:
+            return jsonify({'error': 'Alert not found'}), 404
+        
+        alert.is_active = False
+        db.session.commit()
+        
+        return jsonify({
+            'message': 'Alert dismissed successfully'
+        })
+        
+    except Exception as e:
+        logger.error(f"Error dismissing alert: {e}")
+        db.session.rollback()
+        return jsonify({'error': 'Failed to dismiss alert'}), 500
+
 @app.route('/api/trade', methods=['POST'])
 @login_required
 def execute_trade():
