@@ -1,0 +1,200 @@
+<!-- Simplified Advanced Section - Focus on 2 Core Features -->
+<div id="advanced-section" style="display: none;">
+    <!-- Simple Header -->
+    <div class="mb-4">
+        <h2 class="text-white mb-2">
+            <i class="fas fa-rocket me-2 text-success"></i>
+            Advanced AI Features
+        </h2>
+        <p class="text-muted">Two powerful AI tools to boost your investment success</p>
+    </div>
+    
+    <!-- Main Feature Cards -->
+    <div class="row">
+        <!-- Feature 1: Personal AI Investment Coach -->
+        <div class="col-lg-6 mb-4">
+            <div class="card bg-gradient-primary h-100">
+                <div class="card-header border-0 bg-transparent">
+                    <h4 class="mb-0 text-white">
+                        <i class="fas fa-user-tie me-2"></i>
+                        Personal AI Investment Coach
+                    </h4>
+                    <p class="text-white-50 mb-0">AI that learns your style and gives personalized guidance</p>
+                </div>
+                <div class="card-body">
+                    <!-- Your Investment Profile -->
+                    <div class="mb-4">
+                        <h6 class="text-warning mb-3">
+                            <i class="fas fa-chart-line me-2"></i>Your Investment Profile
+                        </h6>
+                        <div id="trading-profile" class="profile-display bg-dark p-3 rounded">
+                            <div class="text-center text-muted">
+                                <i class="fas fa-spinner fa-spin me-2"></i>Analyzing your patterns...
+                            </div>
+                        </div>
+                        <button class="btn btn-sm btn-outline-light mt-3" onclick="learnTradingPatterns()">
+                            <i class="fas fa-sync-alt me-2"></i>Update Profile from Trades
+                        </button>
+                    </div>
+                    
+                    <!-- AI Recommendations -->
+                    <div class="mb-4">
+                        <h6 class="text-success mb-3">
+                            <i class="fas fa-lightbulb me-2"></i>Personalized Recommendations
+                        </h6>
+                        <div id="personalized-recommendations" class="recommendations-display bg-dark p-3 rounded">
+                            <div class="text-center text-muted">
+                                <i class="fas fa-spinner fa-spin me-2"></i>Generating insights...
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- AI Performance -->
+                    <div class="ai-performance-compact">
+                        <h6 class="text-info mb-3">
+                            <i class="fas fa-brain me-2"></i>AI Intelligence
+                        </h6>
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <div class="text-center">
+                                    <div class="badge bg-success" id="price-accuracy">-</div>
+                                    <small class="text-muted d-block">Accuracy</small>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="text-center">
+                                    <div class="badge bg-secondary" id="training-samples">-</div>
+                                    <small class="text-muted d-block">Data Points</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <button class="btn btn-sm btn-success me-2" onclick="trainAIModel()">
+                                <i class="fas fa-graduation-cap me-1"></i>Train AI
+                            </button>
+                            <button class="btn btn-sm btn-info" onclick="triggerContinuousLearning()">
+                                <i class="fas fa-sync-alt me-1"></i>Learn More
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Feature 2: AI Strategy Builder -->
+        <div class="col-lg-6 mb-4">
+            <div class="card bg-gradient-success h-100">
+                <div class="card-header border-0 bg-transparent">
+                    <h4 class="mb-0 text-white">
+                        <i class="fas fa-magic me-2"></i>
+                        AI Strategy Builder
+                    </h4>
+                    <p class="text-white-50 mb-0">Create, test, and optimize trading strategies with AI</p>
+                </div>
+                <div class="card-body">
+                    <!-- Strategy Creation -->
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="text-warning mb-0">
+                                <i class="fas fa-cogs me-2"></i>Strategy Workshop
+                            </h6>
+                            <button class="btn btn-warning btn-sm" onclick="showStrategyBuilder()">
+                                <i class="fas fa-plus-circle me-2"></i>Create Strategy
+                            </button>
+                        </div>
+                        
+                        <div id="strategy-builder-form" style="display: none;" class="mb-3">
+                            <!-- Strategy builder form will be populated here -->
+                        </div>
+                    </div>
+                    
+                    <!-- Your Strategies -->
+                    <div class="mb-4">
+                        <h6 class="text-primary mb-3">
+                            <i class="fas fa-list me-2"></i>Your Strategies
+                        </h6>
+                        <div id="user-strategies" class="strategy-list bg-dark p-3 rounded">
+                            <div class="text-center text-muted">
+                                <i class="fas fa-spinner fa-spin me-2"></i>Loading strategies...
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Performance Results -->
+                    <div class="mb-4">
+                        <h6 class="text-success mb-3">
+                            <i class="fas fa-chart-area me-2"></i>Performance Test Results
+                        </h6>
+                        <div id="backtest-results" class="backtest-display bg-dark p-3 rounded">
+                            <div class="text-center text-muted">
+                                <i class="fas fa-info-circle me-2"></i>Select a strategy to see results
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Quick AI Predictions -->
+                    <div class="ai-predictions-compact">
+                        <h6 class="text-info mb-3">
+                            <i class="fas fa-crystal-ball me-2"></i>Quick AI Analysis
+                        </h6>
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control" id="prediction-symbol" 
+                                   placeholder="Enter stock symbol">
+                            <button class="btn btn-info" onclick="getPredictions()">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                        <div id="market-predictions" class="predictions-display bg-dark p-2 rounded">
+                            <div class="text-center text-muted">
+                                <i class="fas fa-chart-line me-2"></i>
+                                Enter symbol for analysis
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.ai-performance-compact .metric-compact {
+    text-align: center;
+    padding: 0.5rem;
+}
+
+.ai-performance-compact .badge {
+    font-size: 0.9rem;
+    padding: 0.5rem 0.75rem;
+    display: block;
+    margin-bottom: 0.25rem;
+}
+
+.strategy-list, .backtest-display, .predictions-display, .profile-display, .recommendations-display {
+    min-height: 80px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.card.bg-gradient-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.card.bg-gradient-success {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+}
+
+.feature-icon-wrapper {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.feature-icon-wrapper i {
+    font-size: 1.2rem;
+}
+</style>
