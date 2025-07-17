@@ -350,6 +350,7 @@ def generate_trading_alerts():
                 
                 if not existing_alert:
                     alert = Alert(
+                        user_id=current_user.id,
                         symbol=stock['symbol'],
                         alert_type='buy',
                         message=f"Strong buy signal for {stock['symbol']} - {insights['analysis'][:100]}...",
@@ -367,6 +368,7 @@ def generate_trading_alerts():
                 
                 if not existing_alert:
                     alert = Alert(
+                        user_id=current_user.id,
                         symbol=stock['symbol'],
                         alert_type='sell',
                         message=f"Sell signal for {stock['symbol']} - {insights['analysis'][:100]}...",
@@ -383,8 +385,8 @@ def generate_trading_alerts():
 def calculate_portfolio_performance():
     """Calculate portfolio performance metrics"""
     try:
-        # Filter trades by current user
-        trades = Trade.query.filter_by(user_id=current_user.id).all()
+        # Get current user's trades
+        trades = current_user.trades.all() if current_user.is_authenticated else []
         
         # Also get portfolio holdings for unrealized P&L
         portfolio_items = Portfolio.query.filter_by(user_id=current_user.id).all()
