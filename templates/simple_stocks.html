@@ -22,13 +22,13 @@
                                 </span>
                                 <input 
                                     type="text" 
-                                    class="form-control border-0" 
+                                    class="form-control border-0 search-interactive focus-indicator" 
                                     id="stock-search-input" 
                                     placeholder="Enter stock symbol (e.g., AAPL, TSLA, MSFT)"
                                     onkeypress="if(event.key==='Enter') searchStockAI()"
                                 >
                                 <button 
-                                    class="btn btn-success btn-lg px-4" 
+                                    class="btn btn-success btn-lg px-4 btn-interactive" 
                                     onclick="searchStockAI()"
                                     id="search-btn"
                                 >
@@ -41,11 +41,11 @@
                     <!-- Quick Stock Suggestions -->
                     <div class="mt-4">
                         <small class="text-muted">Popular: </small>
-                        <button class="btn btn-outline-light btn-sm me-2" onclick="quickSearch('AAPL')">AAPL</button>
-                        <button class="btn btn-outline-light btn-sm me-2" onclick="quickSearch('TSLA')">TSLA</button>
-                        <button class="btn btn-outline-light btn-sm me-2" onclick="quickSearch('MSFT')">MSFT</button>
-                        <button class="btn btn-outline-light btn-sm me-2" onclick="quickSearch('NVDA')">NVDA</button>
-                        <button class="btn btn-outline-light btn-sm me-2" onclick="quickSearch('GOOGL')">GOOGL</button>
+                        <button class="btn btn-outline-light btn-sm me-2 btn-interactive" onclick="quickSearch('AAPL')">AAPL</button>
+                        <button class="btn btn-outline-light btn-sm me-2 btn-interactive" onclick="quickSearch('TSLA')">TSLA</button>
+                        <button class="btn btn-outline-light btn-sm me-2 btn-interactive" onclick="quickSearch('MSFT')">MSFT</button>
+                        <button class="btn btn-outline-light btn-sm me-2 btn-interactive" onclick="quickSearch('NVDA')">NVDA</button>
+                        <button class="btn btn-outline-light btn-sm me-2 btn-interactive" onclick="quickSearch('GOOGL')">GOOGL</button>
                     </div>
                 </div>
             </div>
@@ -67,9 +67,9 @@
                             </div>
                         </div>
                         <div class="col-md-6 text-md-end">
-                            <div class="h2 text-white mb-1" id="stock-price">$0.00</div>
+                            <div class="h2 text-white mb-1 counter-animated" id="stock-price" data-price="true">$0.00</div>
                             <div id="stock-change" class="h6">
-                                <span class="text-success">+0.00 (0.00%)</span>
+                                <span class="text-success counter-animated" data-price="true">+0.00 (0.00%)</span>
                             </div>
                         </div>
                     </div>
@@ -78,18 +78,18 @@
                     <div class="row g-3">
                         <!-- AI Recommendation -->
                         <div class="col-lg-4">
-                            <div class="ai-card bg-gradient-primary">
+                            <div class="ai-card bg-gradient-primary card-interactive ai-recommendation">
                                 <div class="ai-card-header">
                                     <i class="fas fa-robot"></i>
                                     <h5>AI Recommendation</h5>
                                 </div>
                                 <div class="ai-card-body">
                                     <div class="recommendation-badge" id="ai-recommendation">
-                                        <span class="badge bg-success">STRONG BUY</span>
+                                        <span class="badge bg-success badge-animated">STRONG BUY</span>
                                     </div>
                                     <div class="confidence-score mt-2">
                                         <small class="text-white-50">Confidence: </small>
-                                        <span class="text-white" id="ai-confidence">85%</span>
+                                        <span class="text-white counter-animated" id="ai-confidence">85%</span>
                                     </div>
                                     <p class="ai-insight mt-3" id="ai-insight">
                                         AI analysis in progress...
@@ -100,18 +100,18 @@
 
                         <!-- Risk Analysis -->
                         <div class="col-lg-4">
-                            <div class="ai-card bg-gradient-warning">
+                            <div class="ai-card bg-gradient-warning card-interactive ai-recommendation">
                                 <div class="ai-card-header">
                                     <i class="fas fa-shield-alt"></i>
                                     <h5>Risk Assessment</h5>
                                 </div>
                                 <div class="ai-card-body">
                                     <div class="risk-level" id="risk-level">
-                                        <span class="badge bg-warning">MODERATE</span>
+                                        <span class="badge bg-warning badge-animated">MODERATE</span>
                                     </div>
                                     <div class="risk-score mt-2">
                                         <small class="text-white-50">Risk Score: </small>
-                                        <span class="text-white" id="risk-score">6/10</span>
+                                        <span class="text-white counter-animated" id="risk-score">6/10</span>
                                     </div>
                                     <div class="risk-factors mt-3">
                                         <h6 class="text-white-50">Key Risks:</h6>
@@ -125,22 +125,22 @@
 
                         <!-- Price Prediction -->
                         <div class="col-lg-4">
-                            <div class="ai-card bg-gradient-success">
+                            <div class="ai-card bg-gradient-success card-interactive ai-recommendation">
                                 <div class="ai-card-header">
                                     <i class="fas fa-chart-line"></i>
                                     <h5>Price Target</h5>
                                 </div>
                                 <div class="ai-card-body">
                                     <div class="price-target">
-                                        <div class="target-price" id="target-price">$0.00</div>
+                                        <div class="target-price counter-animated" id="target-price" data-price="true">$0.00</div>
                                         <div class="target-range mt-2">
                                             <small class="text-white-50">Range: </small>
-                                            <span class="text-white" id="price-range">$0.00 - $0.00</span>
+                                            <span class="text-white counter-animated" id="price-range" data-price="true">$0.00 - $0.00</span>
                                         </div>
                                     </div>
                                     <div class="expected-return mt-3">
                                         <small class="text-white-50">Expected Return: </small>
-                                        <span class="text-white" id="expected-return">+0.00%</span>
+                                        <span class="text-white counter-animated" id="expected-return" data-price="true">+0.00%</span>
                                     </div>
                                 </div>
                             </div>

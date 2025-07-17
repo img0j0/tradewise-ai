@@ -93,7 +93,7 @@
     <div class="row">
         <!-- Performance Summary -->
         <div class="col-lg-4 mb-4">
-            <div class="card bg-dark performance-card">
+            <div class="card bg-dark performance-card card-interactive">
                 <div class="card-header">
                     <h5 class="mb-0"><i class="fas fa-trophy me-2"></i>Your Performance</h5>
                 </div>
@@ -101,27 +101,27 @@
                     <div class="performance-stats">
                         <div class="stat-row">
                             <span>Total Trades:</span>
-                            <span class="text-primary" id="total-trades">0</span>
+                            <span class="text-primary counter-animated" id="total-trades">0</span>
                         </div>
                         <div class="stat-row">
                             <span>Win Rate:</span>
-                            <span class="text-success" id="win-rate">0%</span>
+                            <span class="text-success counter-animated" id="win-rate">0%</span>
                         </div>
                         <div class="stat-row">
                             <span>Total P&L:</span>
-                            <span id="total-pnl">$0.00</span>
+                            <span class="counter-animated" id="total-pnl" data-price="true">$0.00</span>
                         </div>
                         <div class="stat-row">
                             <span>Realized P&L:</span>
-                            <span id="realized-pnl">$0.00</span>
+                            <span class="counter-animated" id="realized-pnl" data-price="true">$0.00</span>
                         </div>
                         <div class="stat-row">
                             <span>Unrealized P&L:</span>
-                            <span id="unrealized-pnl">$0.00</span>
+                            <span class="counter-animated" id="unrealized-pnl" data-price="true">$0.00</span>
                         </div>
                         <div class="stat-row">
                             <span>Avg Confidence:</span>
-                            <span class="text-info" id="avg-confidence">0%</span>
+                            <span class="text-info counter-animated" id="avg-confidence">0%</span>
                         </div>
                     </div>
                 </div>
@@ -130,16 +130,18 @@
         
         <!-- Top Movers -->
         <div class="col-lg-8 mb-4">
-            <div class="card bg-dark top-movers-card">
+            <div class="card bg-dark top-movers-card card-interactive">
                 <div class="card-header">
-                    <h5 class="mb-0"><i class="fas fa-trending-up me-2"></i>Top Movers</h5>
+                    <h5 class="mb-0"><i class="fas fa-trending-up me-2"></i>Top Movers 
+                        <span class="live-data-indicator"></span>
+                    </h5>
                 </div>
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-6">
                             <h6 class="text-success">Top Gainers</h6>
                             <div id="top-gainers">
-                                <div class="text-center text-muted">Loading...</div>
+                                <div class="text-center text-muted data-loading">Loading...</div>
                             </div>
                         </div>
                         <div class="col-md-6">
