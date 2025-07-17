@@ -17,6 +17,9 @@ from ai_training import ai_trainer
 from personalized_ai import personalized_ai
 from strategy_builder import strategy_builder
 from color_palette import ColorPalette, get_trading_color, get_confidence_color, get_profit_loss_color, generate_chart_colors
+from technical_indicators import TechnicalIndicators
+# Import will be done after setup
+realtime_service = None
 
 # Configure Stripe
 stripe.api_key = os.environ.get('STRIPE_SECRET_KEY')
@@ -1908,4 +1911,21 @@ def get_semantic_color(color_type):
         })
     except Exception as e:
         logger.error(f"Error getting semantic color: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/technical-indicators/<symbol>')
+@login_required
+def get_technical_indicators(symbol):
+    """Get technical indicators for a symbol"""
+    try:
+        period = request.args.get('period', '3mo')
+        indicators = TechnicalIndicators.get_all_indicators(symbol, period)
+        
+        if not indicators:
+            return jsonify({'error': 'Failed to calculate indicators'}), 404
+        
+        return jsonify(indicators)
+    
+    except Exception as e:
+        logger.error(f"Error getting technical indicators: {e}")
         return jsonify({'error': str(e)}), 500

@@ -857,6 +857,9 @@
     </div>
 </div>
 
+<!-- Include Advanced Chart Component -->
+{% include 'components/advanced_chart.html' %}
+
 <!-- Transaction History Modal -->
 <div class="modal fade" id="transactionModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
@@ -882,6 +885,8 @@
 <script src="{{ url_for('static', filename='js/analytics.js') }}?v={{ range(1000, 9999) | random }}"></script>
 <script src="{{ url_for('static', filename='js/dashboard.js') }}?v={{ range(1000, 9999) | random }}"></script>
 <script src="{{ url_for('static', filename='js/ai_assistant.js') }}?v={{ range(1000, 9999) | random }}"></script>
+<script src="{{ url_for('static', filename='js/realtime_updates.js') }}?v={{ range(1000, 9999) | random }}"></script>
+<script src="{{ url_for('static', filename='js/advanced_chart.js') }}?v={{ range(1000, 9999) | random }}"></script>
 
 <!-- Fix for dashboard showing on all tabs -->
 <script>

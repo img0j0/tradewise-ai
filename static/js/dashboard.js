@@ -595,6 +595,9 @@ function updateStocksList(stocks) {
                         <button class="btn btn-sm btn-primary" onclick="showTradeModal('${stock.symbol}')">
                             <i class="fas fa-exchange-alt me-1"></i>Trade
                         </button>
+                        <button class="btn btn-sm btn-info ms-1" onclick="window.advancedChart.showChart('${stock.symbol}')" title="Advanced Chart">
+                            <i class="fas fa-chart-line me-1"></i>Chart
+                        </button>
                     </div>
                 </div>
 
@@ -1103,21 +1106,31 @@ async function processDeposit() {
     }
 }
 
-function showBuyModal() {
+function showBuyModal(symbol = null, price = null) {
     const modal = new bootstrap.Modal(document.getElementById('buyModal'));
 
     // Clear previous search results
     currentSearchedStock = null;
     document.getElementById('stock-search-result').style.display = 'none';
     document.getElementById('ai-risk-analysis').style.display = 'none';
-    document.getElementById('buy-symbol-search').value = '';
+    document.getElementById('buy-symbol-search').value = symbol || '';
     document.getElementById('buy-quantity').value = '';
     updateBuyCalculations();
 
     // Set up event listener for quantity changes
     document.getElementById('buy-quantity').addEventListener('input', updateBuyCalculations);
 
+    // If symbol is provided, search for it automatically
+    if (symbol) {
+        searchStock();
+    }
+
     modal.show();
+}
+
+function showTradeModal(symbol) {
+    // For now, show buy modal (can be enhanced later)
+    showBuyModal(symbol);
 }
 
 function updateBuyCalculations() {
