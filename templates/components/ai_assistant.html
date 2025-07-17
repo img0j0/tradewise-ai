@@ -133,6 +133,37 @@
     overflow-y: auto;
     padding: 1rem;
     min-height: 300px;
+    max-height: 300px;
+    /* Prevent background scrolling when scrolling within modal */
+    overscroll-behavior: contain;
+    /* Ensure smooth scrolling within the container */
+    scroll-behavior: smooth;
+    /* Add webkit scrollbar styling */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(74, 158, 255, 0.3) rgba(22, 27, 34, 0.5);
+}
+
+.ai-messages::-webkit-scrollbar {
+    width: 8px;
+}
+
+.ai-messages::-webkit-scrollbar-track {
+    background: rgba(22, 27, 34, 0.5);
+    border-radius: 4px;
+}
+
+.ai-messages::-webkit-scrollbar-thumb {
+    background: rgba(74, 158, 255, 0.3);
+    border-radius: 4px;
+}
+
+.ai-messages::-webkit-scrollbar-thumb:hover {
+    background: rgba(74, 158, 255, 0.5);
+}
+
+/* Prevent body scroll when AI assistant is open */
+body.ai-assistant-open {
+    overflow: hidden;
 }
 
 .ai-message {

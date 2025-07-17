@@ -2,6 +2,29 @@
 let assistantMinimized = false;
 let messageId = 1;
 
+// Fix scroll behavior for AI assistant modal
+document.addEventListener('DOMContentLoaded', function() {
+    const aiMessages = document.getElementById('ai-messages');
+    if (aiMessages) {
+        // Prevent scroll propagation to background
+        aiMessages.addEventListener('wheel', function(e) {
+            // Check if scrolling would exceed bounds
+            const isAtTop = aiMessages.scrollTop === 0;
+            const isAtBottom = aiMessages.scrollTop + aiMessages.clientHeight >= aiMessages.scrollHeight;
+            
+            // Only prevent default if we're not at the bounds
+            if ((e.deltaY < 0 && !isAtTop) || (e.deltaY > 0 && !isAtBottom)) {
+                e.stopPropagation();
+            }
+        });
+        
+        // Prevent touch scroll propagation on mobile
+        aiMessages.addEventListener('touchmove', function(e) {
+            e.stopPropagation();
+        });
+    }
+});
+
 // Toggle assistant visibility
 function toggleAssistant() {
     const assistant = document.getElementById('ai-assistant');
@@ -10,9 +33,13 @@ function toggleAssistant() {
     if (assistant.style.display === 'none' || assistant.style.display === '') {
         assistant.style.display = 'block';
         button.style.display = 'none';
+        // Prevent body scroll when AI assistant is open
+        document.body.classList.add('ai-assistant-open');
     } else {
         assistant.style.display = 'none';
         button.style.display = 'flex';
+        // Restore body scroll when AI assistant is closed
+        document.body.classList.remove('ai-assistant-open');
     }
 }
 
