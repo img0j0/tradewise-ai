@@ -1203,14 +1203,21 @@ def test_login():
     """Test login page"""
     return render_template('test_login.html')
 
+@app.route('/test-session')
+def test_session():
+    """Test session page"""
+    return render_template('test_session.html')
+
 @app.route('/debug-auth')
 def debug_auth():
     """Debug authentication status"""
+    from flask import session
     return jsonify({
         'authenticated': current_user.is_authenticated,
         'user_id': current_user.id if current_user.is_authenticated else None,
         'username': current_user.username if current_user.is_authenticated else None,
-        'session': dict(session)
+        'session': dict(session),
+        'cookies': list(request.cookies.keys())
     })
 
 @app.route('/login', methods=['GET', 'POST'])
