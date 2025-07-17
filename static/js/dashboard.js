@@ -30,8 +30,8 @@ function initializeDashboard() {
         // Initialize notification manager
         window.notificationManager = new NotificationManager();
         
-        // Show loading state
-        showMainLoadingState();
+        // Show loading state (disabled to prevent content replacement)
+        // showMainLoadingState();
         
         // Load theme preference
         const savedTheme = localStorage.getItem('theme') || 'dark';
@@ -55,9 +55,9 @@ function initializeDashboard() {
         setupEventListeners();
         
         // Hide loading state after initial load
-        setTimeout(() => {
-            hideMainLoadingState();
-        }, 1000);
+        // setTimeout(() => {
+        //     hideMainLoadingState();
+        // }, 1000);
         
     } catch (error) {
         console.error('Error initializing dashboard:', error);

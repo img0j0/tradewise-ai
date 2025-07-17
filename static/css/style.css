@@ -42,6 +42,10 @@ body {
 /* Ensure dashboard section is visible */
 #dashboard-section {
     display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    position: relative !important;
+    min-height: 100px;
 }
 
 /* Card styles */
