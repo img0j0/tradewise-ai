@@ -5,7 +5,8 @@
 
 // Initialize micro-interactions when DOM is ready
 document.addEventListener('DOMContentLoaded', function() {
-    initMicroInteractions();
+    // Wait a bit for the DOM to be fully loaded
+    setTimeout(initMicroInteractions, 500);
 });
 
 function initMicroInteractions() {
@@ -26,7 +27,17 @@ function initMicroInteractions() {
     // Search input effects
     setupSearchEffects();
     
+    // Add live data indicators
+    addLiveDataIndicators();
+    
     console.log('Micro-interactions initialized successfully!');
+    
+    // Re-run setup every 2 seconds to catch new elements
+    setInterval(function() {
+        setupCardHoverEffects();
+        setupButtonRippleEffects();
+        setupSearchEffects();
+    }, 2000);
 }
 
 // Card hover effects
@@ -34,18 +45,30 @@ function setupCardHoverEffects() {
     const cards = document.querySelectorAll('.card');
     
     cards.forEach(card => {
-        card.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-5px)';
-            this.style.boxShadow = '0 8px 25px rgba(0,0,0,0.3)';
-            this.style.transition = 'all 0.3s ease';
-        });
+        // Remove existing listeners to avoid duplicates
+        card.removeEventListener('mouseenter', cardHoverIn);
+        card.removeEventListener('mouseleave', cardHoverOut);
         
-        card.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateY(0)';
-            this.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1)';
-            this.style.transition = 'all 0.3s ease';
-        });
+        // Add new listeners
+        card.addEventListener('mouseenter', cardHoverIn);
+        card.addEventListener('mouseleave', cardHoverOut);
+        
+        // Add visual indicator that hover is active
+        card.style.cursor = 'pointer';
+        card.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
     });
+}
+
+function cardHoverIn() {
+    this.style.transform = 'translateY(-8px) scale(1.02)';
+    this.style.boxShadow = '0 20px 40px rgba(0,0,0,0.4)';
+    this.style.borderColor = '#007bff';
+}
+
+function cardHoverOut() {
+    this.style.transform = 'translateY(0) scale(1)';
+    this.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1)';
+    this.style.borderColor = '';
 }
 
 // Button ripple effects
@@ -53,35 +76,65 @@ function setupButtonRippleEffects() {
     const buttons = document.querySelectorAll('.btn');
     
     buttons.forEach(button => {
-        button.addEventListener('click', function(e) {
-            const ripple = document.createElement('div');
-            const rect = this.getBoundingClientRect();
-            const size = Math.max(rect.width, rect.height);
-            const x = e.clientX - rect.left - size / 2;
-            const y = e.clientY - rect.top - size / 2;
-            
-            ripple.style.cssText = `
-                position: absolute;
-                border-radius: 50%;
-                background: rgba(255,255,255,0.3);
-                transform: scale(0);
-                animation: ripple 0.6s linear;
-                width: ${size}px;
-                height: ${size}px;
-                left: ${x}px;
-                top: ${y}px;
-                pointer-events: none;
-            `;
-            
-            this.style.position = 'relative';
-            this.style.overflow = 'hidden';
-            this.appendChild(ripple);
-            
-            setTimeout(() => {
-                ripple.remove();
-            }, 600);
+        // Remove existing listener to avoid duplicates
+        button.removeEventListener('click', buttonClickRipple);
+        
+        // Add new listener
+        button.addEventListener('click', buttonClickRipple);
+        
+        // Set up button for ripple effects
+        button.style.position = 'relative';
+        button.style.overflow = 'hidden';
+        button.style.transition = 'all 0.2s ease';
+        
+        // Add hover effect
+        button.addEventListener('mouseenter', function() {
+            this.style.transform = 'scale(1.05)';
+            this.style.boxShadow = '0 4px 12px rgba(0,0,0,0.2)';
+        });
+        
+        button.addEventListener('mouseleave', function() {
+            this.style.transform = 'scale(1)';
+            this.style.boxShadow = '';
         });
     });
+}
+
+function buttonClickRipple(e) {
+    const button = this;
+    const ripple = document.createElement('div');
+    const rect = button.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height);
+    const x = e.clientX - rect.left - size / 2;
+    const y = e.clientY - rect.top - size / 2;
+    
+    ripple.style.cssText = `
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.4);
+        transform: scale(0);
+        animation: ripple 0.6s linear;
+        width: ${size}px;
+        height: ${size}px;
+        left: ${x}px;
+        top: ${y}px;
+        pointer-events: none;
+        z-index: 1000;
+    `;
+    
+    button.appendChild(ripple);
+    
+    // Add button press animation
+    button.style.transform = 'scale(0.98)';
+    setTimeout(() => {
+        button.style.transform = 'scale(1)';
+    }, 150);
+    
+    setTimeout(() => {
+        if (ripple.parentNode) {
+            ripple.remove();
+        }
+    }, 600);
 }
 
 // Price animations with heartbeat effect
@@ -132,21 +185,32 @@ function setupLoadingAnimations() {
 
 // Search input effects
 function setupSearchEffects() {
-    const searchInputs = document.querySelectorAll('input[type="text"]');
+    const searchInputs = document.querySelectorAll('input[type="text"], input.form-control');
     
     searchInputs.forEach(input => {
+        // Set up transitions
+        input.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+        
         input.addEventListener('focus', function() {
-            this.style.transform = 'scale(1.02)';
+            this.style.transform = 'scale(1.05)';
             this.style.borderColor = '#007bff';
-            this.style.boxShadow = '0 0 0 0.2rem rgba(0,123,255,0.25)';
-            this.style.transition = 'all 0.3s ease';
+            this.style.boxShadow = '0 0 0 0.3rem rgba(0,123,255,0.4), 0 8px 16px rgba(0,123,255,0.2)';
+            this.style.backgroundColor = '#f8f9fa';
         });
         
         input.addEventListener('blur', function() {
             this.style.transform = 'scale(1)';
             this.style.borderColor = '';
             this.style.boxShadow = '';
-            this.style.transition = 'all 0.3s ease';
+            this.style.backgroundColor = '';
+        });
+        
+        // Add typing animation
+        input.addEventListener('input', function() {
+            this.style.borderColor = '#28a745';
+            setTimeout(() => {
+                this.style.borderColor = '#007bff';
+            }, 300);
         });
     });
 }
@@ -165,15 +229,42 @@ function addLiveDataIndicators() {
         const dot = indicator.querySelector('.pulse-dot');
         if (dot) {
             dot.style.cssText = `
-                width: 8px;
-                height: 8px;
+                width: 10px;
+                height: 10px;
                 background: #28a745;
                 border-radius: 50%;
-                animation: pulse 2s ease-in-out infinite;
+                animation: pulse 1.5s ease-in-out infinite;
+                box-shadow: 0 0 8px rgba(40, 167, 69, 0.6);
             `;
         }
     });
 }
 
+// Visual feedback for successful interactions
+function showSuccessAnimation(element) {
+    element.style.animation = 'bounceIn 0.5s ease-out';
+    setTimeout(() => {
+        element.style.animation = '';
+    }, 500);
+}
+
+// Add visual feedback to form submissions
+function setupFormAnimations() {
+    const forms = document.querySelectorAll('form');
+    forms.forEach(form => {
+        form.addEventListener('submit', function() {
+            const submitBtn = this.querySelector('button[type="submit"]');
+            if (submitBtn) {
+                submitBtn.style.transform = 'scale(0.95)';
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+                setTimeout(() => {
+                    submitBtn.style.transform = 'scale(1)';
+                }, 200);
+            }
+        });
+    });
+}
+
 // Initialize live data indicators after DOM load
 setTimeout(addLiveDataIndicators, 1000);
+setTimeout(setupFormAnimations, 1000);
