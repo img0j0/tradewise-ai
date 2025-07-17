@@ -134,7 +134,14 @@ async function loadDashboardData() {
         }
         
         dashboardData = data;
-        updateDashboard(data);
+        
+        // Safely update dashboard with proper error handling
+        try {
+            updateDashboard(data);
+        } catch (updateError) {
+            console.error('Error updating dashboard UI:', updateError);
+            showError('Failed to update dashboard display: ' + updateError.message);
+        }
         
     } catch (error) {
         console.error('Error loading dashboard data:', error);
@@ -231,54 +238,66 @@ async function loadSectors() {
 
 // Update UI functions
 function updateDashboard(data) {
-    // Update market overview
-    updateMarketOverview(data.market_overview);
-    
-    // Update welcome banner
-    updateWelcomeBanner(data.market_overview);
-    
-    // Update account balance
-    updateAccountBalance(data.user_account);
-    
-    // Update performance summary
-    updatePerformanceSummary(data.portfolio_performance);
-    
-    // Update top movers
-    updateTopMovers(data.top_movers);
-    
-    // Update recent trades
-    updateRecentTrades(data.recent_trades);
-    
-    // Update active alerts
-    updateActiveAlerts(data.active_alerts);
-    
-    // Update timestamp
-    updateTimestamp(data.timestamp);
+    try {
+        // Update market overview
+        updateMarketOverview(data.market_overview);
+        
+        // Update welcome banner
+        updateWelcomeBanner(data.market_overview);
+        
+        // Update account balance
+        updateAccountBalance(data.user_account);
+        
+        // Update performance summary
+        updatePerformanceSummary(data.portfolio_performance);
+        
+        // Update top movers
+        updateTopMovers(data.top_movers);
+        
+        // Update recent trades
+        updateRecentTrades(data.recent_trades);
+        
+        // Update active alerts
+        updateActiveAlerts(data.active_alerts);
+        
+        // Update timestamp
+        updateTimestamp(data.timestamp);
+        
+    } catch (error) {
+        console.error('Error in updateDashboard:', error);
+        console.error('Stack trace:', error.stack);
+        throw error; // Re-throw to be caught by the caller
+    }
 }
 
 function updateMarketOverview(overview) {
-    if (document.getElementById('total-stocks')) {
-        document.getElementById('total-stocks').textContent = overview.total_stocks;
-    }
-    if (document.getElementById('gainers')) {
-        document.getElementById('gainers').textContent = overview.gainers;
-    }
-    if (document.getElementById('losers')) {
-        document.getElementById('losers').textContent = overview.losers;
-    }
-    if (document.getElementById('unchanged')) {
-        document.getElementById('unchanged').textContent = overview.unchanged;
-    }
-    
-    const avgChange = overview.avg_change;
-    const avgChangeElement = document.getElementById('avg-change');
-    if (avgChangeElement) {
-        avgChangeElement.textContent = formatCurrency(avgChange);
-        avgChangeElement.className = `stat-number ${avgChange >= 0 ? 'text-success' : 'text-danger'}`;
-    }
-    
-    if (document.getElementById('total-volume')) {
-        document.getElementById('total-volume').textContent = formatVolume(overview.total_volume);
+    try {
+        if (document.getElementById('total-stocks')) {
+            document.getElementById('total-stocks').textContent = overview.total_stocks;
+        }
+        if (document.getElementById('gainers')) {
+            document.getElementById('gainers').textContent = overview.gainers;
+        }
+        if (document.getElementById('losers')) {
+            document.getElementById('losers').textContent = overview.losers;
+        }
+        if (document.getElementById('unchanged')) {
+            document.getElementById('unchanged').textContent = overview.unchanged;
+        }
+        
+        const avgChange = overview.avg_change;
+        const avgChangeElement = document.getElementById('avg-change');
+        if (avgChangeElement) {
+            avgChangeElement.textContent = formatCurrency(avgChange);
+            avgChangeElement.className = `stat-number ${avgChange >= 0 ? 'text-success' : 'text-danger'}`;
+        }
+        
+        if (document.getElementById('total-volume')) {
+            document.getElementById('total-volume').textContent = formatVolume(overview.total_volume);
+        }
+    } catch (error) {
+        console.error('Error in updateMarketOverview:', error);
+        throw error;
     }
 }
 
@@ -309,14 +328,23 @@ function updateWelcomeBanner(overview) {
 }
 
 function updatePerformanceSummary(performance) {
-    document.getElementById('total-trades').textContent = performance.total_trades;
-    document.getElementById('win-rate').textContent = performance.win_rate.toFixed(1) + '%';
+    const totalTradesElement = document.getElementById('total-trades');
+    if (totalTradesElement) {
+        totalTradesElement.textContent = performance.total_trades;
+    }
+    
+    const winRateElement = document.getElementById('win-rate');
+    if (winRateElement) {
+        winRateElement.textContent = performance.win_rate.toFixed(1) + '%';
+    }
     
     // Total P&L
     const pnl = performance.total_pnl || 0;
     const pnlElement = document.getElementById('total-pnl');
-    pnlElement.textContent = formatCurrency(pnl);
-    pnlElement.className = pnl >= 0 ? 'text-success' : 'text-danger';
+    if (pnlElement) {
+        pnlElement.textContent = formatCurrency(pnl);
+        pnlElement.className = pnl >= 0 ? 'text-success' : 'text-danger';
+    }
     
     // Realized P&L
     const realizedPnl = performance.total_realized_pnl || 0;
@@ -334,7 +362,10 @@ function updatePerformanceSummary(performance) {
         unrealizedElement.className = unrealizedPnl >= 0 ? 'text-success' : 'text-danger';
     }
     
-    document.getElementById('avg-confidence').textContent = performance.avg_confidence.toFixed(1) + '%';
+    const avgConfidenceElement = document.getElementById('avg-confidence');
+    if (avgConfidenceElement) {
+        avgConfidenceElement.textContent = performance.avg_confidence.toFixed(1) + '%';
+    }
 }
 
 function updateAccountBalance(userAccount) {
@@ -351,6 +382,8 @@ function updateTopMovers(topMovers) {
 
 function updateTopGainers(gainers) {
     const container = document.getElementById('top-gainers');
+    
+    if (!container) return;
     
     if (!gainers || gainers.length === 0) {
         container.innerHTML = '<div class="text-center text-muted">No gainers found</div>';
@@ -371,6 +404,8 @@ function updateTopGainers(gainers) {
 function updateTopLosers(losers) {
     const container = document.getElementById('top-losers');
     
+    if (!container) return;
+    
     if (!losers || losers.length === 0) {
         container.innerHTML = '<div class="text-center text-muted">No losers found</div>';
         return;
@@ -389,6 +424,8 @@ function updateTopLosers(losers) {
 
 function updateRecentTrades(trades) {
     const container = document.getElementById('recent-trades');
+    
+    if (!container) return;
     
     if (!trades || trades.length === 0) {
         container.innerHTML = '<div class="text-center text-muted">No recent trades</div>';
@@ -411,6 +448,8 @@ function updateRecentTrades(trades) {
 
 function updateActiveAlerts(alerts) {
     const container = document.getElementById('active-alerts');
+    
+    if (!container) return;
     
     if (!alerts || alerts.length === 0) {
         container.innerHTML = '<div class="text-center text-muted">No active alerts</div>';
