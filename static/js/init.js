@@ -13,8 +13,13 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         // Initialize mobile optimization
-        if (!window.mobileOptimization) {
+        if (!window.mobileOptimization && typeof MobileOptimization !== 'undefined') {
             window.mobileOptimization = new MobileOptimization();
+        }
+        
+        // Initialize micro-interactions
+        if (!window.microInteractions && typeof MicroInteractions !== 'undefined') {
+            window.microInteractions = new MicroInteractions();
         }
         
         // Initialize advanced chart
