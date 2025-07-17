@@ -823,8 +823,7 @@ async function executeTrade() {
             analyticsManager.trackEvent('trade_executed', {
                 symbol: symbol,
                 action: action,
-                quantity: quantity,
-                price: price
+                quantity: quantity
             });
         }
 
