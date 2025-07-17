@@ -22,4 +22,9 @@ dependencies = [
     "openai>=1.97.0",
     "yfinance>=0.2.65",
     "bcrypt>=4.3.0",
+    "flask-caching>=2.3.1",
+    "flask-compress>=1.18",
+    "flask-socketio>=5.5.1",
+    "joblib>=1.5.1",
+    "requests>=2.32.4",
 ]
