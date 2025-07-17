@@ -1,0 +1,57 @@
+{
+  "timestamp": "2025-07-17T23:40:32.431729",
+  "tests": [
+    {
+      "test": "iPhone CSS Loading",
+      "status": "PASS",
+      "details": "CSS file loaded successfully"
+    },
+    {
+      "test": "iPhone JS Loading",
+      "status": "PASS",
+      "details": "JavaScript file loaded successfully"
+    },
+    {
+      "test": "Main Page Mobile Loading",
+      "status": "PASS",
+      "details": "Found 0/6 mobile features",
+      "features": []
+    },
+    {
+      "test": "Mobile vs Desktop Response",
+      "status": "PASS",
+      "details": "Mobile: 2897 bytes, Desktop: 2897 bytes"
+    },
+    {
+      "test": "API /api/dashboard",
+      "status": "PASS",
+      "details": "Status: 200"
+    },
+    {
+      "test": "API /api/market-overview",
+      "status": "PASS",
+      "details": "Status: 200"
+    },
+    {
+      "test": "API /api/sectors",
+      "status": "PASS",
+      "details": "Status: 200"
+    },
+    {
+      "test": "API /api/search-stock",
+      "status": "FAIL",
+      "details": "Status: 405"
+    },
+    {
+      "test": "Touch-Friendly Features",
+      "status": "PARTIAL",
+      "details": "Found 0/6 touch features",
+      "features": []
+    },
+    {
+      "test": "WebSocket Compatibility",
+      "status": "FAIL",
+      "details": "Socket.IO library not found"
+    }
+  ]
+}

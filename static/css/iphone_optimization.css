@@ -1,0 +1,409 @@
+/* iPhone-Specific Optimizations */
+
+/* iOS Safe Area Support */
+body {
+    padding-top: var(--safe-area-inset-top);
+    padding-bottom: var(--safe-area-inset-bottom);
+    padding-left: var(--safe-area-inset-left);
+    padding-right: var(--safe-area-inset-right);
+}
+
+.navbar {
+    padding-top: calc(0.5rem + var(--safe-area-inset-top));
+    padding-left: calc(1rem + var(--safe-area-inset-left));
+    padding-right: calc(1rem + var(--safe-area-inset-right));
+}
+
+/* iPhone-specific touch optimizations */
+@media (max-width: 430px) {
+    /* iPhone 14 Pro Max and smaller */
+    
+    /* Enhanced touch targets */
+    .btn {
+        min-height: 48px;
+        min-width: 48px;
+        padding: 0.875rem 1.25rem;
+        font-size: 16px; /* Prevents zoom on tap */
+    }
+    
+    .btn-sm {
+        min-height: 44px;
+        min-width: 44px;
+        padding: 0.75rem 1rem;
+        font-size: 14px;
+    }
+    
+    /* Form controls optimized for iOS */
+    .form-control, .form-select {
+        font-size: 16px; /* Prevents zoom on iOS */
+        padding: 0.875rem 1rem;
+        border-radius: 10px;
+        -webkit-appearance: none;
+        -webkit-tap-highlight-color: transparent;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.2rem rgba(96, 165, 250, 0.25);
+        outline: none;
+    }
+    
+    /* Navigation optimizations */
+    .navbar-nav {
+        padding: 0.5rem 0;
+    }
+    
+    .nav-link {
+        padding: 0.875rem 1rem;
+        font-size: 16px;
+        border-radius: 8px;
+        margin: 0.25rem 0;
+    }
+    
+    .nav-tabs .nav-link {
+        padding: 0.75rem 1rem;
+        font-size: 15px;
+        white-space: nowrap;
+        border-radius: 8px 8px 0 0;
+    }
+    
+    /* Card optimizations */
+    .card {
+        border-radius: 12px;
+        margin-bottom: 1rem;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .card-body {
+        padding: 1.25rem;
+    }
+    
+    .card-header {
+        padding: 1rem 1.25rem;
+        border-radius: 12px 12px 0 0;
+    }
+    
+    /* Modal optimizations */
+    .modal-dialog {
+        margin: 0.5rem;
+        max-width: calc(100vw - 1rem);
+    }
+    
+    .modal-content {
+        border-radius: 16px;
+        border: none;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    }
+    
+    .modal-header {
+        padding: 1.25rem 1.25rem 1rem;
+        border-radius: 16px 16px 0 0;
+    }
+    
+    .modal-body {
+        padding: 1rem 1.25rem;
+    }
+    
+    .modal-footer {
+        padding: 1rem 1.25rem 1.25rem;
+        border-radius: 0 0 16px 16px;
+    }
+    
+    /* Table optimizations */
+    .table-responsive {
+        border-radius: 12px;
+        -webkit-overflow-scrolling: touch;
+        overflow-x: auto;
+    }
+    
+    .table th, .table td {
+        padding: 0.875rem 0.75rem;
+        font-size: 15px;
+        white-space: nowrap;
+    }
+    
+    /* Search input optimizations */
+    .search-container {
+        position: relative;
+    }
+    
+    .search-container input {
+        padding-right: 2.5rem;
+        border-radius: 12px;
+        font-size: 16px;
+    }
+    
+    .search-container .search-icon {
+        position: absolute;
+        right: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-secondary);
+        pointer-events: none;
+    }
+    
+    /* AI Assistant optimizations */
+    .ai-assistant-button {
+        width: 56px;
+        height: 56px;
+        border-radius: 28px;
+        right: calc(1rem + var(--safe-area-inset-right));
+        bottom: calc(1rem + var(--safe-area-inset-bottom));
+        font-size: 24px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+    
+    .ai-assistant-container {
+        width: calc(100vw - 2rem);
+        max-width: 390px;
+        height: calc(100vh - 8rem);
+        max-height: 600px;
+        right: 1rem;
+        bottom: calc(5rem + var(--safe-area-inset-bottom));
+        border-radius: 16px;
+    }
+    
+    .ai-messages {
+        -webkit-overflow-scrolling: touch;
+        scroll-behavior: smooth;
+    }
+    
+    /* Notification optimizations */
+    .notification-container {
+        top: calc(1rem + var(--safe-area-inset-top));
+        left: calc(1rem + var(--safe-area-inset-left));
+        right: calc(1rem + var(--safe-area-inset-right));
+        max-width: none;
+        transform: none;
+    }
+    
+    .notification {
+        padding: 1rem;
+        border-radius: 12px;
+        font-size: 15px;
+    }
+    
+    /* Chart optimizations */
+    .chart-container {
+        height: 280px;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+    
+    /* Loading states */
+    .loading-spinner {
+        width: 32px;
+        height: 32px;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-top: 3px solid var(--primary-color);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+    
+    /* Gesture indicators */
+    .swipe-indicator {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(0, 0, 0, 0.7);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 14px;
+        z-index: 1000;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    .swipe-indicator.show {
+        opacity: 1;
+    }
+    
+    /* Performance optimizations */
+    .card, .btn, .modal-content {
+        will-change: transform;
+        transform: translateZ(0);
+    }
+    
+    /* Reduce motion for battery savings */
+    @media (prefers-reduced-motion: reduce) {
+        * {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+        }
+    }
+}
+
+/* iPhone landscape optimizations */
+@media (max-width: 926px) and (orientation: landscape) {
+    .navbar {
+        padding-top: calc(0.25rem + var(--safe-area-inset-top));
+        padding-bottom: 0.25rem;
+    }
+    
+    .nav-link {
+        padding: 0.5rem 0.75rem;
+        font-size: 14px;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .ai-assistant-container {
+        height: calc(100vh - 6rem);
+        max-height: 400px;
+    }
+    
+    .modal-dialog {
+        margin: 0.25rem;
+    }
+    
+    .modal-content {
+        max-height: calc(100vh - 2rem);
+        overflow-y: auto;
+    }
+}
+
+/* iPhone SE and smaller optimizations */
+@media (max-width: 375px) {
+    .container-fluid {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .btn {
+        padding: 0.75rem 1rem;
+        font-size: 15px;
+    }
+    
+    .form-control, .form-select {
+        padding: 0.75rem 0.875rem;
+        font-size: 15px;
+    }
+    
+    .nav-tabs .nav-link {
+        padding: 0.625rem 0.75rem;
+        font-size: 14px;
+    }
+    
+    .ai-assistant-container {
+        width: calc(100vw - 1rem);
+        right: 0.5rem;
+    }
+    
+    .chart-container {
+        height: 250px;
+    }
+    
+    .table th, .table td {
+        padding: 0.75rem 0.5rem;
+        font-size: 14px;
+    }
+}
+
+/* Dark mode specific iPhone optimizations */
+@media (max-width: 430px) and (prefers-color-scheme: dark) {
+    .form-control {
+        background-color: rgba(255, 255, 255, 0.05);
+        border-color: rgba(255, 255, 255, 0.1);
+        color: var(--text-primary);
+    }
+    
+    .form-control:focus {
+        background-color: rgba(255, 255, 255, 0.08);
+        border-color: var(--primary-color);
+        color: var(--text-bright);
+    }
+    
+    .modal-content {
+        background-color: rgba(24, 24, 27, 0.95);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+    }
+    
+    .card {
+        background-color: rgba(24, 24, 27, 0.8);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+    }
+}
+
+/* iOS-specific touch feedback */
+@media (max-width: 430px) {
+    .btn:active, .nav-link:active, .card:active {
+        transform: scale(0.98);
+        transition: transform 0.1s ease;
+    }
+    
+    .btn:not(:active), .nav-link:not(:active), .card:not(:active) {
+        transform: scale(1);
+        transition: transform 0.2s ease;
+    }
+}
+
+/* Keyboard handling for iOS */
+@media (max-width: 430px) {
+    .keyboard-visible {
+        transform: translateY(-25vh);
+        transition: transform 0.3s ease;
+    }
+    
+    .modal.keyboard-visible .modal-dialog {
+        transform: translateY(-30vh);
+        transition: transform 0.3s ease;
+    }
+}
+
+/* Prevent iOS bounce scrolling */
+body, html {
+    overscroll-behavior: none;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Smooth scrolling for iOS */
+.table-responsive, .ai-messages, .nav-tabs {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+}
+
+/* iOS-specific animations */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+    animation: fadeIn 0.3s ease forwards;
+}
+
+/* Accessibility improvements for iOS */
+@media (max-width: 430px) {
+    .btn:focus, .nav-link:focus, .form-control:focus {
+        outline: 2px solid var(--primary-color);
+        outline-offset: 2px;
+    }
+    
+    .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+    }
+}
