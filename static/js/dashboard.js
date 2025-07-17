@@ -160,7 +160,9 @@ function showSection(sectionName) {
 // Data loading functions
 async function loadDashboardData() {
     try {
-        const response = await fetch('/api/dashboard');
+        const response = await fetch('/api/dashboard', {
+            credentials: 'include'
+        });
         const data = await response.json();
         
         if (data.error) {
@@ -272,6 +274,9 @@ async function loadSectors() {
 
 // Update UI functions
 function updateDashboard(data) {
+    // Only update dashboard elements if we're on the dashboard tab
+    if (currentSection !== 'dashboard') return;
+    
     console.log('Updating dashboard with data:', data);
     
     // Update each section with individual error handling
@@ -517,6 +522,9 @@ function updateRecentTrades(trades) {
 }
 
 function updateActiveAlerts(alerts) {
+    // Only update if we're on the dashboard tab
+    if (currentSection !== 'dashboard') return;
+    
     const container = document.getElementById('active-alerts');
     
     if (!container) return;
