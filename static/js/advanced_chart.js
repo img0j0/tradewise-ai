@@ -11,15 +11,15 @@ class AdvancedChart {
     }
 
     initialize() {
-        // Set up event listeners
-        document.getElementById('chart-period').addEventListener('change', () => this.updateChart());
-        document.getElementById('chart-type').addEventListener('change', () => this.updateChart());
+        // Set up event listeners with proper timeline handling
+        document.getElementById('chart-period').addEventListener('change', () => this.handleTimelineChange());
+        document.getElementById('chart-type').addEventListener('change', () => this.handleChartTypeChange());
         
         // Indicator toggles
         ['sma', 'sma50', 'ema', 'ema26', 'bb', 'volume', 'rsi', 'macd', 'vwap', 'stoch', 'support', 'resistance', 'atr', 'mfi'].forEach(indicator => {
             const element = document.getElementById(`indicator-${indicator}`);
             if (element) {
-                element.addEventListener('change', () => this.updateChart());
+                element.addEventListener('change', () => this.handleIndicatorChange());
             }
         });
 
@@ -28,6 +28,52 @@ class AdvancedChart {
         
         // Keyboard shortcuts
         this.setupKeyboardShortcuts();
+        
+        // Real-time updates
+        this.setupRealTimeConnection();
+    }
+
+    handleTimelineChange() {
+        console.log('Timeline changed to:', document.getElementById('chart-period').value);
+        this.stopRealTimeUpdates();
+        this.loadChartData();
+    }
+
+    handleChartTypeChange() {
+        console.log('Chart type changed to:', document.getElementById('chart-type').value);
+        this.updateChart();
+    }
+
+    handleIndicatorChange() {
+        console.log('Indicator changed');
+        this.updateChart();
+    }
+
+    setupRealTimeConnection() {
+        // Connect to WebSocket for real-time updates
+        if (typeof io !== 'undefined' && window.socket) {
+            window.socket.on('price_update', (data) => {
+                this.handleRealTimePriceUpdate(data);
+            });
+        }
+    }
+
+    handleRealTimePriceUpdate(data) {
+        if (data.symbol === this.currentSymbol) {
+            // Update current price in header
+            const priceElement = document.getElementById('chart-price');
+            if (priceElement) {
+                priceElement.textContent = `$${data.price.toFixed(2)}`;
+            }
+            
+            // Update price change
+            const changeElement = document.getElementById('chart-change');
+            if (changeElement) {
+                const changePercent = data.change_percent || 0;
+                changeElement.textContent = `${changePercent > 0 ? '+' : ''}${changePercent.toFixed(2)}%`;
+                changeElement.className = `badge ${changePercent > 0 ? 'bg-success' : 'bg-danger'}`;
+            }
+        }
     }
 
     setupDrawingTools() {
@@ -83,7 +129,124 @@ class AdvancedChart {
         document.getElementById('chart-period').value = '1mo';
         document.getElementById('chart-type').value = 'line';
         
+        // Reload chart data with reset settings
         this.loadChartData();
+    }
+
+    updateAIInsights() {
+        if (!this.chartData || !this.chartData.aiPredictions) return;
+        
+        const aiInsights = this.chartData.aiPredictions;
+        const aiSignals = this.chartData.aiSignals || [];
+        
+        // Update AI confidence display
+        const confidenceElement = document.getElementById('ai-confidence');
+        if (confidenceElement) {
+            const confidence = this.chartData.aiConfidence || 0;
+            confidenceElement.textContent = `${(confidence * 100).toFixed(1)}%`;
+            confidenceElement.className = `badge ${confidence > 0.7 ? 'bg-success' : confidence > 0.4 ? 'bg-warning' : 'bg-danger'}`;
+        }
+        
+        // Update AI signals
+        this.displayAISignals(aiSignals);
+        
+        // Update price predictions
+        this.displayPricePredictions(aiInsights);
+    }
+    
+    displayAISignals(signals) {
+        const signalsContainer = document.getElementById('ai-signals');
+        if (!signalsContainer) return;
+        
+        signalsContainer.innerHTML = '';
+        
+        signals.forEach(signal => {
+            const signalElement = document.createElement('div');
+            signalElement.className = `alert alert-${this.getSignalColor(signal.type)} alert-sm mb-2`;
+            signalElement.innerHTML = `
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>${signal.type}</strong> - ${signal.strength}
+                        <br><small>${signal.reason}</small>
+                    </div>
+                    <div class="text-end">
+                        <small>${new Date(signal.timestamp).toLocaleTimeString()}</small>
+                        ${signal.confidence ? `<br><span class="badge bg-primary">${(signal.confidence * 100).toFixed(0)}%</span>` : ''}
+                    </div>
+                </div>
+            `;
+            signalsContainer.appendChild(signalElement);
+        });
+    }
+    
+    displayPricePredictions(predictions) {
+        if (!predictions) return;
+        
+        // Update price target
+        const priceTargetElement = document.getElementById('price-target');
+        if (priceTargetElement) {
+            priceTargetElement.textContent = `$${predictions.price_target?.toFixed(2) || 'N/A'}`;
+        }
+        
+        // Update trend direction
+        const trendElement = document.getElementById('trend-direction');
+        if (trendElement) {
+            trendElement.textContent = predictions.trend_direction || 'NEUTRAL';
+            trendElement.className = `badge ${predictions.trend_direction === 'BULLISH' ? 'bg-success' : 'bg-danger'}`;
+        }
+        
+        // Update risk level
+        const riskElement = document.getElementById('risk-level');
+        if (riskElement) {
+            riskElement.textContent = predictions.risk_level || 'MEDIUM';
+            riskElement.className = `badge ${predictions.risk_level === 'LOW' ? 'bg-success' : predictions.risk_level === 'HIGH' ? 'bg-danger' : 'bg-warning'}`;
+        }
+    }
+    
+    getSignalColor(signalType) {
+        switch(signalType) {
+            case 'BUY': return 'success';
+            case 'SELL': return 'danger';
+            case 'BREAKOUT': return 'info';
+            case 'VOLUME_SPIKE': return 'warning';
+            default: return 'secondary';
+        }
+    }
+    
+    startRealTimeUpdates() {
+        // Start real-time updates every 30 seconds
+        this.realTimeInterval = setInterval(() => {
+            this.updateRealTimeData();
+        }, 30000);
+    }
+    
+    async updateRealTimeData() {
+        if (!this.currentSymbol) return;
+        
+        try {
+            const response = await fetch(`/api/ai-predictions/${this.currentSymbol}?period=${document.getElementById('chart-period').value}`);
+            const data = await response.json();
+            
+            if (data.error) return;
+            
+            // Update AI data
+            this.chartData.aiPredictions = data.predictions;
+            this.chartData.aiSignals = data.signals;
+            this.chartData.aiConfidence = data.confidence;
+            
+            // Update displays
+            this.updateAIInsights();
+            
+        } catch (error) {
+            console.error('Error updating real-time data:', error);
+        }
+    }
+    
+    stopRealTimeUpdates() {
+        if (this.realTimeInterval) {
+            clearInterval(this.realTimeInterval);
+            this.realTimeInterval = null;
+        }
     }
 
     async showChart(symbol) {
@@ -108,17 +271,32 @@ class AdvancedChart {
             this.showLoadingState();
             
             const period = document.getElementById('chart-period').value;
-            const response = await fetch(`/api/technical-indicators/${this.currentSymbol}?period=${period}`);
-            const data = await response.json();
             
-            if (data.error) {
-                throw new Error(data.error);
+            // Fetch both technical indicators and AI predictions
+            const [indicatorResponse, aiResponse] = await Promise.all([
+                fetch(`/api/technical-indicators/${this.currentSymbol}?period=${period}`),
+                fetch(`/api/ai-predictions/${this.currentSymbol}?period=${period}`)
+            ]);
+            
+            const indicatorData = await indicatorResponse.json();
+            const aiData = await aiResponse.json();
+            
+            if (indicatorData.error) {
+                throw new Error(indicatorData.error);
             }
             
-            this.chartData = data;
+            this.chartData = {
+                ...indicatorData,
+                aiPredictions: aiData.predictions || {},
+                aiSignals: aiData.signals || [],
+                aiConfidence: aiData.confidence || 0
+            };
+            
             this.updateChart();
             this.updateLevels();
             this.updateStockInfo();
+            this.updateAIInsights();
+            this.startRealTimeUpdates();
             
         } catch (error) {
             console.error('Error loading chart data:', error);
@@ -176,10 +354,17 @@ class AdvancedChart {
         if (this.chartData.market_data) {
             const marketData = this.chartData.market_data;
             
-            document.getElementById('chart-volume').textContent = this.formatVolume(marketData.current_volume);
-            document.getElementById('chart-high').textContent = `$${marketData.daily_high.toFixed(2)}`;
-            document.getElementById('chart-low').textContent = `$${marketData.daily_low.toFixed(2)}`;
-            document.getElementById('chart-avg-volume').textContent = this.formatVolume(marketData.avg_volume);
+            const volumeElement = document.getElementById('chart-volume');
+            if (volumeElement) volumeElement.textContent = this.formatVolume(marketData.current_volume);
+            
+            const highElement = document.getElementById('chart-high');
+            if (highElement) highElement.textContent = `$${marketData.daily_high.toFixed(2)}`;
+            
+            const lowElement = document.getElementById('chart-low');
+            if (lowElement) lowElement.textContent = `$${marketData.daily_low.toFixed(2)}`;
+            
+            const avgVolumeElement = document.getElementById('chart-avg-volume');
+            if (avgVolumeElement) avgVolumeElement.textContent = this.formatVolume(marketData.avg_volume);
         }
     }
 

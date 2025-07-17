@@ -1994,3 +1994,98 @@ def get_technical_indicators(symbol):
     except Exception as e:
         logger.error(f"Error getting technical indicators: {e}")
         return jsonify({'error': 'Failed to get technical indicators'}), 500
+
+@app.route('/api/ai-predictions/<symbol>')
+@login_required
+def get_ai_predictions(symbol):
+    """Get AI-powered predictions and signals for a symbol"""
+    try:
+        period = request.args.get('period', '1mo')
+        
+        # Get real-time stock data
+        stock_data = stock_search_service.get_stock_data(symbol)
+        if not stock_data:
+            return jsonify({'error': 'Stock data not found'}), 404
+        
+        # Get AI insights
+        ai_insights = ai_engine.get_insights(symbol, stock_data)
+        
+        # Generate AI signals based on current conditions
+        signals = []
+        confidence = ai_insights.get('confidence', 0)
+        
+        # Buy/Sell signals based on AI confidence
+        if confidence > 0.7:
+            signals.append({
+                'type': 'BUY',
+                'strength': 'STRONG',
+                'reason': 'AI model shows high confidence in upward movement',
+                'timestamp': datetime.now().isoformat(),
+                'confidence': confidence
+            })
+        elif confidence < 0.3:
+            signals.append({
+                'type': 'SELL',
+                'strength': 'MODERATE',
+                'reason': 'AI model indicates potential downward pressure',
+                'timestamp': datetime.now().isoformat(),
+                'confidence': confidence
+            })
+        
+        # Technical pattern recognition
+        if ai_insights.get('expected_return', 0) > 0.05:
+            signals.append({
+                'type': 'BREAKOUT',
+                'strength': 'STRONG',
+                'reason': 'AI detects potential breakout pattern',
+                'timestamp': datetime.now().isoformat(),
+                'probability': 0.85
+            })
+        
+        # Volume analysis
+        if stock_data.get('volume', 0) > stock_data.get('avg_volume', 0) * 1.5:
+            signals.append({
+                'type': 'VOLUME_SPIKE',
+                'strength': 'MODERATE',
+                'reason': 'Unusual volume activity detected',
+                'timestamp': datetime.now().isoformat(),
+                'volume_ratio': stock_data.get('volume', 0) / stock_data.get('avg_volume', 1)
+            })
+        
+        # Risk assessment
+        risk_level = 'LOW' if confidence > 0.6 else 'MEDIUM' if confidence > 0.4 else 'HIGH'
+        
+        # Price predictions
+        current_price = stock_data.get('price', 0)
+        expected_return = ai_insights.get('expected_return', 0)
+        
+        predictions = {
+            'price_target': current_price * (1 + expected_return),
+            'price_range': {
+                'low': current_price * (1 + expected_return - 0.05),
+                'high': current_price * (1 + expected_return + 0.05)
+            },
+            'trend_direction': 'BULLISH' if expected_return > 0 else 'BEARISH',
+            'trend_strength': abs(expected_return) * 10,
+            'volatility_forecast': ai_insights.get('volatility', 0.2),
+            'risk_level': risk_level,
+            'time_horizon': period,
+            'ml_accuracy': ai_insights.get('model_accuracy', 0.85),
+            'momentum_score': confidence * 100,
+            'support_level': current_price * 0.95,
+            'resistance_level': current_price * 1.05
+        }
+        
+        return jsonify({
+            'predictions': predictions,
+            'signals': signals,
+            'confidence': confidence,
+            'ai_score': confidence * 100,
+            'timestamp': datetime.now().isoformat(),
+            'symbol': symbol,
+            'period': period
+        })
+        
+    except Exception as e:
+        logger.error(f"Error generating AI predictions for {symbol}: {e}")
+        return jsonify({'error': str(e)}), 500
