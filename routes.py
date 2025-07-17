@@ -18,6 +18,7 @@ from personalized_ai import personalized_ai
 from strategy_builder import strategy_builder
 from color_palette import ColorPalette, get_trading_color, get_confidence_color, get_profit_loss_color, generate_chart_colors
 from technical_indicators import TechnicalIndicators
+from error_recovery import ErrorRecoveryManager, ErrorCategory, with_error_recovery
 # Import will be done after setup
 realtime_service = None
 
@@ -37,10 +38,14 @@ portfolio_optimizer = PortfolioOptimizer()
 social_trading_engine = SocialTradingEngine()
 gamification_engine = GamificationEngine()
 color_palette = ColorPalette()
+error_recovery_manager = ErrorRecoveryManager()
 
 # Train AI model on startup
 stocks_data = data_service.get_all_stocks()
 ai_engine.train_model(stocks_data)
+
+# Start error recovery manager
+error_recovery_manager.start()
 
 # Get or create user account for logged in user
 def get_or_create_user_account():
@@ -2311,3 +2316,122 @@ def generate_contextual_response(message, context, portfolio, user_preferences):
     
     else:
         return "I'm here to help you make informed investment decisions. Ask me about market trends, stock analysis, portfolio optimization, or AI-powered trading strategies!"
+
+# Error Recovery API Endpoints
+@app.route('/api/error-report', methods=['POST'])
+@with_error_recovery(category=ErrorCategory.API)
+def error_report():
+    """Accept error reports from frontend"""
+    try:
+        error_data = request.json
+        
+        # Log the error
+        logger.error(f"Frontend error report: {error_data}")
+        
+        # Add to error recovery manager
+        error_recovery_manager.handle_error(
+            Exception(error_data.get('error', 'Unknown error')),
+            context=error_data.get('context', {}),
+            category=ErrorCategory.SYSTEM
+        )
+        
+        return jsonify({'status': 'received', 'timestamp': datetime.now().isoformat()})
+        
+    except Exception as e:
+        logger.error(f"Error processing error report: {e}")
+        return jsonify({'error': 'Failed to process error report'}), 500
+
+@app.route('/api/error-recovery-stats', methods=['GET'])
+@login_required
+@with_error_recovery(category=ErrorCategory.API)
+def error_recovery_stats():
+    """Get error recovery statistics"""
+    try:
+        stats = error_recovery_manager.get_error_statistics()
+        return jsonify(stats)
+        
+    except Exception as e:
+        logger.error(f"Error getting recovery stats: {e}")
+        return jsonify({'error': 'Failed to get recovery stats'}), 500
+
+@app.route('/api/system-health', methods=['GET'])
+@login_required
+@with_error_recovery(category=ErrorCategory.API)
+def system_health():
+    """Get system health status"""
+    try:
+        health_status = {
+            'timestamp': datetime.now().isoformat(),
+            'database': check_database_health(),
+            'ai_engine': check_ai_engine_health(),
+            'real_time_data': check_realtime_health(),
+            'error_recovery': check_error_recovery_health(),
+            'overall_status': 'healthy'
+        }
+        
+        # Determine overall status
+        unhealthy_components = [k for k, v in health_status.items() 
+                               if isinstance(v, dict) and v.get('status') != 'healthy']
+        
+        if unhealthy_components:
+            health_status['overall_status'] = 'degraded'
+            health_status['unhealthy_components'] = unhealthy_components
+        
+        return jsonify(health_status)
+        
+    except Exception as e:
+        logger.error(f"Error getting system health: {e}")
+        return jsonify({
+            'timestamp': datetime.now().isoformat(),
+            'overall_status': 'error',
+            'error': str(e)
+        }), 500
+
+def check_database_health():
+    """Check database health"""
+    try:
+        # Simple query to test database connectivity
+        db.session.execute('SELECT 1')
+        return {'status': 'healthy', 'last_checked': datetime.now().isoformat()}
+    except Exception as e:
+        return {'status': 'unhealthy', 'error': str(e), 'last_checked': datetime.now().isoformat()}
+
+def check_ai_engine_health():
+    """Check AI engine health"""
+    try:
+        # Test AI engine
+        test_result = ai_engine.get_model_performance()
+        return {
+            'status': 'healthy',
+            'model_accuracy': test_result.get('accuracy', 0.85),
+            'last_checked': datetime.now().isoformat()
+        }
+    except Exception as e:
+        return {'status': 'unhealthy', 'error': str(e), 'last_checked': datetime.now().isoformat()}
+
+def check_realtime_health():
+    """Check real-time data health"""
+    try:
+        # Test stock data fetching
+        test_stock = stock_search_service.search_stock('AAPL')
+        return {
+            'status': 'healthy' if test_stock else 'degraded',
+            'last_price_update': test_stock.get('last_updated') if test_stock else None,
+            'last_checked': datetime.now().isoformat()
+        }
+    except Exception as e:
+        return {'status': 'unhealthy', 'error': str(e), 'last_checked': datetime.now().isoformat()}
+
+def check_error_recovery_health():
+    """Check error recovery system health"""
+    try:
+        stats = error_recovery_manager.get_error_statistics()
+        return {
+            'status': 'healthy',
+            'error_rate': stats.get('error_rate', 0),
+            'total_errors': stats.get('total_errors', 0),
+            'resolved_errors': stats.get('resolved_errors', 0),
+            'last_checked': datetime.now().isoformat()
+        }
+    except Exception as e:
+        return {'status': 'unhealthy', 'error': str(e), 'last_checked': datetime.now().isoformat()}
