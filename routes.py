@@ -2016,7 +2016,7 @@ def get_ai_predictions(symbol):
         period = request.args.get('period', '1mo')
         
         # Get real-time stock data
-        stock_data = stock_search_service.get_stock_data(symbol)
+        stock_data = stock_search_service.search_stock(symbol)
         if not stock_data:
             return jsonify({'error': 'Stock data not found'}), 404
         
@@ -2069,7 +2069,7 @@ def get_ai_predictions(symbol):
         risk_level = 'LOW' if confidence > 0.6 else 'MEDIUM' if confidence > 0.4 else 'HIGH'
         
         # Price predictions
-        current_price = stock_data.get('price', 0)
+        current_price = stock_data.get('current_price', 0)
         expected_return = ai_insights.get('expected_return', 0)
         
         predictions = {
@@ -2129,8 +2129,8 @@ def get_portfolio_analytics():
         
         for holding in portfolio:
             # Get current stock price
-            stock_data = stock_search_service.get_stock_data(holding.symbol)
-            current_price = stock_data.get('price', holding.average_price) if stock_data else holding.average_price
+            stock_data = stock_search_service.search_stock(holding.symbol)
+            current_price = stock_data.get('current_price', holding.average_price) if stock_data else holding.average_price
             
             position_value = current_price * holding.shares
             position_cost = holding.average_price * holding.shares
