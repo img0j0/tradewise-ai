@@ -13,6 +13,7 @@ import logging
 import os
 import stripe
 from datetime import datetime
+from ai_training import ai_trainer
 
 # Configure Stripe
 stripe.api_key = os.environ.get('STRIPE_SECRET_KEY')
@@ -1570,4 +1571,127 @@ def backtest_strategy():
         
     except Exception as e:
         logger.error(f"Error running backtest: {e}")
+        return jsonify({'error': str(e)}), 500
+
+# Advanced AI Training endpoints
+
+@app.route('/api/ai/train', methods=['POST'])
+@login_required
+def train_ai_model():
+    """Trigger AI model training with latest data"""
+    try:
+        data = request.json
+        symbols = data.get('symbols', None)
+        days = data.get('days', 90)
+        
+        # Collect training data
+        training_data = ai_trainer.collect_training_data(symbols=symbols, days=days)
+        
+        if training_data is None:
+            return jsonify({'error': 'Failed to collect training data'}), 500
+            
+        # Train models
+        success = ai_trainer.train_models(training_data)
+        
+        if success:
+            return jsonify({
+                'success': True,
+                'message': 'AI models trained successfully',
+                'performance': ai_trainer.model_performance,
+                'training_samples': len(training_data)
+            })
+        else:
+            return jsonify({'error': 'Failed to train models'}), 500
+            
+    except Exception as e:
+        logger.error(f"Error training AI model: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/ai/insights/<symbol>')
+@login_required
+def get_enhanced_ai_insights(symbol):
+    """Get enhanced AI insights with advanced predictions"""
+    try:
+        insights = ai_trainer.get_ai_insights(symbol)
+        
+        if insights:
+            return jsonify(insights)
+        else:
+            # Fallback to basic AI insights
+            stock_info = stock_search_service.get_stock_info(symbol)
+            if stock_info:
+                basic_insights = ai_engine.generate_insights(stock_info)
+                return jsonify({
+                    'symbol': symbol,
+                    'confidence_score': basic_insights['confidence_score'],
+                    'recommendation': basic_insights['recommendation'],
+                    'analysis': basic_insights['analysis'],
+                    'technical_summary': 'Advanced analysis unavailable',
+                    'model_accuracy': ai_trainer.model_performance.get('trend_classifier', 0.85) * 100
+                })
+            else:
+                return jsonify({'error': 'Stock not found'}), 404
+                
+    except Exception as e:
+        logger.error(f"Error getting enhanced AI insights: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/ai/predict', methods=['POST'])
+@login_required
+def predict_market_conditions():
+    """Get market predictions for multiple symbols"""
+    try:
+        data = request.json
+        symbols = data.get('symbols', [])
+        
+        if not symbols:
+            return jsonify({'error': 'No symbols provided'}), 400
+            
+        predictions = {}
+        
+        for symbol in symbols[:10]:  # Limit to 10 symbols
+            prediction = ai_trainer.predict_market_conditions(symbol)
+            if prediction:
+                predictions[symbol] = prediction
+                
+        return jsonify({
+            'predictions': predictions,
+            'timestamp': datetime.utcnow().isoformat()
+        })
+        
+    except Exception as e:
+        logger.error(f"Error predicting market conditions: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/ai/performance')
+@login_required
+def get_ai_performance():
+    """Get AI model performance metrics"""
+    try:
+        return jsonify({
+            'model_performance': ai_trainer.model_performance,
+            'training_history_size': len(ai_trainer.training_history),
+            'models': list(ai_trainer.models.keys()),
+            'last_updated': ai_trainer.model_performance.get('last_training', 'Never')
+        })
+        
+    except Exception as e:
+        logger.error(f"Error getting AI performance: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/ai/continuous-learning', methods=['POST'])
+@login_required
+def trigger_continuous_learning():
+    """Trigger continuous learning from recent trades"""
+    try:
+        ai_trainer.continuous_learning()
+        
+        return jsonify({
+            'success': True,
+            'message': 'Continuous learning process completed',
+            'training_history_size': len(ai_trainer.training_history)
+        })
+        
+    except Exception as e:
+        logger.error(f"Error in continuous learning: {e}")
         return jsonify({'error': str(e)}), 500

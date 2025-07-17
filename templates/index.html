@@ -345,7 +345,7 @@
     </div>
     
     <!-- Gamification Row -->
-    <div class="row">
+    <div class="row mb-4">
         <div class="col-lg-4">
             <div class="card bg-dark">
                 <div class="card-header">
@@ -378,6 +378,52 @@
                 <div class="card-body">
                     <div id="challenges">
                         <div class="text-center text-muted">Loading challenges...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- AI Training Row -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card bg-dark">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-robot me-2"></i>AI Model Training & Intelligence</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h6 class="text-success">Model Performance</h6>
+                            <div id="ai-performance">
+                                <div class="text-center text-muted">Loading AI performance metrics...</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-info">Training Controls</h6>
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-primary" onclick="trainAIModel()">
+                                    <i class="fas fa-brain me-2"></i>Train AI with Latest Data
+                                </button>
+                                <button class="btn btn-secondary" onclick="triggerContinuousLearning()">
+                                    <i class="fas fa-sync-alt me-2"></i>Update from Recent Trades
+                                </button>
+                            </div>
+                            <div id="training-status" class="mt-3"></div>
+                        </div>
+                    </div>
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <h6 class="text-warning">Market Predictions</h6>
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control" id="prediction-symbols" 
+                                       placeholder="Enter symbols (comma-separated, e.g., AAPL, MSFT, GOOGL)">
+                                <button class="btn btn-outline-primary" onclick="getPredictions()">
+                                    <i class="fas fa-chart-line me-2"></i>Get Predictions
+                                </button>
+                            </div>
+                            <div id="market-predictions"></div>
+                        </div>
                     </div>
                 </div>
             </div>

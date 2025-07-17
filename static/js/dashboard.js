@@ -1456,6 +1456,9 @@ async function loadAdvancedFeatures() {
             leaderboard,
             challenges
         });
+        
+        // Load AI performance data
+        loadAIPerformance();
     } catch (error) {
         console.error('Error loading advanced features:', error);
         showError('Failed to load advanced features');
@@ -1796,6 +1799,193 @@ function viewTraderProfile(traderId) {
     // Implementation can be added later
 }
 
+// AI Training Functions
+async function loadAIPerformance() {
+    try {
+        const response = await fetch('/api/ai/performance');
+        const data = await response.json();
+        
+        const performanceDiv = document.getElementById('ai-performance');
+        if (data.model_performance) {
+            performanceDiv.innerHTML = `
+                <div class="row">
+                    <div class="col-6">
+                        <div class="text-muted small">Price Prediction Accuracy</div>
+                        <div class="text-success h5">${(data.model_performance.price_prediction * 100).toFixed(1)}%</div>
+                    </div>
+                    <div class="col-6">
+                        <div class="text-muted small">Trend Classification</div>
+                        <div class="text-info h5">${(data.model_performance.trend_classifier * 100).toFixed(1)}%</div>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-6">
+                        <div class="text-muted small">Volatility Prediction</div>
+                        <div class="text-warning h5">${(data.model_performance.volatility_predictor * 100).toFixed(1)}%</div>
+                    </div>
+                    <div class="col-6">
+                        <div class="text-muted small">Training Samples</div>
+                        <div class="text-primary h5">${data.model_performance.training_samples || 0}</div>
+                    </div>
+                </div>
+                <div class="mt-2">
+                    <small class="text-muted">Last trained: ${data.last_updated}</small>
+                </div>
+            `;
+        }
+    } catch (error) {
+        console.error('Error loading AI performance:', error);
+    }
+}
+
+async function trainAIModel() {
+    const statusDiv = document.getElementById('training-status');
+    statusDiv.innerHTML = '<div class="alert alert-info"><i class="fas fa-spinner fa-spin me-2"></i>Training AI model with latest market data...</div>';
+    
+    try {
+        const response = await fetch('/api/ai/train', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                days: 90
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            statusDiv.innerHTML = `
+                <div class="alert alert-success">
+                    <i class="fas fa-check-circle me-2"></i>
+                    AI model trained successfully!
+                    <br><small>Trained on ${data.training_samples} samples</small>
+                </div>
+            `;
+            loadAIPerformance();
+        } else {
+            statusDiv.innerHTML = '<div class="alert alert-danger"><i class="fas fa-exclamation-triangle me-2"></i>Failed to train model</div>';
+        }
+    } catch (error) {
+        console.error('Error training AI model:', error);
+        statusDiv.innerHTML = '<div class="alert alert-danger"><i class="fas fa-exclamation-triangle me-2"></i>Error training model</div>';
+    }
+}
+
+async function triggerContinuousLearning() {
+    const statusDiv = document.getElementById('training-status');
+    statusDiv.innerHTML = '<div class="alert alert-info"><i class="fas fa-sync-alt fa-spin me-2"></i>Updating AI from recent trades...</div>';
+    
+    try {
+        const response = await fetch('/api/ai/continuous-learning', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            statusDiv.innerHTML = `
+                <div class="alert alert-success">
+                    <i class="fas fa-check-circle me-2"></i>
+                    AI updated from recent trading activity!
+                </div>
+            `;
+            loadAIPerformance();
+        } else {
+            statusDiv.innerHTML = '<div class="alert alert-warning"><i class="fas fa-info-circle me-2"></i>No recent trades to learn from</div>';
+        }
+    } catch (error) {
+        console.error('Error in continuous learning:', error);
+        statusDiv.innerHTML = '<div class="alert alert-danger"><i class="fas fa-exclamation-triangle me-2"></i>Error updating AI</div>';
+    }
+}
+
+async function getPredictions() {
+    const symbolsInput = document.getElementById('prediction-symbols');
+    const predictionsDiv = document.getElementById('market-predictions');
+    
+    const symbols = symbolsInput.value.split(',').map(s => s.trim()).filter(s => s);
+    
+    if (symbols.length === 0) {
+        predictionsDiv.innerHTML = '<div class="alert alert-warning">Please enter at least one symbol</div>';
+        return;
+    }
+    
+    predictionsDiv.innerHTML = '<div class="text-center"><i class="fas fa-spinner fa-spin"></i> Generating predictions...</div>';
+    
+    try {
+        const response = await fetch('/api/ai/predict', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ symbols })
+        });
+        
+        const data = await response.json();
+        
+        if (data.predictions && Object.keys(data.predictions).length > 0) {
+            let html = '<div class="row">';
+            
+            for (const [symbol, prediction] of Object.entries(data.predictions)) {
+                const recommendationClass = prediction.recommendation.includes('buy') ? 'success' : 
+                                          prediction.recommendation.includes('sell') ? 'danger' : 'warning';
+                
+                html += `
+                    <div class="col-md-6 mb-3">
+                        <div class="card bg-dark border-${recommendationClass}">
+                            <div class="card-body">
+                                <h6 class="card-title">${symbol}</h6>
+                                <div class="mb-2">
+                                    <small class="text-muted">Expected Return:</small>
+                                    <span class="text-${prediction.expected_return > 0 ? 'success' : 'danger'}">
+                                        ${(prediction.expected_return * 100).toFixed(2)}%
+                                    </span>
+                                </div>
+                                <div class="mb-2">
+                                    <small class="text-muted">Uptrend Probability:</small>
+                                    <div class="progress" style="height: 20px;">
+                                        <div class="progress-bar bg-${prediction.uptrend_probability > 0.6 ? 'success' : 'warning'}" 
+                                             style="width: ${prediction.uptrend_probability * 100}%">
+                                            ${(prediction.uptrend_probability * 100).toFixed(0)}%
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mb-2">
+                                    <small class="text-muted">Risk Score:</small>
+                                    <span class="text-${prediction.risk_score < 40 ? 'success' : prediction.risk_score < 70 ? 'warning' : 'danger'}">
+                                        ${prediction.risk_score.toFixed(0)}/100
+                                    </span>
+                                </div>
+                                <div class="mt-2">
+                                    <span class="badge bg-${recommendationClass}">
+                                        ${prediction.recommendation.toUpperCase()}
+                                    </span>
+                                    <span class="badge bg-secondary">
+                                        ${prediction.market_regime.replace('_', ' ')}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            html += '</div>';
+            predictionsDiv.innerHTML = html;
+        } else {
+            predictionsDiv.innerHTML = '<div class="alert alert-warning">No predictions available</div>';
+        }
+    } catch (error) {
+        console.error('Error getting predictions:', error);
+        predictionsDiv.innerHTML = '<div class="alert alert-danger">Error generating predictions</div>';
+    }
+}
+
 // Export functions for global access
 window.showSection = showSection;
 window.toggleTheme = toggleTheme;
@@ -1812,3 +2002,6 @@ window.executeSell = executeSell;
 window.showTransactionHistory = showTransactionHistory;
 window.searchStock = searchStock;
 window.viewTraderProfile = viewTraderProfile;
+window.trainAIModel = trainAIModel;
+window.triggerContinuousLearning = triggerContinuousLearning;
+window.getPredictions = getPredictions;
