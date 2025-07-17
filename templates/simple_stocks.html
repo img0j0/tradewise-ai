@@ -1,52 +1,83 @@
-<!-- Simple AI-Powered Stock Analysis Section -->
-<div class="container-fluid py-4">
-    <!-- AI Stock Search -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card bg-dark border-0 shadow-lg">
-                <div class="card-body text-center py-5">
-                    <h1 class="display-4 text-white mb-3">
-                        <i class="fas fa-robot text-primary me-3"></i>
-                        AI Stock Advisor
-                    </h1>
-                    <p class="lead text-light mb-4">
-                        Get instant AI-powered investment insights on any stock
-                    </p>
+<!-- Google-Like Stock Search Interface -->
+<div class="container-fluid py-2">
+    <!-- Main Search Container -->
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-10 col-lg-8">
+            <!-- Search Header -->
+            <div class="text-center mb-4">
+                <h1 class="display-5 text-white mb-2 d-none d-md-block">
+                    <i class="fas fa-search text-primary me-3"></i>Stock Search
+                </h1>
+                <h2 class="h4 text-white mb-2 d-md-none">
+                    <i class="fas fa-search text-primary me-2"></i>Stock Search
+                </h2>
+                <p class="text-light mb-0 d-none d-md-block">
+                    Search any stock for instant AI-powered analysis
+                </p>
+            </div>
+            
+            <!-- Google-Style Search Box -->
+            <div class="search-container-wrapper mb-4">
+                <div class="google-search-box position-relative">
+                    <div class="search-input-wrapper">
+                        <i class="fas fa-search search-icon"></i>
+                        <input 
+                            type="text" 
+                            class="google-search-input" 
+                            id="stock-search-input" 
+                            placeholder="Search stocks... (e.g., Apple, AAPL, Microsoft)"
+                            autocomplete="off"
+                            spellcheck="false"
+                        >
+                        <button 
+                            class="search-button" 
+                            id="search-btn"
+                            type="button"
+                        >
+                            <i class="fas fa-brain me-2"></i>
+                            <span class="d-none d-sm-inline">AI Analysis</span>
+                            <span class="d-sm-none">Analyze</span>
+                        </button>
+                    </div>
                     
-                    <!-- Search Bar -->
-                    <div class="row justify-content-center">
-                        <div class="col-md-8 col-lg-6">
-                            <div class="input-group input-group-lg">
-                                <span class="input-group-text bg-primary border-0">
-                                    <i class="fas fa-search text-white"></i>
-                                </span>
-                                <input 
-                                    type="text" 
-                                    class="form-control border-0 search-interactive focus-indicator" 
-                                    id="stock-search-input" 
-                                    placeholder="Enter stock symbol (e.g., AAPL, TSLA, MSFT)"
-                                    onkeypress="if(event.key==='Enter') searchStockAI()"
-                                >
-                                <button 
-                                    class="btn btn-success btn-lg px-4 btn-interactive" 
-                                    onclick="searchStockAI()"
-                                    id="search-btn"
-                                >
-                                    <i class="fas fa-brain me-2"></i>Analyze
-                                </button>
-                            </div>
+                    <!-- Search Suggestions Dropdown -->
+                    <div class="search-suggestions" id="search-suggestions" style="display: none;">
+                        <div class="suggestions-header">
+                            <small class="text-muted">Suggestions</small>
+                        </div>
+                        <div class="suggestions-list" id="suggestions-list">
+                            <!-- Suggestions will be populated here -->
                         </div>
                     </div>
-                    
-                    <!-- Quick Stock Suggestions -->
-                    <div class="mt-4">
-                        <small class="text-muted">Popular: </small>
-                        <button class="btn btn-outline-light btn-sm me-2 btn-interactive" onclick="quickSearch('AAPL')">AAPL</button>
-                        <button class="btn btn-outline-light btn-sm me-2 btn-interactive" onclick="quickSearch('TSLA')">TSLA</button>
-                        <button class="btn btn-outline-light btn-sm me-2 btn-interactive" onclick="quickSearch('MSFT')">MSFT</button>
-                        <button class="btn btn-outline-light btn-sm me-2 btn-interactive" onclick="quickSearch('NVDA')">NVDA</button>
-                        <button class="btn btn-outline-light btn-sm me-2 btn-interactive" onclick="quickSearch('GOOGL')">GOOGL</button>
-                    </div>
+                </div>
+            </div>
+            
+            <!-- Popular Stocks -->
+            <div class="popular-stocks text-center">
+                <div class="mb-2">
+                    <small class="text-muted">Popular searches:</small>
+                </div>
+                <div class="popular-buttons">
+                    <button class="popular-btn" onclick="quickSearch('AAPL')">
+                        <i class="fab fa-apple"></i>
+                        <span>Apple</span>
+                    </button>
+                    <button class="popular-btn" onclick="quickSearch('TSLA')">
+                        <i class="fas fa-car"></i>
+                        <span>Tesla</span>
+                    </button>
+                    <button class="popular-btn" onclick="quickSearch('MSFT')">
+                        <i class="fab fa-microsoft"></i>
+                        <span>Microsoft</span>
+                    </button>
+                    <button class="popular-btn" onclick="quickSearch('NVDA')">
+                        <i class="fas fa-microchip"></i>
+                        <span>NVIDIA</span>
+                    </button>
+                    <button class="popular-btn" onclick="quickSearch('GOOGL')">
+                        <i class="fab fa-google"></i>
+                        <span>Google</span>
+                    </button>
                 </div>
             </div>
         </div>
