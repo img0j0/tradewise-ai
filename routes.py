@@ -1208,6 +1208,11 @@ def test_session():
     """Test session page"""
     return render_template('test_session.html')
 
+@app.route('/test-direct-login')
+def test_direct_login():
+    """Direct login test page"""
+    return render_template('test_direct_login.html')
+
 @app.route('/debug-auth')
 def debug_auth():
     """Debug authentication status"""
@@ -1248,6 +1253,7 @@ def login():
                 db.session.commit()
             
             logger.info(f"Login successful for user: {username}")
+            session.permanent = True  # Make session permanent
             next_page = request.args.get('next')
             if next_page:
                 return redirect(next_page)

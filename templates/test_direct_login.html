@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Direct Login Test</title>
+    <meta charset="utf-8">
+    <style>
+        body {
+            background: #1a1a1a;
+            color: white;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        form {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            box-sizing: border-box;
+        }
+        button {
+            background: #00ff88;
+            color: black;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Direct Login Test (No JavaScript)</h1>
+    
+    <form action="/login" method="POST">
+        <h2>Login Form</h2>
+        <input type="text" name="username" value="testuser" placeholder="Username">
+        <input type="password" name="password" value="password123" placeholder="Password">
+        <button type="submit">Login</button>
+    </form>
+    
+    <div id="result">
+        <h3>Debug Info:</h3>
+        <p>This form will submit directly to /login with POST method.</p>
+        <p>No JavaScript is involved in the submission.</p>
+    </div>
+</body>
+</html>

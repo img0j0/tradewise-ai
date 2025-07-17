@@ -17,11 +17,14 @@ db = SQLAlchemy(model_class=Base)
 # create the app
 app = Flask(__name__)
 app.secret_key = os.environ.get("SESSION_SECRET", "dev-secret-key-change-in-production")
-app.config['SESSION_COOKIE_SECURE'] = False  # Allow cookies over HTTP in development
+app.config['SESSION_COOKIE_SECURE'] = False  # Allow cookies over HTTP
 app.config['SESSION_COOKIE_HTTPONLY'] = True
-app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+app.config['SESSION_COOKIE_SAMESITE'] = None  # Allow cross-origin in Replit
+app.config['SESSION_COOKIE_NAME'] = 'session'
 app.config['PERMANENT_SESSION_LIFETIME'] = 86400  # 24 hours
-app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
+app.config['SESSION_COOKIE_PATH'] = '/'
+app.config['SESSION_COOKIE_DOMAIN'] = None  # Let Flask determine the domain
+app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1, x_for=1)
 
 # configure the database
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL", "sqlite:///trading_platform.db")
