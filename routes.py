@@ -19,6 +19,10 @@ from strategy_builder import strategy_builder
 from color_palette import ColorPalette, get_trading_color, get_confidence_color, get_profit_loss_color, generate_chart_colors
 from technical_indicators import TechnicalIndicators
 from error_recovery import ErrorRecoveryManager, ErrorCategory, with_error_recovery
+from advanced_orders import get_order_manager, OrderType, OrderSide, AdvancedOrder
+from market_intelligence import get_market_intelligence
+from deep_learning_engine import get_deep_learning_engine
+from performance_optimizer import get_performance_optimizer, cached, monitored
 # Import will be done after setup
 realtime_service = None
 
@@ -39,6 +43,10 @@ social_trading_engine = SocialTradingEngine()
 gamification_engine = GamificationEngine()
 color_palette = ColorPalette()
 error_recovery_manager = ErrorRecoveryManager()
+order_manager = get_order_manager()
+market_intelligence = get_market_intelligence()
+deep_learning_engine = get_deep_learning_engine()
+performance_optimizer = get_performance_optimizer()
 
 # Train AI model on startup
 stocks_data = data_service.get_all_stocks()
@@ -2435,3 +2443,172 @@ def check_error_recovery_health():
         }
     except Exception as e:
         return {'status': 'unhealthy', 'error': str(e), 'last_checked': datetime.now().isoformat()}
+
+# ======= ADVANCED TRADING ENHANCEMENTS =======
+
+# Advanced Order Management System
+@app.route('/api/orders/advanced', methods=['POST'])
+@login_required
+@monitored
+def create_advanced_order():
+    """Create advanced order (stop-loss, take-profit, trailing stop, etc.)"""
+    try:
+        data = request.json
+        symbol = data.get('symbol')
+        quantity = int(data.get('quantity', 0))
+        order_type = OrderType(data.get('order_type', 'market'))
+        side = OrderSide(data.get('side', 'buy'))
+        
+        # Create advanced order
+        order = order_manager.create_order(
+            symbol=symbol,
+            quantity=quantity,
+            order_type=order_type,
+            side=side,
+            user_id=current_user.id,
+            limit_price=data.get('limit_price'),
+            stop_price=data.get('stop_price'),
+            trailing_amount=data.get('trailing_amount'),
+            trailing_percent=data.get('trailing_percent'),
+            time_in_force=data.get('time_in_force', 'GTC')
+        )
+        
+        return jsonify({
+            'success': True,
+            'order': order.to_dict(),
+            'message': f'Advanced order created successfully'
+        })
+        
+    except Exception as e:
+        logger.error(f"Error creating advanced order: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/orders/position-size', methods=['POST'])
+@login_required
+@cached(ttl=60)
+def calculate_position_size():
+    """Calculate optimal position size using various methods"""
+    try:
+        data = request.json
+        method = data.get('method', 'risk_based')
+        
+        if method == 'risk_based':
+            user_account = get_or_create_user_account()
+            size = order_manager.calculate_position_size(
+                method='risk_based',
+                account_balance=user_account.balance,
+                risk_percent=data.get('risk_percent', 2),
+                entry_price=data.get('entry_price', 100),
+                stop_loss=data.get('stop_loss', 95)
+            )
+        
+        return jsonify({
+            'method': method,
+            'position_size': size,
+            'recommended_shares': int(size) if method == 'risk_based' else None
+        })
+        
+    except Exception as e:
+        logger.error(f"Error calculating position size: {e}")
+        return jsonify({'error': str(e)}), 500
+
+# Market Intelligence Hub
+@app.route('/api/market-intelligence/overview')
+@login_required
+@cached(ttl=300)
+def get_market_intelligence_overview():
+    """Get comprehensive market intelligence overview"""
+    try:
+        overview = market_intelligence.get_market_overview()
+        return jsonify(overview)
+        
+    except Exception as e:
+        logger.error(f"Error getting market intelligence: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/market-intelligence/sentiment/<symbol>')
+@login_required
+@cached(ttl=180)
+def get_symbol_sentiment(symbol):
+    """Get detailed sentiment analysis for a symbol"""
+    try:
+        news_items = market_intelligence.news_aggregator.get_market_news([symbol])
+        news_dicts = [item.__dict__ for item in news_items]
+        sentiment = market_intelligence.news_aggregator.sentiment_analyzer.analyze_news_batch(news_dicts)
+        
+        return jsonify({
+            'symbol': symbol,
+            'sentiment': sentiment.__dict__,
+            'news_items': news_dicts[:5]
+        })
+        
+    except Exception as e:
+        logger.error(f"Error getting sentiment for {symbol}: {e}")
+        return jsonify({'error': str(e)}), 500
+
+# Deep Learning Price Prediction Engine
+@app.route('/api/deep-learning/analyze/<symbol>')
+@login_required
+@cached(ttl=900)
+def deep_learning_analysis(symbol):
+    """Get comprehensive deep learning analysis for a symbol"""
+    try:
+        analysis = deep_learning_engine.analyze_symbol(symbol)
+        return jsonify(analysis)
+        
+    except Exception as e:
+        logger.error(f"Error in deep learning analysis for {symbol}: {e}")
+        return jsonify({'error': str(e)}), 500
+
+# Performance Optimization Endpoints
+@app.route('/api/performance/optimization-report')
+@login_required
+def get_optimization_report():
+    """Get comprehensive performance optimization report"""
+    try:
+        report = performance_optimizer.get_optimization_report()
+        return jsonify(report)
+        
+    except Exception as e:
+        logger.error(f"Error getting optimization report: {e}")
+        return jsonify({'error': str(e)}), 500
+
+# AI-Powered Trading Recommendations
+@app.route('/api/ai/unified-recommendations')
+@login_required
+@cached(ttl=600)
+def get_unified_ai_recommendations():
+    """Get unified AI recommendations from all enhancement modules"""
+    try:
+        recommendations = {
+            'market_intelligence': {},
+            'deep_learning': {},
+            'personalized_ai': {},
+            'performance_optimization': {},
+            'timestamp': datetime.now().isoformat()
+        }
+        
+        # Get market intelligence recommendations
+        market_overview = market_intelligence.get_market_overview()
+        recommendations['market_intelligence'] = {
+            'sentiment': market_overview.get('sentiment_analysis', {}),
+            'alerts': market_overview.get('alerts', []),
+            'regime': market_overview.get('market_regime', {})
+        }
+        
+        # Get deep learning recommendations for top symbols
+        top_symbols = ['AAPL', 'MSFT', 'GOOGL']
+        for symbol in top_symbols:
+            dl_analysis = deep_learning_engine.analyze_symbol(symbol)
+            if not dl_analysis.get('error'):
+                recommendations['deep_learning'][symbol] = dl_analysis.get('recommendations', [])
+        
+        # Get performance optimization recommendations
+        perf_report = performance_optimizer.get_optimization_report()
+        recommendations['performance_optimization'] = perf_report.get('recommendations', [])
+        
+        return jsonify(recommendations)
+        
+    except Exception as e:
+        logger.error(f"Error getting unified AI recommendations: {e}")
+        return jsonify({'error': str(e)}), 500
