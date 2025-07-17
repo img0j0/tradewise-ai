@@ -1240,6 +1240,11 @@ def quick_login(username):
     
     return redirect(url_for('login'))
 
+@app.route('/login-bypass')
+def login_bypass():
+    """Login bypass page with clickable links"""
+    return render_template('login_bypass.html')
+
 @app.route('/debug-auth')
 def debug_auth():
     """Debug authentication status"""
