@@ -1224,6 +1224,8 @@ def login():
         password = request.form.get('password')
         remember = bool(request.form.get('remember', False))
         
+        logger.info(f"Login attempt for username: {username}")
+        
         user = User.query.filter_by(username=username).first()
         
         if user and user.check_password(password):
@@ -1238,14 +1240,16 @@ def login():
                 db.session.add(user_account)
                 db.session.commit()
             
+            logger.info(f"Login successful for user: {username}")
             next_page = request.args.get('next')
             if next_page:
                 return redirect(next_page)
             return redirect(url_for('index'))
         else:
+            logger.warning(f"Login failed for username: {username}")
             flash('Invalid username or password', 'error')
     
-    return render_template('login.html')
+    return render_template('simple_login.html')
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():

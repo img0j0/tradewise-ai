@@ -22,7 +22,7 @@
                         {% endif %}
                     {% endwith %}
                     
-                    <form method="POST" action="{{ url_for('login') }}">
+                    <form method="POST" action="{{ url_for('login') }}" id="loginForm">
                         <div class="mb-3">
                             <label for="username" class="form-label">Username</label>
                             <div class="input-group">
@@ -95,4 +95,31 @@
     box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
 }
 </style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const loginForm = document.getElementById('loginForm');
+    if (loginForm) {
+        loginForm.addEventListener('submit', function(e) {
+            console.log('Form is being submitted');
+            
+            // Check if fields are empty
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            if (!username || !password) {
+                console.error('Username or password is empty!');
+                e.preventDefault();
+                alert('Please enter both username and password');
+                return false;
+            }
+            
+            console.log('Form validation passed, submitting with username:', username);
+            // Let the form submit normally
+        });
+    }
+});
+</script>
 {% endblock %}
