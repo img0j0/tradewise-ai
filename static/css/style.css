@@ -39,12 +39,9 @@ body {
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Ensure dashboard section is visible */
+/* Dashboard section styling */
 #dashboard-section {
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    position: relative !important;
+    position: relative;
     min-height: 100px;
 }
 
