@@ -26,6 +26,9 @@ document.addEventListener('DOMContentLoaded', function() {
 function initializeDashboard() {
     console.log('Initializing Trading Analytics Dashboard...');
     
+    // Show loading state
+    showMainLoadingState();
+    
     // Load theme preference
     const savedTheme = localStorage.getItem('theme') || 'dark';
     setTheme(savedTheme);
@@ -36,6 +39,11 @@ function initializeDashboard() {
     
     // Set up event listeners
     setupEventListeners();
+    
+    // Hide loading state after initial load
+    setTimeout(() => {
+        hideMainLoadingState();
+    }, 1000);
 }
 
 // Set up event listeners
@@ -680,6 +688,16 @@ async function executeTrade() {
         // Show success message
         showSuccess(data.message);
         
+        // Track trade execution
+        if (window.analyticsManager) {
+            analyticsManager.trackEvent('trade_executed', {
+                symbol: symbol,
+                action: action,
+                quantity: quantity,
+                price: price
+            });
+        }
+        
         // Refresh data
         refreshData();
         
@@ -699,19 +717,83 @@ function applyFilters() {
 // Utility functions
 function refreshData() {
     console.log('Refreshing data...');
+    showRefreshIndicator();
     
+    let loadPromise;
     switch (currentSection) {
         case 'stocks':
-            loadStocks();
+            loadPromise = loadStocks();
             break;
         case 'alerts':
-            loadAlerts();
+            loadPromise = loadAlerts();
             break;
         case 'portfolio':
-            loadPortfolio();
+            loadPromise = loadPortfolio();
             break;
         default:
-            loadDashboardData();
+            loadPromise = loadDashboardData();
+    }
+    
+    if (loadPromise && loadPromise.then) {
+        loadPromise.then(() => {
+            hideRefreshIndicator();
+            showSuccess('Data refreshed successfully!');
+        }).catch(error => {
+            hideRefreshIndicator();
+            showError('Failed to refresh data: ' + error.message);
+        });
+    } else {
+        setTimeout(() => {
+            hideRefreshIndicator();
+        }, 1000);
+    }
+}
+
+// Loading state functions
+function showMainLoadingState() {
+    const loadingHTML = `
+        <div id="main-loading" class="text-center p-5">
+            <div class="spinner-border text-primary mb-3" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <h5 class="text-primary">Loading Trading Dashboard...</h5>
+            <p class="text-muted">Fetching real-time market data and your portfolio</p>
+        </div>
+    `;
+    
+    const dashboardSection = document.getElementById('dashboard-section');
+    if (dashboardSection) {
+        dashboardSection.innerHTML = loadingHTML;
+    }
+}
+
+function hideMainLoadingState() {
+    const mainLoading = document.getElementById('main-loading');
+    if (mainLoading) {
+        mainLoading.remove();
+    }
+}
+
+function showRefreshIndicator() {
+    // Add refresh indicator to the page
+    let refreshIndicator = document.getElementById('refresh-indicator');
+    if (!refreshIndicator) {
+        refreshIndicator = document.createElement('div');
+        refreshIndicator.id = 'refresh-indicator';
+        refreshIndicator.className = 'refresh-indicator';
+        refreshIndicator.innerHTML = `
+            <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+            <span>Refreshing data...</span>
+        `;
+        document.body.appendChild(refreshIndicator);
+    }
+    refreshIndicator.style.display = 'flex';
+}
+
+function hideRefreshIndicator() {
+    const refreshIndicator = document.getElementById('refresh-indicator');
+    if (refreshIndicator) {
+        refreshIndicator.style.display = 'none';
     }
 }
 
@@ -762,16 +844,24 @@ function getConfidenceClass(score) {
 
 function showError(message) {
     console.error(message);
-    // Create toast notification
-    const toast = createToast('Error', message, 'danger');
-    showToast(toast);
+    if (window.notificationManager) {
+        notificationManager.showError(message);
+    } else {
+        // Fallback to toast notification
+        const toast = createToast('Error', message, 'danger');
+        showToast(toast);
+    }
 }
 
 function showSuccess(message) {
     console.log(message);
-    // Create toast notification
-    const toast = createToast('Success', message, 'success');
-    showToast(toast);
+    if (window.notificationManager) {
+        notificationManager.showSuccess(message);
+    } else {
+        // Fallback to toast notification
+        const toast = createToast('Success', message, 'success');
+        showToast(toast);
+    }
 }
 
 function createToast(title, message, type) {

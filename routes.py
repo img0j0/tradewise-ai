@@ -4,6 +4,7 @@ from models import Trade, Portfolio, Alert, UserAccount, Transaction, User
 from ai_insights import AIInsightsEngine
 from data_service import DataService
 from stock_search import StockSearchService
+from cache_service import cache
 from flask_login import login_user, logout_user, login_required, current_user
 import logging
 import os
@@ -928,6 +929,13 @@ def search_stock():
         if not symbol:
             return jsonify({'error': 'Stock symbol is required'}), 400
         
+        # Check cache first
+        cache_key = f"stock_search_{symbol}"
+        cached_result = cache.get(cache_key)
+        
+        if cached_result:
+            return jsonify(cached_result)
+        
         # Search for stock data
         stock_data = stock_search_service.search_stock(symbol)
         
@@ -942,6 +950,9 @@ def search_stock():
         fundamentals = stock_search_service.get_stock_fundamentals(symbol)
         if fundamentals:
             stock_data['fundamentals'] = fundamentals
+        
+        # Cache the result
+        cache.set(cache_key, stock_data)
         
         return jsonify(stock_data)
         
@@ -1278,3 +1289,25 @@ def logout():
     logout_user()
     flash('You have been logged out.', 'info')
     return redirect(url_for('login'))
+
+@app.route('/api/analytics', methods=['POST'])
+@login_required
+def analytics():
+    """Receive analytics data from frontend"""
+    try:
+        data = request.get_json()
+        
+        # Log analytics data (in production, you'd store this in a database)
+        logger.info(f"Analytics data from user {current_user.id}: {data}")
+        
+        # You could store this in a database table for analysis
+        # For now, we'll just acknowledge receipt
+        
+        return jsonify({
+            'success': True,
+            'message': 'Analytics data received'
+        })
+        
+    except Exception as e:
+        logger.error(f"Error receiving analytics data: {e}")
+        return jsonify({'error': 'Failed to process analytics data'}), 500
