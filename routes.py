@@ -1916,16 +1916,65 @@ def get_semantic_color(color_type):
 @app.route('/api/technical-indicators/<symbol>')
 @login_required
 def get_technical_indicators(symbol):
-    """Get technical indicators for a symbol"""
+    """Get enhanced technical indicators for a stock"""
     try:
-        period = request.args.get('period', '3mo')
-        indicators = TechnicalIndicators.get_all_indicators(symbol, period)
+        period = request.args.get('period', '1mo')
         
-        if not indicators:
-            return jsonify({'error': 'Failed to calculate indicators'}), 404
+        # Get historical data
+        import yfinance as yf
+        ticker = yf.Ticker(symbol)
+        hist = ticker.history(period=period)
         
-        return jsonify(indicators)
-    
+        if hist.empty:
+            return jsonify({'error': 'No data available for symbol'}), 404
+        
+        prices = hist['Close'].tolist()
+        volumes = hist['Volume'].tolist()
+        highs = hist['High'].tolist()
+        lows = hist['Low'].tolist()
+        dates = [date.strftime('%m/%d') for date in hist.index]
+        
+        # Calculate technical indicators
+        indicators = TechnicalIndicators()
+        
+        # Calculate all indicators
+        sma_20 = indicators.calculate_sma(prices, 20)
+        ema_12 = indicators.calculate_ema(prices, 12)
+        rsi = indicators.calculate_rsi(prices)
+        macd_data = indicators.calculate_macd(prices)
+        bollinger = indicators.calculate_bollinger_bands(prices, 20, 2.0)
+        stochastic = indicators.calculate_stochastic(highs, lows, prices)
+        vwap = indicators.calculate_vwap(prices, volumes)
+        support_resistance = indicators.find_support_resistance(prices)
+        
+        # Calculate additional market data
+        current_price = prices[-1] if prices else 0
+        daily_high = max(prices[-5:]) if len(prices) >= 5 else max(prices) if prices else 0
+        daily_low = min(prices[-5:]) if len(prices) >= 5 else min(prices) if prices else 0
+        avg_volume = sum(volumes[-20:]) / min(20, len(volumes)) if volumes else 0
+        
+        return jsonify({
+            'symbol': symbol,
+            'dates': dates,
+            'prices': prices,
+            'volume': volumes,
+            'sma_20': sma_20,
+            'ema_12': ema_12,
+            'rsi': rsi,
+            'macd': macd_data,
+            'bollinger': bollinger,
+            'stochastic': stochastic,
+            'vwap': vwap,
+            'support_resistance': support_resistance,
+            'market_data': {
+                'current_price': current_price,
+                'daily_high': daily_high,
+                'daily_low': daily_low,
+                'current_volume': volumes[-1] if volumes else 0,
+                'avg_volume': avg_volume
+            }
+        })
+        
     except Exception as e:
         logger.error(f"Error getting technical indicators: {e}")
-        return jsonify({'error': str(e)}), 500
+        return jsonify({'error': 'Failed to get technical indicators'}), 500

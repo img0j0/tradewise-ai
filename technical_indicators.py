@@ -72,7 +72,141 @@ class TechnicalIndicators:
         if len(prices) < 26:
             return {'macd': [], 'signal': [], 'histogram': []}
         
-        # Calculate EMAs
+        # Calculate EMAs (12 and 26 periods)
+        ema_12 = TechnicalIndicators.calculate_ema(prices, 12)
+        ema_26 = TechnicalIndicators.calculate_ema(prices, 26)
+        
+        # Calculate MACD line
+        macd_line = []
+        for i in range(len(ema_26)):
+            macd_line.append(ema_12[i + (len(ema_12) - len(ema_26))] - ema_26[i])
+        
+        # Calculate signal line (9-period EMA of MACD)
+        signal_line = TechnicalIndicators.calculate_ema(macd_line, 9)
+        
+        # Calculate histogram
+        histogram = []
+        for i in range(len(signal_line)):
+            histogram.append(macd_line[i + (len(macd_line) - len(signal_line))] - signal_line[i])
+        
+        return {
+            'macd': macd_line,
+            'signal': signal_line,
+            'histogram': histogram
+        }
+    
+    @staticmethod
+    def calculate_bollinger_bands(prices: List[float], period: int = 20, std_dev: float = 2.0) -> Dict[str, List[float]]:
+        """Calculate Bollinger Bands"""
+        if len(prices) < period:
+            return {'upper': [], 'middle': [], 'lower': []}
+        
+        sma = TechnicalIndicators.calculate_sma(prices, period)
+        upper_band = []
+        lower_band = []
+        
+        for i in range(period - 1, len(prices)):
+            # Calculate standard deviation for the period
+            price_slice = prices[i - period + 1:i + 1]
+            mean = sum(price_slice) / period
+            variance = sum((x - mean) ** 2 for x in price_slice) / period
+            std_deviation = variance ** 0.5
+            
+            upper_band.append(sma[i - period + 1] + (std_dev * std_deviation))
+            lower_band.append(sma[i - period + 1] - (std_dev * std_deviation))
+        
+        return {
+            'upper': upper_band,
+            'middle': sma,
+            'lower': lower_band
+        }
+    
+    @staticmethod
+    def calculate_stochastic(high: List[float], low: List[float], close: List[float], k_period: int = 14, d_period: int = 3) -> Dict[str, List[float]]:
+        """Calculate Stochastic Oscillator"""
+        if len(high) < k_period or len(low) < k_period or len(close) < k_period:
+            return {'k': [], 'd': []}
+        
+        k_values = []
+        
+        for i in range(k_period - 1, len(close)):
+            highest_high = max(high[i - k_period + 1:i + 1])
+            lowest_low = min(low[i - k_period + 1:i + 1])
+            
+            if highest_high == lowest_low:
+                k_percent = 50  # Avoid division by zero
+            else:
+                k_percent = ((close[i] - lowest_low) / (highest_high - lowest_low)) * 100
+            
+            k_values.append(k_percent)
+        
+        # Calculate %D (moving average of %K)
+        d_values = TechnicalIndicators.calculate_sma(k_values, d_period)
+        
+        return {
+            'k': k_values,
+            'd': d_values
+        }
+    
+    @staticmethod
+    def calculate_vwap(prices: List[float], volumes: List[float]) -> List[float]:
+        """Calculate Volume Weighted Average Price"""
+        if len(prices) != len(volumes) or len(prices) == 0:
+            return []
+        
+        vwap_values = []
+        cumulative_volume = 0
+        cumulative_price_volume = 0
+        
+        for i in range(len(prices)):
+            cumulative_volume += volumes[i]
+            cumulative_price_volume += prices[i] * volumes[i]
+            
+            if cumulative_volume > 0:
+                vwap_values.append(cumulative_price_volume / cumulative_volume)
+            else:
+                vwap_values.append(prices[i])
+        
+        return vwap_values
+    
+    @staticmethod
+    def find_support_resistance(prices: List[float], window: int = 10) -> Dict[str, List[float]]:
+        """Find support and resistance levels"""
+        if len(prices) < window * 2:
+            return {'support': [], 'resistance': []}
+        
+        support_levels = []
+        resistance_levels = []
+        
+        for i in range(window, len(prices) - window):
+            # Check for local minimum (support)
+            is_support = True
+            for j in range(i - window, i + window + 1):
+                if j != i and prices[j] < prices[i]:
+                    is_support = False
+                    break
+            
+            if is_support:
+                support_levels.append(prices[i])
+            
+            # Check for local maximum (resistance)
+            is_resistance = True
+            for j in range(i - window, i + window + 1):
+                if j != i and prices[j] > prices[i]:
+                    is_resistance = False
+                    break
+            
+            if is_resistance:
+                resistance_levels.append(prices[i])
+        
+        # Sort and return most significant levels
+        support_levels.sort()
+        resistance_levels.sort(reverse=True)
+        
+        return {
+            'support': support_levels[:3],  # Top 3 support levels
+            'resistance': resistance_levels[:3]  # Top 3 resistance levels
+        }
         ema_12 = TechnicalIndicators.calculate_ema(prices, 12)
         ema_26 = TechnicalIndicators.calculate_ema(prices, 26)
         

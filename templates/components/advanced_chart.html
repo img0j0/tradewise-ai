@@ -1,145 +1,277 @@
 <!-- Advanced Stock Chart Component -->
 <div id="advanced-chart-modal" class="modal fade" tabindex="-1" role="dialog">
-    <div class="modal-dialog modal-xl" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">
+    <div class="modal-dialog modal-fullscreen" role="document">
+        <div class="modal-content bg-dark">
+            <div class="modal-header border-bottom border-secondary">
+                <h5 class="modal-title d-flex align-items-center">
+                    <i class="fas fa-chart-line me-2 text-primary"></i>
                     <span id="chart-symbol">STOCK</span> - Advanced Chart
                     <span class="badge bg-primary ms-2" id="chart-price">$0.00</span>
                     <span class="badge" id="chart-change">0.00%</span>
                 </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="d-flex align-items-center">
+                    <button type="button" class="btn btn-sm btn-outline-light me-2" onclick="window.advancedChart.resetChart()" title="Reset Chart">
+                        <i class="fas fa-undo"></i>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-primary me-2" onclick="window.advancedChart.exportChart()" title="Export Chart">
+                        <i class="fas fa-download"></i>
+                    </button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
             </div>
-            <div class="modal-body">
-                <!-- Chart Controls -->
-                <div class="chart-controls mb-3">
-                    <div class="row">
-                        <div class="col-md-3">
-                            <label>Time Period</label>
-                            <select class="form-select" id="chart-period">
+            <div class="modal-body p-0">
+                <!-- Enhanced Chart Controls -->
+                <div class="chart-controls bg-dark border-bottom border-secondary p-3">
+                    <div class="row g-3">
+                        <div class="col-lg-2">
+                            <label class="form-label text-light small">Time Period</label>
+                            <select class="form-select form-select-sm bg-dark text-light border-secondary" id="chart-period">
                                 <option value="1d">1 Day</option>
                                 <option value="5d">5 Days</option>
                                 <option value="1mo" selected>1 Month</option>
                                 <option value="3mo">3 Months</option>
                                 <option value="6mo">6 Months</option>
                                 <option value="1y">1 Year</option>
+                                <option value="2y">2 Years</option>
+                                <option value="5y">5 Years</option>
                             </select>
                         </div>
-                        <div class="col-md-3">
-                            <label>Chart Type</label>
-                            <select class="form-select" id="chart-type">
-                                <option value="candlestick">Candlestick</option>
+                        <div class="col-lg-2">
+                            <label class="form-label text-light small">Chart Type</label>
+                            <select class="form-select form-select-sm bg-dark text-light border-secondary" id="chart-type">
                                 <option value="line">Line</option>
                                 <option value="area">Area</option>
+                                <option value="candlestick">Candlestick</option>
                                 <option value="bar">Bar</option>
                             </select>
                         </div>
-                        <div class="col-md-6">
-                            <label>Indicators</label>
-                            <div class="btn-group" role="group">
-                                <input type="checkbox" class="btn-check" id="indicator-sma" autocomplete="off">
-                                <label class="btn btn-outline-primary btn-sm" for="indicator-sma">SMA</label>
-                                
-                                <input type="checkbox" class="btn-check" id="indicator-ema" autocomplete="off">
-                                <label class="btn btn-outline-primary btn-sm" for="indicator-ema">EMA</label>
-                                
-                                <input type="checkbox" class="btn-check" id="indicator-bb" autocomplete="off">
-                                <label class="btn btn-outline-primary btn-sm" for="indicator-bb">Bollinger</label>
-                                
-                                <input type="checkbox" class="btn-check" id="indicator-volume" autocomplete="off" checked>
-                                <label class="btn btn-outline-primary btn-sm" for="indicator-volume">Volume</label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Main Chart -->
-                <div class="chart-container" style="height: 500px;">
-                    <canvas id="advanced-price-chart"></canvas>
-                </div>
-                
-                <!-- Technical Indicators Charts -->
-                <div class="indicators-container mt-3">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h6 class="mb-0">RSI (14)</h6>
+                        <div class="col-lg-8">
+                            <label class="form-label text-light small">Technical Indicators</label>
+                            <div class="btn-toolbar" role="toolbar">
+                                <div class="btn-group me-2" role="group">
+                                    <input type="checkbox" class="btn-check" id="indicator-sma" autocomplete="off">
+                                    <label class="btn btn-outline-warning btn-sm" for="indicator-sma">SMA 20</label>
+                                    
+                                    <input type="checkbox" class="btn-check" id="indicator-ema" autocomplete="off">
+                                    <label class="btn btn-outline-danger btn-sm" for="indicator-ema">EMA 12</label>
+                                    
+                                    <input type="checkbox" class="btn-check" id="indicator-bb" autocomplete="off">
+                                    <label class="btn btn-outline-info btn-sm" for="indicator-bb">Bollinger</label>
+                                    
+                                    <input type="checkbox" class="btn-check" id="indicator-vwap" autocomplete="off">
+                                    <label class="btn btn-outline-secondary btn-sm" for="indicator-vwap">VWAP</label>
                                 </div>
-                                <div class="card-body" style="height: 150px;">
-                                    <canvas id="rsi-chart"></canvas>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h6 class="mb-0">MACD</h6>
-                                </div>
-                                <div class="card-body" style="height: 150px;">
-                                    <canvas id="macd-chart"></canvas>
+                                <div class="btn-group me-2" role="group">
+                                    <input type="checkbox" class="btn-check" id="indicator-volume" autocomplete="off" checked>
+                                    <label class="btn btn-outline-success btn-sm" for="indicator-volume">Volume</label>
+                                    
+                                    <input type="checkbox" class="btn-check" id="indicator-rsi" autocomplete="off" checked>
+                                    <label class="btn btn-outline-primary btn-sm" for="indicator-rsi">RSI</label>
+                                    
+                                    <input type="checkbox" class="btn-check" id="indicator-macd" autocomplete="off" checked>
+                                    <label class="btn btn-outline-light btn-sm" for="indicator-macd">MACD</label>
+                                    
+                                    <input type="checkbox" class="btn-check" id="indicator-stoch" autocomplete="off">
+                                    <label class="btn btn-outline-primary btn-sm" for="indicator-stoch">Stochastic</label>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 
-                <!-- Support & Resistance Levels -->
-                <div class="levels-container mt-3">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h6 class="mb-0 text-success">Support Levels</h6>
-                                </div>
-                                <div class="card-body">
-                                    <ul class="list-unstyled mb-0" id="support-levels">
-                                        <!-- Dynamically populated -->
-                                    </ul>
-                                </div>
+                <!-- Main Chart Container -->
+                <div class="chart-main-container p-3" style="height: calc(100vh - 300px);">
+                    <div class="row h-100">
+                        <div class="col-lg-9">
+                            <!-- Price Chart -->
+                            <div class="chart-container bg-dark rounded mb-3" style="height: 70%; position: relative;">
+                                <canvas id="advanced-price-chart"></canvas>
+                            </div>
+                            
+                            <!-- Volume Chart -->
+                            <div class="volume-container bg-dark rounded" style="height: 25%; position: relative;">
+                                <canvas id="volume-chart"></canvas>
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h6 class="mb-0 text-danger">Resistance Levels</h6>
-                                </div>
-                                <div class="card-body">
-                                    <ul class="list-unstyled mb-0" id="resistance-levels">
-                                        <!-- Dynamically populated -->
-                                    </ul>
+                        
+                        <div class="col-lg-3">
+                            <!-- Technical Indicators Panel -->
+                            <div class="indicators-panel h-100">
+                                <div class="row h-100">
+                                    <div class="col-12 mb-3">
+                                        <div class="card bg-dark border-secondary h-100">
+                                            <div class="card-header bg-dark border-secondary">
+                                                <h6 class="mb-0 text-light">
+                                                    <i class="fas fa-chart-bar me-2"></i>RSI (14)
+                                                </h6>
+                                            </div>
+                                            <div class="card-body p-2" style="height: 120px;">
+                                                <canvas id="rsi-chart"></canvas>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-12 mb-3">
+                                        <div class="card bg-dark border-secondary h-100">
+                                            <div class="card-header bg-dark border-secondary">
+                                                <h6 class="mb-0 text-light">
+                                                    <i class="fas fa-chart-line me-2"></i>MACD
+                                                </h6>
+                                            </div>
+                                            <div class="card-body p-2" style="height: 120px;">
+                                                <canvas id="macd-chart"></canvas>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-12">
+                                        <div class="card bg-dark border-secondary h-100">
+                                            <div class="card-header bg-dark border-secondary">
+                                                <h6 class="mb-0 text-light">
+                                                    <i class="fas fa-info-circle me-2"></i>Market Info
+                                                </h6>
+                                            </div>
+                                            <div class="card-body p-2">
+                                                <div class="market-info">
+                                                    <div class="d-flex justify-content-between mb-1">
+                                                        <small class="text-muted">Volume:</small>
+                                                        <small class="text-light" id="chart-volume">-</small>
+                                                    </div>
+                                                    <div class="d-flex justify-content-between mb-1">
+                                                        <small class="text-muted">High:</small>
+                                                        <small class="text-light" id="chart-high">-</small>
+                                                    </div>
+                                                    <div class="d-flex justify-content-between mb-1">
+                                                        <small class="text-muted">Low:</small>
+                                                        <small class="text-light" id="chart-low">-</small>
+                                                    </div>
+                                                    <div class="d-flex justify-content-between mb-1">
+                                                        <small class="text-muted">Avg Vol:</small>
+                                                        <small class="text-light" id="chart-avg-volume">-</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" onclick="window.advancedChart.exportChart()">
-                    <i class="fas fa-download me-2"></i>Export Chart
-                </button>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            
+            <!-- Support & Resistance Levels Footer -->
+            <div class="modal-footer border-top border-secondary bg-dark">
+                <div class="row w-100">
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-arrow-up text-success me-2"></i>
+                            <span class="text-light me-3">Support:</span>
+                            <div id="support-levels" class="d-flex">
+                                <!-- Dynamically populated -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-arrow-down text-danger me-2"></i>
+                            <span class="text-light me-3">Resistance:</span>
+                            <div id="resistance-levels" class="d-flex">
+                                <!-- Dynamically populated -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 <style>
-.chart-controls .btn-group .btn-check:checked + .btn-outline-primary {
-    background-color: var(--bs-primary);
+/* Enhanced Chart Styling */
+.chart-controls .btn-check:checked + .btn-outline-warning {
+    background-color: #ffc107;
+    color: #000;
+}
+
+.chart-controls .btn-check:checked + .btn-outline-danger {
+    background-color: #dc3545;
     color: white;
 }
 
-.levels-container .card {
-    background-color: rgba(255, 255, 255, 0.05);
+.chart-controls .btn-check:checked + .btn-outline-info {
+    background-color: #0dcaf0;
+    color: #000;
 }
 
-.levels-container ul li {
-    padding: 0.25rem 0;
-    border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+.chart-controls .btn-check:checked + .btn-outline-success {
+    background-color: #198754;
+    color: white;
 }
 
-.levels-container ul li:last-child {
-    border-bottom: none;
+.chart-controls .btn-check:checked + .btn-outline-primary {
+    background-color: #0d6efd;
+    color: white;
+}
+
+.chart-controls .btn-check:checked + .btn-outline-light {
+    background-color: #f8f9fa;
+    color: #000;
+}
+
+.chart-controls .btn-check:checked + .btn-outline-secondary {
+    background-color: #6c757d;
+    color: white;
+}
+
+.chart-container, .volume-container {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+}
+
+.chart-container canvas, .volume-container canvas {
+    border-radius: 8px;
+}
+
+.indicators-panel .card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+}
+
+.market-info {
+    font-size: 0.85rem;
+}
+
+#support-levels, #resistance-levels {
+    gap: 0.5rem;
+}
+
+#support-levels .badge, #resistance-levels .badge {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+}
+
+.modal-fullscreen .modal-content {
+    height: 100vh;
+    border-radius: 0;
+}
+
+/* Scrollbar styling for dark theme */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
 }
 </style>
