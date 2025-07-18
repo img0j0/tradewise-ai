@@ -78,7 +78,7 @@ def index():
     """Main ChatGPT-style AI interface"""
     if not current_user.is_authenticated:
         return redirect(url_for('login'))
-    return render_template('chatgpt_interface.html')
+    return render_template('chatgpt_style_search.html')
 
 @app.route('/dashboard')
 def dashboard():
