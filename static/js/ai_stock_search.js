@@ -310,95 +310,171 @@ function displayStockAnalysis(stockData, aiAnalysis) {
         searchBox.classList.remove('search-loading');
     }
     
-    // Update stock information
-    document.getElementById('stock-name').textContent = stockData.name;
-    document.getElementById('stock-symbol').textContent = stockData.symbol;
-    document.getElementById('stock-sector').textContent = stockData.sector;
-    document.getElementById('stock-price').textContent = formatPrice(stockData.current_price);
+    // Build the complete AI analysis results HTML
+    const resultsContainer = document.getElementById('ai-analysis-results');
+    const analysisHTML = buildAnalysisHTML(stockData, aiAnalysis);
     
-    // Update price change
+    resultsContainer.innerHTML = analysisHTML;
+    resultsContainer.style.display = 'block';
+    
+    // Scroll to results
+    resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function buildAnalysisHTML(stockData, aiAnalysis) {
     const priceChange = stockData.current_price - stockData.previous_close;
     const priceChangePercent = (priceChange / stockData.previous_close) * 100;
-    const changeElement = document.getElementById('stock-change');
     const changeClass = priceChange >= 0 ? 'text-success' : 'text-danger';
     const changeSymbol = priceChange >= 0 ? '+' : '';
     
-    changeElement.innerHTML = `<span class="${changeClass}">${changeSymbol}${priceChange.toFixed(2)} (${changeSymbol}${priceChangePercent.toFixed(2)}%)</span>`;
-    
-    // Update AI recommendation
-    const recommendationElement = document.getElementById('ai-recommendation');
     const recommendation = aiAnalysis.recommendation || 'HOLD';
-    let badgeClass = 'bg-secondary';
-    
-    switch (recommendation) {
-        case 'STRONG BUY':
-            badgeClass = 'bg-success';
-            break;
-        case 'BUY':
-            badgeClass = 'bg-success';
-            break;
-        case 'HOLD':
-            badgeClass = 'bg-warning';
-            break;
-        case 'SELL':
-            badgeClass = 'bg-danger';
-            break;
-        case 'STRONG SELL':
-            badgeClass = 'bg-danger';
-            break;
-    }
-    
-    recommendationElement.innerHTML = `<span class="badge ${badgeClass}">${recommendation}</span>`;
-    document.getElementById('ai-confidence').textContent = `${aiAnalysis.confidence || 50}%`;
-    document.getElementById('ai-insight').textContent = aiAnalysis.insight || 'AI analysis in progress...';
-    
-    // Update risk assessment
-    const riskElement = document.getElementById('risk-level');
+    const confidence = aiAnalysis.confidence || 50;
     const riskLevel = aiAnalysis.risk_level || 'MEDIUM';
-    let riskBadgeClass = 'bg-warning';
-    
-    switch (riskLevel) {
-        case 'LOW':
-            riskBadgeClass = 'bg-success';
-            break;
-        case 'MEDIUM':
-            riskBadgeClass = 'bg-warning';
-            break;
-        case 'HIGH':
-            riskBadgeClass = 'bg-danger';
-            break;
-    }
-    
-    riskElement.innerHTML = `<span class="badge ${riskBadgeClass}">${riskLevel}</span>`;
-    document.getElementById('risk-score').textContent = `${aiAnalysis.risk_score || 5}/10`;
-    
-    // Update risk factors
-    const riskFactors = aiAnalysis.key_risks || ['Market volatility', 'Economic conditions'];
-    const riskFactorsList = document.getElementById('risk-factors');
-    riskFactorsList.innerHTML = riskFactors.map(risk => `<li>${risk}</li>`).join('');
-    
-    // Update price target
+    const riskScore = aiAnalysis.risk_score || 5;
+    const insight = aiAnalysis.insight || 'AI analysis in progress...';
     const priceTarget = aiAnalysis.price_target || stockData.current_price;
     const expectedReturn = aiAnalysis.expected_return || 0;
+    const keyRisks = aiAnalysis.key_risks || ['Market volatility', 'Economic conditions'];
     
-    document.getElementById('target-price').textContent = formatPrice(priceTarget);
-    document.getElementById('price-range').textContent = `${formatPrice(priceTarget * 0.95)} - ${formatPrice(priceTarget * 1.05)}`;
-    document.getElementById('expected-return').textContent = `${expectedReturn >= 0 ? '+' : ''}${expectedReturn.toFixed(2)}%`;
+    // Get badge classes
+    const recBadgeClass = getRecommendationBadgeClass(recommendation);
+    const riskBadgeClass = getRiskBadgeClass(riskLevel);
     
-    // Update AI insights text
-    const insightsText = generateDetailedInsights(stockData, aiAnalysis);
-    const insightsElement = document.getElementById('ai-insights-text');
-    if (insightsElement) {
-        insightsElement.innerHTML = insightsText;
+    return `
+        <div class="row">
+            <div class="col-12">
+                <div class="card bg-dark border-0 shadow-lg">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <div>
+                                        <h2 class="text-white mb-1">${stockData.name}</h2>
+                                        <p class="text-muted mb-0">${stockData.symbol} • ${stockData.sector}</p>
+                                    </div>
+                                    <div class="text-end">
+                                        <h3 class="text-white mb-0">${formatPrice(stockData.current_price)}</h3>
+                                        <p class="mb-0">
+                                            <span class="${changeClass}">
+                                                ${changeSymbol}${priceChange.toFixed(2)} (${changeSymbol}${priceChangePercent.toFixed(2)}%)
+                                            </span>
+                                        </p>
+                                    </div>
+                                </div>
+                                
+                                <div class="row mb-4">
+                                    <div class="col-md-6">
+                                        <div class="ai-recommendation-card">
+                                            <h5 class="text-white mb-2">
+                                                <i class="fas fa-robot me-2"></i>AI Recommendation
+                                            </h5>
+                                            <span class="badge ${recBadgeClass} fs-6 mb-2">${recommendation}</span>
+                                            <p class="text-muted mb-0">Confidence: ${confidence}%</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="risk-assessment-card">
+                                            <h5 class="text-white mb-2">
+                                                <i class="fas fa-exclamation-triangle me-2"></i>Risk Assessment
+                                            </h5>
+                                            <span class="badge ${riskBadgeClass} fs-6 mb-2">${riskLevel}</span>
+                                            <p class="text-muted mb-0">Risk Score: ${riskScore}/10</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="ai-insights-section">
+                                    <h5 class="text-white mb-3">
+                                        <i class="fas fa-brain me-2"></i>AI Insights
+                                    </h5>
+                                    <p class="text-light mb-3">${insight}</p>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="metric-card">
+                                                <h6 class="text-white">Price Target</h6>
+                                                <p class="text-success fs-5 mb-0">${formatPrice(priceTarget)}</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="metric-card">
+                                                <h6 class="text-white">Expected Return</h6>
+                                                <p class="fs-5 mb-0 ${expectedReturn >= 0 ? 'text-success' : 'text-danger'}">
+                                                    ${expectedReturn >= 0 ? '+' : ''}${expectedReturn.toFixed(2)}%
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="key-risks-section mt-4">
+                                        <h6 class="text-white mb-2">Key Risk Factors</h6>
+                                        <ul class="text-muted">
+                                            ${keyRisks.map(risk => `<li>${risk}</li>`).join('')}
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-4">
+                                <div class="action-panel">
+                                    <button class="btn btn-success btn-lg w-100 mb-3" onclick="showBuyModal('${stockData.symbol}', ${stockData.current_price})">
+                                        <i class="fas fa-shopping-cart me-2"></i>Buy Stock
+                                    </button>
+                                    <button class="btn btn-outline-primary w-100 mb-3" onclick="addToWatchlist('${stockData.symbol}')">
+                                        <i class="fas fa-eye me-2"></i>Add to Watchlist
+                                    </button>
+                                    <button class="btn btn-outline-secondary w-100" onclick="showNewSearch()">
+                                        <i class="fas fa-search me-2"></i>Search Another
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function getRecommendationBadgeClass(recommendation) {
+    switch (recommendation) {
+        case 'STRONG BUY':
+        case 'BUY':
+            return 'bg-success';
+        case 'HOLD':
+            return 'bg-warning';
+        case 'SELL':
+        case 'STRONG SELL':
+            return 'bg-danger';
+        default:
+            return 'bg-secondary';
     }
-    
-    // Update buy button
-    const buyButton = document.getElementById('buy-stock-btn');
-    buyButton.setAttribute('onclick', `showBuyModal('${stockData.symbol}', ${stockData.current_price})`);
-    
-    // Show results
-    document.getElementById('search-loading').style.display = 'none';
-    document.getElementById('ai-analysis-results').style.display = 'block';
+}
+
+function getRiskBadgeClass(riskLevel) {
+    switch (riskLevel) {
+        case 'LOW':
+            return 'bg-success';
+        case 'MEDIUM':
+            return 'bg-warning';
+        case 'HIGH':
+            return 'bg-danger';
+        default:
+            return 'bg-secondary';
+    }
+}
+
+function showNewSearch() {
+    document.getElementById('ai-analysis-results').style.display = 'none';
+    document.getElementById('stock-search-input').value = '';
+    document.getElementById('stock-search-input').focus();
+}
+
+function addToWatchlist(symbol) {
+    // Implementation for adding to watchlist
+    console.log('Adding to watchlist:', symbol);
+    // You can implement this feature later
+    alert('Watchlist feature coming soon!');
 }
 
 // Generate detailed AI insights
