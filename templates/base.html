@@ -33,6 +33,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/micro_interactions.css') }}?v={{ range(1000, 9999) | random }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/iphone_optimization.css') }}?v={{ range(1000, 9999) | random }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/google_search.css') }}?v={{ range(1000, 9999) | random }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/ai_autocomplete.css') }}?v={{ range(1000, 9999) | random }}">
 </head>
 <body class="bg-dark text-light">
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
@@ -135,6 +136,7 @@
     <script src="{{ url_for('static', filename='js/init.js') }}"></script>
     <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
     <script src="{{ url_for('static', filename='js/ai_stock_search.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/ai_autocomplete_enhanced.js') }}"></script>
     
     <!-- Scripts -->
     {% block scripts %}{% endblock %}

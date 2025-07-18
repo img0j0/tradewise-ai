@@ -23,6 +23,7 @@ from advanced_orders import get_order_manager, OrderType, OrderSide, AdvancedOrd
 from market_intelligence import get_market_intelligence
 from deep_learning_engine import get_deep_learning_engine
 from performance_optimizer import get_performance_optimizer, cached, monitored
+from dynamic_search_autocomplete import autocomplete_engine
 # Import will be done after setup
 realtime_service = None
 
@@ -2022,6 +2023,93 @@ def search_stock_api(symbol):
     except Exception as e:
         logger.error(f"Error searching for stock {symbol}: {e}")
         return jsonify({'error': str(e)}), 500
+
+# Dynamic Search Autocomplete API Endpoints
+@app.route('/api/search-autocomplete')
+@login_required
+def search_autocomplete():
+    """Get intelligent search suggestions with AI insights"""
+    try:
+        query = request.args.get('q', '').strip()
+        limit = int(request.args.get('limit', 8))
+        
+        # Get intelligent suggestions from autocomplete engine
+        suggestions = autocomplete_engine.get_intelligent_suggestions(query, limit)
+        
+        return jsonify({
+            'suggestions': suggestions,
+            'query': query,
+            'total': len(suggestions)
+        })
+        
+    except Exception as e:
+        logger.error(f"Error getting autocomplete suggestions: {e}")
+        return jsonify({'error': 'Failed to get suggestions'}), 500
+
+@app.route('/api/search-themes')
+@login_required
+def search_themes():
+    """Get trending investment themes"""
+    try:
+        themes = {
+            'AI': 'Artificial Intelligence & Machine Learning',
+            'Electric Vehicles': 'Electric Vehicles & Clean Transportation',
+            'Streaming': 'Streaming & Digital Entertainment',
+            'Cloud Computing': 'Cloud Computing & Enterprise Software',
+            'Fintech': 'Financial Technology & Digital Payments',
+            'Healthcare': 'Healthcare & Biotechnology',
+            'Renewable Energy': 'Renewable Energy & Clean Tech'
+        }
+        
+        return jsonify({
+            'themes': themes,
+            'trending': list(themes.keys())[:4]
+        })
+        
+    except Exception as e:
+        logger.error(f"Error getting investment themes: {e}")
+        return jsonify({'error': 'Failed to get themes'}), 500
+
+@app.route('/api/search-theme/<theme>')
+@login_required
+def search_theme(theme):
+    """Get stocks for a specific investment theme"""
+    try:
+        suggestions = autocomplete_engine.get_themed_suggestions(theme)
+        
+        return jsonify({
+            'theme': theme,
+            'suggestions': suggestions,
+            'total': len(suggestions)
+        })
+        
+    except Exception as e:
+        logger.error(f"Error getting theme suggestions for {theme}: {e}")
+        return jsonify({'error': 'Failed to get theme suggestions'}), 500
+
+@app.route('/api/search-external')
+@login_required
+def search_external():
+    """Search for stocks not in the popular database"""
+    try:
+        query = request.args.get('q', '').strip()
+        limit = int(request.args.get('limit', 5))
+        
+        if not query:
+            return jsonify({'suggestions': [], 'query': query, 'total': 0})
+        
+        # Search external stocks
+        suggestions = autocomplete_engine.search_external_stocks(query, limit)
+        
+        return jsonify({
+            'suggestions': suggestions,
+            'query': query,
+            'total': len(suggestions)
+        })
+        
+    except Exception as e:
+        logger.error(f"Error searching external stocks: {e}")
+        return jsonify({'error': 'Failed to search external stocks'}), 500
 
 @app.route('/api/ai-analysis/<symbol>')
 @login_required

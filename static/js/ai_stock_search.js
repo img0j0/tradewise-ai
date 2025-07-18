@@ -113,16 +113,31 @@ function handleSearchBlur() {
     }, 150);
 }
 
-function showSuggestions(query) {
+async function showSuggestions(query) {
     const suggestionsContainer = document.getElementById('search-suggestions');
     const suggestionsList = document.getElementById('suggestions-list');
     
-    // Filter suggestions based on query
-    suggestions = filterSuggestions(query);
+    // Show loading state
+    showLoadingState();
     
-    if (suggestions.length === 0) {
-        hideSuggestions();
-        return;
+    try {
+        // Get AI-powered suggestions from the backend
+        suggestions = await getAIAutocompleteData(query);
+        
+        if (suggestions.length === 0) {
+            hideSuggestions();
+            return;
+        }
+    } catch (error) {
+        console.error('Error getting AI suggestions:', error);
+        // Fallback to local suggestions
+        suggestions = filterSuggestions(query);
+        
+        if (suggestions.length === 0) {
+            hideSuggestions();
+            return;
+        }
+    }
     }
     
     // Create suggestion items

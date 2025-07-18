@@ -1,0 +1,312 @@
+/* AI-Enhanced Autocomplete Styles */
+
+/* Enhanced search suggestions */
+.search-suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 0 0 12px 12px;
+    max-height: 400px;
+    overflow-y: auto;
+    z-index: 1000;
+    display: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.suggestion-item {
+    padding: 12px 16px;
+    cursor: pointer;
+    border-bottom: 1px solid #333;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.suggestion-item:hover,
+.suggestion-item.selected {
+    background: #2a2a2a;
+    transform: translateX(4px);
+}
+
+.suggestion-item:last-child {
+    border-bottom: none;
+}
+
+.suggestion-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.suggestion-symbol {
+    font-weight: 600;
+    color: #4CAF50;
+    font-size: 14px;
+}
+
+.suggestion-name {
+    color: #e0e0e0;
+    font-size: 13px;
+    margin-bottom: 2px;
+}
+
+.suggestion-sector {
+    color: #888;
+    font-size: 12px;
+}
+
+/* AI-enhanced suggestion data */
+.suggestion-ai-data {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+    min-width: 120px;
+}
+
+.suggestion-price {
+    color: #e0e0e0;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.suggestion-change {
+    font-size: 12px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 500;
+}
+
+.suggestion-change.positive {
+    color: #4CAF50;
+    background: rgba(76, 175, 80, 0.1);
+}
+
+.suggestion-change.negative {
+    color: #f44336;
+    background: rgba(244, 67, 54, 0.1);
+}
+
+.suggestion-sentiment {
+    font-size: 11px;
+    padding: 2px 6px;
+    border-radius: 8px;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+.ai-sentiment-very-bullish {
+    color: #4CAF50;
+    background: rgba(76, 175, 80, 0.2);
+}
+
+.ai-sentiment-bullish {
+    color: #8BC34A;
+    background: rgba(139, 195, 74, 0.2);
+}
+
+.ai-sentiment-neutral {
+    color: #FFC107;
+    background: rgba(255, 193, 7, 0.2);
+}
+
+.ai-sentiment-bearish {
+    color: #FF9800;
+    background: rgba(255, 152, 0, 0.2);
+}
+
+.ai-sentiment-very-bearish {
+    color: #f44336;
+    background: rgba(244, 67, 54, 0.2);
+}
+
+.suggestion-confidence {
+    color: #2196F3;
+    font-size: 10px;
+    font-weight: 500;
+}
+
+.suggestion-reason {
+    position: absolute;
+    bottom: 8px;
+    right: 16px;
+    color: #666;
+    font-size: 10px;
+    font-style: italic;
+}
+
+/* Loading state */
+.suggestion-loading {
+    padding: 20px;
+    text-align: center;
+    color: #888;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.loading-spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid #333;
+    border-top: 2px solid #4CAF50;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Theme buttons */
+.theme-btn {
+    background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+    color: #e0e0e0;
+    border: 1px solid #333;
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin: 4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.theme-btn:hover {
+    background: linear-gradient(135deg, #3a3a3a 0%, #2a2a2a 100%);
+    border-color: #4CAF50;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.theme-btn i {
+    color: #4CAF50;
+}
+
+/* Trending themes container */
+#trending-themes {
+    margin-top: 15px;
+    padding: 10px 0;
+    border-top: 1px solid #333;
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+    .suggestion-item {
+        padding: 10px 12px;
+        gap: 8px;
+    }
+    
+    .suggestion-ai-data {
+        min-width: 100px;
+        gap: 2px;
+    }
+    
+    .suggestion-price {
+        font-size: 13px;
+    }
+    
+    .suggestion-change {
+        font-size: 11px;
+        padding: 1px 4px;
+    }
+    
+    .suggestion-sentiment {
+        font-size: 10px;
+        padding: 1px 4px;
+    }
+    
+    .suggestion-confidence {
+        font-size: 9px;
+    }
+    
+    .suggestion-reason {
+        font-size: 9px;
+        bottom: 6px;
+        right: 12px;
+    }
+    
+    .theme-btn {
+        padding: 6px 10px;
+        font-size: 11px;
+        margin: 3px;
+    }
+}
+
+/* Enhanced search input animation */
+.google-search-input:focus + .search-suggestions {
+    border-color: #4CAF50;
+    box-shadow: 0 4px 16px rgba(76, 175, 80, 0.2);
+}
+
+/* AI badge animations */
+.suggestion-sentiment,
+.suggestion-confidence {
+    animation: fadeInUp 0.3s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Hover effects for better UX */
+.suggestion-item:hover .suggestion-symbol {
+    color: #66BB6A;
+}
+
+.suggestion-item:hover .suggestion-ai-data {
+    transform: scale(1.05);
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .suggestion-item {
+        border-bottom: 2px solid #555;
+    }
+    
+    .suggestion-item:hover,
+    .suggestion-item.selected {
+        background: #333;
+        border-left: 4px solid #4CAF50;
+    }
+    
+    .suggestion-sentiment,
+    .suggestion-change {
+        border: 1px solid currentColor;
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    .suggestion-item,
+    .theme-btn,
+    .loading-spinner {
+        transition: none;
+        animation: none;
+    }
+    
+    .suggestion-item:hover {
+        transform: none;
+    }
+    
+    .theme-btn:hover {
+        transform: none;
+    }
+}
