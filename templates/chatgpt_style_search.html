@@ -642,7 +642,7 @@
                 </div>
                 
                 <div class="ai-analysis">
-                    <div class="ai-recommendation ${data.ai_recommendation.toLowerCase().replace(/\s+/g, '-')} ${data.ai_recommendation.toLowerCase() === 'hold' ? 'force-dark-text' : 'force-white-text'}" style="${getRecommendationStyles(data.ai_recommendation)}">
+                    <div class="ai-recommendation ${data.ai_recommendation.toLowerCase().replace(/\s+/g, '-')} ${data.ai_recommendation.toLowerCase() === 'hold' ? 'force-dark-text' : 'force-white-text'}"
                         <span style="${data.ai_recommendation.toLowerCase() === 'hold' ? 'color: #000000 !important;' : 'color: white !important;'}">${data.ai_recommendation}</span> (<span style="${data.ai_recommendation.toLowerCase() === 'hold' ? 'color: rgba(0,0,0,0.7);' : 'color: rgba(255,255,255,0.9);'}">${data.ai_confidence}% confidence</span>)
                     </div>
                     <p style="color: rgba(255,255,255,0.8); line-height: 1.4; margin: 0.5rem 0 1rem 0;">
