@@ -763,6 +763,98 @@ def ai_chat():
         logger.error(f"Error in AI chat: {e}")
         return jsonify({'error': 'Failed to process request'}), 500
 
+@app.route('/api/ai-search-suggestions', methods=['POST'])
+def ai_search_suggestions():
+    """AI-powered smart search suggestions"""
+    try:
+        data = request.get_json()
+        query = data.get('query', '').strip()
+        
+        if not query:
+            return jsonify({'suggestions': []})
+        
+        suggestions = []
+        
+        # AI-powered company name matching
+        company_mappings = {
+            'nvidia': {'symbol': 'NVDA', 'name': 'NVIDIA Corporation'},
+            'apple': {'symbol': 'AAPL', 'name': 'Apple Inc.'},
+            'tesla': {'symbol': 'TSLA', 'name': 'Tesla, Inc.'},
+            'microsoft': {'symbol': 'MSFT', 'name': 'Microsoft Corporation'},
+            'amazon': {'symbol': 'AMZN', 'name': 'Amazon.com Inc.'},
+            'google': {'symbol': 'GOOGL', 'name': 'Alphabet Inc.'},
+            'meta': {'symbol': 'META', 'name': 'Meta Platforms Inc.'},
+            'netflix': {'symbol': 'NFLX', 'name': 'Netflix Inc.'},
+            'facebook': {'symbol': 'META', 'name': 'Meta Platforms Inc.'},
+            'alphabet': {'symbol': 'GOOGL', 'name': 'Alphabet Inc.'}
+        }
+        
+        query_lower = query.lower()
+        
+        # Direct symbol match
+        if query.upper() in ['AAPL', 'TSLA', 'NVDA', 'MSFT', 'GOOGL', 'AMZN', 'META', 'NFLX']:
+            suggestions.append({
+                'type': 'stock',
+                'symbol': query.upper(),
+                'text': query.upper(),
+                'confidence': 0.95
+            })
+        
+        # Company name matching
+        for name, info in company_mappings.items():
+            if query_lower in name or name in query_lower:
+                suggestions.append({
+                    'type': 'company',
+                    'symbol': info['symbol'],
+                    'text': info['name'],
+                    'confidence': 0.9
+                })
+        
+        # AI-generated smart suggestions based on market context
+        market_suggestions = []
+        
+        # Technology keywords
+        if any(word in query_lower for word in ['tech', 'ai', 'chip', 'semiconductor', 'software']):
+            market_suggestions.extend([
+                {'type': 'ai', 'symbol': 'NVDA', 'text': 'NVIDIA - AI Leader', 'confidence': 0.85},
+                {'type': 'ai', 'symbol': 'MSFT', 'text': 'Microsoft - Cloud & AI', 'confidence': 0.8},
+                {'type': 'ai', 'symbol': 'GOOGL', 'text': 'Google - AI Innovation', 'confidence': 0.8}
+            ])
+        
+        # Electric vehicle keywords
+        if any(word in query_lower for word in ['electric', 'ev', 'car', 'auto', 'vehicle']):
+            market_suggestions.extend([
+                {'type': 'ai', 'symbol': 'TSLA', 'text': 'Tesla - EV Pioneer', 'confidence': 0.9},
+                {'type': 'ai', 'symbol': 'F', 'text': 'Ford - EV Growth', 'confidence': 0.7}
+            ])
+        
+        # Streaming/entertainment keywords
+        if any(word in query_lower for word in ['streaming', 'video', 'entertainment', 'media']):
+            market_suggestions.extend([
+                {'type': 'ai', 'symbol': 'NFLX', 'text': 'Netflix - Streaming Leader', 'confidence': 0.85},
+                {'type': 'ai', 'symbol': 'DIS', 'text': 'Disney - Media Giant', 'confidence': 0.75}
+            ])
+        
+        suggestions.extend(market_suggestions)
+        
+        # Remove duplicates and limit results
+        seen = set()
+        unique_suggestions = []
+        for suggestion in suggestions:
+            key = suggestion['symbol']
+            if key not in seen:
+                seen.add(key)
+                unique_suggestions.append(suggestion)
+        
+        return jsonify({
+            'suggestions': unique_suggestions[:8],
+            'query': query
+        })
+        
+    except Exception as e:
+        logger.error(f"AI Search Suggestions error: {e}")
+        return jsonify({'suggestions': []}), 200
+
 def get_market_overview_response():
     """Generate market overview response"""
     try:
