@@ -27,11 +27,16 @@ class AIAutocompleteEngine {
     }
     
     setupEventListeners() {
-        const searchInput = document.getElementById('stock-search-input');
-        const searchBtn = document.getElementById('search-btn');
+        const searchInput = document.getElementById('stock-search-input') || 
+                           document.getElementById('main-search-input');
+        const searchBtn = document.getElementById('search-btn') || 
+                         document.querySelector('.chatgpt-search-btn');
         const suggestionsContainer = document.getElementById('search-suggestions');
         
-        if (!searchInput || !searchBtn) return;
+        if (!searchInput || !searchBtn) {
+            console.log('Search elements not found, skipping autocomplete setup');
+            return;
+        }
         
         // Search input events
         searchInput.addEventListener('input', (e) => this.handleSearchInput(e));
@@ -50,8 +55,12 @@ class AIAutocompleteEngine {
     }
     
     setupKeyboardNavigation() {
-        const searchInput = document.getElementById('stock-search-input');
-        if (!searchInput) return;
+        const searchInput = document.getElementById('stock-search-input') || 
+                           document.getElementById('main-search-input');
+        if (!searchInput) {
+            console.log('Search input not found, skipping keyboard navigation setup');
+            return;
+        }
         
         searchInput.addEventListener('keydown', (e) => {
             switch(e.key) {
