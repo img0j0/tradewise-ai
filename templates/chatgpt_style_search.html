@@ -214,14 +214,25 @@
         font-weight: 600;
     }
     
+    .force-dark-text,
+    .force-dark-text *,
+    .ai-recommendation.hold,
+    .ai-recommendation.hold *,
     .ai-recommendation.hold .recommendation-text {
-        color: #1a1a1a !important;
+        color: #000000 !important;
+        text-shadow: none !important;
     }
     
-    .ai-recommendation.buy .recommendation-text,
-    .ai-recommendation.strong-buy .recommendation-text,
-    .ai-recommendation.sell .recommendation-text,
-    .ai-recommendation.strong-sell .recommendation-text {
+    .force-white-text,
+    .force-white-text *,
+    .ai-recommendation.buy,
+    .ai-recommendation.buy *,
+    .ai-recommendation.strong-buy,
+    .ai-recommendation.strong-buy *,
+    .ai-recommendation.sell,
+    .ai-recommendation.sell *,
+    .ai-recommendation.strong-sell,
+    .ai-recommendation.strong-sell * {
         color: white !important;
     }
 
@@ -479,6 +490,21 @@
         console.log('TradeWise AI: Recommendation is:', data.ai_recommendation, 'Lowercase:', data.ai_recommendation.toLowerCase());
                 hideLoading();
                 displayResult(data);
+                
+                // Force styling for HOLD recommendations
+                setTimeout(() => {
+                    const holdElements = document.querySelectorAll('.ai-recommendation.hold, .force-dark-text');
+                    holdElements.forEach(el => {
+                        el.style.setProperty('color', '#000000', 'important');
+                        el.style.setProperty('background', '#fbbf24', 'important');
+                        const spans = el.querySelectorAll('span');
+                        spans.forEach(span => {
+                            if (!span.style.color || span.style.color !== 'rgba(255,255,255,0.9)') {
+                                span.style.setProperty('color', '#000000', 'important');
+                            }
+                        });
+                    });
+                }, 100);
             })
             .catch(error => {
                 console.error('TradeWise AI: Error', error);
@@ -576,7 +602,7 @@
                 </div>
                 
                 <div class="ai-analysis">
-                    <div class="ai-recommendation ${data.ai_recommendation.toLowerCase().replace(/\s+/g, '-')}" style="${data.ai_recommendation.toLowerCase() === 'hold' ? 'color: #000000 !important; background: var(--yellow) !important;' : 'color: white !important;'}">
+                    <div class="ai-recommendation ${data.ai_recommendation.toLowerCase().replace(/\s+/g, '-')} ${data.ai_recommendation.toLowerCase() === 'hold' ? 'force-dark-text' : 'force-white-text'}" style="${data.ai_recommendation.toLowerCase() === 'hold' ? 'color: #000000 !important; background: #fbbf24 !important;' : 'color: white !important;'}">
                         <span style="${data.ai_recommendation.toLowerCase() === 'hold' ? 'color: #000000 !important;' : 'color: white !important;'}">${data.ai_recommendation}</span> (<span style="color: rgba(255,255,255,0.9);">${data.ai_confidence}% confidence</span>)
                     </div>
                     <p style="color: rgba(255,255,255,0.8); line-height: 1.4; margin: 0.5rem 0 1rem 0;">
