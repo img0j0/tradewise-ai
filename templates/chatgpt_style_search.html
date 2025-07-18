@@ -527,6 +527,14 @@
             return value;
         };
         
+        // Format price with proper decimal places
+        const formatPrice = (price) => {
+            if (typeof price === 'number') {
+                return price.toFixed(2);
+            }
+            return parseFloat(price).toFixed(2);
+        };
+        
         resultsDiv.innerHTML = `
             <div class="stock-result">
                 <div class="stock-header">
@@ -538,7 +546,7 @@
                         </div>
                     </div>
                     <div style="text-align: right;">
-                        <div class="stock-price">$${data.price}</div>
+                        <div class="stock-price">$${formatPrice(data.price)}</div>
                         <div class="stock-change ${changeClass}">
                             ${changeSymbol}$${Math.abs(data.change).toFixed(2)} (${data.change_percent}%)
                         </div>
@@ -580,12 +588,12 @@
                         ${data.week_52_high ? `
                         <div class="metric-item">
                             <span class="metric-label">52W High</span>
-                            <span class="metric-value">$${formatMetric(data.week_52_high)}</span>
+                            <span class="metric-value">$${formatPrice(data.week_52_high)}</span>
                         </div>` : ''}
                         ${data.week_52_low ? `
                         <div class="metric-item">
                             <span class="metric-label">52W Low</span>
-                            <span class="metric-value">$${formatMetric(data.week_52_low)}</span>
+                            <span class="metric-value">$${formatPrice(data.week_52_low)}</span>
                         </div>` : ''}
                         ${data.dividend_yield ? `
                         <div class="metric-item">
