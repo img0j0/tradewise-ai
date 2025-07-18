@@ -398,7 +398,14 @@ class AIAutocompleteEngine {
             { name: 'Crypto', icon: 'fa-coins', return: -5.2 }
         ];
     }
-}
+    
+    async showAISuggestions(query) {
+        if (this.isLoading) return;
+        
+        this.isLoading = true;
+        this.showLoadingState();
+        
+        try {
             const response = await fetch(`/api/search-autocomplete?q=${encodeURIComponent(query)}&limit=8`, {
                 credentials: 'include'
             });
@@ -633,65 +640,7 @@ class AIAutocompleteEngine {
         }
     }
     
-    async loadTrendingThemes() {
-        try {
-            const response = await fetch('/api/search-themes', {
-                credentials: 'include'
-            });
-            
-            if (!response.ok) {
-                throw new Error('Failed to load themes');
-            }
-            
-            const data = await response.json();
-            this.displayTrendingThemes(data.themes);
-            
-        } catch (error) {
-            console.error('Error loading trending themes:', error);
-        }
-    }
-    
-    displayTrendingThemes(themes) {
-        const themesContainer = document.getElementById('trending-themes');
-        if (!themesContainer) return;
-        
-        let themesHTML = '';
-        Object.entries(themes).forEach(([key, description]) => {
-            themesHTML += `
-                <button class="theme-btn" onclick="aiAutocomplete.searchTheme('${key}')">
-                    <i class="fas fa-chart-line me-2"></i>
-                    ${key}
-                </button>
-            `;
-        });
-        
-        themesContainer.innerHTML = themesHTML;
-    }
-    
-    async searchTheme(theme) {
-        try {
-            this.showLoadingState();
-            
-            const response = await fetch(`/api/search-theme/${encodeURIComponent(theme)}`, {
-                credentials: 'include'
-            });
-            
-            if (!response.ok) {
-                throw new Error('Failed to load theme suggestions');
-            }
-            
-            const data = await response.json();
-            this.suggestions = data.suggestions || [];
-            
-            if (this.suggestions.length > 0) {
-                this.displaySuggestions();
-            }
-            
-        } catch (error) {
-            console.error('Error searching theme:', error);
-            this.hideSuggestions();
-        }
-    }
+
     
     // Quick search function for popular stocks
     quickSearch(symbol) {
