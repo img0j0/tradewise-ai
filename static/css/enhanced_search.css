@@ -440,7 +440,7 @@
 
 .search-controls-buttons {
     display: flex;
-    gap: 2.5rem;
+    gap: 4rem;
     justify-content: center;
     align-items: center;
 }
@@ -494,7 +494,7 @@
     }
     
     .search-controls-buttons {
-        gap: 3rem;
+        gap: 4rem;
     }
     
     .voice-search-btn,
