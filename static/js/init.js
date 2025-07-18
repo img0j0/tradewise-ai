@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         // Initialize portfolio analytics
-        if (!window.portfolioAnalytics) {
+        if (!window.portfolioAnalytics && typeof PortfolioAnalytics !== 'undefined') {
             window.portfolioAnalytics = new PortfolioAnalytics();
         }
         

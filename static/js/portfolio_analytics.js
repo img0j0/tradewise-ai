@@ -665,6 +665,4 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // Export for use in other modules
-if (!window.PortfolioAnalytics) {
-    window.PortfolioAnalytics = PortfolioAnalytics;
-}
+} // End of if (!window.PortfolioAnalytics) block
