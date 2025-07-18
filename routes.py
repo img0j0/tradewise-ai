@@ -759,9 +759,84 @@ def stock_analysis(symbol):
             'error': f'Failed to analyze {symbol.upper()}. Please verify the stock symbol is correct.'
         }), 500
 
-# Removed duplicate portfolio-summary route
+@app.route('/api/portfolio-summary')
+@login_required
+def portfolio_summary():
+    """Get portfolio summary for current user"""
+    try:
+        if not current_user.is_authenticated:
+            return jsonify({
+                'total_value': 0.0,
+                'total_invested': 0.0,
+                'profit_loss': 0.0,
+                'holdings': []
+            })
+        
+        # Get user's portfolio holdings
+        holdings = Portfolio.query.filter_by(user_id=current_user.id).all()
+        
+        total_value = 0.0
+        total_invested = 0.0
+        holdings_list = []
+        
+        for holding in holdings:
+            if holding.quantity > 0:
+                # Get current stock price
+                try:
+                    stock_data = stock_search_service.get_stock_data(holding.symbol)
+                    current_price = float(stock_data.get('current_price', holding.average_price))
+                except:
+                    current_price = holding.average_price
+                
+                current_value = holding.quantity * current_price
+                invested_value = holding.quantity * holding.average_price
+                profit_loss = current_value - invested_value
+                
+                total_value += current_value
+                total_invested += invested_value
+                
+                holdings_list.append({
+                    'symbol': holding.symbol,
+                    'quantity': holding.quantity,
+                    'avg_price': holding.average_price,
+                    'current_price': current_price,
+                    'current_value': current_value,
+                    'invested_value': invested_value,
+                    'profit_loss': profit_loss
+                })
+        
+        return jsonify({
+            'total_value': total_value,
+            'total_invested': total_invested,
+            'profit_loss': total_value - total_invested,
+            'holdings': holdings_list
+        })
+        
+    except Exception as e:
+        logger.error(f"Error getting portfolio summary: {e}")
+        return jsonify({
+            'total_value': 0.0,
+            'total_invested': 0.0,
+            'profit_loss': 0.0,
+            'holdings': []
+        }), 500
 
-# Removed duplicate account balance route
+@app.route('/api/account-balance')
+@login_required  
+def get_account_balance():
+    """Get current account balance"""
+    try:
+        if not current_user.is_authenticated:
+            return jsonify({'balance': 0.0, 'currency': 'USD'})
+            
+        user_account = get_or_create_user_account()
+        return jsonify({
+            'balance': user_account.balance,
+            'currency': 'USD'
+        })
+    except Exception as e:
+        logger.error(f"Error getting account balance: {e}")
+        return jsonify({'balance': 0.0, 'currency': 'USD'}), 500
 
 @app.route('/api/ai/chat', methods=['POST'])
 @login_required

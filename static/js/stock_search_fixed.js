@@ -214,13 +214,326 @@ function handleSearchKeypress(event) {
     }
 }
 
-// Placeholder functions for actions
+// Get recommendation styles based on type
+function getRecommendationStyles(recommendation) {
+    const rec = recommendation.toLowerCase();
+    switch(rec) {
+        case 'strong buy':
+            return 'color: white !important; background: #059669 !important;';
+        case 'buy':
+            return 'color: white !important; background: #10b981 !important;';
+        case 'hold':
+            return 'color: #000000 !important; background: #fbbf24 !important;';
+        case 'sell':
+            return 'color: white !important; background: #ef4444 !important;';
+        case 'strong sell':
+            return 'color: white !important; background: #dc2626 !important;';
+        default:
+            return 'color: white !important; background: #6b7280 !important;';
+    }
+}
+
+// Portfolio functionality
 function buyStock(symbol) {
-    showNotification(`Buy functionality for ${symbol} coming soon!`, 'info');
+    // Show buy modal with stock details
+    showBuyModal(symbol);
 }
 
 function addToWatchlist(symbol) {
-    showNotification(`${symbol} added to watchlist!`, 'success');
+    fetch('/api/add-to-watchlist', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ symbol: symbol })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showNotification(`${symbol} added to watchlist!`, 'success');
+        } else {
+            showNotification(data.message || 'Failed to add to watchlist', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error adding to watchlist:', error);
+        showNotification('Error adding to watchlist', 'error');
+    });
+}
+
+// Show buy modal
+function showBuyModal(symbol) {
+    const modal = document.createElement('div');
+    modal.className = 'buy-modal-overlay';
+    modal.innerHTML = `
+        <div class="buy-modal">
+            <div class="buy-modal-header">
+                <h3>Buy ${symbol}</h3>
+                <button class="close-modal" onclick="closeBuyModal()">&times;</button>
+            </div>
+            <div class="buy-modal-body">
+                <div class="loading-spinner">Loading stock details...</div>
+            </div>
+        </div>
+    `;
+    
+    // Add modal styles
+    const styles = `
+        .buy-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .buy-modal {
+            background: #1a1a2e;
+            border-radius: 15px;
+            width: min(90%, 500px);
+            max-height: 90vh;
+            overflow-y: auto;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .buy-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .buy-modal-header h3 {
+            color: white;
+            margin: 0;
+            font-size: 1.5rem;
+        }
+        .close-modal {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 2rem;
+            cursor: pointer;
+            line-height: 1;
+        }
+        .buy-modal-body {
+            padding: 1.5rem;
+        }
+        .loading-spinner {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
+            padding: 2rem;
+        }
+        .stock-price-info {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .buy-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .form-group label {
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 600;
+        }
+        .form-group input {
+            padding: 0.75rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1rem;
+        }
+        .purchase-summary {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid #10b981;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+        .buy-button {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .buy-button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+    `;
+    
+    if (!document.getElementById('buy-modal-styles')) {
+        const styleSheet = document.createElement('style');
+        styleSheet.id = 'buy-modal-styles';
+        styleSheet.textContent = styles;
+        document.head.appendChild(styleSheet);
+    }
+    
+    document.body.appendChild(modal);
+    
+    // Load stock details
+    loadStockDetailsForPurchase(symbol);
+}
+
+// Load stock details for purchase
+function loadStockDetailsForPurchase(symbol) {
+    fetch(`/api/stock-analysis/${symbol}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                displayBuyForm(symbol, data);
+            } else {
+                document.querySelector('.buy-modal-body').innerHTML = `
+                    <div class="error-message">
+                        <p style="color: #ef4444;">Failed to load stock details: ${data.error || 'Unknown error'}</p>
+                        <button class="buy-button" onclick="closeBuyModal()">Close</button>
+                    </div>
+                `;
+            }
+        })
+        .catch(error => {
+            console.error('Error loading stock details:', error);
+            document.querySelector('.buy-modal-body').innerHTML = `
+                <div class="error-message">
+                    <p style="color: #ef4444;">Error loading stock details. Please try again.</p>
+                    <button class="buy-button" onclick="closeBuyModal()">Close</button>
+                </div>
+            `;
+        });
+}
+
+// Display buy form with stock details
+function displayBuyForm(symbol, stockData) {
+    const modalBody = document.querySelector('.buy-modal-body');
+    const price = parseFloat(stockData.price);
+    
+    modalBody.innerHTML = `
+        <div class="stock-price-info">
+            <h4 style="color: white; margin: 0 0 0.5rem 0;">${stockData.name}</h4>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <span style="color: #10b981; font-size: 1.5rem; font-weight: 700;">$${price.toFixed(2)}</span>
+                    <span style="color: ${stockData.change >= 0 ? '#10b981' : '#ef4444'}; margin-left: 0.5rem;">
+                        ${stockData.change >= 0 ? '+' : ''}${stockData.change_percent}%
+                    </span>
+                </div>
+                <div style="text-align: right;">
+                    <div style="color: rgba(255,255,255,0.7); font-size: 0.9rem;">Market Cap</div>
+                    <div style="color: white; font-weight: 600;">${stockData.market_cap}</div>
+                </div>
+            </div>
+        </div>
+        
+        <form class="buy-form" onsubmit="executePurchase(event, '${symbol}', ${price})">
+            <div class="form-group">
+                <label for="quantity">Number of Shares to Buy</label>
+                <input type="number" id="quantity" name="quantity" min="1" value="1" required 
+                       onchange="updatePurchaseTotal('${symbol}', ${price})">
+            </div>
+            
+            <div class="form-group">
+                <label>Price per Share</label>
+                <input type="text" value="$${price.toFixed(2)}" readonly style="opacity: 0.7;">
+            </div>
+            
+            <div class="purchase-summary" id="purchase-summary">
+                <div style="color: white; font-weight: 600; margin-bottom: 0.5rem;">Purchase Summary</div>
+                <div style="color: rgba(255,255,255,0.8);">
+                    You are buying <span id="summary-quantity">1</span> shares for 
+                    <strong style="color: #10b981;">$<span id="summary-total">${price.toFixed(2)}</span></strong>
+                </div>
+            </div>
+            
+            <button type="submit" class="buy-button">
+                Buy ${symbol} Stock
+            </button>
+        </form>
+    `;
+}
+
+// Update purchase total
+function updatePurchaseTotal(symbol, price) {
+    const quantity = parseInt(document.getElementById('quantity').value) || 1;
+    const total = (quantity * price).toFixed(2);
+    
+    document.getElementById('summary-quantity').textContent = quantity;
+    document.getElementById('summary-total').textContent = total;
+}
+
+// Execute purchase
+function executePurchase(event, symbol, price) {
+    event.preventDefault();
+    
+    const quantity = parseInt(document.getElementById('quantity').value);
+    const total = quantity * price;
+    
+    // Show loading state
+    const button = event.target.querySelector('.buy-button');
+    const originalText = button.textContent;
+    button.textContent = 'Processing Purchase...';
+    button.disabled = true;
+    
+    fetch('/api/purchase-stock', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            symbol: symbol,
+            quantity: quantity,
+            price: price
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showNotification(`Successfully purchased ${quantity} shares of ${symbol}!`, 'success');
+            closeBuyModal();
+            // Update portfolio display if visible
+            loadPortfolioSummary();
+        } else {
+            showNotification(data.message || 'Purchase failed', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error executing purchase:', error);
+        showNotification('Error processing purchase', 'error');
+    })
+    .finally(() => {
+        button.textContent = originalText;
+        button.disabled = false;
+    });
+}
+
+// Close buy modal
+function closeBuyModal() {
+    const modal = document.querySelector('.buy-modal-overlay');
+    if (modal) {
+        modal.remove();
+    }
+}
+
+// Portfolio summary functionality
+function loadPortfolioSummary() {
+    // This will be called to refresh portfolio data
+    console.log('TradeWise AI: Portfolio summary updated');
 }
 
 // Initialize

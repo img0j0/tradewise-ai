@@ -14,34 +14,75 @@
         <!-- Header -->
         <div class="header">
             <div class="header-title">TradeWise AI</div>
+            <div class="header-actions">
+                <button class="portfolio-toggle" onclick="togglePortfolio()">
+                    <i class="fas fa-wallet"></i>
+                    <span class="portfolio-text">Portfolio</span>
+                    <div class="portfolio-value" id="portfolio-value">$0.00</div>
+                </button>
+            </div>
         </div>
         
         <!-- Main Content Area -->
         <div class="main-content">
-            <!-- Suggestion Cards -->
-            <div class="suggestion-cards">
-                <div class="suggestion-card" onclick="searchStock('NVDA')">
-                    <div class="card-title">Best AI stocks</div>
-                    <div class="card-subtitle">for tech portfolio growth</div>
+            <!-- Portfolio Section -->
+            <div id="portfolio-section" class="portfolio-section" style="display: none;">
+                <div class="portfolio-header">
+                    <h3><i class="fas fa-chart-line"></i> Your Portfolio</h3>
+                    <button class="close-portfolio" onclick="togglePortfolio()">
+                        <i class="fas fa-times"></i>
+                    </button>
                 </div>
-                <div class="suggestion-card" onclick="searchStock('TSLA')">
-                    <div class="card-title">EV leaders</div>
-                    <div class="card-subtitle">for sustainable investing</div>
+                
+                <div class="portfolio-summary">
+                    <div class="portfolio-stats">
+                        <div class="stat-item">
+                            <div class="stat-label">Total Value</div>
+                            <div class="stat-value" id="total-portfolio-value">$0.00</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Total Invested</div>
+                            <div class="stat-value" id="total-invested">$0.00</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Profit/Loss</div>
+                            <div class="stat-value profit-loss" id="profit-loss">$0.00</div>
+                        </div>
+                    </div>
                 </div>
-                <div class="suggestion-card" onclick="searchStock('AAPL')">
-                    <div class="card-title">Blue chip stocks</div>
-                    <div class="card-subtitle">for stable returns</div>
+                
+                <div class="portfolio-holdings" id="portfolio-holdings">
+                    <div class="loading-portfolio">Loading your holdings...</div>
                 </div>
             </div>
             
-            <!-- Search Suggestions -->
-            <div id="search-suggestions" class="search-suggestions">
-                <!-- Dynamic suggestions will appear here -->
-            </div>
-            
-            <!-- Search Results Area -->
-            <div id="search-results" class="search-results">
-                <!-- Results will appear here -->
+            <!-- Stock Search Content (default view) -->
+            <div id="search-content" class="search-content">
+                <!-- Suggestion Cards -->
+                <div class="suggestion-cards">
+                    <div class="suggestion-card" onclick="searchStock('NVDA')">
+                        <div class="card-title">Best AI stocks</div>
+                        <div class="card-subtitle">for tech portfolio growth</div>
+                    </div>
+                    <div class="suggestion-card" onclick="searchStock('TSLA')">
+                        <div class="card-title">EV leaders</div>
+                        <div class="card-subtitle">for sustainable investing</div>
+                    </div>
+                    <div class="suggestion-card" onclick="searchStock('AAPL')">
+                        <div class="card-title">Blue chip stocks</div>
+                        <div class="card-subtitle">for stable returns</div>
+                    </div>
+                </div>
+                
+                <!-- Search Suggestions -->
+                <div id="search-suggestions" class="search-suggestions">
+                    <!-- Dynamic suggestions will appear here -->
+                </div>
+                
+                <!-- Search Results Area -->
+                <div id="search-results" class="search-results">
+                    <!-- Results will appear here -->
+                </div>
             </div>
         </div>
         
@@ -84,7 +125,9 @@
 
     .header {
         padding: 1rem;
-        text-align: center;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
         border-bottom: 1px solid rgba(255,255,255,0.1);
     }
 
@@ -95,6 +138,197 @@
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
+    }
+
+    .header-actions {
+        display: flex;
+        align-items: center;
+    }
+
+    .portfolio-toggle {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 25px;
+        color: white;
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+    }
+
+    .portfolio-toggle:hover {
+        background: rgba(255, 255, 255, 0.15);
+        transform: translateY(-1px);
+    }
+
+    .portfolio-text {
+        font-weight: 500;
+    }
+
+    .portfolio-value {
+        font-weight: 600;
+        color: #00D4AA;
+    }
+
+    /* Portfolio Section Styles */
+    .portfolio-section {
+        background: rgba(255, 255, 255, 0.02);
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .portfolio-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .portfolio-header h3 {
+        margin: 0;
+        color: white;
+        font-size: 1.2rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .close-portfolio {
+        background: none;
+        border: none;
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 1.2rem;
+        cursor: pointer;
+        padding: 0.25rem;
+        border-radius: 50%;
+        transition: all 0.3s ease;
+    }
+
+    .close-portfolio:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+    }
+
+    .portfolio-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .stat-item {
+        text-align: center;
+        background: rgba(255, 255, 255, 0.05);
+        padding: 1rem;
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .stat-label {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 0.85rem;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+    }
+
+    .stat-value {
+        color: white;
+        font-size: 1.1rem;
+        font-weight: 600;
+    }
+
+    .profit-loss.positive {
+        color: #10b981;
+    }
+
+    .profit-loss.negative {
+        color: #ef4444;
+    }
+
+    .portfolio-holdings {
+        max-height: 400px;
+        overflow-y: auto;
+    }
+
+    .loading-portfolio {
+        text-align: center;
+        color: rgba(255, 255, 255, 0.7);
+        padding: 2rem;
+        font-style: italic;
+    }
+
+    .holding-item {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 10px;
+        padding: 1rem;
+        margin-bottom: 0.75rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: all 0.3s ease;
+    }
+
+    .holding-item:hover {
+        background: rgba(255, 255, 255, 0.08);
+        transform: translateY(-1px);
+    }
+
+    .holding-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.5rem;
+    }
+
+    .holding-symbol {
+        font-weight: 600;
+        font-size: 1rem;
+        color: white;
+    }
+
+    .holding-value {
+        font-weight: 600;
+        color: #00D4AA;
+    }
+
+    .holding-details {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+        gap: 0.5rem;
+        font-size: 0.85rem;
+    }
+
+    .detail-small {
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    .holding-actions {
+        margin-top: 0.75rem;
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .holding-btn {
+        padding: 0.4rem 0.8rem;
+        border: none;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .sell-btn {
+        background: rgba(239, 68, 68, 0.2);
+        color: #ef4444;
+        border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    .sell-btn:hover {
+        background: rgba(239, 68, 68, 0.3);
     }
 
     .main-content {
@@ -1465,9 +1699,135 @@
         }
     }
 
-    // Load balance on page load
+    // Portfolio functionality
+    let portfolioVisible = false;
+    
+    function togglePortfolio() {
+        const portfolioSection = document.getElementById('portfolio-section');
+        const searchContent = document.getElementById('search-content');
+        
+        portfolioVisible = !portfolioVisible;
+        
+        if (portfolioVisible) {
+            portfolioSection.style.display = 'block';
+            searchContent.style.display = 'none';
+            loadPortfolioData();
+        } else {
+            portfolioSection.style.display = 'none';
+            searchContent.style.display = 'block';
+        }
+    }
+    
+    function loadPortfolioData() {
+        // Load portfolio summary
+        fetch('/api/portfolio-summary')
+            .then(response => response.json())
+            .then(data => {
+                updatePortfolioDisplay(data);
+            })
+            .catch(error => {
+                console.error('Error loading portfolio:', error);
+                document.getElementById('portfolio-holdings').innerHTML = `
+                    <div class="loading-portfolio">
+                        <p style="color: #ef4444;">Error loading portfolio data</p>
+                        <p style="color: rgba(255,255,255,0.7); font-size: 0.9rem;">
+                            This might be because you haven't made any purchases yet, or you need to log in.
+                        </p>
+                    </div>
+                `;
+            });
+    }
+    
+    function updatePortfolioDisplay(data) {
+        // Update header portfolio value
+        const portfolioValue = document.getElementById('portfolio-value');
+        portfolioValue.textContent = `$${data.total_value.toFixed(2)}`;
+        
+        // Update portfolio stats
+        document.getElementById('total-portfolio-value').textContent = `$${data.total_value.toFixed(2)}`;
+        document.getElementById('total-invested').textContent = `$${data.total_invested.toFixed(2)}`;
+        
+        const profitLoss = data.profit_loss;
+        const profitLossElement = document.getElementById('profit-loss');
+        profitLossElement.textContent = `$${profitLoss.toFixed(2)}`;
+        profitLossElement.className = 'stat-value profit-loss ' + (profitLoss >= 0 ? 'positive' : 'negative');
+        
+        // Update holdings
+        const holdingsContainer = document.getElementById('portfolio-holdings');
+        
+        if (data.holdings && data.holdings.length > 0) {
+            holdingsContainer.innerHTML = data.holdings.map(holding => `
+                <div class="holding-item">
+                    <div class="holding-header">
+                        <div class="holding-symbol">${holding.symbol}</div>
+                        <div class="holding-value">$${holding.current_value.toFixed(2)}</div>
+                    </div>
+                    <div class="holding-details">
+                        <div class="detail-small">
+                            <div>Shares</div>
+                            <div style="color: white;">${holding.quantity}</div>
+                        </div>
+                        <div class="detail-small">
+                            <div>Avg Cost</div>
+                            <div style="color: white;">$${holding.avg_price.toFixed(2)}</div>
+                        </div>
+                        <div class="detail-small">
+                            <div>Current</div>
+                            <div style="color: white;">$${holding.current_price.toFixed(2)}</div>
+                        </div>
+                        <div class="detail-small">
+                            <div>P&L</div>
+                            <div style="color: ${holding.profit_loss >= 0 ? '#10b981' : '#ef4444'};">
+                                ${holding.profit_loss >= 0 ? '+' : ''}$${holding.profit_loss.toFixed(2)}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="holding-actions">
+                        <button class="holding-btn sell-btn" onclick="sellStock('${holding.symbol}')">
+                            Sell
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        } else {
+            holdingsContainer.innerHTML = `
+                <div class="loading-portfolio">
+                    <p style="color: rgba(255,255,255,0.7);">No holdings yet</p>
+                    <p style="color: rgba(255,255,255,0.5); font-size: 0.9rem;">
+                        Start by searching for stocks and making your first purchase!
+                    </p>
+                </div>
+            `;
+        }
+    }
+    
+    function sellStock(symbol) {
+        // For now, show a simple notification
+        alert(`Sell functionality for ${symbol} coming soon!`);
+    }
+    
+    // Update portfolio summary when purchases are made
+    function loadPortfolioSummary() {
+        if (portfolioVisible) {
+            loadPortfolioData();
+        }
+        
+        // Always update the header value
+        fetch('/api/portfolio-summary')
+            .then(response => response.json())
+            .then(data => {
+                const portfolioValue = document.getElementById('portfolio-value');
+                portfolioValue.textContent = `$${data.total_value.toFixed(2)}`;
+            })
+            .catch(error => {
+                console.error('Error updating portfolio value:', error);
+            });
+    }
+
+    // Load balance and portfolio on page load
     document.addEventListener('DOMContentLoaded', function() {
         loadAccountBalance();
+        loadPortfolioSummary();
     });
 
     // Close modals when clicking outside
