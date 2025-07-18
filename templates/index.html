@@ -281,30 +281,54 @@
                     <h5 class="mb-0"><i class="fas fa-briefcase me-2"></i>Portfolio Holdings</h5>
                 </div>
                 <div class="card-body">
+                    <!-- Portfolio Performance Overview -->
+                    <div class="mb-4">
+                        <h6 class="text-white mb-3">
+                            <i class="fas fa-chart-bar me-2"></i>
+                            Portfolio Performance Summary
+                        </h6>
+                        <p class="small text-muted mb-3">
+                            <i class="fas fa-info-circle me-1"></i>
+                            Real-time portfolio valuation based on current market prices. All values updated live during market hours.
+                        </p>
+                    </div>
+                    
                     <div id="portfolio-summary" class="mb-4">
                         <div class="row text-center">
                             <div class="col-md-3">
                                 <div class="stat-card">
                                     <div class="stat-number text-primary" id="portfolio-value">$0.00</div>
-                                    <div class="stat-label">Total Value</div>
+                                    <div class="stat-label">
+                                        Current Market Value
+                                        <br><small class="text-muted">Live stock prices × shares owned</small>
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="stat-card">
                                     <div class="stat-number text-info" id="portfolio-cost">$0.00</div>
-                                    <div class="stat-label">Total Cost</div>
+                                    <div class="stat-label">
+                                        Total Investment
+                                        <br><small class="text-muted">Amount you paid for all stocks</small>
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="stat-card">
                                     <div class="stat-number" id="portfolio-pnl">$0.00</div>
-                                    <div class="stat-label">P&L</div>
+                                    <div class="stat-label">
+                                        Profit/Loss ($)
+                                        <br><small class="text-muted">Market value - investment cost</small>
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="stat-card">
                                     <div class="stat-number" id="portfolio-pnl-pct">0%</div>
-                                    <div class="stat-label">P&L %</div>
+                                    <div class="stat-label">
+                                        Return Percentage
+                                        <br><small class="text-muted">Your investment performance</small>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -313,10 +337,23 @@
                         <div class="text-center text-muted">No holdings found</div>
                     </div>
                     <div class="mt-4">
-                        <small class="text-muted">
-                            <i class="fas fa-info-circle me-1"></i>
-                            Stock prices are updated in real-time. P&L calculations are based on your purchase price.
-                        </small>
+                        <div class="alert alert-info">
+                            <h6 class="alert-heading">
+                                <i class="fas fa-lightbulb me-2"></i>
+                                Understanding Your Portfolio Data
+                            </h6>
+                            <p class="mb-2">
+                                <strong>Market Value:</strong> Current worth of your stocks at today's prices<br>
+                                <strong>Investment Cost:</strong> Total amount you originally paid<br>
+                                <strong>Profit/Loss:</strong> How much you've gained or lost<br>
+                                <strong>Return %:</strong> Your performance as a percentage
+                            </p>
+                            <hr>
+                            <small class="mb-0">
+                                <i class="fas fa-sync-alt me-1"></i>
+                                Data updates automatically during market hours (9:30 AM - 4:00 PM EST)
+                            </small>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -73,29 +73,47 @@
             <div class="col-md-6">
                 <div class="analytics-card">
                     <h5><i class="fas fa-brain me-2"></i>AI Market Intelligence</h5>
+                    <p class="small text-muted mb-3">
+                        Real-time sentiment analysis from news, social media, and market indicators
+                    </p>
                     <div class="row">
                         <div class="col-6">
                             <div class="metric-value" id="sentiment-score">72%</div>
-                            <div class="metric-label">Market Sentiment</div>
+                            <div class="metric-label">
+                                Market Sentiment
+                                <br><small class="text-muted">0-100% bullish sentiment</small>
+                            </div>
                         </div>
                         <div class="col-6">
                             <div class="metric-value" id="volatility-index">24.8</div>
-                            <div class="metric-label">Volatility Index</div>
+                            <div class="metric-label">
+                                Volatility Index (VIX)
+                                <br><small class="text-muted">Market fear gauge</small>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="analytics-card">
-                    <h5><i class="fas fa-chart-line me-2"></i>Market Regime</h5>
+                    <h5><i class="fas fa-chart-line me-2"></i>Market Regime Classification</h5>
+                    <p class="small text-muted mb-3">
+                        AI-powered analysis of current market conditions and trend direction
+                    </p>
                     <div class="row">
                         <div class="col-6">
                             <div class="metric-value" style="color: #00ff88;">BULL</div>
-                            <div class="metric-label">Current Regime</div>
+                            <div class="metric-label">
+                                Current Regime
+                                <br><small class="text-muted">Bull/Bear/Sideways/Volatile</small>
+                            </div>
                         </div>
                         <div class="col-6">
                             <div class="metric-value">85%</div>
-                            <div class="metric-label">Confidence</div>
+                            <div class="metric-label">
+                                AI Confidence
+                                <br><small class="text-muted">Model certainty level</small>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -121,10 +139,19 @@
         <div class="row">
             <div class="col-md-8">
                 <div class="analytics-card">
-                    <h5><i class="fas fa-chart-pie me-2"></i>Sector Performance</h5>
+                    <h5><i class="fas fa-chart-pie me-2"></i>Sector Performance Analysis</h5>
+                    <p class="mb-3 text-muted">
+                        <i class="fas fa-info-circle me-1"></i>
+                        This chart shows the percentage return of different market sectors over the last 30 days. 
+                        Green indicates gains, red indicates losses. Data sourced from S&P 500 sector ETFs.
+                    </p>
                     <div class="chart-container">
                         <canvas id="sectorChart"></canvas>
                     </div>
+                    <small class="text-muted">
+                        <i class="fas fa-clock me-1"></i>Last updated: <span id="sector-last-update">Now</span> | 
+                        <i class="fas fa-database me-1"></i>Data source: Yahoo Finance
+                    </small>
                 </div>
             </div>
             <div class="col-md-4">
