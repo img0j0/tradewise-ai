@@ -116,8 +116,11 @@ class AIInsightsEngine:
             # Get prediction probability
             prob = self.model.predict_proba(features_scaled)[0]
             
-            # Convert to confidence score (0-100)
-            confidence = float(prob[1]) * 100  # Probability of positive class
+            # Handle case where model only has one class
+            if len(prob) == 1:
+                confidence = 50.0  # Neutral confidence if only one class
+            else:
+                confidence = float(prob[1]) * 100  # Probability of positive class
             
             return int(min(max(confidence, 0), 100))  # Clamp between 0-100
             

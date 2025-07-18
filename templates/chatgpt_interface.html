@@ -802,10 +802,10 @@ async function displayStockResult(data) {
     const resultsContainer = document.getElementById('main-search-results');
     if (!resultsContainer) return;
     
-    // Use real stock data
+    // Use real stock data with corrected change calculation
     const price = data.current_price || 0;
     const change = data.change || 0;
-    const changePercent = ((change / price) * 100) || 0;
+    const changePercent = data.change_percent || 0;
     
     // Get enhanced AI analysis
     let recommendation = data.recommendation || 'HOLD';

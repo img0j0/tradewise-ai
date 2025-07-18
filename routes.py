@@ -677,12 +677,19 @@ def stock_analysis(symbol):
         # Generate AI insights
         insights = ai_engine.generate_insights(stock_data)
         
+        # Calculate price change
+        current_price = float(stock_data.get('current_price', 0))
+        previous_close = float(stock_data.get('previous_close', current_price))
+        price_change = current_price - previous_close
+        change_percent = ((price_change / previous_close) * 100) if previous_close > 0 else 0
+
         return jsonify({
             'success': True,
             'symbol': symbol.upper(),
             'name': stock_data.get('name', symbol),
-            'current_price': stock_data.get('current_price', 0),
-            'change': stock_data.get('change_percent', 0),
+            'current_price': current_price,
+            'change': price_change,
+            'change_percent': change_percent,
             'recommendation': insights.get('recommendation', 'HOLD'),
             'analysis': insights.get('analysis', 'No analysis available'),
             'confidence': insights.get('confidence', 50)
