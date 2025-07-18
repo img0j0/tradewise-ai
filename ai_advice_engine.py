@@ -330,61 +330,18 @@ class AdvancedStockAdviceEngine:
         return True
     
     def get_concise_advice(self, symbol):
-        """Generate concise, actionable advice for a stock"""
+        """Generate concise, actionable advice for a stock using real market data"""
         try:
-            # Collect current data
-            data = self.collect_comprehensive_data(symbol, days=100)
-            if data is None:
+            # Get comprehensive real-time stock data
+            stock_data = self.get_comprehensive_stock_data(symbol)
+            if not stock_data:
                 return self.fallback_advice(symbol)
             
-            # Get latest features
-            feature_cols = [col for col in data.columns if col not in 
-                          ['target', 'forward_return', 'Open', 'High', 'Low', 'Close', 'Volume']]
+            # Use intelligent rule-based prediction with real data
+            predicted_class, confidence = self.intelligent_rule_based_prediction([], stock_data)
             
-            latest_features = data[feature_cols].iloc[-1:].fillna(0)
-            X_scaled = self.scalers['technical'].transform(latest_features)
-            
-            # Get prediction and confidence
-            if self.ensemble_model is None:
-                return self.fallback_advice(symbol)
-            
-            prediction = self.ensemble_model.predict(X_scaled)[0]
-            probabilities = self.ensemble_model.predict_proba(X_scaled)[0]
-            confidence = max(probabilities)
-            
-            # Generate advice
-            advice_categories = ['strong_sell', 'sell', 'hold', 'buy', 'strong_buy']
-            category = advice_categories[int(prediction)]
-            
-            # Select advice template
-            templates = self.advice_templates[category]
-            advice_text = np.random.choice(templates)
-            
-            # Add key insights
-            key_factors = self.extract_key_factors(data, symbol)
-            
-            advice = {
-                'symbol': symbol,
-                'recommendation': category.replace('_', ' ').title(),
-                'confidence': round(confidence * 100, 1),
-                'advice': advice_text,
-                'key_factors': key_factors,
-                'risk_level': self.assess_risk_level(data),
-                'target_price': self.estimate_target_price(data),
-                'time_horizon': '1-3 months',
-                'generated_at': datetime.now().isoformat()
-            }
-            
-            # Store for learning
-            self.market_memory.append({
-                'symbol': symbol,
-                'prediction': prediction,
-                'confidence': confidence,
-                'timestamp': datetime.now(),
-                'price': data['Close'].iloc[-1]
-            })
-            
-            return advice
+            # Generate intelligent advice based on real market data
+            return self.generate_intelligent_advice(symbol, predicted_class, confidence, stock_data)
             
         except Exception as e:
             logger.error(f"Error generating advice for {symbol}: {e}")
@@ -548,6 +505,224 @@ class AdvancedStockAdviceEngine:
             
         except Exception as e:
             logger.warning(f"Auto-training failed: {e}")
+
+    def get_comprehensive_stock_data(self, symbol):
+        """Get comprehensive real-time stock data from Yahoo Finance"""
+        try:
+            stock = yf.Ticker(symbol)
+            
+            # Get current price and basic info
+            info = stock.info
+            history = stock.history(period="1mo")
+            
+            if history.empty or not info:
+                return None
+                
+            current_price = history['Close'].iloc[-1]
+            prev_close = history['Close'].iloc[-2] if len(history) > 1 else current_price
+            
+            return {
+                'symbol': symbol,
+                'current_price': float(current_price),
+                'previous_close': float(prev_close),
+                'price_change': float(current_price - prev_close),
+                'price_change_percent': float((current_price - prev_close) / prev_close * 100),
+                'volume': int(history['Volume'].iloc[-1]) if not history['Volume'].empty else 0,
+                'market_cap': info.get('marketCap', 0),
+                'pe_ratio': info.get('trailingPE', 0),
+                'beta': info.get('beta', 1.0),
+                'history': history,
+                'info': info
+            }
+        except Exception as e:
+            logger.error(f"Error fetching data for {symbol}: {e}")
+            return None
+
+    def intelligent_rule_based_prediction(self, features, stock_data):
+        """Enhanced rule-based prediction using real market data"""
+        try:
+            price_change_pct = stock_data.get('price_change_percent', 0)
+            pe_ratio = stock_data.get('pe_ratio', 20)
+            beta = stock_data.get('beta', 1.0)
+            volume = stock_data.get('volume', 0)
+            market_cap = stock_data.get('market_cap', 0)
+            
+            # Calculate technical indicators
+            history = stock_data.get('history')
+            if history is not None and len(history) > 14:
+                prices = history['Close']
+                rsi = self.calculate_simple_rsi(prices)
+                momentum = (prices.iloc[-1] / prices.iloc[-5] - 1) * 100 if len(prices) > 5 else 0
+            else:
+                rsi = 50
+                momentum = 0
+            
+            # Decision logic based on multiple factors
+            score = 0
+            confidence_factors = []
+            
+            # Price momentum analysis
+            if price_change_pct > 3:
+                score += 2
+                confidence_factors.append("Strong upward momentum")
+            elif price_change_pct > 1:
+                score += 1
+                confidence_factors.append("Positive momentum")
+            elif price_change_pct < -3:
+                score -= 2
+                confidence_factors.append("Significant decline")
+            elif price_change_pct < -1:
+                score -= 1
+                confidence_factors.append("Negative momentum")
+                
+            # Valuation analysis
+            if pe_ratio > 0:
+                if pe_ratio < 15:
+                    score += 1
+                    confidence_factors.append("Attractive valuation")
+                elif pe_ratio > 30:
+                    score -= 1
+                    confidence_factors.append("High valuation")
+            
+            # Technical analysis
+            if rsi < 30:
+                score += 1
+                confidence_factors.append("Oversold conditions")
+            elif rsi > 70:
+                score -= 1
+                confidence_factors.append("Overbought conditions")
+                
+            # Volume analysis
+            if volume > 1000000:  # High volume
+                confidence_factors.append("Strong volume confirmation")
+                
+            # Convert score to prediction class
+            if score >= 2:
+                predicted_class = 4  # Strong Buy
+                confidence = min(85, 70 + len(confidence_factors) * 3)
+            elif score >= 1:
+                predicted_class = 3  # Buy
+                confidence = min(80, 65 + len(confidence_factors) * 3)
+            elif score <= -2:
+                predicted_class = 0  # Strong Sell
+                confidence = min(85, 70 + len(confidence_factors) * 3)
+            elif score <= -1:
+                predicted_class = 1  # Sell
+                confidence = min(80, 65 + len(confidence_factors) * 3)
+            else:
+                predicted_class = 2  # Hold
+                confidence = min(75, 60 + len(confidence_factors) * 2)
+                
+            return predicted_class, confidence
+            
+        except Exception as e:
+            logger.error(f"Rule-based prediction failed: {e}")
+            return 2, 50  # Default to Hold with 50% confidence
+
+    def calculate_simple_rsi(self, prices, period=14):
+        """Calculate RSI indicator"""
+        try:
+            delta = prices.diff()
+            gain = (delta.where(delta > 0, 0)).rolling(window=period).mean()
+            loss = (-delta.where(delta < 0, 0)).rolling(window=period).mean()
+            rs = gain / loss
+            rsi = 100 - (100 / (1 + rs))
+            return rsi.iloc[-1] if not rsi.empty else 50
+        except:
+            return 50
+
+    def generate_intelligent_advice(self, symbol, predicted_class, confidence, stock_data, market_analysis=None):
+        """Generate intelligent, contextual advice based on real data"""
+        try:
+            # Map prediction class to recommendation
+            class_to_recommendation = {
+                0: 'Strong Sell',
+                1: 'Sell', 
+                2: 'Hold',
+                3: 'Buy',
+                4: 'Strong Buy'
+            }
+            
+            recommendation = class_to_recommendation.get(predicted_class, 'Hold')
+            
+            # Get current price data
+            current_price = stock_data.get('current_price', 0)
+            price_change_pct = stock_data.get('price_change_percent', 0)
+            pe_ratio = stock_data.get('pe_ratio', 0)
+            
+            # Generate contextual advice based on real data
+            if predicted_class >= 3:  # Buy/Strong Buy
+                if price_change_pct > 2:
+                    advice = f"Strong upward momentum (+{price_change_pct:.1f}%) suggests continued growth potential"
+                elif pe_ratio > 0 and pe_ratio < 20:
+                    advice = f"Attractive valuation (P/E: {pe_ratio:.1f}) with positive technical signals"
+                else:
+                    advice = "Technical indicators and market conditions favor upward movement"
+            elif predicted_class <= 1:  # Sell/Strong Sell
+                if price_change_pct < -2:
+                    advice = f"Significant decline ({price_change_pct:.1f}%) with bearish technical signals"
+                elif pe_ratio > 25:
+                    advice = f"Overvalued (P/E: {pe_ratio:.1f}) with technical weakness emerging"
+                else:
+                    advice = "Risk factors outweigh potential rewards at current levels"
+            else:  # Hold
+                advice = f"Currently trading at ${current_price:.2f}. Mixed signals suggest patience until clarity emerges"
+            
+            # Generate key factors based on real data
+            key_factors = []
+            if abs(price_change_pct) > 1:
+                direction = "upward" if price_change_pct > 0 else "downward"
+                key_factors.append(f"Recent {direction} price momentum")
+            
+            if pe_ratio > 0:
+                if pe_ratio < 15:
+                    key_factors.append("Attractive valuation metrics")
+                elif pe_ratio > 25:
+                    key_factors.append("High valuation concerns")
+                    
+            if stock_data.get('volume', 0) > 1000000:
+                key_factors.append("High trading volume")
+                
+            # Add market cap context
+            market_cap = stock_data.get('market_cap', 0)
+            if market_cap > 100e9:
+                key_factors.append("Large-cap stability")
+            elif market_cap > 10e9:
+                key_factors.append("Mid-cap growth potential")
+            else:
+                key_factors.append("Small-cap volatility risk")
+            
+            # Determine risk level
+            beta = stock_data.get('beta', 1.0)
+            if beta > 1.5:
+                risk_level = "High"
+            elif beta < 0.8:
+                risk_level = "Low"
+            else:
+                risk_level = "Medium"
+                
+            # Calculate target price
+            target_price = None
+            if predicted_class >= 3:  # Buy recommendations
+                target_price = round(current_price * (1 + (confidence - 50) / 100 * 0.2), 2)
+            elif predicted_class <= 1:  # Sell recommendations
+                target_price = round(current_price * (1 - (confidence - 50) / 100 * 0.15), 2)
+            
+            return {
+                'symbol': symbol,
+                'recommendation': recommendation,
+                'confidence': round(confidence, 1),
+                'advice': advice,
+                'risk_level': risk_level,
+                'target_price': target_price,
+                'time_horizon': '1-3 months',
+                'key_factors': key_factors[:3],  # Limit to top 3 factors
+                'generated_at': datetime.now().isoformat()
+            }
+            
+        except Exception as e:
+            logger.error(f"Error generating intelligent advice: {e}")
+            return self.fallback_advice(symbol)
 
 # Global instance
 advice_engine = AdvancedStockAdviceEngine()
