@@ -81,6 +81,67 @@
     font-weight: 500;
 }
 
+/* Alerts page specific improvements */
+.alert-card, .alert-card p, .alert-card small, .alert-card .text-muted {
+    color: rgba(255, 255, 255, 0.9) !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+    line-height: 1.6;
+}
+
+.alert-card h1, .alert-card h2, .alert-card h3, .alert-card h4, .alert-card h5 {
+    color: #ffffff !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+    font-weight: 600;
+}
+
+.alert-card .metric-label, .alert-card .small, .alert-card .text-secondary {
+    color: rgba(255, 255, 255, 0.8) !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+    font-weight: 500;
+}
+
+.alert-item, .alert-item p, .alert-item span {
+    color: rgba(255, 255, 255, 0.95) !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+}
+
+/* Analytics page specific improvements */
+.analytics-card, .analytics-card p, .analytics-card small, .analytics-card .text-muted {
+    color: rgba(255, 255, 255, 0.9) !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+    line-height: 1.6;
+}
+
+.analytics-card h1, .analytics-card h2, .analytics-card h3, .analytics-card h4, .analytics-card h5 {
+    color: #ffffff !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+    font-weight: 600;
+}
+
+.analytics-card .metric-label, .analytics-card .small, .analytics-card .text-secondary {
+    color: rgba(255, 255, 255, 0.8) !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+    font-weight: 500;
+}
+
+.sector-item, .sector-item p, .sector-item span {
+    color: rgba(255, 255, 255, 0.95) !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+}
+
+/* Dashboard iframe improvements */
+.dashboard-content, .dashboard-content p, .dashboard-content small, .dashboard-content .text-muted {
+    color: rgba(255, 255, 255, 0.9) !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+    line-height: 1.6;
+}
+
+.dashboard-content h1, .dashboard-content h2, .dashboard-content h3, .dashboard-content h4, .dashboard-content h5 {
+    color: #ffffff !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+    font-weight: 600;
+}
+
 /* Improve button text contrast */
 .btn {
     text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
