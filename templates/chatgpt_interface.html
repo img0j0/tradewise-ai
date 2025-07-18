@@ -20,24 +20,30 @@
                     <h1 class="search-title">Search Stocks</h1>
                 </div>
 
-                <!-- Prominent Search Box -->
-                <div class="chatgpt-search-container">
-                    <div class="chatgpt-search-box">
-                        <i class="fas fa-search search-icon"></i>
-                        <input type="text" 
-                               id="main-search-input" 
-                               placeholder="Type any company name or ticker..."
-                               class="chatgpt-search-input"
-                               onkeypress="handleSearchKeypress(event)">
-                        <div class="search-shortcut">⌘K</div>
-                        <button class="chatgpt-search-btn" onclick="performIntelligentSearch()">
-                            <i class="fas fa-arrow-right"></i>
-                        </button>
+                <!-- Advanced Search Interface -->
+                <div class="advanced-search-container">
+                    <!-- Main Search Box -->
+                    <div class="main-search-wrapper">
+                        <div class="chatgpt-search-box">
+                            <div class="search-icon-wrapper">
+                                <i class="fas fa-search search-icon"></i>
+                            </div>
+                            <input type="text" 
+                                   id="main-search-input" 
+                                   placeholder="Search any stock symbol or company name..."
+                                   class="chatgpt-search-input"
+                                   onkeypress="handleSearchKeypress(event)">
+                            <div class="search-shortcut">⌘K</div>
+                            <button class="chatgpt-search-btn" onclick="performIntelligentSearch()">
+                                <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
                     </div>
                     
-                    <!-- Search Controls - Voice & History (Mobile: Below search bar) -->
+                    <!-- Advanced Search Controls -->
                     <div class="search-controls">
-                        <!-- These buttons will be added dynamically by JavaScript -->
+                        <div class="controls-label">Quick Actions</div>
+                        <!-- Buttons will be added dynamically by JavaScript -->
                     </div>
                     
                     <!-- Search Suggestions -->

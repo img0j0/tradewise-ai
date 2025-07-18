@@ -100,26 +100,42 @@ class SmartSearchEngine {
         const searchControls = document.querySelector('.search-controls');
         if (!searchControls || !this.voiceRecognition) return;
         
+        // Create buttons container if it doesn't exist
+        let buttonsContainer = searchControls.querySelector('.search-controls-buttons');
+        if (!buttonsContainer) {
+            buttonsContainer = document.createElement('div');
+            buttonsContainer.className = 'search-controls-buttons';
+            searchControls.appendChild(buttonsContainer);
+        }
+        
         const voiceBtn = document.createElement('button');
         voiceBtn.className = 'voice-search-btn';
         voiceBtn.innerHTML = '<i class="fas fa-microphone"></i>';
-        voiceBtn.title = 'Voice Search (Hold to speak)';
+        voiceBtn.title = 'Voice Search - Speak your query';
         voiceBtn.addEventListener('click', () => this.toggleVoiceSearch());
         
-        searchControls.appendChild(voiceBtn);
+        buttonsContainer.appendChild(voiceBtn);
     }
     
     addSearchHistoryButton() {
         const searchControls = document.querySelector('.search-controls');
         if (!searchControls) return;
         
+        // Create buttons container if it doesn't exist
+        let buttonsContainer = searchControls.querySelector('.search-controls-buttons');
+        if (!buttonsContainer) {
+            buttonsContainer = document.createElement('div');
+            buttonsContainer.className = 'search-controls-buttons';
+            searchControls.appendChild(buttonsContainer);
+        }
+        
         const historyBtn = document.createElement('button');
         historyBtn.className = 'search-history-btn';
         historyBtn.innerHTML = '<i class="fas fa-history"></i>';
-        historyBtn.title = 'Search History';
+        historyBtn.title = 'Search History - View recent searches';
         historyBtn.addEventListener('click', () => this.toggleSearchHistory());
         
-        searchControls.appendChild(historyBtn);
+        buttonsContainer.appendChild(historyBtn);
     }
     
     handleSmartInput(event) {
