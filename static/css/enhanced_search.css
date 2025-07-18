@@ -439,12 +439,15 @@
 }
 
 /* Override any conflicting button styles */
-.search-controls button,
-.search-controls .btn {
-    background: unset !important;
-    border: unset !important;
-    color: unset !important;
-    padding: unset !important;
+.search-controls button:not(.voice-search-btn):not(.search-history-btn),
+.search-controls .btn:not(.voice-search-btn):not(.search-history-btn) {
+    display: none !important;
+}
+
+/* Ensure our buttons maintain their styling */
+.search-controls .voice-search-btn,
+.search-controls .search-history-btn {
+    display: flex !important;
 }
 
 .search-controls-buttons {

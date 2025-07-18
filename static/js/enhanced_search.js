@@ -32,6 +32,15 @@ class SmartSearchEngine {
         const duplicates = document.querySelectorAll('.search-controls .btn, .search-controls button:not(.voice-search-btn):not(.search-history-btn)');
         duplicates.forEach(btn => {
             if (!btn.classList.contains('voice-search-btn') && !btn.classList.contains('search-history-btn')) {
+                btn.style.display = 'none';
+                btn.remove();
+            }
+        });
+        
+        // Also remove any buttons that might have white backgrounds
+        const whiteButtons = document.querySelectorAll('.search-controls button[style*="background"], .search-controls .btn[style*="background"]');
+        whiteButtons.forEach(btn => {
+            if (!btn.classList.contains('voice-search-btn') && !btn.classList.contains('search-history-btn')) {
                 btn.remove();
             }
         });
@@ -45,7 +54,7 @@ class SmartSearchEngine {
         
         // Enhanced input events
         searchInput.addEventListener('input', (e) => this.handleSmartInput(e));
-        searchInput.addEventListener('focus', () => this.showSearchSuggestions());
+        searchInput.addEventListener('focus', () => this.showRecentSearches());
         searchInput.addEventListener('keydown', (e) => this.handleKeyNavigation(e));
         
         // Search button
