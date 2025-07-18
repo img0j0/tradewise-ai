@@ -665,7 +665,7 @@ def calculate_portfolio_performance():
 
 # AI Assistant Routes
 @app.route('/api/stock-analysis/<symbol>')
-@login_required
+# Remove login requirement for public stock analysis
 def stock_analysis(symbol):
     """Get comprehensive stock analysis for ChatGPT interface"""
     try:

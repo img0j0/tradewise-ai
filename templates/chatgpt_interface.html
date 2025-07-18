@@ -798,15 +798,31 @@ function displaySearchError(errorMessage) {
     }
 }
 
-function displayStockResult(data) {
+async function displayStockResult(data) {
     const resultsContainer = document.getElementById('main-search-results');
     if (!resultsContainer) return;
     
-    const recommendation = data.recommendation || 'HOLD';
-    const confidence = Math.round((data.confidence || 0.5) * 100);
-    const price = data.price || 0;
+    // Use real stock data
+    const price = data.current_price || 0;
     const change = data.change || 0;
-    const changePercent = data.change_percent || 0;
+    const changePercent = ((change / price) * 100) || 0;
+    
+    // Get enhanced AI analysis
+    let recommendation = data.recommendation || 'HOLD';
+    let confidence = Math.round(data.confidence || 50);
+    let aiAnalysis = data.analysis || 'Mixed signals from technical indicators.';
+    
+    try {
+        const aiResponse = await fetch(`/api/ai/advice/${data.symbol}`);
+        if (aiResponse.ok) {
+            const aiData = await aiResponse.json();
+            recommendation = aiData.recommendation || recommendation;
+            confidence = Math.round(aiData.confidence || confidence);
+            aiAnalysis = aiData.advice || aiAnalysis;
+        }
+    } catch (e) {
+        console.log('Using fallback AI data');
+    }
     
     const changeClass = change >= 0 ? 'positive' : 'negative';
     const changeIcon = change >= 0 ? 'fa-arrow-up' : 'fa-arrow-down';
@@ -842,7 +858,7 @@ function displayStockResult(data) {
                     </div>
                 </div>
                 
-                ${data.analysis ? `<p class="ai-insight">${data.analysis}</p>` : ''}
+                <p class="ai-insight">${aiAnalysis}</p>
             </div>
             
             <div class="action-section">
