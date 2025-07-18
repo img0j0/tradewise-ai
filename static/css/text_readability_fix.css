@@ -82,27 +82,49 @@
 }
 
 /* Alerts page specific improvements */
-.alert-card, .alert-card p, .alert-card small, .alert-card .text-muted {
+.alerts-card, .alerts-card p, .alerts-card small, .alerts-card .text-muted {
     color: rgba(255, 255, 255, 0.9) !important;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
     line-height: 1.6;
 }
 
-.alert-card h1, .alert-card h2, .alert-card h3, .alert-card h4, .alert-card h5 {
+.alerts-card h1, .alerts-card h2, .alerts-card h3, .alerts-card h4, .alerts-card h5 {
     color: #ffffff !important;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
     font-weight: 600;
 }
 
-.alert-card .metric-label, .alert-card .small, .alert-card .text-secondary {
-    color: rgba(255, 255, 255, 0.8) !important;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
-    font-weight: 500;
+.alerts-card .metric-label, .alerts-card .small, .alerts-card .text-secondary {
+    color: rgba(255, 255, 255, 0.95) !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9);
+    font-weight: 600;
+    font-size: 1rem;
 }
 
 .alert-item, .alert-item p, .alert-item span {
     color: rgba(255, 255, 255, 0.95) !important;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+}
+
+/* Enhanced metric labels for alerts stats */
+.metric-label {
+    color: rgba(255, 255, 255, 0.95) !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9);
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+/* Specific improvements for alert statistics cards */
+.alerts-stats .metric-label, .alert-stats .metric-label {
+    color: #ffffff !important;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 1);
+    font-weight: 700;
+    font-size: 1.1rem;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 0.3rem 0.8rem;
+    border-radius: 8px;
+    margin-top: 0.5rem;
+    display: inline-block;
 }
 
 /* Analytics page specific improvements */
