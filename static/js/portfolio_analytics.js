@@ -546,8 +546,8 @@ if (!window.PortfolioAnalytics) {
 
     calculateBeta() {
         // Portfolio beta calculation vs market
-        const portfolioReturns = this.portfolioData.historical_returns || [];
-        const marketReturns = this.portfolioData.market_returns || [];
+        const portfolioReturns = this.portfolioData?.historical_returns || [];
+        const marketReturns = this.portfolioData?.market_returns || [];
         
         if (portfolioReturns.length === 0 || marketReturns.length === 0) return 1;
         
@@ -559,7 +559,7 @@ if (!window.PortfolioAnalytics) {
 
     calculateVaR() {
         // Value at Risk calculation
-        const returns = this.portfolioData.historical_returns || [];
+        const returns = this.portfolioData?.historical_returns || [];
         if (returns.length === 0) return 0;
         
         const sortedReturns = returns.sort((a, b) => a - b);
@@ -570,7 +570,7 @@ if (!window.PortfolioAnalytics) {
 
     calculateCorrelationMatrix() {
         // Correlation matrix for holdings
-        const holdings = this.portfolioData.holdings || [];
+        const holdings = this.portfolioData?.holdings || [];
         const correlations = {};
         
         holdings.forEach(holding => {

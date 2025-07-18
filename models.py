@@ -65,6 +65,11 @@ class Portfolio(db.Model):
     symbol = db.Column(db.String(10), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
     avg_price = db.Column(db.Float, nullable=False)
+    
+    @property
+    def average_price(self):
+        """Alias for avg_price to fix portfolio analytics error"""
+        return self.avg_price
     last_updated = db.Column(db.DateTime, default=datetime.utcnow)
     
     def to_dict(self):

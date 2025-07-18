@@ -71,7 +71,14 @@ def get_or_create_user_account():
 
 @app.route('/')
 def index():
-    """Main dashboard page"""
+    """Main ChatGPT-style AI interface"""
+    if not current_user.is_authenticated:
+        return redirect(url_for('login'))
+    return render_template('chatgpt_interface.html')
+
+@app.route('/dashboard')
+def dashboard():
+    """Legacy dashboard interface"""
     if not current_user.is_authenticated:
         return redirect(url_for('login'))
     return render_template('index.html')
@@ -600,6 +607,81 @@ def calculate_portfolio_performance():
         }
 
 # AI Assistant Routes
+@app.route('/api/stock-analysis/<symbol>')
+@login_required
+def stock_analysis(symbol):
+    """Get comprehensive stock analysis for ChatGPT interface"""
+    try:
+        # Get stock data
+        stock_data = stock_search_service.search_stock(symbol.upper())
+        if not stock_data:
+            return jsonify({'success': False, 'error': f'Stock {symbol} not found'}), 404
+        
+        # Generate AI insights
+        insights = ai_engine.generate_insights(stock_data)
+        
+        return jsonify({
+            'success': True,
+            'symbol': symbol.upper(),
+            'name': stock_data.get('name', symbol),
+            'current_price': stock_data.get('current_price', 0),
+            'change': stock_data.get('change_percent', 0),
+            'recommendation': insights.get('recommendation', 'HOLD'),
+            'analysis': insights.get('analysis', 'No analysis available'),
+            'confidence': insights.get('confidence', 50)
+        })
+    except Exception as e:
+        logger.error(f"Error in stock analysis: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/portfolio-summary')
+@login_required
+def portfolio_summary():
+    """Get portfolio summary for ChatGPT interface"""
+    try:
+        performance = calculate_portfolio_performance()
+        user_account = get_or_create_user_account()
+        
+        # Calculate portfolio value
+        portfolio_items = Portfolio.query.filter_by(user_id=current_user.id).all()
+        stocks = data_service.get_all_stocks()
+        total_value = user_account.balance if user_account else 0
+        
+        for item in portfolio_items:
+            current_stock = next((s for s in stocks if s['symbol'] == item.symbol), None)
+            if not current_stock:
+                try:
+                    real_stock = stock_search_service.search_stock(item.symbol)
+                    if real_stock:
+                        current_stock = real_stock
+                except:
+                    pass
+            
+            if current_stock:
+                current_price = float(current_stock.get('current_price', 0))
+                total_value += item.quantity * current_price
+        
+        return jsonify({
+            'total_value': total_value,
+            'daily_change': performance.get('total_pnl', 0) / max(total_value - performance.get('total_pnl', 0), 1) * 100,
+            'total_trades': performance.get('total_trades', 0),
+            'win_rate': performance.get('win_rate', 0)
+        })
+    except Exception as e:
+        logger.error(f"Error getting portfolio summary: {e}")
+        return jsonify({'total_value': 0, 'daily_change': 0, 'total_trades': 0, 'win_rate': 0})
+
+@app.route('/api/account-balance')
+@login_required
+def account_balance():
+    """Get current account balance"""
+    try:
+        user_account = get_or_create_user_account()
+        return jsonify({'balance': user_account.balance if user_account else 0})
+    except Exception as e:
+        logger.error(f"Error getting account balance: {e}")
+        return jsonify({'balance': 0})
+
 @app.route('/api/ai/chat', methods=['POST'])
 @login_required
 def ai_chat():

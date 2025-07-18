@@ -1,0 +1,752 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="chatgpt-container">
+    <!-- Header with AI Assistant -->
+    <div class="chatgpt-header">
+        <div class="container-fluid">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="logo-section">
+                    <h3 class="mb-0"><i class="fas fa-robot me-2"></i>AI Trading Assistant</h3>
+                    <small class="text-muted">Your intelligent investment partner</small>
+                </div>
+                <div class="user-section">
+                    <span class="balance-display">$<span id="user-balance">0.00</span></span>
+                    <button class="btn btn-sm btn-success ms-2" onclick="showDepositModal()">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Search Interface -->
+    <div class="search-container">
+        <div class="search-wrapper">
+            <div class="search-input-group">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" 
+                       id="ai-search-input" 
+                       class="search-input" 
+                       placeholder="Ask me anything about investing or search for stocks..."
+                       autocomplete="off">
+                <button class="search-submit" onclick="processAIQuery()">
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+            <div class="search-suggestions" id="search-suggestions"></div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <button class="quick-action-btn" onclick="quickAction('portfolio')">
+                <i class="fas fa-chart-pie"></i>
+                Portfolio
+            </button>
+            <button class="quick-action-btn" onclick="quickAction('trending')">
+                <i class="fas fa-fire"></i>
+                Trending
+            </button>
+            <button class="quick-action-btn" onclick="quickAction('watchlist')">
+                <i class="fas fa-eye"></i>
+                Watchlist
+            </button>
+            <button class="quick-action-btn" onclick="quickAction('analysis')">
+                <i class="fas fa-brain"></i>
+                AI Analysis
+            </button>
+        </div>
+    </div>
+
+    <!-- Content Area -->
+    <div class="content-area">
+        <div class="content-wrapper">
+            <!-- AI Response Area -->
+            <div id="ai-response-area" class="ai-response-area">
+                <div class="welcome-message">
+                    <div class="ai-avatar">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="welcome-content">
+                        <h4>Welcome to AI Trading</h4>
+                        <p>I'm your intelligent investment assistant. I can help you:</p>
+                        <ul>
+                            <li>Find and analyze stocks</li>
+                            <li>Manage your portfolio</li>
+                            <li>Provide market insights</li>
+                            <li>Make informed investment decisions</li>
+                        </ul>
+                        <p>Try asking: "What are the best tech stocks?" or "Show me my portfolio performance"</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="quick-stats">
+                <div class="stat-card">
+                    <div class="stat-icon text-success">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="portfolio-value">$0.00</div>
+                        <div class="stat-label">Portfolio Value</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon text-primary">
+                        <i class="fas fa-percentage"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="portfolio-change">+0.00%</div>
+                        <div class="stat-label">Today's Change</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon text-info">
+                        <i class="fas fa-bullseye"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="ai-accuracy">98%</div>
+                        <div class="stat-label">AI Accuracy</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Stock Detail Modal -->
+<div class="modal fade" id="stockDetailModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content bg-dark">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title" id="stockDetailTitle">Stock Analysis</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="stockDetailBody">
+                <!-- Dynamic content -->
+            </div>
+            <div class="modal-footer border-secondary">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-success" onclick="quickTrade()">Trade</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* ChatGPT-Style Interface */
+.chatgpt-container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    color: #ffffff;
+}
+
+.chatgpt-header {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1rem 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.logo-section h3 {
+    background: linear-gradient(45deg, #00d4ff, #00ff88);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.balance-display {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #00ff88;
+}
+
+.search-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 3rem 1rem;
+    text-align: center;
+}
+
+.search-wrapper {
+    position: relative;
+    margin-bottom: 2rem;
+}
+
+.search-input-group {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50px;
+    padding: 0.5rem 1rem;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.search-input-group:focus-within {
+    border-color: #00d4ff;
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+}
+
+.search-icon {
+    color: #00d4ff;
+    margin-right: 1rem;
+    font-size: 1.1rem;
+}
+
+.search-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #ffffff;
+    font-size: 1.1rem;
+    padding: 0.75rem 0;
+}
+
+.search-input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.search-submit {
+    background: linear-gradient(45deg, #00d4ff, #00ff88);
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #000;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.search-submit:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
+}
+
+.search-suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.9);
+    border-radius: 15px;
+    margin-top: 0.5rem;
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 1000;
+    backdrop-filter: blur(10px);
+    display: none;
+}
+
+.suggestion-item {
+    padding: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.suggestion-item:hover {
+    background: rgba(0, 212, 255, 0.1);
+}
+
+.quick-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.quick-action-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 25px;
+    padding: 0.75rem 1.5rem;
+    color: #ffffff;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    cursor: pointer;
+}
+
+.quick-action-btn:hover {
+    background: rgba(0, 212, 255, 0.2);
+    border-color: #00d4ff;
+    transform: translateY(-2px);
+    color: #ffffff;
+}
+
+.quick-action-btn i {
+    margin-right: 0.5rem;
+}
+
+.content-area {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+.ai-response-area {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.welcome-message {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.5rem;
+}
+
+.ai-avatar {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(45deg, #00d4ff, #00ff88);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #000;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.welcome-content h4 {
+    color: #00d4ff;
+    margin-bottom: 1rem;
+}
+
+.welcome-content ul {
+    color: rgba(255, 255, 255, 0.8);
+    margin: 1rem 0;
+}
+
+.quick-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.stat-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    padding: 1.5rem;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 212, 255, 0.2);
+}
+
+.stat-icon {
+    width: 50px;
+    height: 50px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.stat-label {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .search-container {
+        padding: 2rem 1rem;
+    }
+    
+    .welcome-message {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .quick-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .quick-action-btn {
+        width: 100%;
+        max-width: 300px;
+    }
+}
+</style>
+
+<script>
+// ChatGPT-Style AI Interface
+class AITradingInterface {
+    constructor() {
+        this.searchInput = document.getElementById('ai-search-input');
+        this.suggestionsContainer = document.getElementById('search-suggestions');
+        this.responseArea = document.getElementById('ai-response-area');
+        this.init();
+    }
+
+    init() {
+        this.setupSearch();
+        this.loadUserData();
+        this.setupRealTimeUpdates();
+    }
+
+    setupSearch() {
+        this.searchInput.addEventListener('input', (e) => {
+            this.handleSearchInput(e.target.value);
+        });
+
+        this.searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                this.processAIQuery();
+            }
+        });
+
+        // Hide suggestions when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.search-wrapper')) {
+                this.hideSuggestions();
+            }
+        });
+    }
+
+    handleSearchInput(query) {
+        if (query.length < 2) {
+            this.hideSuggestions();
+            return;
+        }
+
+        // Generate intelligent suggestions
+        const suggestions = this.generateSuggestions(query);
+        this.showSuggestions(suggestions);
+    }
+
+    generateSuggestions(query) {
+        const stockSuggestions = ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'TSLA', 'NVDA', 'META'];
+        const aiQuestions = [
+            'What are the best stocks to buy now?',
+            'Show me my portfolio performance',
+            'Analyze the tech sector',
+            'What is the market sentiment today?',
+            'Find undervalued stocks',
+            'Show me dividend stocks'
+        ];
+
+        const suggestions = [];
+
+        // Stock symbol matches
+        stockSuggestions.forEach(symbol => {
+            if (symbol.toLowerCase().includes(query.toLowerCase())) {
+                suggestions.push({
+                    type: 'stock',
+                    text: symbol,
+                    description: `Analyze ${symbol} stock`
+                });
+            }
+        });
+
+        // AI question matches
+        aiQuestions.forEach(question => {
+            if (question.toLowerCase().includes(query.toLowerCase())) {
+                suggestions.push({
+                    type: 'question',
+                    text: question,
+                    description: 'AI-powered analysis'
+                });
+            }
+        });
+
+        return suggestions.slice(0, 5);
+    }
+
+    showSuggestions(suggestions) {
+        if (suggestions.length === 0) {
+            this.hideSuggestions();
+            return;
+        }
+
+        const html = suggestions.map(suggestion => `
+            <div class="suggestion-item" onclick="aiInterface.selectSuggestion('${suggestion.text}')">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-${suggestion.type === 'stock' ? 'chart-line' : 'brain'} me-2"></i>
+                    <div>
+                        <div>${suggestion.text}</div>
+                        <small class="text-muted">${suggestion.description}</small>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+
+        this.suggestionsContainer.innerHTML = html;
+        this.suggestionsContainer.style.display = 'block';
+    }
+
+    hideSuggestions() {
+        this.suggestionsContainer.style.display = 'none';
+    }
+
+    selectSuggestion(text) {
+        this.searchInput.value = text;
+        this.hideSuggestions();
+        this.processAIQuery();
+    }
+
+    async processAIQuery() {
+        const query = this.searchInput.value.trim();
+        if (!query) return;
+
+        this.showTypingIndicator();
+
+        try {
+            // Determine query type and route to appropriate handler
+            if (this.isStockQuery(query)) {
+                await this.handleStockQuery(query);
+            } else {
+                await this.handleAIQuestion(query);
+            }
+        } catch (error) {
+            this.showError('Sorry, I encountered an error processing your request.');
+        }
+    }
+
+    isStockQuery(query) {
+        const stockPattern = /^[A-Z]{1,5}$/;
+        return stockPattern.test(query.toUpperCase());
+    }
+
+    async handleStockQuery(symbol) {
+        try {
+            const response = await fetch(`/api/stock-analysis/${symbol.toUpperCase()}`);
+            const data = await response.json();
+            this.displayStockAnalysis(data);
+        } catch (error) {
+            this.showError(`Unable to analyze ${symbol}. Please try again.`);
+        }
+    }
+
+    async handleAIQuestion(question) {
+        try {
+            const response = await fetch('/api/ai-assistant', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    message: question,
+                    context: 'trading'
+                })
+            });
+            const data = await response.json();
+            this.displayAIResponse(data);
+        } catch (error) {
+            this.showError('Unable to process your question. Please try again.');
+        }
+    }
+
+    showTypingIndicator() {
+        this.responseArea.innerHTML = `
+            <div class="typing-indicator">
+                <div class="ai-avatar">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="typing-content">
+                    <div class="typing-animation">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                    <p>Analyzing your request...</p>
+                </div>
+            </div>
+        `;
+    }
+
+    displayStockAnalysis(data) {
+        const html = `
+            <div class="stock-analysis">
+                <div class="d-flex align-items-start gap-3">
+                    <div class="ai-avatar">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="analysis-content">
+                        <h4>${data.symbol} - ${data.name}</h4>
+                        <div class="price-info mb-3">
+                            <span class="current-price">$${data.current_price}</span>
+                            <span class="price-change ${data.change >= 0 ? 'text-success' : 'text-danger'}">
+                                ${data.change >= 0 ? '+' : ''}${data.change}%
+                            </span>
+                        </div>
+                        <div class="ai-recommendation">
+                            <h5>AI Analysis</h5>
+                            <div class="recommendation-badge ${data.recommendation.toLowerCase()}">
+                                ${data.recommendation}
+                            </div>
+                            <p>${data.analysis}</p>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="btn btn-success" onclick="quickBuy('${data.symbol}')">
+                                <i class="fas fa-shopping-cart"></i> Buy
+                            </button>
+                            <button class="btn btn-outline-info" onclick="addToWatchlist('${data.symbol}')">
+                                <i class="fas fa-eye"></i> Watch
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        this.responseArea.innerHTML = html;
+    }
+
+    displayAIResponse(data) {
+        const html = `
+            <div class="ai-response">
+                <div class="d-flex align-items-start gap-3">
+                    <div class="ai-avatar">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="response-content">
+                        <h4>AI Assistant</h4>
+                        <div class="response-text">${data.response}</div>
+                        ${data.suggestions ? this.renderSuggestions(data.suggestions) : ''}
+                        ${data.data ? this.renderData(data.data) : ''}
+                    </div>
+                </div>
+            </div>
+        `;
+        this.responseArea.innerHTML = html;
+    }
+
+    renderSuggestions(suggestions) {
+        return `
+            <div class="ai-suggestions mt-3">
+                <h6>Related Actions:</h6>
+                <div class="suggestion-buttons">
+                    ${suggestions.map(suggestion => `
+                        <button class="btn btn-outline-primary btn-sm me-2 mb-2" 
+                                onclick="aiInterface.selectSuggestion('${suggestion}')">
+                            ${suggestion}
+                        </button>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+    }
+
+    showError(message) {
+        this.responseArea.innerHTML = `
+            <div class="error-message">
+                <div class="d-flex align-items-start gap-3">
+                    <div class="ai-avatar bg-danger">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="error-content">
+                        <h4>Oops!</h4>
+                        <p>${message}</p>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    loadUserData() {
+        // Load user balance and portfolio data
+        this.updateBalance();
+        this.updatePortfolioStats();
+    }
+
+    async updateBalance() {
+        try {
+            const response = await fetch('/api/account-balance');
+            const data = await response.json();
+            document.getElementById('user-balance').textContent = data.balance.toLocaleString();
+        } catch (error) {
+            console.error('Error loading balance:', error);
+        }
+    }
+
+    async updatePortfolioStats() {
+        try {
+            const response = await fetch('/api/portfolio-summary');
+            const data = await response.json();
+            
+            document.getElementById('portfolio-value').textContent = `$${data.total_value.toLocaleString()}`;
+            document.getElementById('portfolio-change').textContent = `${data.daily_change >= 0 ? '+' : ''}${data.daily_change.toFixed(2)}%`;
+            
+            // Update change color
+            const changeElement = document.getElementById('portfolio-change');
+            changeElement.className = `stat-value ${data.daily_change >= 0 ? 'text-success' : 'text-danger'}`;
+        } catch (error) {
+            console.error('Error loading portfolio stats:', error);
+        }
+    }
+
+    setupRealTimeUpdates() {
+        // Update data every 30 seconds
+        setInterval(() => {
+            this.updateBalance();
+            this.updatePortfolioStats();
+        }, 30000);
+    }
+}
+
+// Quick Actions
+function quickAction(action) {
+    const queries = {
+        'portfolio': 'Show me my portfolio performance',
+        'trending': 'What are the trending stocks today?',
+        'watchlist': 'Show me my watchlist',
+        'analysis': 'Give me market analysis'
+    };
+    
+    aiInterface.searchInput.value = queries[action];
+    aiInterface.processAIQuery();
+}
+
+function quickBuy(symbol) {
+    showBuyModal(symbol);
+}
+
+function addToWatchlist(symbol) {
+    // Add to watchlist functionality
+    alert(`Added ${symbol} to your watchlist!`);
+}
+
+// Initialize when page loads
+let aiInterface;
+document.addEventListener('DOMContentLoaded', function() {
+    aiInterface = new AITradingInterface();
+});
+
+// Make processAIQuery globally available
+function processAIQuery() {
+    aiInterface.processAIQuery();
+}
+</script>
+{% endblock %}
