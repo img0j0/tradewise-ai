@@ -1,0 +1,20 @@
+{% extends "clean_base.html" %}
+
+{% block title %}Dashboard - AI Trading Platform{% endblock %}
+
+{% block content %}
+<div class="page-content">
+    <div class="page-header">
+        <h1 class="page-title">Dashboard</h1>
+        <p class="page-subtitle">Real-time market insights and portfolio performance</p>
+    </div>
+    
+    <!-- Embed the existing dashboard content -->
+    <div class="dashboard-wrapper">
+        <iframe src="/dashboard_content" 
+                style="width: 100%; height: 80vh; border: none; border-radius: 15px; background: rgba(255,255,255,0.05);" 
+                frameborder="0">
+        </iframe>
+    </div>
+</div>
+{% endblock %}

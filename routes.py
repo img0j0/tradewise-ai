@@ -78,10 +78,72 @@ def index():
 
 @app.route('/dashboard')
 def dashboard():
-    """Legacy dashboard interface"""
+    """Clean dashboard page"""
+    if not current_user.is_authenticated:
+        return redirect(url_for('login'))
+    return render_template('clean_dashboard.html')
+
+@app.route('/simple_stocks')
+def simple_stocks():
+    """Clean tools page"""
+    if not current_user.is_authenticated:
+        return redirect(url_for('login'))
+    return render_template('clean_tools.html')
+
+@app.route('/portfolio')
+def portfolio():
+    """Clean portfolio page"""
+    if not current_user.is_authenticated:
+        return redirect(url_for('login'))
+    return render_template('clean_portfolio.html')
+
+@app.route('/alerts')
+def alerts():
+    """Clean alerts page"""
+    if not current_user.is_authenticated:
+        return redirect(url_for('login'))
+    return render_template('clean_alerts.html')
+
+# Content-only endpoints for iframe embedding
+@app.route('/dashboard_content')
+def dashboard_content():
+    """Legacy dashboard content for iframe"""
     if not current_user.is_authenticated:
         return redirect(url_for('login'))
     return render_template('index.html')
+
+@app.route('/simple_stocks_content')
+def simple_stocks_content():
+    """Simple stocks content for iframe"""
+    if not current_user.is_authenticated:
+        return redirect(url_for('login'))
+    # Check if simple_stocks.html exists, otherwise use index.html
+    try:
+        return render_template('simple_stocks.html')
+    except:
+        return render_template('index.html')
+
+@app.route('/portfolio_content')
+def portfolio_content():
+    """Portfolio content for iframe"""
+    if not current_user.is_authenticated:
+        return redirect(url_for('login'))
+    try:
+        return render_template('portfolio.html')
+    except:
+        return render_template('index.html')
+
+@app.route('/alerts_content')
+def alerts_content():
+    """Alerts content for iframe"""
+    if not current_user.is_authenticated:
+        return redirect(url_for('login'))
+    try:
+        return render_template('alerts.html')
+    except:
+        return render_template('index.html')
+
+
 
 @app.route('/api/dashboard')
 @login_required
