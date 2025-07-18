@@ -213,6 +213,17 @@
         color: #1a1a1a !important; 
         font-weight: 600;
     }
+    
+    .ai-recommendation.hold .recommendation-text {
+        color: #1a1a1a !important;
+    }
+    
+    .ai-recommendation.buy .recommendation-text,
+    .ai-recommendation.strong-buy .recommendation-text,
+    .ai-recommendation.sell .recommendation-text,
+    .ai-recommendation.strong-sell .recommendation-text {
+        color: white !important;
+    }
 
     /* Bottom Input Area */
     .input-area {
@@ -564,8 +575,8 @@
                 </div>
                 
                 <div class="ai-analysis">
-                    <div class="ai-recommendation ${data.ai_recommendation.toLowerCase().replace(' ', '-')}">
-                        ${data.ai_recommendation} (<span style="color: rgba(255,255,255,0.9);">${data.ai_confidence}% confidence</span>)
+                    <div class="ai-recommendation ${data.ai_recommendation.toLowerCase().replace(/\s+/g, '-')}">
+                        <span class="recommendation-text">${data.ai_recommendation}</span> (<span style="color: rgba(255,255,255,0.9);">${data.ai_confidence}% confidence</span>)
                     </div>
                     <p style="color: rgba(255,255,255,0.8); line-height: 1.4; margin: 0.5rem 0 1rem 0;">
                         ${data.analysis}
