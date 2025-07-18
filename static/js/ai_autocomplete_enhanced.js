@@ -76,8 +76,8 @@ class AIAutocompleteEngine {
     }
     
     setupThemeButtons() {
-        // Load trending themes
-        this.loadTrendingThemes();
+        // Load trending themes immediately with default themes
+        this.displayTrendingThemes(this.getDefaultThemes());
     }
     
     async handleSearchInput(e) {
@@ -398,6 +398,7 @@ class AIAutocompleteEngine {
             { name: 'Crypto', icon: 'fa-coins', return: -5.2 }
         ];
     }
+}
             const response = await fetch(`/api/search-autocomplete?q=${encodeURIComponent(query)}&limit=8`, {
                 credentials: 'include'
             });
@@ -709,3 +710,18 @@ const aiAutocomplete = new AIAutocompleteEngine();
 
 // Export for global access
 window.aiAutocomplete = aiAutocomplete;
+
+// Global function for theme buttons
+function searchTheme(themeName) {
+    console.log('Searching theme:', themeName);
+    // Open theme analysis page
+    window.open(`/theme-analysis/${encodeURIComponent(themeName)}`, '_blank');
+}
+
+// Global function for popular stock buttons
+function quickSearch(symbol) {
+    console.log('Quick search for:', symbol);
+    if (window.aiAutocomplete) {
+        window.aiAutocomplete.quickSearch(symbol);
+    }
+}
