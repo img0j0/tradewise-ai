@@ -476,6 +476,7 @@
             .then(response => response.json())
             .then(data => {
                 console.log('TradeWise AI: API Response', data);
+        console.log('TradeWise AI: Recommendation is:', data.ai_recommendation, 'Lowercase:', data.ai_recommendation.toLowerCase());
                 hideLoading();
                 displayResult(data);
             })
@@ -575,8 +576,8 @@
                 </div>
                 
                 <div class="ai-analysis">
-                    <div class="ai-recommendation ${data.ai_recommendation.toLowerCase().replace(/\s+/g, '-')}" style="${data.ai_recommendation.toLowerCase() === 'hold' ? 'color: #1a1a1a !important;' : 'color: white !important;'}">
-                        <span class="recommendation-text" style="${data.ai_recommendation.toLowerCase() === 'hold' ? 'color: #1a1a1a !important;' : 'color: white !important;'}">${data.ai_recommendation}</span> (<span style="color: rgba(255,255,255,0.9);">${data.ai_confidence}% confidence</span>)
+                    <div class="ai-recommendation ${data.ai_recommendation.toLowerCase().replace(/\s+/g, '-')}" style="${data.ai_recommendation.toLowerCase() === 'hold' ? 'color: #000000 !important; background: var(--yellow) !important;' : 'color: white !important;'}">
+                        <span style="${data.ai_recommendation.toLowerCase() === 'hold' ? 'color: #000000 !important;' : 'color: white !important;'}">${data.ai_recommendation}</span> (<span style="color: rgba(255,255,255,0.9);">${data.ai_confidence}% confidence</span>)
                     </div>
                     <p style="color: rgba(255,255,255,0.8); line-height: 1.4; margin: 0.5rem 0 1rem 0;">
                         ${data.analysis}
