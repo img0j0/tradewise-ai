@@ -69,15 +69,51 @@
             100% { box-shadow: 0 0 0 0 rgba(255, 107, 107, 0); }
         }
         .alert-badge {
-            background: linear-gradient(135deg, #00d4ff, #00ff88);
-            color: #000000;
-            padding: 0.3rem 0.8rem;
-            border-radius: 15px;
-            font-size: 0.8rem;
-            font-weight: 600;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #ffffff;
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
             white-space: nowrap;
             display: inline-block;
             min-width: fit-content;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        /* Specific badge styles for different types */
+        .alert-badge.ai-prediction {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+        }
+        
+        .alert-badge.technical {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            box-shadow: 0 2px 8px rgba(245, 87, 108, 0.4);
+        }
+        
+        .alert-badge.earnings {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            box-shadow: 0 2px 8px rgba(79, 172, 254, 0.4);
+        }
+        
+        .alert-badge.portfolio {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            box-shadow: 0 2px 8px rgba(67, 233, 123, 0.4);
+        }
+        
+        .alert-badge.executed {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            box-shadow: 0 2px 8px rgba(250, 112, 154, 0.4);
+        }
+        
+        .alert-badge.profit-taken {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            box-shadow: 0 2px 8px rgba(168, 237, 234, 0.4);
         }
         .alert-time {
             color: rgba(255, 255, 255, 0.8) !important;
@@ -274,7 +310,7 @@
                     <div class="flex-grow-1 me-2">
                         <div class="d-flex align-items-center flex-wrap">
                             <strong class="me-2">NVDA Price Breakout</strong>
-                            <span class="alert-badge">AI PREDICTION</span>
+                            <span class="alert-badge ai-prediction">AI Prediction</span>
                         </div>
                     </div>
                     <div class="alert-time flex-shrink-0">2 minutes ago</div>
@@ -296,7 +332,7 @@
                 <div class="d-flex justify-content-between align-items-start mb-2">
                     <div>
                         <strong>AAPL RSI Oversold</strong>
-                        <span class="alert-badge ms-2">TECHNICAL</span>
+                        <span class="alert-badge technical ms-2">Technical</span>
                     </div>
                     <div class="alert-time">15 minutes ago</div>
                 </div>
@@ -317,7 +353,7 @@
                 <div class="d-flex justify-content-between align-items-start mb-2">
                     <div>
                         <strong>TSLA Earnings Approach</strong>
-                        <span class="alert-badge ms-2">EARNINGS</span>
+                        <span class="alert-badge earnings ms-2">Earnings</span>
                     </div>
                     <div class="alert-time">1 hour ago</div>
                 </div>
@@ -338,7 +374,7 @@
                 <div class="d-flex justify-content-between align-items-start mb-2">
                     <div>
                         <strong>Portfolio Rebalance Needed</strong>
-                        <span class="alert-badge ms-2">PORTFOLIO</span>
+                        <span class="alert-badge portfolio ms-2">Portfolio</span>
                     </div>
                     <div class="alert-time">3 hours ago</div>
                 </div>
@@ -359,7 +395,7 @@
                 <div class="d-flex justify-content-between align-items-start mb-2">
                     <div>
                         <strong>RMBS Stop Loss Hit</strong>
-                        <span class="alert-badge ms-2">EXECUTED</span>
+                        <span class="alert-badge executed ms-2">Executed</span>
                     </div>
                     <div class="alert-time">Yesterday 2:30 PM</div>
                 </div>
@@ -375,7 +411,7 @@
                 <div class="d-flex justify-content-between align-items-start mb-2">
                     <div>
                         <strong>MSFT Target Reached</strong>
-                        <span class="alert-badge ms-2">PROFIT TAKEN</span>
+                        <span class="alert-badge profit-taken ms-2">Profit Taken</span>
                     </div>
                     <div class="alert-time">Yesterday 11:45 AM</div>
                 </div>
