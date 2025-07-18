@@ -4,18 +4,11 @@
 
 {% block content %}
 <div class="chatgpt-interface">
-    <!-- OpenAI-Style Header with Navigation -->
-    <div class="ai-header">
+    <!-- Clean Minimal Navigation -->
+    <div class="minimal-header">
         <div class="container-fluid">
-            <div class="d-flex justify-content-between align-items-center py-3">
-                <div class="brand">
-                    <h4 class="mb-0 ai-title">
-                        <i class="fas fa-robot me-2"></i>AI Trading Assistant
-                    </h4>
-                    <small class="text-muted">Powered by advanced market intelligence</small>
-                </div>
-                
-                <!-- OpenAI-Style Tab Navigation -->
+            <div class="d-flex justify-content-center align-items-center py-2">
+                <!-- Clean Tab Navigation -->
                 <div class="openai-tabs">
                     <button class="tab-btn active" data-section="ai-interface" onclick="switchToSection('ai-interface')">
                         <i class="fas fa-search"></i>
@@ -38,13 +31,6 @@
                         <span>Alerts</span>
                     </button>
                 </div>
-                
-                <div class="user-info">
-                    <span class="balance me-3">Balance: $<span id="balance">0.00</span></span>
-                    <button class="btn btn-sm btn-outline-success" onclick="showDepositModal()">
-                        <i class="fas fa-plus me-1"></i>Add Funds
-                    </button>
-                </div>
             </div>
         </div>
     </div>
@@ -54,12 +40,9 @@
         <!-- Main Search Interface - ChatGPT Style -->
         <div class="main-search-interface">
             <div class="container">
-                <!-- Welcome Header -->
+                <!-- Simple Title -->
                 <div class="search-welcome">
-                    <h1 class="search-title">
-                        <i class="fas fa-chart-line me-3"></i>AI Trading Intelligence
-                    </h1>
-                    <p class="search-subtitle">Search any stock, get instant AI analysis and market insights</p>
+                    <h1 class="search-title">Search Stocks</h1>
                 </div>
 
                 <!-- Prominent Search Box -->
@@ -68,7 +51,7 @@
                         <i class="fas fa-search search-icon"></i>
                         <input type="text" 
                                id="main-search-input" 
-                               placeholder="Search for any stock like 'nvidia', 'apple', 'tesla'..."
+                               placeholder="Type any company name or ticker..."
                                class="chatgpt-search-input"
                                onkeypress="handleSearchKeypress(event)">
                         <button class="chatgpt-search-btn" onclick="performIntelligentSearch()">
@@ -82,28 +65,15 @@
                     </div>
                 </div>
 
-                <!-- Popular Stocks Quick Access -->
+                <!-- Popular Stocks - Cleaner Layout -->
                 <div class="popular-stocks">
-                    <p class="popular-label">Popular searches:</p>
                     <div class="stock-chips">
-                        <button class="stock-chip" onclick="searchStockByName('nvidia')">
-                            <i class="fab fa-nvidia"></i> NVIDIA
-                        </button>
-                        <button class="stock-chip" onclick="searchStockByName('apple')">
-                            <i class="fab fa-apple"></i> Apple
-                        </button>
-                        <button class="stock-chip" onclick="searchStockByName('tesla')">
-                            <i class="fas fa-car"></i> Tesla
-                        </button>
-                        <button class="stock-chip" onclick="searchStockByName('microsoft')">
-                            <i class="fab fa-microsoft"></i> Microsoft
-                        </button>
-                        <button class="stock-chip" onclick="searchStockByName('amazon')">
-                            <i class="fab fa-amazon"></i> Amazon
-                        </button>
-                        <button class="stock-chip" onclick="searchStockByName('google')">
-                            <i class="fab fa-google"></i> Google
-                        </button>
+                        <button class="stock-chip" onclick="searchStockByName('nvidia')">NVIDIA</button>
+                        <button class="stock-chip" onclick="searchStockByName('apple')">Apple</button>
+                        <button class="stock-chip" onclick="searchStockByName('tesla')">Tesla</button>
+                        <button class="stock-chip" onclick="searchStockByName('microsoft')">Microsoft</button>
+                        <button class="stock-chip" onclick="searchStockByName('amazon')">Amazon</button>
+                        <button class="stock-chip" onclick="searchStockByName('google')">Google</button>
                     </div>
                 </div>
 
@@ -164,33 +134,33 @@
 </div>
 
 <style>
-/* Main Search Interface - ChatGPT Style */
+/* Clean Search Interface */
 .main-search-interface {
-    min-height: 80vh;
+    min-height: 85vh;
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 2rem 0;
 }
 
 .search-welcome {
     text-align: center;
-    margin-bottom: 3rem;
+    margin-bottom: 2rem;
+}
+
+/* Minimal Header */
+.minimal-header {
+    background: rgba(255, 255, 255, 0.03);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
 }
 
 .search-title {
-    font-size: 3rem;
-    font-weight: 700;
-    background: linear-gradient(135deg, #00d4ff, #00ff88);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    margin-bottom: 1rem;
-}
-
-.search-subtitle {
-    font-size: 1.2rem;
-    color: rgba(255, 255, 255, 0.7);
-    margin-bottom: 0;
+    font-size: 2.5rem;
+    font-weight: 300;
+    color: #ffffff;
+    margin-bottom: 2rem;
+    text-align: center;
 }
 
 /* ChatGPT-Style Search Box */
@@ -296,47 +266,38 @@
     border-bottom: none;
 }
 
-/* Popular Stocks */
+/* Popular Stocks - Simplified */
 .popular-stocks {
     text-align: center;
-    margin-bottom: 3rem;
-}
-
-.popular-label {
-    color: rgba(255, 255, 255, 0.7);
-    margin-bottom: 1.5rem;
-    font-size: 1rem;
+    margin-top: 2rem;
 }
 
 .stock-chips {
     display: flex;
     flex-wrap: wrap;
-    gap: 1rem;
+    gap: 0.5rem;
     justify-content: center;
+    max-width: 600px;
+    margin: 0 auto;
 }
 
 .stock-chip {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 25px;
-    padding: 0.8rem 1.5rem;
-    color: #ffffff;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    padding: 0.6rem 1.2rem;
+    color: rgba(255, 255, 255, 0.8);
     cursor: pointer;
-    transition: all 0.3s ease;
-    backdrop-filter: blur(10px);
-    font-size: 0.9rem;
-    font-weight: 500;
+    transition: all 0.2s ease;
+    font-size: 0.85rem;
+    font-weight: 400;
 }
 
 .stock-chip:hover {
-    background: rgba(0, 212, 255, 0.2);
-    border-color: #00d4ff;
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0, 212, 255, 0.2);
-}
-
-.stock-chip i {
-    margin-right: 0.5rem;
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    transform: translateY(-1px);
 }
 
 /* Main Search Results */
