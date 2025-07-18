@@ -153,15 +153,7 @@ body {
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
     }
     
-    .ai-assistant-container {
-        width: calc(100vw - 2rem);
-        max-width: 390px;
-        height: calc(100vh - 8rem);
-        max-height: 600px;
-        right: 1rem;
-        bottom: calc(5rem + var(--safe-area-inset-bottom));
-        border-radius: 16px;
-    }
+    /* Old AI assistant container styles removed */
     
     .ai-messages {
         -webkit-overflow-scrolling: touch;
@@ -252,10 +244,7 @@ body {
         padding: 1rem;
     }
     
-    .ai-assistant-container {
-        height: calc(100vh - 6rem);
-        max-height: 400px;
-    }
+    /* Old AI assistant styles removed */
     
     .modal-dialog {
         margin: 0.25rem;
@@ -293,10 +282,7 @@ body {
         font-size: 14px;
     }
     
-    .ai-assistant-container {
-        width: calc(100vw - 1rem);
-        right: 0.5rem;
-    }
+    /* Old AI assistant styles removed */
     
     .chart-container {
         height: 250px;
