@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="chatgpt-interface">
-    <!-- Header -->
+    <!-- OpenAI-Style Header with Navigation -->
     <div class="ai-header">
         <div class="container-fluid">
             <div class="d-flex justify-content-between align-items-center py-3">
@@ -14,6 +14,31 @@
                     </h4>
                     <small class="text-muted">Powered by advanced market intelligence</small>
                 </div>
+                
+                <!-- OpenAI-Style Tab Navigation -->
+                <div class="openai-tabs">
+                    <button class="tab-btn active" data-section="ai-interface" onclick="switchToSection('ai-interface')">
+                        <i class="fas fa-robot"></i>
+                        <span>AI Chat</span>
+                    </button>
+                    <button class="tab-btn" data-section="dashboard" onclick="switchToSection('dashboard')">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Dashboard</span>
+                    </button>
+                    <button class="tab-btn" data-section="stocks" onclick="switchToSection('stocks')">
+                        <i class="fas fa-search"></i>
+                        <span>Stocks</span>
+                    </button>
+                    <button class="tab-btn" data-section="portfolio" onclick="switchToSection('portfolio')">
+                        <i class="fas fa-briefcase"></i>
+                        <span>Portfolio</span>
+                    </button>
+                    <button class="tab-btn" data-section="alerts" onclick="switchToSection('alerts')">
+                        <i class="fas fa-bell"></i>
+                        <span>Alerts</span>
+                    </button>
+                </div>
+                
                 <div class="user-info">
                     <span class="balance me-3">Balance: $<span id="balance">0.00</span></span>
                     <button class="btn btn-sm btn-outline-success" onclick="showDepositModal()">
@@ -23,6 +48,9 @@
             </div>
         </div>
     </div>
+    
+    <!-- Content Sections -->
+    <div id="ai-interface-section" class="content-section active">
 
     <!-- Main Interface -->
     <div class="main-interface">
@@ -130,9 +158,468 @@
             </div>
         </div>
     </div>
+    </div> <!-- End ai-interface-section -->
+    
+    <!-- Dashboard Section -->
+    <div id="dashboard-section" class="content-section">
+        <div class="container">
+            <div class="section-header">
+                <h3><i class="fas fa-chart-line me-2"></i>Dashboard Overview</h3>
+                <p class="text-muted">Real-time market insights and portfolio performance</p>
+            </div>
+            <!-- Dashboard content will be loaded here -->
+            <iframe src="/dashboard" class="section-iframe" frameborder="0"></iframe>
+        </div>
+    </div>
+    
+    <!-- Stocks Section -->
+    <div id="stocks-section" class="content-section">
+        <div class="container">
+            <div class="section-header">
+                <h3><i class="fas fa-search me-2"></i>Stock Search & Analysis</h3>
+                <p class="text-muted">Discover and analyze any stock with AI-powered insights</p>
+            </div>
+            <!-- Stock search content will be loaded here -->
+            <div class="stocks-content">
+                <div class="search-container mb-4">
+                    <div class="advanced-search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="stock-search-input" placeholder="Search any stock symbol (e.g., AAPL, TSLA, MSFT)..." class="search-input">
+                        <button class="search-btn" onclick="searchStock()">
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+                <div id="stock-results" class="stock-results"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Portfolio Section -->
+    <div id="portfolio-section" class="content-section">
+        <div class="container">
+            <div class="section-header">
+                <h3><i class="fas fa-briefcase me-2"></i>Your Portfolio</h3>
+                <p class="text-muted">Track your investments and performance metrics</p>
+            </div>
+            <div id="portfolio-content" class="portfolio-content">
+                <!-- Portfolio content will be loaded here -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- Alerts Section -->
+    <div id="alerts-section" class="content-section">
+        <div class="container">
+            <div class="section-header">
+                <h3><i class="fas fa-bell me-2"></i>Trading Alerts</h3>
+                <p class="text-muted">AI-generated alerts and notifications</p>
+            </div>
+            <div id="alerts-content" class="alerts-content">
+                <!-- Alerts content will be loaded here -->
+            </div>
+        </div>
+    </div>
 </div>
 
 <style>
+/* OpenAI-Style Navigation Tabs */
+.openai-tabs {
+    display: flex;
+    gap: 0.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 25px;
+    padding: 0.5rem;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.tab-btn {
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
+    padding: 0.7rem 1.2rem;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.tab-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.9);
+    transform: translateY(-1px);
+}
+
+.tab-btn.active {
+    background: linear-gradient(135deg, #00d4ff, #00ff88);
+    color: #000;
+    font-weight: 600;
+    box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+}
+
+.tab-btn i {
+    font-size: 1rem;
+}
+
+/* Content Sections */
+.content-section {
+    display: none;
+    min-height: 80vh;
+}
+
+.content-section.active {
+    display: block;
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding: 2rem 0;
+}
+
+.section-header h3 {
+    background: linear-gradient(135deg, #00d4ff, #00ff88);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 600;
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.section-iframe {
+    width: 100%;
+    height: 80vh;
+    border: none;
+    border-radius: 15px;
+    background: rgba(255, 255, 255, 0.02);
+    backdrop-filter: blur(10px);
+}
+
+/* Advanced Search Box for Stocks */
+.advanced-search-box {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50px;
+    padding: 1rem 1.5rem;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.advanced-search-box:focus-within {
+    border-color: #00d4ff;
+    box-shadow: 0 0 25px rgba(0, 212, 255, 0.2);
+}
+
+.advanced-search-box i {
+    color: #00d4ff;
+    margin-right: 1rem;
+    font-size: 1.1rem;
+}
+
+.advanced-search-box .search-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #ffffff;
+    font-size: 1rem;
+    padding: 0.5rem 0;
+}
+
+.advanced-search-box .search-input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.advanced-search-box .search-btn {
+    background: linear-gradient(135deg, #00d4ff, #00ff88);
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #000;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-left: 1rem;
+}
+
+.advanced-search-box .search-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 15px rgba(0, 212, 255, 0.4);
+}
+
+.stock-results {
+    margin-top: 2rem;
+}
+
+.portfolio-content, .alerts-content {
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 15px;
+    padding: 2rem;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Stock Result Cards */
+.stock-result-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    padding: 2rem;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.stock-header {
+    display: flex;
+    justify-content: between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.stock-header h4 {
+    color: #00d4ff;
+    margin: 0;
+    flex: 1;
+}
+
+.stock-price {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.price {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.change.positive {
+    color: #00ff88;
+}
+
+.change.negative {
+    color: #ff6b6b;
+}
+
+.ai-recommendation {
+    margin: 1.5rem 0;
+}
+
+.ai-recommendation h5 {
+    color: #00ff88;
+    margin-bottom: 1rem;
+}
+
+.confidence-bar {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    height: 8px;
+    margin: 1rem 0 0.5rem;
+    overflow: hidden;
+}
+
+.confidence-fill {
+    height: 100%;
+    background: linear-gradient(135deg, #00d4ff, #00ff88);
+    border-radius: 10px;
+    transition: width 0.3s ease;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.action-buttons .btn {
+    flex: 1;
+    min-width: 120px;
+    padding: 0.75rem 1.5rem;
+    border-radius: 25px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.action-buttons .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.error-message {
+    text-align: center;
+    padding: 2rem;
+    background: rgba(255, 107, 107, 0.1);
+    border: 1px solid rgba(255, 107, 107, 0.3);
+    border-radius: 15px;
+    color: #ff6b6b;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.error-message i {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    display: block;
+}
+
+/* Portfolio Stats */
+.stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all 0.3s ease;
+}
+
+.stat-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(0, 212, 255, 0.1);
+}
+
+.stat-item h3 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.stat-item h3.positive {
+    color: #00ff88;
+}
+
+.stat-item h3.negative {
+    color: #ff6b6b;
+}
+
+.stat-item p {
+    color: rgba(255, 255, 255, 0.7);
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+/* Alert Items */
+.alert-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 15px;
+    margin-bottom: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all 0.3s ease;
+}
+
+.alert-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.alert-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+.alert-icon.buy {
+    background: rgba(0, 255, 136, 0.2);
+    color: #00ff88;
+}
+
+.alert-icon.sell {
+    background: rgba(255, 107, 107, 0.2);
+    color: #ff6b6b;
+}
+
+.alert-content h6 {
+    color: #00d4ff;
+    margin-bottom: 0.5rem;
+}
+
+.alert-content p {
+    color: rgba(255, 255, 255, 0.8);
+    margin: 0.5rem 0;
+    font-size: 0.9rem;
+}
+
+.alert-content small {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.no-alerts {
+    text-align: center;
+    padding: 3rem;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.no-alerts i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    display: block;
+    opacity: 0.5;
+}
+
+/* Responsive Design for Tabs */
+@media (max-width: 768px) {
+    .openai-tabs {
+        flex-wrap: wrap;
+        gap: 0.25rem;
+        padding: 0.25rem;
+    }
+    
+    .tab-btn {
+        padding: 0.5rem 0.8rem;
+        font-size: 0.8rem;
+    }
+    
+    .tab-btn span {
+        display: none;
+    }
+    
+    .tab-btn i {
+        font-size: 1.1rem;
+    }
+    
+    .section-header h3 {
+        font-size: 1.5rem;
+    }
+    
+    .advanced-search-box {
+        padding: 0.8rem 1rem;
+    }
+}
+
 /* ChatGPT-Style Clean Interface */
 .chatgpt-interface {
     min-height: 100vh;
@@ -682,6 +1169,172 @@ class AITradingAssistant {
     }
 }
 
+// Section Navigation Functions
+function switchToSection(sectionName) {
+    // Remove active class from all tabs and sections
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.content-section').forEach(section => section.classList.remove('active'));
+    
+    // Add active class to selected tab and section
+    document.querySelector(`[data-section="${sectionName}"]`).classList.add('active');
+    document.getElementById(`${sectionName}-section`).classList.add('active');
+    
+    // Load content based on section
+    loadSectionContent(sectionName);
+}
+
+function loadSectionContent(sectionName) {
+    switch(sectionName) {
+        case 'ai-interface':
+            // AI interface is always loaded
+            break;
+        case 'dashboard':
+            // Dashboard loads via iframe
+            break;
+        case 'stocks':
+            loadStocksContent();
+            break;
+        case 'portfolio':
+            loadPortfolioContent();
+            break;
+        case 'alerts':
+            loadAlertsContent();
+            break;
+    }
+}
+
+async function searchStock() {
+    const input = document.getElementById('stock-search-input');
+    const symbol = input.value.trim().toUpperCase();
+    
+    if (!symbol) return;
+    
+    try {
+        const response = await fetch(`/api/stock-analysis/${symbol}`);
+        const data = await response.json();
+        
+        const resultsDiv = document.getElementById('stock-results');
+        
+        if (data.success) {
+            resultsDiv.innerHTML = `
+                <div class="stock-result-card">
+                    <div class="stock-header">
+                        <h4>${data.symbol} - ${data.name}</h4>
+                        <div class="stock-price">
+                            <span class="price">$${data.current_price}</span>
+                            <span class="change ${data.change >= 0 ? 'positive' : 'negative'}">
+                                ${data.change >= 0 ? '+' : ''}${data.change}%
+                            </span>
+                        </div>
+                    </div>
+                    <div class="ai-recommendation">
+                        <h5>AI Recommendation: ${data.recommendation}</h5>
+                        <p>${data.analysis}</p>
+                        <div class="confidence-bar">
+                            <div class="confidence-fill" style="width: ${data.confidence}%"></div>
+                        </div>
+                        <small>Confidence: ${data.confidence}%</small>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="btn btn-success" onclick="quickBuy('${data.symbol}')">
+                            <i class="fas fa-shopping-cart"></i> Buy
+                        </button>
+                        <button class="btn btn-outline-info" onclick="addToWatchlist('${data.symbol}')">
+                            <i class="fas fa-eye"></i> Watch
+                        </button>
+                    </div>
+                </div>
+            `;
+        } else {
+            resultsDiv.innerHTML = `
+                <div class="error-message">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <p>Stock ${symbol} not found. Please check the symbol and try again.</p>
+                </div>
+            `;
+        }
+    } catch (error) {
+        console.error('Error searching stock:', error);
+        document.getElementById('stock-results').innerHTML = `
+            <div class="error-message">
+                <i class="fas fa-times-circle"></i>
+                <p>Error searching for stock. Please try again.</p>
+            </div>
+        `;
+    }
+}
+
+async function loadPortfolioContent() {
+    try {
+        const response = await fetch('/api/portfolio-summary');
+        const data = await response.json();
+        
+        document.getElementById('portfolio-content').innerHTML = `
+            <div class="portfolio-stats">
+                <div class="stat-grid">
+                    <div class="stat-item">
+                        <h3>$${data.total_value.toLocaleString()}</h3>
+                        <p>Total Value</p>
+                    </div>
+                    <div class="stat-item">
+                        <h3 class="${data.daily_change >= 0 ? 'positive' : 'negative'}">
+                            ${data.daily_change >= 0 ? '+' : ''}${data.daily_change.toFixed(2)}%
+                        </h3>
+                        <p>Today's Change</p>
+                    </div>
+                    <div class="stat-item">
+                        <h3>${data.total_trades}</h3>
+                        <p>Total Trades</p>
+                    </div>
+                    <div class="stat-item">
+                        <h3>${data.win_rate.toFixed(1)}%</h3>
+                        <p>Win Rate</p>
+                    </div>
+                </div>
+            </div>
+        `;
+    } catch (error) {
+        console.error('Error loading portfolio:', error);
+    }
+}
+
+async function loadAlertsContent() {
+    try {
+        const response = await fetch('/api/dashboard');
+        const data = await response.json();
+        
+        if (data.active_alerts && data.active_alerts.length > 0) {
+            const alertsHTML = data.active_alerts.map(alert => `
+                <div class="alert-item">
+                    <div class="alert-icon ${alert.alert_type}">
+                        <i class="fas fa-${alert.alert_type === 'buy' ? 'arrow-up' : 'arrow-down'}"></i>
+                    </div>
+                    <div class="alert-content">
+                        <h6>${alert.symbol} - ${alert.alert_type.toUpperCase()} Signal</h6>
+                        <p>${alert.message}</p>
+                        <small>Confidence: ${alert.confidence_score}%</small>
+                    </div>
+                </div>
+            `).join('');
+            
+            document.getElementById('alerts-content').innerHTML = alertsHTML;
+        } else {
+            document.getElementById('alerts-content').innerHTML = `
+                <div class="no-alerts">
+                    <i class="fas fa-bell-slash"></i>
+                    <p>No active alerts at the moment</p>
+                </div>
+            `;
+        }
+    } catch (error) {
+        console.error('Error loading alerts:', error);
+    }
+}
+
+function loadStocksContent() {
+    // Stocks content is already in the HTML
+}
+
 // Global functions
 function sendMessage() {
     if (window.aiAssistant) {
@@ -696,7 +1349,8 @@ function quickQuery(type) {
 }
 
 function quickBuy(symbol) {
-    showBuyModal(symbol);
+    // For now, show alert - later integrate with buy modal
+    alert(`Buy functionality for ${symbol} will be integrated with the trading system`);
 }
 
 function addToWatchlist(symbol) {
@@ -706,6 +1360,13 @@ function addToWatchlist(symbol) {
 // Initialize when page loads
 document.addEventListener('DOMContentLoaded', function() {
     window.aiAssistant = new AITradingAssistant();
+    
+    // Setup keyboard shortcuts for search
+    document.getElementById('stock-search-input').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            searchStock();
+        }
+    });
 });
 </script>
 {% endblock %}
