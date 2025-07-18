@@ -4,40 +4,37 @@
 
 {% block content %}
 <div class="chatgpt-interface">
-    <!-- Clean Minimal Navigation -->
-    <div class="minimal-header">
-        <div class="container-fluid">
-            <div class="d-flex justify-content-center align-items-center py-2">
-                <!-- Clean Tab Navigation -->
-                <div class="openai-tabs">
-                    <button class="tab-btn active" data-section="ai-interface" onclick="switchToSection('ai-interface')">
-                        <i class="fas fa-search"></i>
-                        <span>Search</span>
-                    </button>
-                    <button class="tab-btn" data-section="dashboard" onclick="switchToSection('dashboard')">
-                        <i class="fas fa-chart-line"></i>
-                        <span>Dashboard</span>
-                    </button>
-                    <button class="tab-btn" data-section="stocks" onclick="switchToSection('stocks')">
-                        <i class="fas fa-tools"></i>
-                        <span>Tools</span>
-                    </button>
-                    <button class="tab-btn" data-section="portfolio" onclick="switchToSection('portfolio')">
-                        <i class="fas fa-briefcase"></i>
-                        <span>Portfolio</span>
-                    </button>
-                    <button class="tab-btn" data-section="alerts" onclick="switchToSection('alerts')">
-                        <i class="fas fa-bell"></i>
-                        <span>Alerts</span>
-                    </button>
-                </div>
+    <!-- Clean Interactive Navigation Buttons -->
+    <div class="clean-navigation">
+        <div class="container">
+            <div class="nav-buttons">
+                <button class="nav-btn active" data-section="search" onclick="showPage('search')">
+                    <i class="fas fa-search"></i>
+                    <span>Search</span>
+                </button>
+                <button class="nav-btn" onclick="window.location.href='/dashboard'">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Dashboard</span>
+                </button>
+                <button class="nav-btn" onclick="window.location.href='/simple_stocks'">
+                    <i class="fas fa-tools"></i>
+                    <span>Tools</span>
+                </button>
+                <button class="nav-btn" onclick="window.location.href='/portfolio'">
+                    <i class="fas fa-briefcase"></i>
+                    <span>Portfolio</span>
+                </button>
+                <button class="nav-btn" onclick="window.location.href='/alerts'">
+                    <i class="fas fa-bell"></i>
+                    <span>Alerts</span>
+                </button>
             </div>
         </div>
     </div>
     
-    <!-- Content Sections -->
-    <div id="ai-interface-section" class="content-section active">
-        <!-- Main Search Interface - ChatGPT Style -->
+    <!-- Main Search Content (Only Search Data) -->
+    <div id="search-section" class="content-section active">
+        <!-- Clean Search Interface -->
         <div class="main-search-interface">
             <div class="container">
                 <!-- Simple Title -->
@@ -83,54 +80,7 @@
                 </div>
             </div>
         </div>
-    </div> <!-- End ai-interface-section -->
-
-    <!-- Dashboard Section -->
-    <div id="dashboard-section" class="content-section">
-        <div class="container">
-            <div class="section-header">
-                <h3><i class="fas fa-chart-line me-2"></i>Dashboard Overview</h3>
-                <p class="text-muted">Real-time market insights and portfolio performance</p>
-            </div>
-            <!-- Dashboard content will be loaded here -->
-            <iframe src="/dashboard" class="section-iframe" frameborder="0"></iframe>
-        </div>
-    </div>
-
-    <!-- Trading Tools Section -->
-    <div id="stocks-section" class="content-section">
-        <div class="container">
-            <div class="section-header">
-                <h3><i class="fas fa-tools me-2"></i>Trading Tools</h3>
-                <p class="text-muted">Professional trading tools and advanced analytics</p>
-            </div>
-            <iframe src="/simple_stocks" class="section-iframe" frameborder="0"></iframe>
-        </div>
-    </div>
-
-    <div id="portfolio-section" class="content-section">
-        <div class="container">
-            <div class="section-header">
-                <h3><i class="fas fa-briefcase me-2"></i>Your Portfolio</h3>
-                <p class="text-muted">Track your investments and performance metrics</p>
-            </div>
-            <div id="portfolio-content" class="portfolio-content">
-                <!-- Portfolio content will be loaded here -->
-            </div>
-        </div>
-    </div>
-
-    <div id="alerts-section" class="content-section">
-        <div class="container">
-            <div class="section-header">
-                <h3><i class="fas fa-bell me-2"></i>Trading Alerts</h3>
-                <p class="text-muted">AI-generated alerts and notifications</p>
-            </div>
-            <div id="alerts-content" class="alerts-content">
-                <!-- Alerts content will be loaded here -->
-            </div>
-        </div>
-    </div>
+    </div> <!-- End search-section -->
 </div>
 
 <style>
@@ -148,11 +98,70 @@
     margin-bottom: 2rem;
 }
 
-/* Minimal Header */
-.minimal-header {
-    background: rgba(255, 255, 255, 0.03);
+/* Clean Navigation */
+.clean-navigation {
+    background: rgba(255, 255, 255, 0.02);
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(15px);
+    padding: 1rem 0;
+}
+
+.nav-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.nav-btn {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    padding: 0.75rem 1.5rem;
+    color: rgba(255, 255, 255, 0.8);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.nav-btn:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.nav-btn.active {
+    background: linear-gradient(135deg, #00d4ff, #00ff88);
+    color: #000000;
+    border-color: transparent;
+}
+
+.nav-btn.active:hover {
+    background: linear-gradient(135deg, #00b8e6, #00e079);
+    color: #000000;
+}
+
+.nav-btn i {
+    font-size: 1rem;
+}
+
+@media (max-width: 768px) {
+    .nav-btn span {
+        display: none;
+    }
+    
+    .nav-btn {
+        padding: 0.75rem;
+        min-width: 50px;
+        justify-content: center;
+    }
 }
 
 .search-title {
