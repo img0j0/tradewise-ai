@@ -10,6 +10,7 @@ from portfolio_optimizer import PortfolioOptimizer
 from social_trading import SocialTradingEngine
 from gamification import GamificationEngine
 from flask_login import login_user, logout_user, login_required, current_user
+from werkzeug.security import check_password_hash
 import logging
 import os
 import stripe
@@ -139,6 +140,8 @@ def alerts_content():
     if not current_user.is_authenticated:
         return redirect(url_for('login'))
     return render_template('alerts_content.html')
+
+
 
 
 
