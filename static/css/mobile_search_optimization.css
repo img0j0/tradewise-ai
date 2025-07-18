@@ -129,9 +129,8 @@
     padding: 0.25rem 0.5rem;
     font-size: 0.75rem;
     color: rgba(255, 255, 255, 0.6);
-    margin-right: 0.5rem;
     font-family: monospace;
-    display: none; /* Hide on mobile */
+    display: none; /* Hide completely to prevent overlap */
 }
 
 .chatgpt-search-btn {
@@ -151,7 +150,7 @@
     height: 44px;
     flex-shrink: 0;
     position: absolute;
-    right: 0.75rem;
+    right: 0.5rem;
     top: 50%;
     transform: translateY(-50%);
 }

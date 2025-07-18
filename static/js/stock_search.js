@@ -24,6 +24,9 @@ const companySymbols = {
     'airbnb': 'ABNB'
 };
 
+// Debug: Log company symbols on load
+console.log('TradeWise AI: Company symbols loaded:', companySymbols);
+
 // Search by company name function
 function searchStockByName(companyName) {
     console.log('TradeWise AI: Searching for company:', companyName);
