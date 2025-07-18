@@ -25,6 +25,7 @@ from market_intelligence import get_market_intelligence
 from deep_learning_engine import get_deep_learning_engine
 from performance_optimizer import get_performance_optimizer, cached, monitored
 from dynamic_search_autocomplete import autocomplete_engine
+from monetization_strategy import get_monetization_engine
 # Import will be done after setup
 realtime_service = None
 
@@ -49,6 +50,7 @@ order_manager = get_order_manager()
 market_intelligence = get_market_intelligence()
 deep_learning_engine = get_deep_learning_engine()
 performance_optimizer = get_performance_optimizer()
+monetization_engine = get_monetization_engine()
 
 # Train AI model on startup
 stocks_data = data_service.get_all_stocks()
@@ -1130,14 +1132,17 @@ def purchase_stock():
         if user_account.balance < total_cost:
             return jsonify({'error': 'Insufficient funds'}), 400
         
-        # Deduct from account balance
-        user_account.balance -= total_cost
+        # Calculate commission
+        commission = monetization_engine.calculate_trade_commission(total_cost)
+        
+        # Deduct from account balance (including commission)
+        user_account.balance -= (total_cost + commission)
         
         # Create transaction record
         transaction = Transaction(
             user_id=current_user.id,
             transaction_type='stock_purchase',
-            amount=total_cost,
+            amount=total_cost + commission,
             symbol=symbol,
             quantity=quantity,
             price_per_share=price,
@@ -3222,3 +3227,71 @@ def get_ai_advice(symbol):
     except Exception as e:
         logger.error(f"Error getting advice for {symbol}: {e}")
         return jsonify({'error': str(e)}), 500
+
+# Monetization API Endpoints
+@app.route('/api/monetization/info')
+def get_monetization_info():
+    """Get comprehensive monetization information"""
+    try:
+        return jsonify(monetization_engine.get_monetization_summary())
+    except Exception as e:
+        logger.error(f"Error getting monetization info: {e}")
+        return jsonify({'error': 'Failed to get monetization info'}), 500
+
+@app.route('/api/monetization/premium-features')
+def get_premium_features():
+    """Get available premium features"""
+    try:
+        return jsonify(monetization_engine.get_premium_features())
+    except Exception as e:
+        logger.error(f"Error getting premium features: {e}")
+        return jsonify({'error': 'Failed to get premium features'}), 500
+
+@app.route('/api/monetization/revenue-projection')
+def get_revenue_projection():
+    """Get revenue projection based on user base"""
+    try:
+        user_count = User.query.count()
+        trade_count = Trade.query.count()
+        
+        # Calculate monthly projections
+        avg_trade_volume = trade_count * 1000  # $1000 average per trade
+        monthly_commission = avg_trade_volume * monetization_engine.commission_rate
+        
+        premium_adoption = user_count * 0.1  # 10% adoption rate
+        monthly_premium = premium_adoption * 8.5  # Average premium price
+        
+        referral_growth = user_count * 0.05  # 5% monthly referral growth
+        monthly_referral = referral_growth * monetization_engine.referral_bonus
+        
+        total_monthly = monthly_commission + monthly_premium + monthly_referral
+        
+        return jsonify({
+            'user_count': user_count,
+            'trade_count': trade_count,
+            'monthly_projections': {
+                'trade_commissions': monthly_commission,
+                'premium_subscriptions': monthly_premium,
+                'referral_program': monthly_referral,
+                'total_monthly_revenue': total_monthly,
+                'annual_projection': total_monthly * 12
+            },
+            'growth_scenarios': {
+                'conservative': total_monthly * 1.2,
+                'moderate': total_monthly * 2.0,
+                'aggressive': total_monthly * 5.0
+            }
+        })
+    except Exception as e:
+        logger.error(f"Error calculating revenue projection: {e}")
+        return jsonify({'error': 'Failed to calculate revenue projection'}), 500
+
+@app.route('/monetization-info')
+def monetization_info_page():
+    """Display monetization information page"""
+    return render_template('monetization_info.html')
+
+@app.route('/monetization-dashboard')
+def monetization_dashboard():
+    """Display monetization dashboard"""
+    return render_template('monetization_dashboard.html')
