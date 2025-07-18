@@ -2014,9 +2014,17 @@ def get_technical_indicators(symbol):
 def search_stock_api(symbol):
     """Search for stock data using the StockSearchService"""
     try:
+        logger.info(f"Searching for stock: {symbol}")
         stock_data = stock_search_service.search_stock(symbol)
+        logger.info(f"Stock data result: {stock_data is not None}")
+        
         if not stock_data:
+            logger.error(f"Stock not found: {symbol}")
             return jsonify({'error': 'Stock not found'}), 404
+        
+        # Generate AI insights
+        ai_insights = ai_engine.generate_insights(stock_data)
+        stock_data['ai_insights'] = ai_insights
         
         return jsonify(stock_data)
         

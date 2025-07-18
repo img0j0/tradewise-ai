@@ -244,15 +244,23 @@ async function searchStockAI() {
 // Search stock data from backend
 async function searchStockData(symbol) {
     try {
+        console.log(`Fetching stock data for: ${symbol}`);
         const response = await fetch(`/api/search-stock/${symbol}`, {
             credentials: 'include'
         });
         
+        console.log(`Response status: ${response.status}`);
+        
         if (!response.ok) {
-            throw new Error('Failed to fetch stock data');
+            if (response.status === 404) {
+                throw new Error('Stock symbol not found. Please check the symbol and try again.');
+            }
+            throw new Error(`Failed to fetch stock data (${response.status})`);
         }
         
-        return await response.json();
+        const data = await response.json();
+        console.log('Stock data received:', data);
+        return data;
     } catch (error) {
         console.error('Error fetching stock data:', error);
         return null;
