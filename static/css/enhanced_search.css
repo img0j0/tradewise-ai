@@ -6,21 +6,47 @@
     border: none;
     color: white;
     padding: 0.75rem;
-    border-radius: 50%;
+    border-radius: 16px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     width: 50px;
     height: 50px;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 2px 15px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 4px 20px rgba(102, 126, 234, 0.25), 
+                0 1px 3px rgba(102, 126, 234, 0.1);
     flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
 }
 
 .voice-search-btn:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 8px 32px rgba(102, 126, 234, 0.4),
+                0 4px 16px rgba(102, 126, 234, 0.2);
+    background: linear-gradient(135deg, #7c8df0 0%, #8659c1 100%);
+}
+
+.voice-search-btn:active {
+    transform: translateY(-1px) scale(1.02);
+    transition: all 0.1s ease;
+}
+
+.voice-search-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.voice-search-btn:hover::before {
+    left: 100%;
 }
 
 .voice-search-btn.listening {
@@ -39,21 +65,47 @@
     border: none;
     color: white;
     padding: 0.75rem;
-    border-radius: 50%;
+    border-radius: 16px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     width: 50px;
     height: 50px;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 2px 15px rgba(79, 172, 254, 0.3);
+    box-shadow: 0 4px 20px rgba(79, 172, 254, 0.25),
+                0 1px 3px rgba(79, 172, 254, 0.1);
     flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
 }
 
 .search-history-btn:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 20px rgba(79, 172, 254, 0.4);
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 8px 32px rgba(79, 172, 254, 0.4),
+                0 4px 16px rgba(79, 172, 254, 0.2);
+    background: linear-gradient(135deg, #5fbdff 0%, #1af5ff 100%);
+}
+
+.search-history-btn:active {
+    transform: translateY(-1px) scale(1.02);
+    transition: all 0.1s ease;
+}
+
+.search-history-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.search-history-btn:hover::before {
+    left: 100%;
 }
 
 /* Enhanced Suggestions */
@@ -321,8 +373,9 @@
 .search-controls {
     display: flex;
     justify-content: center;
-    gap: 0.5rem;
-    margin-top: 0.5rem;
+    gap: 1rem;
+    margin-top: 1rem;
+    padding: 0 1rem;
 }
 
 /* Keyboard Shortcut Indicator */
@@ -352,39 +405,50 @@
     }
     
     .search-controls {
-        margin-top: 1rem;
+        margin-top: 1.5rem;
         justify-content: center;
-        gap: 1rem;
+        gap: 2rem;
+        padding-bottom: 2rem;
     }
     
     .voice-search-btn,
     .search-history-btn {
-        width: 60px;
-        height: 60px;
-        padding: 0.8rem;
+        width: 72px;
+        height: 72px;
+        padding: 1rem;
         position: relative;
+        border-radius: 20px;
+        box-shadow: 0 6px 24px rgba(102, 126, 234, 0.3);
+    }
+    
+    .search-history-btn {
+        box-shadow: 0 6px 24px rgba(79, 172, 254, 0.3);
     }
     
     .voice-search-btn::after {
         content: 'Voice';
         position: absolute;
-        bottom: -25px;
+        bottom: -30px;
         left: 50%;
         transform: translateX(-50%);
-        font-size: 0.7rem;
-        color: rgba(255, 255, 255, 0.7);
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.8);
         white-space: nowrap;
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
     }
     
     .search-history-btn::after {
         content: 'History';
         position: absolute;
-        bottom: -25px;
+        bottom: -30px;
         left: 50%;
         transform: translateX(-50%);
-        font-size: 0.7rem;
-        color: rgba(255, 255, 255, 0.7);
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.8);
         white-space: nowrap;
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
     }
     
     .search-shortcut {
