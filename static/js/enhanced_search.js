@@ -22,6 +22,19 @@ class SmartSearchEngine {
         this.setupSearchHistory();
         this.setupKeyboardShortcuts();
         this.loadRecentSearches();
+        
+        // Clean up any existing duplicate buttons on init
+        this.cleanupDuplicateButtons();
+    }
+    
+    cleanupDuplicateButtons() {
+        // Remove any duplicate buttons with generic class names
+        const duplicates = document.querySelectorAll('.search-controls .btn, .search-controls button:not(.voice-search-btn):not(.search-history-btn)');
+        duplicates.forEach(btn => {
+            if (!btn.classList.contains('voice-search-btn') && !btn.classList.contains('search-history-btn')) {
+                btn.remove();
+            }
+        });
     }
     
     setupSearchInput() {
@@ -100,6 +113,9 @@ class SmartSearchEngine {
         const searchControls = document.querySelector('.search-controls');
         if (!searchControls || !this.voiceRecognition) return;
         
+        // Check if voice button already exists to prevent duplicates
+        if (searchControls.querySelector('.voice-search-btn')) return;
+        
         // Create buttons container if it doesn't exist
         let buttonsContainer = searchControls.querySelector('.search-controls-buttons');
         if (!buttonsContainer) {
@@ -120,6 +136,9 @@ class SmartSearchEngine {
     addSearchHistoryButton() {
         const searchControls = document.querySelector('.search-controls');
         if (!searchControls) return;
+        
+        // Check if history button already exists to prevent duplicates
+        if (searchControls.querySelector('.search-history-btn')) return;
         
         // Create buttons container if it doesn't exist
         let buttonsContainer = searchControls.querySelector('.search-controls-buttons');
