@@ -18,16 +18,16 @@
                 <!-- OpenAI-Style Tab Navigation -->
                 <div class="openai-tabs">
                     <button class="tab-btn active" data-section="ai-interface" onclick="switchToSection('ai-interface')">
-                        <i class="fas fa-robot"></i>
-                        <span>AI Chat</span>
+                        <i class="fas fa-search"></i>
+                        <span>Search</span>
                     </button>
                     <button class="tab-btn" data-section="dashboard" onclick="switchToSection('dashboard')">
                         <i class="fas fa-chart-line"></i>
                         <span>Dashboard</span>
                     </button>
                     <button class="tab-btn" data-section="stocks" onclick="switchToSection('stocks')">
-                        <i class="fas fa-search"></i>
-                        <span>Stocks</span>
+                        <i class="fas fa-tools"></i>
+                        <span>Tools</span>
                     </button>
                     <button class="tab-btn" data-section="portfolio" onclick="switchToSection('portfolio')">
                         <i class="fas fa-briefcase"></i>
@@ -51,64 +51,550 @@
     
     <!-- Content Sections -->
     <div id="ai-interface-section" class="content-section active">
+        <!-- Main Search Interface - ChatGPT Style -->
+        <div class="main-search-interface">
+            <div class="container">
+                <!-- Welcome Header -->
+                <div class="search-welcome">
+                    <h1 class="search-title">
+                        <i class="fas fa-chart-line me-3"></i>AI Trading Intelligence
+                    </h1>
+                    <p class="search-subtitle">Search any stock, get instant AI analysis and market insights</p>
+                </div>
 
-    <!-- Main Interface -->
-    <div class="main-interface">
-        <div class="container">
-            <!-- Search Section -->
-            <div class="search-section">
-                <div class="search-container">
-                    <div class="search-box">
-                        <i class="fas fa-search"></i>
+                <!-- Prominent Search Box -->
+                <div class="chatgpt-search-container">
+                    <div class="chatgpt-search-box">
+                        <i class="fas fa-search search-icon"></i>
                         <input type="text" 
-                               id="ai-input" 
-                               placeholder="Ask about stocks, get market insights, or manage your portfolio..."
-                               class="search-input">
-                        <button class="search-btn" onclick="sendMessage()">
-                            <i class="fas fa-paper-plane"></i>
+                               id="main-search-input" 
+                               placeholder="Search for any stock like 'nvidia', 'apple', 'tesla'..."
+                               class="chatgpt-search-input"
+                               onkeypress="handleSearchKeypress(event)">
+                        <button class="chatgpt-search-btn" onclick="performIntelligentSearch()">
+                            <i class="fas fa-arrow-right"></i>
                         </button>
                     </div>
                     
-                    <!-- Quick Actions -->
-                    <div class="quick-actions">
-                        <button class="quick-btn" onclick="quickQuery('portfolio')">
-                            <i class="fas fa-chart-pie"></i> Portfolio
+                    <!-- Search Suggestions -->
+                    <div id="search-suggestions" class="search-suggestions hidden">
+                        <!-- Dynamic suggestions will appear here -->
+                    </div>
+                </div>
+
+                <!-- Popular Stocks Quick Access -->
+                <div class="popular-stocks">
+                    <p class="popular-label">Popular searches:</p>
+                    <div class="stock-chips">
+                        <button class="stock-chip" onclick="searchStockByName('nvidia')">
+                            <i class="fab fa-nvidia"></i> NVIDIA
                         </button>
-                        <button class="quick-btn" onclick="quickQuery('trending')">
-                            <i class="fas fa-trending-up"></i> Trending
+                        <button class="stock-chip" onclick="searchStockByName('apple')">
+                            <i class="fab fa-apple"></i> Apple
                         </button>
-                        <button class="quick-btn" onclick="quickQuery('analysis')">
-                            <i class="fas fa-brain"></i> Analysis
+                        <button class="stock-chip" onclick="searchStockByName('tesla')">
+                            <i class="fas fa-car"></i> Tesla
                         </button>
-                        <button class="quick-btn" onclick="quickQuery('watchlist')">
-                            <i class="fas fa-eye"></i> Watchlist
+                        <button class="stock-chip" onclick="searchStockByName('microsoft')">
+                            <i class="fab fa-microsoft"></i> Microsoft
+                        </button>
+                        <button class="stock-chip" onclick="searchStockByName('amazon')">
+                            <i class="fab fa-amazon"></i> Amazon
+                        </button>
+                        <button class="stock-chip" onclick="searchStockByName('google')">
+                            <i class="fab fa-google"></i> Google
                         </button>
                     </div>
                 </div>
-            </div>
 
-            <!-- Chat Area -->
-            <div class="chat-area" id="chat-area">
-                <div class="welcome-message">
-                    <div class="ai-avatar">
-                        <i class="fas fa-robot"></i>
-                    </div>
-                    <div class="message-content">
-                        <h5>Hello! I'm your AI Trading Assistant</h5>
-                        <p>I can help you with:</p>
-                        <ul>
-                            <li>Stock analysis and recommendations</li>
-                            <li>Portfolio performance tracking</li>
-                            <li>Market trends and insights</li>
-                            <li>Investment strategies</li>
-                        </ul>
-                        <p class="mb-0">What would you like to know?</p>
-                    </div>
+                <!-- Search Results -->
+                <div id="main-search-results" class="main-search-results">
+                    <!-- AI-powered search results will appear here -->
                 </div>
             </div>
+        </div>
+    </div> <!-- End ai-interface-section -->
 
-            <!-- Stats Dashboard -->
-            <div class="stats-dashboard">
+    <!-- Dashboard Section -->
+    <div id="dashboard-section" class="content-section">
+        <div class="container">
+            <div class="section-header">
+                <h3><i class="fas fa-chart-line me-2"></i>Dashboard Overview</h3>
+                <p class="text-muted">Real-time market insights and portfolio performance</p>
+            </div>
+            <!-- Dashboard content will be loaded here -->
+            <iframe src="/dashboard" class="section-iframe" frameborder="0"></iframe>
+        </div>
+    </div>
+
+    <!-- Trading Tools Section -->
+    <div id="stocks-section" class="content-section">
+        <div class="container">
+            <div class="section-header">
+                <h3><i class="fas fa-tools me-2"></i>Trading Tools</h3>
+                <p class="text-muted">Professional trading tools and advanced analytics</p>
+            </div>
+            <iframe src="/simple_stocks" class="section-iframe" frameborder="0"></iframe>
+        </div>
+    </div>
+
+    <div id="portfolio-section" class="content-section">
+        <div class="container">
+            <div class="section-header">
+                <h3><i class="fas fa-briefcase me-2"></i>Your Portfolio</h3>
+                <p class="text-muted">Track your investments and performance metrics</p>
+            </div>
+            <div id="portfolio-content" class="portfolio-content">
+                <!-- Portfolio content will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <div id="alerts-section" class="content-section">
+        <div class="container">
+            <div class="section-header">
+                <h3><i class="fas fa-bell me-2"></i>Trading Alerts</h3>
+                <p class="text-muted">AI-generated alerts and notifications</p>
+            </div>
+            <div id="alerts-content" class="alerts-content">
+                <!-- Alerts content will be loaded here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Main Search Interface - ChatGPT Style */
+.main-search-interface {
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.search-welcome {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.search-title {
+    font-size: 3rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #00d4ff, #00ff88);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 1rem;
+}
+
+.search-subtitle {
+    font-size: 1.2rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 0;
+}
+
+/* ChatGPT-Style Search Box */
+.chatgpt-search-container {
+    max-width: 700px;
+    margin: 0 auto 3rem;
+    position: relative;
+}
+
+.chatgpt-search-box {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 25px;
+    padding: 1.5rem 2rem;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(15px);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+.chatgpt-search-box:focus-within {
+    border-color: #00d4ff;
+    box-shadow: 0 0 30px rgba(0, 212, 255, 0.3), 0 10px 40px rgba(0, 0, 0, 0.3);
+    transform: translateY(-2px);
+}
+
+.search-icon {
+    color: #00d4ff;
+    font-size: 1.3rem;
+    margin-right: 1.5rem;
+}
+
+.chatgpt-search-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #ffffff;
+    font-size: 1.1rem;
+    padding: 0.5rem 0;
+    font-weight: 400;
+}
+
+.chatgpt-search-input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+    font-weight: 300;
+}
+
+.chatgpt-search-btn {
+    background: linear-gradient(135deg, #00d4ff, #00ff88);
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #000;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-left: 1rem;
+    font-size: 1.1rem;
+}
+
+.chatgpt-search-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+}
+
+/* Search Suggestions */
+.search-suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    backdrop-filter: blur(15px);
+    margin-top: 0.5rem;
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 1000;
+}
+
+.search-suggestions.hidden {
+    display: none;
+}
+
+.suggestion-item {
+    padding: 1rem 1.5rem;
+    cursor: pointer;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all 0.2s ease;
+}
+
+.suggestion-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.suggestion-item:last-child {
+    border-bottom: none;
+}
+
+/* Popular Stocks */
+.popular-stocks {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.popular-label {
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 1.5rem;
+    font-size: 1rem;
+}
+
+.stock-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.stock-chip {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 25px;
+    padding: 0.8rem 1.5rem;
+    color: #ffffff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.stock-chip:hover {
+    background: rgba(0, 212, 255, 0.2);
+    border-color: #00d4ff;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 212, 255, 0.2);
+}
+
+.stock-chip i {
+    margin-right: 0.5rem;
+}
+
+/* Main Search Results */
+.main-search-results {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* Stock Analysis Card */
+.stock-analysis-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 2.5rem;
+    backdrop-filter: blur(15px);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+    margin-top: 2rem;
+}
+
+.stock-header-main {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+}
+
+.stock-company h2 {
+    color: #00d4ff;
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.stock-company h4 {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 1.2rem;
+    font-weight: 400;
+    margin: 0.5rem 0 0 0;
+}
+
+.stock-price-main {
+    text-align: right;
+}
+
+.current-price {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1;
+}
+
+.price-change {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-top: 0.5rem;
+}
+
+.price-change.positive {
+    color: #00ff88;
+}
+
+.price-change.negative {
+    color: #ff6b6b;
+}
+
+.ai-analysis-section {
+    margin: 2rem 0;
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.ai-analysis-section h3 {
+    color: #00ff88;
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+}
+
+.recommendation-badge {
+    display: inline-block;
+    padding: 0.5rem 1.5rem;
+    border-radius: 25px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+}
+
+.recommendation-badge.buy {
+    background: rgba(0, 255, 136, 0.2);
+    color: #00ff88;
+    border: 1px solid #00ff88;
+}
+
+.recommendation-badge.sell {
+    background: rgba(255, 107, 107, 0.2);
+    color: #ff6b6b;
+    border: 1px solid #ff6b6b;
+}
+
+.recommendation-badge.hold {
+    background: rgba(255, 193, 7, 0.2);
+    color: #ffc107;
+    border: 1px solid #ffc107;
+}
+
+.analysis-text {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1rem;
+    line-height: 1.6;
+    margin: 1rem 0;
+}
+
+.confidence-section {
+    margin-top: 1.5rem;
+}
+
+.confidence-label {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.confidence-bar-main {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    height: 8px;
+    margin: 0.5rem 0;
+    overflow: hidden;
+}
+
+.confidence-fill-main {
+    height: 100%;
+    background: linear-gradient(135deg, #00d4ff, #00ff88);
+    border-radius: 10px;
+    transition: width 0.5s ease;
+}
+
+.confidence-percent {
+    color: #00d4ff;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.action-section {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+}
+
+.action-btn {
+    flex: 1;
+    min-width: 160px;
+    padding: 1rem 2rem;
+    border-radius: 25px;
+    border: none;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.action-btn.primary {
+    background: linear-gradient(135deg, #00d4ff, #00ff88);
+    color: #000;
+}
+
+.action-btn.primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0, 212, 255, 0.3);
+}
+
+.action-btn.secondary {
+    background: rgba(255, 255, 255, 0.05);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.action-btn.secondary:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Loading and Error States */
+.search-loading, .search-error {
+    text-align: center;
+    padding: 3rem;
+    margin-top: 2rem;
+}
+
+.search-loading {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(0, 212, 255, 0.3);
+    border-top: 3px solid #00d4ff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 1rem;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.search-error {
+    color: #ff6b6b;
+    background: rgba(255, 107, 107, 0.1);
+    border: 1px solid rgba(255, 107, 107, 0.3);
+    border-radius: 15px;
+}
+
+.search-error i {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    display: block;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .search-title {
+        font-size: 2rem;
+    }
+    
+    .chatgpt-search-box {
+        padding: 1rem 1.5rem;
+    }
+    
+    .chatgpt-search-input {
+        font-size: 1rem;
+    }
+    
+    .stock-chips {
+        gap: 0.5rem;
+    }
+    
+    .stock-chip {
+        padding: 0.6rem 1rem;
+        font-size: 0.8rem;
+    }
+    
+    .stock-chip span {
+        display: none;
+    }
+}
                 <div class="row">
                     <div class="col-md-3">
                         <div class="stat-card">
@@ -1167,6 +1653,192 @@ class AITradingAssistant {
         this.searchInput.value = queries[type];
         this.sendMessage();
     }
+}
+
+// Intelligent Search Functions - Core Feature
+function handleSearchKeypress(event) {
+    if (event.key === 'Enter') {
+        performIntelligentSearch();
+    } else {
+        // Show search suggestions as user types
+        showSearchSuggestions();
+    }
+}
+
+async function performIntelligentSearch() {
+    const input = document.getElementById('main-search-input');
+    const query = input.value.trim();
+    
+    if (!query) return;
+    
+    // Show loading state
+    showSearchLoading();
+    
+    try {
+        // First, try to intelligently map the query to a stock symbol
+        const symbol = await intelligentSymbolMapping(query);
+        if (symbol) {
+            await displayStockAnalysis(symbol);
+        } else {
+            showSearchError(`Could not find a stock matching "${query}". Try using the exact ticker symbol.`);
+        }
+    } catch (error) {
+        showSearchError('Search error. Please try again.');
+        console.error('Search error:', error);
+    }
+}
+
+async function searchStockByName(companyName) {
+    document.getElementById('main-search-input').value = companyName;
+    await performIntelligentSearch();
+}
+
+async function intelligentSymbolMapping(query) {
+    // Map common company names to symbols
+    const symbolMap = {
+        'nvidia': 'NVDA',
+        'apple': 'AAPL', 
+        'tesla': 'TSLA',
+        'microsoft': 'MSFT',
+        'amazon': 'AMZN',
+        'google': 'GOOGL',
+        'meta': 'META',
+        'facebook': 'META',
+        'alphabet': 'GOOGL'
+    };
+    
+    const normalized = query.toLowerCase();
+    
+    // Check if it's already a symbol (all caps, 1-5 letters)
+    if (/^[A-Z]{1,5}$/.test(query)) {
+        return query;
+    }
+    
+    // Check our mapping
+    if (symbolMap[normalized]) {
+        return symbolMap[normalized];
+    }
+    
+    // If no match, try as-is (might be a symbol in lowercase)
+    return query.toUpperCase();
+}
+
+async function displayStockAnalysis(symbol) {
+    try {
+        const response = await fetch(`/api/stock-analysis/${symbol}`);
+        const data = await response.json();
+        
+        const resultsDiv = document.getElementById('main-search-results');
+        
+        if (data.success) {
+            resultsDiv.innerHTML = `
+                <div class="stock-analysis-card">
+                    <div class="stock-header-main">
+                        <div class="stock-company">
+                            <h2>${data.symbol}</h2>
+                            <h4>${data.name || 'Company Name'}</h4>
+                        </div>
+                        <div class="stock-price-main">
+                            <div class="current-price">$${data.current_price}</div>
+                            <div class="price-change ${data.change >= 0 ? 'positive' : 'negative'}">
+                                ${data.change >= 0 ? '+' : ''}${data.change}%
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="ai-analysis-section">
+                        <h3><i class="fas fa-brain me-2"></i>AI Analysis</h3>
+                        <div class="recommendation-badge ${data.recommendation?.toLowerCase()}">
+                            ${data.recommendation || 'HOLD'}
+                        </div>
+                        <p class="analysis-text">${data.analysis || 'AI analysis in progress...'}</p>
+                        
+                        <div class="confidence-section">
+                            <div class="confidence-label">AI Confidence</div>
+                            <div class="confidence-bar-main">
+                                <div class="confidence-fill-main" style="width: ${data.confidence || 75}%"></div>
+                            </div>
+                            <div class="confidence-percent">${data.confidence || 75}%</div>
+                        </div>
+                    </div>
+                    
+                    <div class="action-section">
+                        <button class="action-btn primary" onclick="quickBuy('${data.symbol}')">
+                            <i class="fas fa-shopping-cart"></i> Buy Stock
+                        </button>
+                        <button class="action-btn secondary" onclick="addToWatchlist('${data.symbol}')">
+                            <i class="fas fa-eye"></i> Add to Watchlist
+                        </button>
+                        <button class="action-btn secondary" onclick="viewAdvancedAnalysis('${data.symbol}')">
+                            <i class="fas fa-chart-area"></i> Advanced Analysis
+                        </button>
+                    </div>
+                </div>
+            `;
+        } else {
+            showSearchError(`Stock "${symbol}" not found. Please check the symbol and try again.`);
+        }
+    } catch (error) {
+        showSearchError('Error loading stock analysis. Please try again.');
+        console.error('Stock analysis error:', error);
+    }
+}
+
+function showSearchLoading() {
+    document.getElementById('main-search-results').innerHTML = `
+        <div class="search-loading">
+            <div class="loading-spinner"></div>
+            <p>Analyzing with AI...</p>
+        </div>
+    `;
+}
+
+function showSearchError(message) {
+    document.getElementById('main-search-results').innerHTML = `
+        <div class="search-error">
+            <i class="fas fa-exclamation-triangle"></i>
+            <p>${message}</p>
+        </div>
+    `;
+}
+
+function showSearchSuggestions() {
+    // Implementation for real-time search suggestions
+    const input = document.getElementById('main-search-input');
+    const query = input.value.trim().toLowerCase();
+    
+    if (query.length < 2) {
+        document.getElementById('search-suggestions').classList.add('hidden');
+        return;
+    }
+    
+    const suggestions = [
+        'NVIDIA (NVDA)', 'Apple (AAPL)', 'Tesla (TSLA)', 
+        'Microsoft (MSFT)', 'Amazon (AMZN)', 'Google (GOOGL)'
+    ].filter(item => item.toLowerCase().includes(query));
+    
+    if (suggestions.length > 0) {
+        const suggestionsHTML = suggestions.map(suggestion => 
+            `<div class="suggestion-item" onclick="selectSuggestion('${suggestion}')">${suggestion}</div>`
+        ).join('');
+        
+        document.getElementById('search-suggestions').innerHTML = suggestionsHTML;
+        document.getElementById('search-suggestions').classList.remove('hidden');
+    } else {
+        document.getElementById('search-suggestions').classList.add('hidden');
+    }
+}
+
+function selectSuggestion(suggestion) {
+    const symbol = suggestion.match(/\(([^)]+)\)/)[1]; // Extract symbol from "Company (SYMBOL)"
+    document.getElementById('main-search-input').value = symbol;
+    document.getElementById('search-suggestions').classList.add('hidden');
+    performIntelligentSearch();
+}
+
+function viewAdvancedAnalysis(symbol) {
+    // Switch to stocks tab and load advanced analysis
+    switchToSection('stocks');
 }
 
 // Section Navigation Functions
