@@ -980,6 +980,7 @@ body::before {
     border: 2px solid rgba(139, 92, 246, 0.3);
     border-radius: 20px;
     padding: 2rem;
+    padding-top: 2.5rem; /* Extra padding at top for antenna clearance */
     display: flex;
     align-items: center;
     gap: 2rem;
@@ -1002,12 +1003,13 @@ body::before {
     position: relative;
     width: 120px;
     height: 140px;
+    margin-top: 15px; /* Move robot down to keep antenna visible */
     animation: float 3s ease-in-out infinite;
 }
 
 @keyframes float {
     0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-10px); }
+    50% { transform: translateY(-8px); } /* Reduced bounce to keep antenna visible */
 }
 
 .robot-head {
