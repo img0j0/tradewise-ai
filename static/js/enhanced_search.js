@@ -45,6 +45,31 @@ class SmartSearchEngine {
         this.addSearchHistoryButton();
     }
     
+    setupSearchHistory() {
+        // Setup search history functionality
+        this.searchHistory = JSON.parse(localStorage.getItem('stockSearchHistory') || '[]');
+    }
+    
+    setupKeyboardShortcuts() {
+        // Global keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            // Ctrl+K or Cmd+K to focus search
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                const searchInput = document.getElementById('main-search-input');
+                if (searchInput) {
+                    searchInput.focus();
+                }
+            }
+            
+            // Ctrl+Shift+V for voice search
+            if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'V') {
+                e.preventDefault();
+                this.toggleVoiceSearch();
+            }
+        });
+    }
+    
     setupVoiceSearch() {
         // Check for speech recognition support
         if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {

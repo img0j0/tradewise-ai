@@ -583,6 +583,14 @@ function performIntelligentSearch() {
     searchStockByName(query);
 }
 
+// Initialize Enhanced Search on page load
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Smart Search if available
+    if (typeof SmartSearchEngine !== 'undefined' && document.querySelector('.search-controls')) {
+        window.smartSearch = new SmartSearchEngine();
+    }
+});
+
 function searchStockByName(stockName) {
     showMainSearchResults();
     const searchUrl = `/api/stock-analysis/${encodeURIComponent(stockName)}`;
