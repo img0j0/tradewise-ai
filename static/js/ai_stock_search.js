@@ -648,8 +648,7 @@ function searchStockSymbol(symbol) {
     searchStockAI();
 }
 
-// Initialize enhanced autocomplete
-const aiAutocomplete = new AIAutocompleteEngine();
+// Enhanced autocomplete will be initialized by ai_autocomplete_enhanced.js
 
 // Utility function to format market cap
 function formatMarketCap(marketCap) {
@@ -676,8 +675,10 @@ function showNewSearch() {
     searchInput.value = '';
     searchInput.focus();
     
-    // Show popular suggestions
-    aiAutocomplete.showPopularSuggestions();
+    // Show popular suggestions if autocomplete is available
+    if (window.aiAutocomplete) {
+        window.aiAutocomplete.showPopularSuggestions();
+    }
 }
 
 // Generate detailed AI insights
