@@ -200,17 +200,25 @@
         margin-bottom: 0.5rem;
     }
 
-    .ai-recommendation.buy, .ai-recommendation.strong-buy { 
-        background: var(--green); 
+    .ai-recommendation.buy { 
+        background: #10b981 !important; 
         color: white !important; 
     }
-    .ai-recommendation.sell, .ai-recommendation.strong-sell { 
-        background: var(--red); 
+    .ai-recommendation.strong-buy { 
+        background: #059669 !important; 
+        color: white !important; 
+    }
+    .ai-recommendation.sell { 
+        background: #ef4444 !important; 
+        color: white !important; 
+    }
+    .ai-recommendation.strong-sell { 
+        background: #dc2626 !important; 
         color: white !important; 
     }
     .ai-recommendation.hold { 
-        background: var(--yellow); 
-        color: #1a1a1a !important; 
+        background: #fbbf24 !important; 
+        color: #000000 !important; 
         font-weight: 600;
     }
     
@@ -491,18 +499,31 @@
                 hideLoading();
                 displayResult(data);
                 
-                // Force styling for HOLD recommendations
+                // Force styling for all recommendations
                 setTimeout(() => {
-                    const holdElements = document.querySelectorAll('.ai-recommendation.hold, .force-dark-text');
-                    holdElements.forEach(el => {
-                        el.style.setProperty('color', '#000000', 'important');
-                        el.style.setProperty('background', '#fbbf24', 'important');
-                        const spans = el.querySelectorAll('span');
-                        spans.forEach(span => {
-                            if (!span.style.color || span.style.color !== 'rgba(255,255,255,0.9)') {
-                                span.style.setProperty('color', '#000000', 'important');
-                            }
-                        });
+                    const recommendations = document.querySelectorAll('.ai-recommendation');
+                    recommendations.forEach(el => {
+                        const rec = el.textContent.split(' (')[0].toLowerCase();
+                        const styles = getRecommendationStyles(rec);
+                        
+                        // Apply background and text colors based on recommendation
+                        if (rec === 'hold') {
+                            el.style.setProperty('color', '#000000', 'important');
+                            el.style.setProperty('background', '#fbbf24', 'important');
+                            const spans = el.querySelectorAll('span');
+                            spans.forEach(span => {
+                                if (!span.style.color || span.style.color !== 'rgba(0,0,0,0.7)') {
+                                    span.style.setProperty('color', '#000000', 'important');
+                                }
+                            });
+                        } else {
+                            el.style.setProperty('color', 'white', 'important');
+                            // Set specific background colors for each recommendation type
+                            if (rec === 'strong buy') el.style.setProperty('background', '#059669', 'important');
+                            else if (rec === 'buy') el.style.setProperty('background', '#10b981', 'important');
+                            else if (rec === 'sell') el.style.setProperty('background', '#ef4444', 'important');
+                            else if (rec === 'strong sell') el.style.setProperty('background', '#dc2626', 'important');
+                        }
                     });
                 }, 100);
             })
@@ -583,6 +604,25 @@
             return parseFloat(price).toFixed(2);
         };
         
+        // Get recommendation styles based on type
+        const getRecommendationStyles = (recommendation) => {
+            const rec = recommendation.toLowerCase();
+            switch(rec) {
+                case 'strong buy':
+                    return 'color: white !important; background: #059669 !important;';
+                case 'buy':
+                    return 'color: white !important; background: #10b981 !important;';
+                case 'hold':
+                    return 'color: #000000 !important; background: #fbbf24 !important;';
+                case 'sell':
+                    return 'color: white !important; background: #ef4444 !important;';
+                case 'strong sell':
+                    return 'color: white !important; background: #dc2626 !important;';
+                default:
+                    return 'color: white !important; background: #6b7280 !important;';
+            }
+        };
+        
         resultsDiv.innerHTML = `
             <div class="stock-result">
                 <div class="stock-header">
@@ -602,8 +642,8 @@
                 </div>
                 
                 <div class="ai-analysis">
-                    <div class="ai-recommendation ${data.ai_recommendation.toLowerCase().replace(/\s+/g, '-')} ${data.ai_recommendation.toLowerCase() === 'hold' ? 'force-dark-text' : 'force-white-text'}" style="${data.ai_recommendation.toLowerCase() === 'hold' ? 'color: #000000 !important; background: #fbbf24 !important;' : 'color: white !important;'}">
-                        <span style="${data.ai_recommendation.toLowerCase() === 'hold' ? 'color: #000000 !important;' : 'color: white !important;'}">${data.ai_recommendation}</span> (<span style="color: rgba(255,255,255,0.9);">${data.ai_confidence}% confidence</span>)
+                    <div class="ai-recommendation ${data.ai_recommendation.toLowerCase().replace(/\s+/g, '-')} ${data.ai_recommendation.toLowerCase() === 'hold' ? 'force-dark-text' : 'force-white-text'}" style="${getRecommendationStyles(data.ai_recommendation)}">
+                        <span style="${data.ai_recommendation.toLowerCase() === 'hold' ? 'color: #000000 !important;' : 'color: white !important;'}">${data.ai_recommendation}</span> (<span style="${data.ai_recommendation.toLowerCase() === 'hold' ? 'color: rgba(0,0,0,0.7);' : 'color: rgba(255,255,255,0.9);'}">${data.ai_confidence}% confidence</span>)
                     </div>
                     <p style="color: rgba(255,255,255,0.8); line-height: 1.4; margin: 0.5rem 0 1rem 0;">
                         ${data.analysis}
