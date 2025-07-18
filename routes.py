@@ -33,8 +33,8 @@ realtime_service = None
 # Configure Stripe
 stripe.api_key = os.environ.get('STRIPE_SECRET_KEY')
 
-# For demo purposes, we'll redirect non-authenticated users to login
-# DEFAULT_USER_ID = "demo_user_001"  # No longer needed
+# Get domain for Stripe redirects
+YOUR_DOMAIN = os.environ.get('REPLIT_DEV_DOMAIN') if os.environ.get('REPLIT_DEPLOYMENT') != '' else os.environ.get('REPLIT_DOMAINS').split(',')[0] if os.environ.get('REPLIT_DOMAINS') else 'localhost:5000'
 
 logger = logging.getLogger(__name__)
 
@@ -59,6 +59,43 @@ ai_engine.train_model(stocks_data)
 
 # Start error recovery manager
 error_recovery_manager.start()
+
+# Create a demo user for testing purposes
+@with_error_recovery("user_setup")
+def ensure_demo_user():
+    """Ensure we have a demo user for testing stock purchases"""
+    try:
+        demo_user = User.query.filter_by(username='demo_user').first()
+        if not demo_user:
+            demo_user = User(
+                username='demo_user',
+                email='demo@tradewise.ai'
+            )
+            demo_user.set_password('demo123')
+            db.session.add(demo_user)
+            db.session.commit()
+            logger.info("Created demo user for testing")
+        
+        # Ensure user has an account with some balance
+        user_account = UserAccount.query.filter_by(user_id=demo_user.id).first()
+        if not user_account:
+            user_account = UserAccount(
+                user_id=demo_user.id,
+                balance=10000.0,  # $10k demo balance
+                total_deposited=10000.0
+            )
+            db.session.add(user_account)
+            db.session.commit()
+            logger.info("Created demo user account with $10k balance")
+        
+        return demo_user
+    except Exception as e:
+        logger.error(f"Error setting up demo user: {e}")
+        return None
+
+# Initialize demo user with application context
+with app.app_context():
+    demo_user = ensure_demo_user()
 
 # Get or create user account for logged in user
 def get_or_create_user_account():
@@ -722,53 +759,9 @@ def stock_analysis(symbol):
             'error': f'Failed to analyze {symbol.upper()}. Please verify the stock symbol is correct.'
         }), 500
 
-@app.route('/api/portfolio-summary')
-@login_required
-def portfolio_summary():
-    """Get portfolio summary for ChatGPT interface"""
-    try:
-        performance = calculate_portfolio_performance()
-        user_account = get_or_create_user_account()
-        
-        # Calculate portfolio value
-        portfolio_items = Portfolio.query.filter_by(user_id=current_user.id).all()
-        stocks = data_service.get_all_stocks()
-        total_value = user_account.balance if user_account else 0
-        
-        for item in portfolio_items:
-            current_stock = next((s for s in stocks if s['symbol'] == item.symbol), None)
-            if not current_stock:
-                try:
-                    real_stock = stock_search_service.search_stock(item.symbol)
-                    if real_stock:
-                        current_stock = real_stock
-                except:
-                    pass
-            
-            if current_stock:
-                current_price = float(current_stock.get('current_price', 0))
-                total_value += item.quantity * current_price
-        
-        return jsonify({
-            'total_value': total_value,
-            'daily_change': performance.get('total_pnl', 0) / max(total_value - performance.get('total_pnl', 0), 1) * 100,
-            'total_trades': performance.get('total_trades', 0),
-            'win_rate': performance.get('win_rate', 0)
-        })
-    except Exception as e:
-        logger.error(f"Error getting portfolio summary: {e}")
-        return jsonify({'total_value': 0, 'daily_change': 0, 'total_trades': 0, 'win_rate': 0})
+# Removed duplicate portfolio-summary route
 
-@app.route('/api/account-balance')
-@login_required
-def account_balance():
-    """Get current account balance"""
-    try:
-        user_account = get_or_create_user_account()
-        return jsonify({'balance': user_account.balance if user_account else 0})
-    except Exception as e:
-        logger.error(f"Error getting account balance: {e}")
-        return jsonify({'balance': 0})
+# Removed duplicate account balance route
 
 @app.route('/api/ai/chat', methods=['POST'])
 @login_required
@@ -1016,20 +1009,7 @@ def generate_market_analysis(market_data, top_movers):
 
 # Payment and Fund Management Routes
 
-@app.route('/api/account/balance')
-@login_required
-def get_account_balance():
-    """Get user account balance"""
-    try:
-        user_account = get_or_create_user_account()
-        return jsonify({
-            'balance': user_account.balance,
-            'total_deposited': user_account.total_deposited,
-            'total_withdrawn': user_account.total_withdrawn
-        })
-    except Exception as e:
-        logger.error(f"Error getting account balance: {e}")
-        return jsonify({'error': 'Failed to get account balance'}), 500
+# Removed duplicate account balance route
 
 @app.route('/api/create-deposit-session', methods=['POST'])
 @login_required
@@ -1120,86 +1100,7 @@ def deposit_cancel():
     """Handle cancelled deposit"""
     return render_template('deposit_cancel.html')
 
-@app.route('/api/purchase-stock', methods=['POST'])
-@login_required
-def purchase_stock():
-    """Purchase stock with account balance"""
-    try:
-        data = request.get_json()
-        symbol = data.get('symbol')
-        quantity = int(data.get('quantity', 0))
-        
-        if not symbol or quantity <= 0:
-            return jsonify({'error': 'Invalid stock symbol or quantity'}), 400
-        
-        # Get stock data - first try from data service, then search real-time
-        stock_data = data_service.get_stock_by_symbol(symbol)
-        if not stock_data:
-            # Try searching for the stock in real-time
-            stock_data = stock_search_service.search_stock(symbol)
-            if not stock_data:
-                return jsonify({'error': 'Stock not found'}), 404
-        
-        # Get the current price and ensure it's a regular Python float
-        price = stock_data.get('current_price') or stock_data.get('price', 0)
-        # Convert numpy types to Python native types
-        price = float(price)
-        if price <= 0:
-            return jsonify({'error': 'Invalid stock price'}), 400
-            
-        total_cost = float(price * quantity)
-        
-        # Check account balance
-        user_account = get_or_create_user_account()
-        if user_account.balance < total_cost:
-            return jsonify({'error': 'Insufficient funds'}), 400
-        
-        # Calculate commission
-        commission = monetization_engine.calculate_trade_commission(total_cost)
-        
-        # Deduct from account balance (including commission)
-        user_account.balance -= (total_cost + commission)
-        
-        # Create transaction record
-        transaction = Transaction(
-            user_id=current_user.id,
-            transaction_type='stock_purchase',
-            amount=total_cost + commission,
-            symbol=symbol,
-            quantity=quantity,
-            price_per_share=price,
-            status='completed'
-        )
-        
-        # Create trade record
-        trade = Trade(
-            user_id=current_user.id,
-            symbol=symbol,
-            action='buy',
-            quantity=quantity,
-            price=price,
-            confidence_score=0.8,  # Default confidence for manual purchases
-            is_simulated=False
-        )
-        
-        db.session.add(transaction)
-        db.session.add(trade)
-        
-        # Update portfolio
-        update_portfolio(trade)
-        
-        db.session.commit()
-        
-        return jsonify({
-            'success': True,
-            'message': f'Successfully purchased {quantity} shares of {symbol}',
-            'transaction_id': transaction.id,
-            'remaining_balance': user_account.balance
-        })
-        
-    except Exception as e:
-        logger.error(f"Error purchasing stock: {e}")
-        return jsonify({'error': 'Failed to purchase stock'}), 500
+# Removed duplicate purchase_stock route
 
 @app.route('/api/sell-stock', methods=['POST'])
 @login_required
@@ -3317,3 +3218,5 @@ def monetization_info_page():
 def monetization_dashboard():
     """Display monetization dashboard"""
     return render_template('monetization_dashboard.html')
+
+# Duplicate section removed - keeping only the original routes

@@ -244,6 +244,65 @@
         color: white !important;
     }
 
+    /* Purchase Actions */
+    .purchase-actions {
+        display: flex;
+        gap: 0.75rem;
+        margin-top: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .purchase-btn {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.25rem;
+        border: none;
+        border-radius: 25px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(10px);
+        text-decoration: none;
+        min-height: 44px;
+    }
+
+    .purchase-btn.primary {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+        box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+    }
+
+    .purchase-btn.primary:hover {
+        background: linear-gradient(135deg, #059669, #047857);
+        box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+        transform: translateY(-2px);
+    }
+
+    .purchase-btn.secondary {
+        background: rgba(255, 255, 255, 0.1);
+        color: rgba(255, 255, 255, 0.9);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .purchase-btn.secondary:hover {
+        background: rgba(255, 255, 255, 0.15);
+        border-color: rgba(255, 255, 255, 0.3);
+        transform: translateY(-2px);
+    }
+
+    @media (max-width: 768px) {
+        .purchase-actions {
+            flex-direction: column;
+        }
+        
+        .purchase-btn {
+            justify-content: center;
+            min-height: 48px;
+        }
+    }
+
     /* Bottom Input Area */
     .input-area {
         padding: 1rem;
@@ -648,6 +707,18 @@
                     <p style="color: rgba(255,255,255,0.8); line-height: 1.4; margin: 0.5rem 0 1rem 0;">
                         ${data.analysis}
                     </p>
+                    
+                    <!-- Purchase Actions -->
+                    <div class="purchase-actions">
+                        <button class="purchase-btn primary" onclick="showPurchaseModal('${data.symbol}', '${data.name}', ${data.price}, '${data.ai_recommendation}', ${data.ai_confidence})">
+                            <i class="fas fa-shopping-cart"></i>
+                            Buy ${data.symbol}
+                        </button>
+                        <button class="purchase-btn secondary" onclick="addToWatchlist('${data.symbol}', '${data.name}', ${data.price})">
+                            <i class="fas fa-star"></i>
+                            Add to Watchlist
+                        </button>
+                    </div>
                 </div>
                 
                 ${Object.keys(data.key_metrics || {}).length > 0 || data.market_cap || data.pe_ratio ? `
@@ -779,6 +850,638 @@
     });
 
     console.log('TradeWise AI: Intelligent ChatGPT-style search loaded');
+    </script>
+
+    <!-- Purchase Modal -->
+    <div id="purchaseModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closePurchaseModal()">&times;</span>
+            <div class="modal-header">
+                <h2><i class="fas fa-shopping-cart"></i> Purchase Stock</h2>
+            </div>
+            <div class="modal-body">
+                <div class="stock-info">
+                    <div class="stock-details">
+                        <div class="symbol" id="modalSymbol">AAPL</div>
+                        <div class="name" id="modalName">Apple Inc.</div>
+                        <div class="price" id="modalPrice">$150.00</div>
+                    </div>
+                    <div class="ai-insights">
+                        <div class="recommendation" id="modalRecommendation">STRONG BUY</div>
+                        <div class="confidence" id="modalConfidence">85% confidence</div>
+                    </div>
+                </div>
+                
+                <div class="account-info">
+                    <div class="balance-display">
+                        <span class="label">Account Balance:</span>
+                        <span class="balance" id="accountBalance">$10,000.00</span>
+                    </div>
+                </div>
+
+                <div class="purchase-form">
+                    <div class="form-group">
+                        <label for="shareQuantity">Number of Shares</label>
+                        <input type="number" id="shareQuantity" min="1" value="1" onchange="updatePurchaseTotal()">
+                    </div>
+                    
+                    <div class="purchase-summary">
+                        <div class="summary-row">
+                            <span>Price per Share:</span>
+                            <span id="pricePerShare">$150.00</span>
+                        </div>
+                        <div class="summary-row total">
+                            <span>Total Cost:</span>
+                            <span id="totalCost">$150.00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-actions">
+                    <button class="modal-btn cancel" onclick="closePurchaseModal()">Cancel</button>
+                    <button class="modal-btn purchase" id="confirmPurchaseBtn" onclick="executePurchase()">
+                        <i class="fas fa-credit-card"></i>
+                        Purchase Shares
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Account Funding Modal -->
+    <div id="fundingModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeFundingModal()">&times;</span>
+            <div class="modal-header">
+                <h2><i class="fas fa-wallet"></i> Add Funds</h2>
+            </div>
+            <div class="modal-body">
+                <p>Add funds to your account to purchase stocks. Your money is securely processed by Stripe.</p>
+                
+                <div class="funding-options">
+                    <div class="amount-preset" onclick="selectAmount(100)">$100</div>
+                    <div class="amount-preset" onclick="selectAmount(500)">$500</div>
+                    <div class="amount-preset" onclick="selectAmount(1000)">$1,000</div>
+                    <div class="amount-preset" onclick="selectAmount(5000)">$5,000</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="customAmount">Or enter custom amount:</label>
+                    <input type="number" id="customAmount" min="10" max="50000" placeholder="Enter amount ($10 - $50,000)">
+                </div>
+
+                <div class="modal-actions">
+                    <button class="modal-btn cancel" onclick="closeFundingModal()">Cancel</button>
+                    <button class="modal-btn purchase" onclick="processFunding()">
+                        <i class="fas fa-credit-card"></i>
+                        Add Funds
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+    /* Modal Styles */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(5px);
+    }
+
+    .modal-content {
+        background: linear-gradient(145deg, #1a1a2e, #16213e);
+        margin: 5% auto;
+        padding: 0;
+        border-radius: 20px;
+        width: 90%;
+        max-width: 500px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        animation: modalSlideIn 0.3s ease-out;
+    }
+
+    @keyframes modalSlideIn {
+        from { transform: translateY(-50px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+
+    .modal-header {
+        padding: 1.5rem 2rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.1));
+        border-radius: 20px 20px 0 0;
+    }
+
+    .modal-header h2 {
+        margin: 0;
+        color: white;
+        font-size: 1.25rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .modal-close {
+        position: absolute;
+        right: 1rem;
+        top: 1rem;
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 2rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: color 0.3s ease;
+    }
+
+    .modal-close:hover {
+        color: white;
+    }
+
+    .modal-body {
+        padding: 2rem;
+    }
+
+    .stock-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        padding: 1rem;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .stock-details .symbol {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: white;
+    }
+
+    .stock-details .name {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 0.9rem;
+        margin: 0.25rem 0;
+    }
+
+    .stock-details .price {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #10b981;
+    }
+
+    .ai-insights {
+        text-align: right;
+    }
+
+    .ai-insights .recommendation {
+        padding: 0.25rem 0.75rem;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .ai-insights .confidence {
+        font-size: 0.85rem;
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    .account-info {
+        margin-bottom: 1.5rem;
+        padding: 1rem;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .balance-display {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .balance-display .label {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 0.9rem;
+    }
+
+    .balance-display .balance {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #10b981;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: rgba(255, 255, 255, 0.8);
+        font-weight: 500;
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-group input:focus {
+        outline: none;
+        border-color: #10b981;
+        box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+    }
+
+    .purchase-summary {
+        margin-bottom: 1.5rem;
+        padding: 1rem;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    .summary-row:last-child {
+        margin-bottom: 0;
+    }
+
+    .summary-row.total {
+        padding-top: 0.5rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.2);
+        font-weight: 600;
+        font-size: 1.1rem;
+        color: white;
+    }
+
+    .modal-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    .modal-btn {
+        flex: 1;
+        padding: 0.875rem 1.5rem;
+        border: none;
+        border-radius: 12px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        min-height: 48px;
+    }
+
+    .modal-btn.cancel {
+        background: rgba(255, 255, 255, 0.1);
+        color: rgba(255, 255, 255, 0.8);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .modal-btn.cancel:hover {
+        background: rgba(255, 255, 255, 0.15);
+        color: white;
+    }
+
+    .modal-btn.purchase {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+        box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+    }
+
+    .modal-btn.purchase:hover {
+        background: linear-gradient(135deg, #059669, #047857);
+        box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+        transform: translateY(-2px);
+    }
+
+    .modal-btn.purchase:disabled {
+        background: #6b7280;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+    }
+
+    /* Funding Modal Styles */
+    .funding-options {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .amount-preset {
+        padding: 1rem;
+        background: rgba(255, 255, 255, 0.1);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        border-radius: 12px;
+        text-align: center;
+        font-weight: 600;
+        color: white;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .amount-preset:hover,
+    .amount-preset.selected {
+        background: linear-gradient(135deg, #10b981, #059669);
+        border-color: #10b981;
+        box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+    }
+
+    @media (max-width: 768px) {
+        .modal-content {
+            margin: 10% auto;
+            width: 95%;
+        }
+        
+        .modal-body {
+            padding: 1.5rem;
+        }
+        
+        .stock-info {
+            flex-direction: column;
+            text-align: center;
+            gap: 1rem;
+        }
+        
+        .ai-insights {
+            text-align: center;
+        }
+        
+        .funding-options {
+            grid-template-columns: 1fr;
+        }
+    }
+    </style>
+
+    <script>
+    let currentStock = {};
+    let userBalance = 0;
+    let selectedAmount = 0;
+
+    // Load account balance
+    async function loadAccountBalance() {
+        try {
+            const response = await fetch('/api/account-balance');
+            const data = await response.json();
+            userBalance = data.balance || 0;
+            
+            // Update balance displays
+            const balanceElements = document.querySelectorAll('#accountBalance, .balance');
+            balanceElements.forEach(el => {
+                el.textContent = `$${userBalance.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+            });
+        } catch (error) {
+            console.error('TradeWise AI: Error loading balance', error);
+        }
+    }
+
+    // Show purchase modal
+    function showPurchaseModal(symbol, name, price, recommendation, confidence) {
+        currentStock = { symbol, name, price, recommendation, confidence };
+        
+        // Update modal content
+        document.getElementById('modalSymbol').textContent = symbol;
+        document.getElementById('modalName').textContent = name;
+        document.getElementById('modalPrice').textContent = `$${parseFloat(price).toFixed(2)}`;
+        document.getElementById('pricePerShare').textContent = `$${parseFloat(price).toFixed(2)}`;
+        
+        // Set recommendation styling
+        const recommendationEl = document.getElementById('modalRecommendation');
+        recommendationEl.textContent = recommendation;
+        recommendationEl.className = `recommendation ${recommendation.toLowerCase().replace(/\s+/g, '-')}`;
+        
+        // Apply the same color coding as main interface
+        const rec = recommendation.toLowerCase();
+        if (rec === 'strong buy') {
+            recommendationEl.style.background = '#059669';
+            recommendationEl.style.color = 'white';
+        } else if (rec === 'buy') {
+            recommendationEl.style.background = '#10b981';
+            recommendationEl.style.color = 'white';
+        } else if (rec === 'hold') {
+            recommendationEl.style.background = '#fbbf24';
+            recommendationEl.style.color = '#000000';
+        } else if (rec === 'sell') {
+            recommendationEl.style.background = '#ef4444';
+            recommendationEl.style.color = 'white';
+        } else if (rec === 'strong sell') {
+            recommendationEl.style.background = '#dc2626';
+            recommendationEl.style.color = 'white';
+        }
+        
+        document.getElementById('modalConfidence').textContent = `${confidence}% confidence`;
+        
+        // Load current balance and update totals
+        loadAccountBalance();
+        updatePurchaseTotal();
+        
+        // Show modal
+        document.getElementById('purchaseModal').style.display = 'block';
+    }
+
+    // Close purchase modal
+    function closePurchaseModal() {
+        document.getElementById('purchaseModal').style.display = 'none';
+    }
+
+    // Update purchase total
+    function updatePurchaseTotal() {
+        const quantity = parseInt(document.getElementById('shareQuantity').value) || 1;
+        const pricePerShare = currentStock.price;
+        const totalCost = quantity * pricePerShare;
+        
+        document.getElementById('totalCost').textContent = `$${totalCost.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+        
+        // Enable/disable purchase button based on balance
+        const purchaseBtn = document.getElementById('confirmPurchaseBtn');
+        if (totalCost > userBalance) {
+            purchaseBtn.disabled = true;
+            purchaseBtn.innerHTML = '<i class="fas fa-wallet"></i> Insufficient Funds - Add Money';
+            purchaseBtn.onclick = () => {
+                closePurchaseModal();
+                showFundingModal();
+            };
+        } else {
+            purchaseBtn.disabled = false;
+            purchaseBtn.innerHTML = '<i class="fas fa-credit-card"></i> Purchase Shares';
+            purchaseBtn.onclick = executePurchase;
+        }
+    }
+
+    // Execute purchase
+    async function executePurchase() {
+        const quantity = parseInt(document.getElementById('shareQuantity').value) || 1;
+        const totalCost = quantity * currentStock.price;
+        
+        if (totalCost > userBalance) {
+            showFundingModal();
+            return;
+        }
+        
+        try {
+            const response = await fetch('/api/purchase-stock', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    symbol: currentStock.symbol,
+                    quantity: quantity,
+                    price: currentStock.price
+                })
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                // Show success message
+                alert(`Successfully purchased ${quantity} shares of ${currentStock.symbol} for $${totalCost.toFixed(2)}!`);
+                
+                // Close modal and refresh balance
+                closePurchaseModal();
+                loadAccountBalance();
+            } else {
+                alert(`Error: ${result.message || 'Unable to complete purchase'}`);
+            }
+        } catch (error) {
+            console.error('TradeWise AI: Purchase error', error);
+            alert('Error processing purchase. Please try again.');
+        }
+    }
+
+    // Add to watchlist
+    async function addToWatchlist(symbol, name, price) {
+        try {
+            const response = await fetch('/api/add-to-watchlist', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    symbol: symbol,
+                    name: name,
+                    price: price
+                })
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                alert(`${symbol} added to your watchlist!`);
+            } else {
+                alert(`Error: ${result.message || 'Unable to add to watchlist'}`);
+            }
+        } catch (error) {
+            console.error('TradeWise AI: Watchlist error', error);
+            alert('Error adding to watchlist. Please try again.');
+        }
+    }
+
+    // Show funding modal
+    function showFundingModal() {
+        selectedAmount = 0;
+        document.getElementById('customAmount').value = '';
+        document.querySelectorAll('.amount-preset').forEach(preset => {
+            preset.classList.remove('selected');
+        });
+        document.getElementById('fundingModal').style.display = 'block';
+    }
+
+    // Close funding modal
+    function closeFundingModal() {
+        document.getElementById('fundingModal').style.display = 'none';
+    }
+
+    // Select funding amount
+    function selectAmount(amount) {
+        selectedAmount = amount;
+        document.getElementById('customAmount').value = amount;
+        
+        // Update preset styling
+        document.querySelectorAll('.amount-preset').forEach(preset => {
+            preset.classList.remove('selected');
+        });
+        event.target.classList.add('selected');
+    }
+
+    // Process funding
+    async function processFunding() {
+        const customAmount = parseFloat(document.getElementById('customAmount').value);
+        const amount = customAmount || selectedAmount;
+        
+        if (!amount || amount < 10 || amount > 50000) {
+            alert('Please enter an amount between $10 and $50,000');
+            return;
+        }
+        
+        try {
+            // Create Stripe checkout session
+            const response = await fetch('/api/create-checkout-session', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    amount: amount
+                })
+            });
+            
+            const result = await response.json();
+            
+            if (result.checkout_url) {
+                // Redirect to Stripe checkout
+                window.location.href = result.checkout_url;
+            } else {
+                alert(`Error: ${result.message || 'Unable to create payment session'}`);
+            }
+        } catch (error) {
+            console.error('TradeWise AI: Funding error', error);
+            alert('Error processing funding request. Please try again.');
+        }
+    }
+
+    // Load balance on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        loadAccountBalance();
+    });
+
+    // Close modals when clicking outside
+    window.onclick = function(event) {
+        const purchaseModal = document.getElementById('purchaseModal');
+        const fundingModal = document.getElementById('fundingModal');
+        
+        if (event.target === purchaseModal) {
+            closePurchaseModal();
+        }
+        if (event.target === fundingModal) {
+            closeFundingModal();
+        }
+    };
     </script>
 </body>
 </html>
