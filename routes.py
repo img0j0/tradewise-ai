@@ -692,16 +692,19 @@ def stock_analysis(symbol):
             'success': True,
             'symbol': symbol.upper(),
             'name': stock_data.get('name', symbol),
-            'current_price': current_price,
+            'price': current_price,
             'change': price_change,
-            'change_percent': change_percent,
-            'recommendation': insights.get('recommendation', 'HOLD'),
+            'change_percent': f"{change_percent:.2f}",
+            'ai_recommendation': insights.get('recommendation', 'HOLD'),
+            'ai_confidence': int(insights.get('confidence', 50)),
             'analysis': insights.get('analysis', 'No analysis available'),
-            'confidence': insights.get('confidence', 50)
+            'market_cap': stock_data.get('market_cap', 'N/A'),
+            'pe_ratio': stock_data.get('pe_ratio', 'N/A'),
+            'volume': stock_data.get('volume', 'N/A')
         })
     except Exception as e:
         logger.error(f"Error in stock analysis: {e}")
-        return jsonify({'success': False, 'error': str(e)}), 500
+        return jsonify({'error': f'Failed to analyze {symbol}: {str(e)}'}), 500
 
 @app.route('/api/portfolio-summary')
 @login_required

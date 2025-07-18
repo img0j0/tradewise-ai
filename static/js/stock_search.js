@@ -36,8 +36,8 @@ function searchStockByName(companyName) {
             searchInput.value = symbol;
         }
         
-        // Perform search
-        performIntelligentSearch();
+        // Perform search with the symbol
+        performIntelligentSearchWithSymbol(symbol);
     } else {
         console.error('Symbol not found for:', companyName);
         showNotification('Stock symbol not found', 'error');
@@ -54,13 +54,26 @@ function performIntelligentSearch() {
         return;
     }
     
-    console.log('Performing search for:', searchValue);
+    // Check if it's a company name and convert to symbol
+    let symbol = searchValue.toUpperCase();
+    const companySymbol = companySymbols[searchValue.toLowerCase()];
+    if (companySymbol) {
+        symbol = companySymbol;
+        searchInput.value = symbol; // Update input with symbol
+    }
+    
+    performIntelligentSearchWithSymbol(symbol);
+}
+
+// Perform search with specific symbol
+function performIntelligentSearchWithSymbol(symbol) {
+    console.log('Performing search for symbol:', symbol);
     
     // Show loading state
     showSearchLoading();
     
     // Call the stock analysis API
-    fetch(`/api/stock-analysis/${searchValue}`)
+    fetch(`/api/stock-analysis/${symbol}`)
         .then(response => response.json())
         .then(data => {
             hideSearchLoading();
