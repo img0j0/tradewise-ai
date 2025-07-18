@@ -64,6 +64,7 @@ class AdvancedStockAdviceEngine:
         self.market_memory = deque(maxlen=5000)  # Remember market patterns
         self.success_tracking = defaultdict(list)  # Track advice accuracy
         self.load_or_create_models()
+        self._auto_train_with_sample_data()  # Auto-train on startup
     
     def load_or_create_models(self):
         """Load existing models or create new ensemble"""
@@ -511,6 +512,42 @@ class AdvancedStockAdviceEngine:
             self.scalers = joblib.load('ai_models/advice_scalers.pkl')
         except Exception as e:
             logger.warning(f"Could not load scalers, using default: {e}")
+
+    def _auto_train_with_sample_data(self):
+        """Auto-train the model with sample data on startup"""
+        try:
+            logger.info("Auto-training AI advice engine with sample data...")
+            
+            # Create sample training data
+            np.random.seed(42)
+            n_samples = 200
+            
+            # Generate realistic features
+            features = np.random.randn(n_samples, 15)  # 15 features
+            
+            # Create realistic targets (0=strong_sell, 1=sell, 2=hold, 3=buy, 4=strong_buy)
+            targets = np.random.choice([0, 1, 2, 3, 4], n_samples, p=[0.1, 0.2, 0.4, 0.2, 0.1])
+            
+            # Fit scalers
+            self.scalers['technical'].fit(features[:, :10])
+            self.scalers['fundamental'].fit(features[:, 10:13])
+            self.scalers['sentiment'].fit(features[:, 13:])
+            
+            # Create and train ensemble model
+            rf = RandomForestClassifier(n_estimators=50, random_state=42)
+            gb = GradientBoostingClassifier(n_estimators=50, random_state=42)
+            nn = MLPClassifier(hidden_layer_sizes=(50,), random_state=42, max_iter=200)
+            
+            self.ensemble_model = VotingClassifier([
+                ('rf', rf), ('gb', gb), ('nn', nn)
+            ], voting='soft')
+            
+            self.ensemble_model.fit(features, targets)
+            
+            logger.info("Auto-training completed successfully")
+            
+        except Exception as e:
+            logger.warning(f"Auto-training failed: {e}")
 
 # Global instance
 advice_engine = AdvancedStockAdviceEngine()
