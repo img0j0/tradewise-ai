@@ -128,20 +128,14 @@ def portfolio_content():
     """Portfolio content for iframe"""
     if not current_user.is_authenticated:
         return redirect(url_for('login'))
-    try:
-        return render_template('portfolio.html')
-    except:
-        return render_template('index.html')
+    return render_template('portfolio_content.html')
 
 @app.route('/alerts_content')
 def alerts_content():
     """Alerts content for iframe"""
     if not current_user.is_authenticated:
         return redirect(url_for('login'))
-    try:
-        return render_template('alerts.html')
-    except:
-        return render_template('index.html')
+    return render_template('alerts_content.html')
 
 
 

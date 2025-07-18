@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .portfolio-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            backdrop-filter: blur(10px);
+        }
+        .stock-row {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            border-left: 4px solid #00d4ff;
+        }
+        .gain {
+            color: #00ff88;
+        }
+        .loss {
+            color: #ff6b6b;
+        }
+        .portfolio-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #00d4ff;
+        }
+        .performance-metric {
+            text-align: center;
+            padding: 1rem;
+        }
+        .metric-number {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        .chart-container {
+            position: relative;
+            height: 250px;
+            margin: 1rem 0;
+        }
+        .action-btn {
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            margin: 0.2rem;
+        }
+        .sell-btn {
+            background: linear-gradient(135deg, #ff6b6b, #cc5555);
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid p-4">
+        <!-- Portfolio Overview -->
+        <div class="row">
+            <div class="col-md-8">
+                <div class="portfolio-card">
+                    <h4><i class="fas fa-wallet me-2"></i>Portfolio Overview</h4>
+                    <div class="row">
+                        <div class="col-md-3 performance-metric">
+                            <div class="portfolio-value" id="total-value">$98,883</div>
+                            <div class="text-muted">Total Value</div>
+                        </div>
+                        <div class="col-md-3 performance-metric">
+                            <div class="metric-number gain" id="daily-change">+$1,247</div>
+                            <div class="text-muted">Today's Change</div>
+                        </div>
+                        <div class="col-md-3 performance-metric">
+                            <div class="metric-number gain" id="total-return">+12.4%</div>
+                            <div class="text-muted">Total Return</div>
+                        </div>
+                        <div class="col-md-3 performance-metric">
+                            <div class="metric-number" id="cash-balance">$15,240</div>
+                            <div class="text-muted">Cash Balance</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="portfolio-card">
+                    <h5><i class="fas fa-chart-pie me-2"></i>Asset Allocation</h5>
+                    <div class="chart-container">
+                        <canvas id="allocationChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Holdings -->
+        <div class="row">
+            <div class="col-12">
+                <div class="portfolio-card">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5><i class="fas fa-list me-2"></i>Your Holdings</h5>
+                        <div>
+                            <button class="action-btn" onclick="addFunds()">
+                                <i class="fas fa-plus me-1"></i>Add Funds
+                            </button>
+                            <button class="action-btn" onclick="rebalancePortfolio()">
+                                <i class="fas fa-balance-scale me-1"></i>Rebalance
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Individual Stock Holdings -->
+                    <div id="holdings-list">
+                        <div class="stock-row">
+                            <div class="row align-items-center">
+                                <div class="col-md-2">
+                                    <strong>RMBS</strong>
+                                    <div class="text-muted small">Rambus Inc</div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div>100 shares</div>
+                                    <div class="text-muted small">@ $54.20 avg</div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="gain">$56.80</div>
+                                    <div class="small gain">+4.8%</div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div>$5,680</div>
+                                    <div class="text-muted small">Market Value</div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="gain">+$260</div>
+                                    <div class="small gain">+4.8% P/L</div>
+                                </div>
+                                <div class="col-md-2">
+                                    <button class="action-btn btn-sm" onclick="buyMore('RMBS')">Buy More</button>
+                                    <button class="sell-btn btn-sm" onclick="sellStock('RMBS')">Sell</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="stock-row">
+                            <div class="row align-items-center">
+                                <div class="col-md-2">
+                                    <strong>AAPL</strong>
+                                    <div class="text-muted small">Apple Inc</div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div>50 shares</div>
+                                    <div class="text-muted small">@ $185.30 avg</div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="gain">$192.45</div>
+                                    <div class="small gain">+3.9%</div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div>$9,622</div>
+                                    <div class="text-muted small">Market Value</div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="gain">+$357</div>
+                                    <div class="small gain">+3.9% P/L</div>
+                                </div>
+                                <div class="col-md-2">
+                                    <button class="action-btn btn-sm" onclick="buyMore('AAPL')">Buy More</button>
+                                    <button class="sell-btn btn-sm" onclick="sellStock('AAPL')">Sell</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="stock-row">
+                            <div class="row align-items-center">
+                                <div class="col-md-2">
+                                    <strong>NVDA</strong>
+                                    <div class="text-muted small">NVIDIA Corp</div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div>25 shares</div>
+                                    <div class="text-muted small">@ $118.50 avg</div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="gain">$128.90</div>
+                                    <div class="small gain">+8.8%</div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div>$3,222</div>
+                                    <div class="text-muted small">Market Value</div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="gain">+$260</div>
+                                    <div class="small gain">+8.8% P/L</div>
+                                </div>
+                                <div class="col-md-2">
+                                    <button class="action-btn btn-sm" onclick="buyMore('NVDA')">Buy More</button>
+                                    <button class="sell-btn btn-sm" onclick="sellStock('NVDA')">Sell</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Performance Chart -->
+        <div class="row">
+            <div class="col-12">
+                <div class="portfolio-card">
+                    <h5><i class="fas fa-chart-line me-2"></i>Portfolio Performance</h5>
+                    <div class="chart-container" style="height: 300px;">
+                        <canvas id="performanceChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Asset Allocation Chart
+        const allocationCtx = document.getElementById('allocationChart').getContext('2d');
+        new Chart(allocationCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Stocks', 'Cash', 'Options'],
+                datasets: [{
+                    data: [85, 12, 3],
+                    backgroundColor: ['#00d4ff', '#00ff88', '#feca57'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { color: '#ffffff', padding: 10 }
+                    }
+                }
+            }
+        });
+
+        // Portfolio Performance Chart
+        const performanceCtx = document.getElementById('performanceChart').getContext('2d');
+        new Chart(performanceCtx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+                datasets: [{
+                    label: 'Portfolio Value',
+                    data: [85000, 87500, 89200, 91800, 94500, 96200, 98883],
+                    borderColor: '#00d4ff',
+                    backgroundColor: 'rgba(0, 212, 255, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        ticks: { color: '#ffffff' }
+                    },
+                    x: {
+                        ticks: { color: '#ffffff' }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        labels: { color: '#ffffff' }
+                    }
+                }
+            }
+        });
+
+        // Portfolio Actions
+        function addFunds() {
+            alert('Add Funds functionality - redirect to deposit page');
+        }
+
+        function rebalancePortfolio() {
+            alert('AI Portfolio Rebalancing - analyze current allocation vs target');
+        }
+
+        function buyMore(symbol) {
+            alert(`Buy more ${symbol} - redirect to purchase interface`);
+        }
+
+        function sellStock(symbol) {
+            alert(`Sell ${symbol} - redirect to sell interface`);
+        }
+
+        // Real-time updates simulation
+        setInterval(() => {
+            const totalValue = document.getElementById('total-value');
+            const dailyChange = document.getElementById('daily-change');
+            
+            // Simulate small price movements
+            const baseValue = 98883;
+            const variation = (Math.random() - 0.5) * 1000;
+            const newValue = baseValue + variation;
+            
+            totalValue.textContent = `$${newValue.toLocaleString()}`;
+            
+            const change = variation > 0 ? `+$${Math.abs(variation).toFixed(0)}` : `-$${Math.abs(variation).toFixed(0)}`;
+            dailyChange.textContent = change;
+            dailyChange.className = variation > 0 ? 'metric-number gain' : 'metric-number loss';
+        }, 5000);
+    </script>
+</body>
+</html>
