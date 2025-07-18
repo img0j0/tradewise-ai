@@ -25,13 +25,17 @@
 
 /* Controls Label */
 .controls-label {
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: rgba(255, 255, 255, 0.7);
-    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.8);
+    margin: 0;
     text-align: center;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.8px;
     text-transform: uppercase;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 /* Voice Search Button */
@@ -39,28 +43,29 @@
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border: none;
     color: white;
-    padding: 1rem;
-    border-radius: 18px;
+    padding: 1.2rem;
+    border-radius: 20px;
     cursor: pointer;
     transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    width: 64px;
-    height: 64px;
+    width: 80px;
+    height: 80px;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 6px 24px rgba(102, 126, 234, 0.25), 
-                0 2px 8px rgba(102, 126, 234, 0.15);
+    box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3), 
+                0 4px 16px rgba(102, 126, 234, 0.2);
     flex-shrink: 0;
     position: relative;
     overflow: hidden;
     backdrop-filter: blur(15px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    font-size: 1.4rem;
 }
 
 .voice-search-btn:hover {
-    transform: translateY(-3px) scale(1.05);
-    box-shadow: 0 8px 32px rgba(102, 126, 234, 0.4),
-                0 4px 16px rgba(102, 126, 234, 0.2);
+    transform: translateY(-4px) scale(1.08);
+    box-shadow: 0 12px 48px rgba(102, 126, 234, 0.5),
+                0 6px 24px rgba(102, 126, 234, 0.3);
     background: linear-gradient(135deg, #7c8df0 0%, #8659c1 100%);
 }
 
@@ -99,28 +104,29 @@
     background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
     border: none;
     color: white;
-    padding: 1rem;
-    border-radius: 18px;
+    padding: 1.2rem;
+    border-radius: 20px;
     cursor: pointer;
     transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    width: 64px;
-    height: 64px;
+    width: 80px;
+    height: 80px;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 6px 24px rgba(79, 172, 254, 0.25),
-                0 2px 8px rgba(79, 172, 254, 0.15);
+    box-shadow: 0 8px 32px rgba(79, 172, 254, 0.3),
+                0 4px 16px rgba(79, 172, 254, 0.2);
     flex-shrink: 0;
     position: relative;
     overflow: hidden;
     backdrop-filter: blur(15px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    font-size: 1.4rem;
 }
 
 .search-history-btn:hover {
-    transform: translateY(-3px) scale(1.05);
-    box-shadow: 0 8px 32px rgba(79, 172, 254, 0.4),
-                0 4px 16px rgba(79, 172, 254, 0.2);
+    transform: translateY(-4px) scale(1.08);
+    box-shadow: 0 12px 48px rgba(79, 172, 254, 0.5),
+                0 6px 24px rgba(79, 172, 254, 0.3);
     background: linear-gradient(135deg, #5fbdff 0%, #1af5ff 100%);
 }
 
@@ -420,15 +426,23 @@
 /* Search Controls Container */
 .search-controls {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
     gap: 1.5rem;
     margin-top: 2rem;
-    padding: 1rem 2rem;
+    padding: 2rem 1.5rem;
     background: rgba(255, 255, 255, 0.03);
     border-radius: 24px;
     backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.search-controls-buttons {
+    display: flex;
+    gap: 2.5rem;
+    justify-content: center;
+    align-items: center;
 }
 
 /* Keyboard Shortcut Indicator */
@@ -470,64 +484,63 @@
     
     .search-controls {
         margin-top: 1.5rem;
-        padding: 1.5rem 1rem 2rem;
-        gap: 2rem;
+        padding: 2rem 1rem 2.5rem;
+        gap: 1.5rem;
         border-radius: 20px;
-        flex-direction: column;
-        align-items: center;
     }
     
     .controls-label {
-        margin-bottom: 1rem;
-        font-size: 0.8rem;
+        font-size: 0.85rem;
     }
     
     .search-controls-buttons {
-        display: flex;
-        gap: 2rem;
-        justify-content: center;
+        gap: 3rem;
     }
     
     .voice-search-btn,
     .search-history-btn {
-        width: 80px;
-        height: 80px;
-        padding: 1.25rem;
-        border-radius: 22px;
-        box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
+        width: 88px;
+        height: 88px;
+        padding: 1.5rem;
+        border-radius: 24px;
+        font-size: 1.6rem;
         position: relative;
     }
     
+    .voice-search-btn {
+        box-shadow: 0 10px 40px rgba(102, 126, 234, 0.35);
+    }
+    
     .search-history-btn {
-        box-shadow: 0 8px 32px rgba(79, 172, 254, 0.3);
+        box-shadow: 0 10px 40px rgba(79, 172, 254, 0.35);
     }
     
     .voice-search-btn::after {
         content: 'Voice';
         position: absolute;
-        bottom: -35px;
+        bottom: -40px;
         left: 50%;
         transform: translateX(-50%);
-        font-size: 0.8rem;
+        font-size: 0.85rem;
         font-weight: 700;
         color: rgba(255, 255, 255, 0.9);
         white-space: nowrap;
-        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
-        letter-spacing: 0.5px;
+        text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+        letter-spacing: 0.8px;
     }
     
     .search-history-btn::after {
         content: 'History';
         position: absolute;
-        bottom: -35px;
+        bottom: -40px;
         left: 50%;
         transform: translateX(-50%);
-        font-size: 0.8rem;
+        font-size: 0.85rem;
         font-weight: 700;
         color: rgba(255, 255, 255, 0.9);
         white-space: nowrap;
-        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
-        letter-spacing: 0.5px;
+        text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+        letter-spacing: 0.8px;
     }
     
     .search-shortcut {
