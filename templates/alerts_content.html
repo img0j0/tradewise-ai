@@ -75,6 +75,9 @@
             border-radius: 15px;
             font-size: 0.8rem;
             font-weight: 600;
+            white-space: nowrap;
+            display: inline-block;
+            min-width: fit-content;
         }
         .alert-time {
             color: rgba(255, 255, 255, 0.8) !important;
@@ -135,6 +138,13 @@
             }
             .alert-time {
                 font-size: 0.75rem;
+            }
+            .alert-badge {
+                font-size: 0.7rem;
+                padding: 0.2rem 0.6rem;
+            }
+            .d-flex.justify-content-between.align-items-start {
+                flex-wrap: nowrap;
             }
         }
         
@@ -261,11 +271,13 @@
                     <button class="action-icon" data-tooltip="Delete Alert" onclick="deleteAlert(1)"><i class="fas fa-trash"></i></button>
                 </div>
                 <div class="d-flex justify-content-between align-items-start mb-2">
-                    <div>
-                        <strong>NVDA Price Breakout</strong>
-                        <span class="alert-badge ms-2">AI PREDICTION</span>
+                    <div class="flex-grow-1 me-2">
+                        <div class="d-flex align-items-center flex-wrap">
+                            <strong class="me-2">NVDA Price Breakout</strong>
+                            <span class="alert-badge">AI PREDICTION</span>
+                        </div>
                     </div>
-                    <div class="alert-time">2 minutes ago</div>
+                    <div class="alert-time flex-shrink-0">2 minutes ago</div>
                 </div>
                 <div class="mb-2">
                     <strong>$128.90</strong> → Target: <strong>$135.00</strong> (+4.7%)
