@@ -8,8 +8,9 @@ import routes
 with app.app_context():
     db.create_all()
 
-# Temporarily disable WebSocket features to fix micro-interactions
-# This will resolve the memory issues and worker timeouts
+# WebSocket optimization for App Store deployment
+# Disabled WebSocket features to prevent memory issues and worker crashes
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    # Production-ready configuration for App Store
+    app.run(host='0.0.0.0', port=5000, debug=False, threaded=True)
