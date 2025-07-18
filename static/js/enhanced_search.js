@@ -72,8 +72,8 @@ class SmartSearchEngine {
     }
     
     addVoiceSearchButton() {
-        const searchContainer = document.querySelector('.chatgpt-search-box');
-        if (!searchContainer || !this.voiceRecognition) return;
+        const searchControls = document.querySelector('.search-controls');
+        if (!searchControls || !this.voiceRecognition) return;
         
         const voiceBtn = document.createElement('button');
         voiceBtn.className = 'voice-search-btn';
@@ -81,12 +81,12 @@ class SmartSearchEngine {
         voiceBtn.title = 'Voice Search (Hold to speak)';
         voiceBtn.addEventListener('click', () => this.toggleVoiceSearch());
         
-        searchContainer.appendChild(voiceBtn);
+        searchControls.appendChild(voiceBtn);
     }
     
     addSearchHistoryButton() {
-        const searchContainer = document.querySelector('.chatgpt-search-box');
-        if (!searchContainer) return;
+        const searchControls = document.querySelector('.search-controls');
+        if (!searchControls) return;
         
         const historyBtn = document.createElement('button');
         historyBtn.className = 'search-history-btn';
@@ -94,7 +94,7 @@ class SmartSearchEngine {
         historyBtn.title = 'Search History';
         historyBtn.addEventListener('click', () => this.toggleSearchHistory());
         
-        searchContainer.appendChild(historyBtn);
+        searchControls.appendChild(historyBtn);
     }
     
     handleSmartInput(event) {
