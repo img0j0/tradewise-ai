@@ -46,10 +46,12 @@ function initializeDashboard() {
             showSection('dashboard');
         }
 
-        // Load sectors data (needed for stocks filter)
-        loadSectors().catch(error => {
-            console.error('Error loading sectors:', error);
-        });
+        // Load sectors data (needed for stocks filter) - only if elements exist
+        if (document.getElementById('sector-filter')) {
+            loadSectors().catch(error => {
+                console.error('Error loading sectors:', error);
+            });
+        }
 
         // Set up event listeners
         setupEventListeners();
@@ -73,6 +75,12 @@ function setupEventListeners() {
     const sectorFilter = document.getElementById('sector-filter');
     const minPrice = document.getElementById('min-price');
     const maxPrice = document.getElementById('max-price');
+    
+    // Only set up stock filter listeners if elements exist
+    if (!sectorFilter || !minPrice || !maxPrice) {
+        console.log('Stock filter elements not found, skipping filter setup');
+        return;
+    }
 
     if (sectorFilter) sectorFilter.addEventListener('change', applyFilters);
     if (minPrice) minPrice.addEventListener('input', applyFilters);
@@ -144,7 +152,8 @@ function showSection(sectionName) {
     // Load section-specific data
     switch (sectionName) {
         case 'stocks':
-            loadStocks();
+            // Stocks section now uses Google-style search interface
+            console.log('Stocks section loaded - AI search interface active');
             break;
         case 'alerts':
             loadAlerts();
@@ -185,9 +194,25 @@ async function loadDashboardData() {
 
 async function loadStocks() {
     try {
-        const sector = document.getElementById('sector-filter').value;
-        const minPrice = document.getElementById('min-price').value;
-        const maxPrice = document.getElementById('max-price').value;
+        // Check if we're in stocks section and elements exist
+        if (currentSection !== 'stocks') {
+            console.log('Not in stocks section, skipping stock loading');
+            return;
+        }
+        
+        const sectorFilter = document.getElementById('sector-filter');
+        const minPriceInput = document.getElementById('min-price');
+        const maxPriceInput = document.getElementById('max-price');
+        
+        // If filter elements don't exist, skip this function
+        if (!sectorFilter || !minPriceInput || !maxPriceInput) {
+            console.log('Stock filter elements not found, skipping stock loading');
+            return;
+        }
+
+        const sector = sectorFilter.value;
+        const minPrice = minPriceInput.value;
+        const maxPrice = maxPriceInput.value;
 
         const params = new URLSearchParams();
         if (sector) params.append('sector', sector);
@@ -849,7 +874,10 @@ function refreshData() {
     let loadPromise;
     switch (currentSection) {
         case 'stocks':
-            loadPromise = loadStocks();
+            // For stocks section, don't load traditional stocks list
+            // since we now use Google-style search interface
+            console.log('Stocks section - using AI search interface');
+            loadPromise = Promise.resolve();
             break;
         case 'alerts':
             loadPromise = loadAlerts();
@@ -871,10 +899,10 @@ function refreshData() {
     if (loadPromise && loadPromise.then) {
         loadPromise.then(() => {
             hideRefreshIndicator();
-            showSuccess('Data refreshed successfully!');
+            console.log('Data refreshed successfully!');
         }).catch(error => {
             hideRefreshIndicator();
-            showError('Failed to refresh data: ' + error.message);
+            console.error('Failed to refresh data:', error);
         });
     } else {
         setTimeout(() => {

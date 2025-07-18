@@ -138,7 +138,6 @@ async function showSuggestions(query) {
             return;
         }
     }
-    }
     
     // Create suggestion items
     suggestionsList.innerHTML = suggestions.map((suggestion, index) => `
@@ -193,6 +192,8 @@ function quickSearch(symbol) {
     const searchInput = document.getElementById('stock-search-input');
     searchInput.value = symbol;
     hideSuggestions();
+    searchStockAI();
+}
     searchStockAI();
 }
 
