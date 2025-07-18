@@ -26,10 +26,11 @@ const companySymbols = {
 
 // Search by company name function
 function searchStockByName(companyName) {
-    console.log('Searching for:', companyName);
+    console.log('TradeWise AI: Searching for company:', companyName);
     
     const symbol = companySymbols[companyName.toLowerCase()];
     if (symbol) {
+        console.log('TradeWise AI: Found symbol:', symbol);
         // Update search input
         const searchInput = document.getElementById('main-search-input');
         if (searchInput) {
@@ -39,8 +40,8 @@ function searchStockByName(companyName) {
         // Perform search with the symbol
         performIntelligentSearchWithSymbol(symbol);
     } else {
-        console.error('Symbol not found for:', companyName);
-        showNotification('Stock symbol not found', 'error');
+        console.error('TradeWise AI: Symbol not found for:', companyName);
+        showNotification(`Company ${companyName} not found in our database`, 'error');
     }
 }
 
