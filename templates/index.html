@@ -3,24 +3,49 @@
 {% block content %}
 <!-- Main Content Sections -->
 <div id="dashboard-section">
-    <!-- Welcome Banner -->
+    <!-- AI Robot Welcome Section -->
     <div class="row mb-3">
         <div class="col-12">
-            <div class="welcome-banner compact">
-                <div class="welcome-content">
-                    <h2 class="welcome-title">Welcome to Your Trading Command Center</h2>
-                    <p class="welcome-subtitle">AI-powered insights at your fingertips</p>
-                </div>
-                <div class="welcome-stats">
-                    <div class="welcome-stat">
-                        <span class="stat-icon"><i class="fas fa-brain"></i></span>
-                        <span class="stat-value" id="ai-accuracy">98%</span>
-                        <span class="stat-label">AI Accuracy</span>
+            <div class="ai-robot-welcome">
+                <div class="robot-container">
+                    <div class="ai-robot">
+                        <div class="robot-head">
+                            <div class="robot-antenna">
+                                <div class="antenna-tip"></div>
+                            </div>
+                            <div class="robot-eyes">
+                                <div class="robot-eye left-eye">
+                                    <div class="eye-pupil"></div>
+                                </div>
+                                <div class="robot-eye right-eye">
+                                    <div class="eye-pupil"></div>
+                                </div>
+                            </div>
+                            <div class="robot-mouth"></div>
+                        </div>
+                        <div class="robot-body">
+                            <div class="chest-light"></div>
+                            <div class="robot-arms">
+                                <div class="arm left-arm"></div>
+                                <div class="arm right-arm"></div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="welcome-stat">
-                        <span class="stat-icon"><i class="fas fa-chart-line"></i></span>
-                        <span class="stat-value" id="market-trend">Bullish</span>
-                        <span class="stat-label">Market Trend</span>
+                </div>
+                <div class="welcome-message">
+                    <div class="speech-bubble">
+                        <h3 class="robot-greeting">Hi there! I'm your AI Trading Assistant</h3>
+                        <p class="robot-message">Ready to help you make smart investment decisions today!</p>
+                        <div class="ai-stats">
+                            <span class="ai-stat-badge">
+                                <i class="fas fa-brain"></i>
+                                <span id="ai-accuracy">98% Accuracy</span>
+                            </span>
+                            <span class="ai-stat-badge">
+                                <i class="fas fa-chart-line"></i>
+                                <span id="market-trend">Bullish Market</span>
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>
