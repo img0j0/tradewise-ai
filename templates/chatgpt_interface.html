@@ -325,6 +325,159 @@
     margin-top: 2rem;
 }
 
+/* Advanced AI Advice Section */
+.ai-advice-section {
+    background: rgba(0, 212, 255, 0.05);
+    border: 1px solid rgba(0, 212, 255, 0.2);
+    border-radius: 15px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+    backdrop-filter: blur(10px);
+}
+
+.ai-advice-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.ai-advice-header h3 {
+    color: #00d4ff;
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.ai-badge {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.recommendation-badge {
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.recommendation-badge.strong-buy { background: linear-gradient(135deg, #00ff88, #00d4ff); color: #000; }
+.recommendation-badge.buy { background: linear-gradient(135deg, #00ff88, #4ade80); color: #000; }
+.recommendation-badge.hold { background: linear-gradient(135deg, #ffd700, #ffb000); color: #000; }
+.recommendation-badge.sell { background: linear-gradient(135deg, #ff9500, #ff6b35); color: #fff; }
+.recommendation-badge.strong-sell { background: linear-gradient(135deg, #ff5555, #dc2626); color: #fff; }
+
+.confidence-badge {
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #000;
+}
+
+.advice-main {
+    margin: 1rem 0;
+}
+
+.advice-text {
+    font-size: 1.1rem;
+    color: #ffffff;
+    font-weight: 500;
+    margin: 0;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.advice-details {
+    margin-top: 1.5rem;
+}
+
+.advice-detail-row {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+}
+
+.detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.detail-label {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.detail-value {
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.key-factors {
+    margin-top: 1rem;
+}
+
+.key-factors h4 {
+    color: #00d4ff;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.factors-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.factors-list li {
+    color: rgba(255, 255, 255, 0.9);
+    padding: 0.3rem 0;
+    font-size: 0.9rem;
+    position: relative;
+    padding-left: 1.5rem;
+}
+
+.factors-list li::before {
+    content: "→";
+    color: #00d4ff;
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+}
+
+.ai-advice-footer {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.ai-disclaimer {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.8rem;
+}
+
+.action-btn.ai-train {
+    background: linear-gradient(135deg, #8b5cf6, #a855f7);
+    color: white;
+    border: none;
+    padding: 0.8rem 1.2rem;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.action-btn.ai-train:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(139, 92, 246, 0.3);
+}
+}
+
 .stock-header-main {
     display: flex;
     justify-content: space-between;
@@ -712,6 +865,141 @@ function showBuyModal(symbol) {
 function addToWatchlist(symbol) {
     alert(`Added ${symbol} to watchlist - Integration pending`);
 }
+
+// AI Training Functions
+async function trainAIAdviceEngine() {
+    // Create training panel
+    const panelHtml = `
+        <div id="ai-training-panel" style="
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: rgba(20, 20, 30, 0.95); border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px; padding: 2rem; backdrop-filter: blur(20px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5); z-index: 1000;
+            min-width: 400px; max-width: 600px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; 
+                       padding-bottom: 1rem; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+                <h3 style="color: #00d4ff; margin: 0; font-size: 1.3rem;">
+                    <i class="fas fa-brain"></i> AI Model Training
+                </h3>
+                <button onclick="closeAIPanel()" style="background: none; border: none; color: rgba(255, 255, 255, 0.7); 
+                                                        font-size: 1.5rem; cursor: pointer; padding: 0.5rem;">&times;</button>
+            </div>
+            
+            <div style="text-align: center;">
+                <div id="training-status" style="background: rgba(255, 255, 255, 0.05); border-radius: 10px; 
+                                                padding: 1rem; margin-bottom: 1.5rem;">
+                    <p style="color: #ffffff; margin: 0;">Ready to train AI models with latest market data</p>
+                </div>
+                
+                <button onclick="startTraining()" style="background: linear-gradient(135deg, #8b5cf6, #a855f7); 
+                                                        color: white; border: none; padding: 1rem 2rem; border-radius: 15px; 
+                                                        font-weight: 600; font-size: 1rem; cursor: pointer; width: 100%; 
+                                                        transition: all 0.3s ease;">
+                    <i class="fas fa-cogs"></i> Train Advanced AI Engine
+                </button>
+                
+                <div id="training-progress" class="hidden" style="margin-top: 1.5rem;">
+                    <div style="width: 100%; height: 8px; background: rgba(255, 255, 255, 0.1); 
+                               border-radius: 4px; overflow: hidden; margin-bottom: 1rem;">
+                        <div id="progress-fill" style="height: 100%; background: linear-gradient(90deg, #00d4ff, #00ff88); 
+                                                      width: 0%; border-radius: 4px; transition: width 0.3s ease;"></div>
+                    </div>
+                    <span style="color: rgba(255, 255, 255, 0.8); font-size: 0.9rem;">Training in progress...</span>
+                </div>
+                
+                <div id="training-results" class="hidden" style="margin-top: 1.5rem; background: rgba(0, 212, 255, 0.1); 
+                                                               border: 1px solid rgba(0, 212, 255, 0.3); border-radius: 10px; padding: 1.5rem;">
+                    <h4 style="color: #00ff88; margin: 0 0 1rem 0;">Training Complete!</h4>
+                    <div style="display: flex; flex-direction: column; gap: 0.8rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="color: rgba(255, 255, 255, 0.7); font-size: 0.9rem;">Training Samples:</span>
+                            <span id="samples-count" style="color: #ffffff; font-weight: 600;">-</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="color: rgba(255, 255, 255, 0.7); font-size: 0.9rem;">Symbols Trained:</span>
+                            <span id="symbols-count" style="color: #ffffff; font-weight: 600;">-</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="color: rgba(255, 255, 255, 0.7); font-size: 0.9rem;">Model Type:</span>
+                            <span id="model-type" style="color: #ffffff; font-weight: 600;">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Remove existing panel and add new one
+    const existingPanel = document.getElementById('ai-training-panel');
+    if (existingPanel) existingPanel.remove();
+    document.body.insertAdjacentHTML('beforeend', panelHtml);
+}
+
+async function startTraining() {
+    const statusEl = document.getElementById('training-status');
+    const progressEl = document.getElementById('training-progress');
+    const resultsEl = document.getElementById('training-results');
+    
+    statusEl.innerHTML = '<p style="color: #00d4ff; margin: 0;">Initializing AI training...</p>';
+    progressEl.classList.remove('hidden');
+    resultsEl.classList.add('hidden');
+    
+    const progressFill = document.getElementById('progress-fill');
+    let progress = 0;
+    const progressInterval = setInterval(() => {
+        progress += Math.random() * 15;
+        if (progress > 90) progress = 90;
+        progressFill.style.width = progress + '%';
+    }, 500);
+    
+    try {
+        const response = await fetch('/api/ai/train-advice-engine', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                days: 365,
+                symbols: ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'TSLA', 'NVDA', 'META', 'NFLX', 'CRM', 'ADBE']
+            })
+        });
+        
+        clearInterval(progressInterval);
+        progressFill.style.width = '100%';
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            statusEl.innerHTML = '<p style="color: #00ff88; margin: 0;">Training completed successfully!</p>';
+            
+            document.getElementById('samples-count').textContent = data.training_samples;
+            document.getElementById('symbols-count').textContent = data.symbols_trained.length;
+            document.getElementById('model-type').textContent = data.model_type;
+            
+            setTimeout(() => {
+                progressEl.classList.add('hidden');
+                resultsEl.classList.remove('hidden');
+            }, 1000);
+            
+        } else {
+            throw new Error(data.message || 'Training failed');
+        }
+        
+    } catch (error) {
+        clearInterval(progressInterval);
+        console.error('Training error:', error);
+        statusEl.innerHTML = `<p style="color: #ff5555; margin: 0;">Training failed: ${error.message}</p>`;
+        progressEl.classList.add('hidden');
+    }
+}
+
+function closeAIPanel() {
+    const panel = document.getElementById('ai-training-panel');
+    if (panel) panel.remove();
+}
+
+// Make functions globally available
+window.trainAIAdviceEngine = trainAIAdviceEngine;
+window.startTraining = startTraining;
+window.closeAIPanel = closeAIPanel;
 </script>
 
 {% endblock %}

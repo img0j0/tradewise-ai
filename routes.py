@@ -2,6 +2,7 @@ from flask import render_template, jsonify, request, session, redirect, url_for,
 from app import app, db
 from models import Trade, Portfolio, Alert, UserAccount, Transaction, User
 from ai_insights import AIInsightsEngine
+from ai_advice_engine import advice_engine
 from data_service import DataService
 from stock_search import StockSearchService
 from cache_service import cache
@@ -3174,3 +3175,43 @@ def health_check():
             'error': str(e),
             'timestamp': datetime.now().isoformat()
         }), 500
+
+@app.route('/api/ai/train-advice-engine', methods=['POST'])
+def train_advice_engine():
+    """Train the advanced AI advice engine"""
+    try:
+        data = request.get_json() or {}
+        days = data.get('days', 365)
+        symbols = data.get('symbols', ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'TSLA', 'NVDA', 'META', 'NFLX', 'CRM', 'ADBE'])
+        
+        # Train the advice engine
+        success = advice_engine.train_with_multiple_stocks(symbols, days)
+        
+        if success:
+            return jsonify({
+                'success': True,
+                'message': 'AI advice engine trained successfully',
+                'training_samples': len(symbols) * days,
+                'symbols_trained': symbols,
+                'model_type': 'Advanced Ensemble Model'
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'message': 'Training failed - insufficient data'
+            }), 500
+            
+    except Exception as e:
+        logger.error(f"Error training advice engine: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/ai/advice/<symbol>')
+def get_ai_advice(symbol):
+    """Get concise AI advice for a specific stock"""
+    try:
+        advice = advice_engine.get_concise_advice(symbol.upper())
+        return jsonify(advice)
+        
+    except Exception as e:
+        logger.error(f"Error getting advice for {symbol}: {e}")
+        return jsonify({'error': str(e)}), 500
