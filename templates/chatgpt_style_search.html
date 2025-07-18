@@ -517,12 +517,25 @@
         const changeClass = data.change >= 0 ? 'change-positive' : 'change-negative';
         const changeSymbol = data.change >= 0 ? '+' : '';
         
+        // Format metrics helper
+        const formatMetric = (value, suffix = '') => {
+            if (value === null || value === undefined || value === 'N/A') return 'N/A';
+            if (typeof value === 'number') {
+                if (suffix === '%') return `${(value * 100).toFixed(2)}%`;
+                return value.toFixed(2);
+            }
+            return value;
+        };
+        
         resultsDiv.innerHTML = `
             <div class="stock-result">
                 <div class="stock-header">
                     <div>
                         <div class="stock-symbol">${data.symbol}</div>
-                        <div class="stock-name" style="color: rgba(255,255,255,0.7); font-size: 0.9rem;">${data.name}</div>
+                        <div class="stock-name" style="color: rgba(255,255,255,0.7); font-size: 0.9rem;">
+                            ${data.name}
+                            ${data.sector && data.sector !== 'Unknown' ? `<span style="color: rgba(255,255,255,0.5);"> • ${data.sector}</span>` : ''}
+                        </div>
                     </div>
                     <div style="text-align: right;">
                         <div class="stock-price">$${data.price}</div>
@@ -533,13 +546,70 @@
                 </div>
                 
                 <div class="ai-analysis">
-                    <div class="ai-recommendation ${data.ai_recommendation.toLowerCase()}">
+                    <div class="ai-recommendation ${data.ai_recommendation.toLowerCase().replace(' ', '-')}">
                         ${data.ai_recommendation} (${data.ai_confidence}% confidence)
                     </div>
-                    <p style="color: rgba(255,255,255,0.8); line-height: 1.4; margin: 0.5rem 0 0 0;">
+                    <p style="color: rgba(255,255,255,0.8); line-height: 1.4; margin: 0.5rem 0 1rem 0;">
                         ${data.analysis}
                     </p>
                 </div>
+                
+                ${Object.keys(data.key_metrics || {}).length > 0 || data.market_cap || data.pe_ratio ? `
+                <div class="comprehensive-metrics">
+                    <div class="metrics-grid">
+                        ${data.market_cap ? `
+                        <div class="metric-item">
+                            <span class="metric-label">Market Cap</span>
+                            <span class="metric-value">${data.market_cap}</span>
+                        </div>` : ''}
+                        ${data.pe_ratio ? `
+                        <div class="metric-item">
+                            <span class="metric-label">P/E Ratio</span>
+                            <span class="metric-value">${formatMetric(data.pe_ratio)}</span>
+                        </div>` : ''}
+                        ${data.beta ? `
+                        <div class="metric-item">
+                            <span class="metric-label">Beta</span>
+                            <span class="metric-value">${formatMetric(data.beta)}</span>
+                        </div>` : ''}
+                        ${data.volume ? `
+                        <div class="metric-item">
+                            <span class="metric-label">Volume</span>
+                            <span class="metric-value">${data.volume}</span>
+                        </div>` : ''}
+                        ${data.week_52_high ? `
+                        <div class="metric-item">
+                            <span class="metric-label">52W High</span>
+                            <span class="metric-value">$${formatMetric(data.week_52_high)}</span>
+                        </div>` : ''}
+                        ${data.week_52_low ? `
+                        <div class="metric-item">
+                            <span class="metric-label">52W Low</span>
+                            <span class="metric-value">$${formatMetric(data.week_52_low)}</span>
+                        </div>` : ''}
+                        ${data.dividend_yield ? `
+                        <div class="metric-item">
+                            <span class="metric-label">Dividend Yield</span>
+                            <span class="metric-value">${formatMetric(data.dividend_yield, '%')}</span>
+                        </div>` : ''}
+                    </div>
+                </div>` : ''}
+                
+                ${data.investment_thesis && data.investment_thesis.length > 20 ? `
+                <div class="investment-section">
+                    <h4 style="margin: 1rem 0 0.5rem 0; color: rgba(255,255,255,0.9); font-size: 0.95rem;">Investment Thesis</h4>
+                    <p style="color: rgba(255,255,255,0.8); line-height: 1.4; margin: 0; font-size: 0.9rem;">
+                        ${data.investment_thesis}
+                    </p>
+                </div>` : ''}
+                
+                ${data.business_summary && data.business_summary.length > 50 ? `
+                <div class="business-section">
+                    <h4 style="margin: 1rem 0 0.5rem 0; color: rgba(255,255,255,0.9); font-size: 0.95rem;">About ${data.name}</h4>
+                    <p style="color: rgba(255,255,255,0.7); line-height: 1.4; margin: 0; font-size: 0.85rem;">
+                        ${data.business_summary}
+                    </p>
+                </div>` : ''}
             </div>
         `;
     }

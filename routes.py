@@ -668,43 +668,59 @@ def calculate_portfolio_performance():
             'avg_confidence': 0
         }
 
+# Import comprehensive advisor
+from comprehensive_ai_advisor import comprehensive_advisor
+
 # AI Assistant Routes
 @app.route('/api/stock-analysis/<symbol>')
-# Remove login requirement for public stock analysis
 def stock_analysis(symbol):
-    """Get comprehensive stock analysis for ChatGPT interface"""
+    """Get comprehensive stock analysis for any stock symbol"""
     try:
-        # Get stock data
-        stock_data = stock_search_service.search_stock(symbol.upper())
-        if not stock_data:
-            return jsonify({'success': False, 'error': f'Stock {symbol} not found'}), 404
+        # Use comprehensive AI advisor for any stock analysis
+        analysis_result = comprehensive_advisor.analyze_any_stock(symbol.upper())
         
-        # Generate AI insights
-        insights = ai_engine.generate_insights(stock_data)
+        if not analysis_result.get('success'):
+            return jsonify(analysis_result), 404
         
-        # Calculate price change
-        current_price = float(stock_data.get('current_price', 0))
-        previous_close = float(stock_data.get('previous_close', current_price))
-        price_change = current_price - previous_close
-        change_percent = ((price_change / previous_close) * 100) if previous_close > 0 else 0
-
+        # Format response for ChatGPT interface
+        ai_analysis = analysis_result.get('ai_analysis', {})
+        
         return jsonify({
             'success': True,
-            'symbol': symbol.upper(),
-            'name': stock_data.get('name', symbol),
-            'price': current_price,
-            'change': price_change,
-            'change_percent': f"{change_percent:.2f}",
-            'ai_recommendation': insights.get('recommendation', 'HOLD'),
-            'ai_confidence': int(insights.get('confidence', 50)),
-            'analysis': insights.get('analysis', 'No analysis available'),
-            'market_cap': stock_data.get('market_cap', 'N/A'),
-            'pe_ratio': stock_data.get('pe_ratio', 'N/A'),
-            'volume': stock_data.get('volume', 'N/A')
+            'symbol': analysis_result['symbol'],
+            'name': analysis_result['company_name'],
+            'sector': analysis_result['sector'],
+            'industry': analysis_result['industry'],
+            'price': analysis_result['current_price'],
+            'change': analysis_result['price_change'],
+            'change_percent': f"{analysis_result['price_change_percent']:.2f}",
+            'market_cap': analysis_result['market_cap'],
+            'volume': analysis_result['volume'],
+            'pe_ratio': analysis_result['pe_ratio'],
+            'beta': analysis_result['beta'],
+            'dividend_yield': analysis_result['dividend_yield'],
+            'week_52_high': analysis_result['week_52_high'],
+            'week_52_low': analysis_result['week_52_low'],
+            'ai_recommendation': ai_analysis.get('recommendation', 'HOLD'),
+            'ai_confidence': ai_analysis.get('confidence', 50),
+            'analysis': ai_analysis.get('analysis_summary', 'Comprehensive analysis available'),
+            'business_summary': analysis_result.get('business_summary', ''),
+            'website': analysis_result.get('website', ''),
+            'technical_analysis': ai_analysis.get('technical_analysis', {}),
+            'fundamental_analysis': ai_analysis.get('fundamental_analysis', {}),
+            'risk_assessment': ai_analysis.get('risk_assessment', {}),
+            'market_position': ai_analysis.get('market_position', {}),
+            'key_metrics': ai_analysis.get('key_metrics', {}),
+            'investment_thesis': ai_analysis.get('investment_thesis', ''),
+            'last_updated': analysis_result.get('last_updated')
         })
+        
     except Exception as e:
-        logger.error(f"Error in stock analysis: {e}")
-        return jsonify({'error': f'Failed to analyze {symbol}: {str(e)}'}), 500
+        logger.error(f"Error in comprehensive stock analysis for {symbol}: {str(e)}")
+        return jsonify({
+            'success': False,
+            'error': f'Failed to analyze {symbol.upper()}. Please verify the stock symbol is correct.'
+        }), 500
 
 @app.route('/api/portfolio-summary')
 @login_required

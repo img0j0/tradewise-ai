@@ -15,35 +15,72 @@ class StockSearchService:
             stock = yf.Ticker(symbol.upper())
             info = stock.info
             
+            # Validate stock exists by checking if longName or shortName is available
+            if not info.get('longName') and not info.get('shortName'):
+                logger.warning(f"Stock {symbol} not found - no company name available")
+                return None
+            
             # Get current price data
-            history = stock.history(period="1d", interval="1m")
+            history = stock.history(period="2d", interval="1d")
             if history.empty:
+                logger.warning(f"No price history available for {symbol}")
                 return None
                 
             current_price = history['Close'].iloc[-1]
+            previous_close = history['Close'].iloc[-2] if len(history) > 1 else current_price
             
-            # Get historical data for moving average
-            hist_data = stock.history(period="1mo")
+            # Get intraday data for volatility analysis
+            intraday = stock.history(period="1d", interval="5m")
+            day_high = intraday['High'].max() if not intraday.empty else current_price
+            day_low = intraday['Low'].min() if not intraday.empty else current_price
+            
+            # Get historical data for technical analysis
+            hist_data = stock.history(period="3mo")
             moving_avg_20 = hist_data['Close'].tail(20).mean() if len(hist_data) >= 20 else current_price
+            moving_avg_50 = hist_data['Close'].tail(50).mean() if len(hist_data) >= 50 else current_price
             
-            # Build stock data object
+            # Calculate price change
+            price_change = current_price - previous_close
+            price_change_percent = (price_change / previous_close * 100) if previous_close > 0 else 0
+            
+            # Build comprehensive stock data object
             stock_data = {
                 'symbol': symbol.upper(),
                 'name': info.get('longName', info.get('shortName', symbol.upper())),
                 'sector': info.get('sector', 'Unknown'),
-                'current_price': round(current_price, 2),
-                'previous_close': round(info.get('previousClose', current_price), 2),
-                'high': round(info.get('dayHigh', current_price), 2),
-                'low': round(info.get('dayLow', current_price), 2),
+                'industry': info.get('industry', 'Unknown'),
+                'country': info.get('country', 'Unknown'),
+                'website': info.get('website', ''),
+                'business_summary': info.get('longBusinessSummary', ''),
+                'current_price': float(current_price),
+                'previous_close': float(previous_close),
+                'price_change': float(price_change),
+                'price_change_percent': round(price_change_percent, 2),
+                'day_high': float(day_high),
+                'day_low': float(day_low),
                 'volume': info.get('volume', 0),
                 'avg_volume': info.get('averageVolume', 0),
+                'avg_volume_10d': info.get('averageVolume10days', 0),
                 'market_cap': info.get('marketCap', 0),
-                'moving_avg_20': round(moving_avg_20, 2),
-                'pe_ratio': info.get('trailingPE', 0),
-                'dividend_yield': info.get('dividendYield', 0),
-                'beta': info.get('beta', 1.0),
+                'enterprise_value': info.get('enterpriseValue', 0),
+                'moving_avg_20': float(moving_avg_20),
+                'moving_avg_50': float(moving_avg_50),
+                'pe_ratio': info.get('trailingPE', None),
+                'forward_pe': info.get('forwardPE', None),
+                'peg_ratio': info.get('pegRatio', None),
+                'price_to_book': info.get('priceToBook', None),
+                'dividend_yield': info.get('dividendYield', None),
+                'dividend_rate': info.get('dividendRate', None),
+                'payout_ratio': info.get('payoutRatio', None),
+                'beta': info.get('beta', None),
                 'week_52_high': info.get('fiftyTwoWeekHigh', current_price),
                 'week_52_low': info.get('fiftyTwoWeekLow', current_price),
+                'shares_outstanding': info.get('sharesOutstanding', 0),
+                'float_shares': info.get('floatShares', 0),
+                'institutional_holdings': info.get('heldByInstitutions', None),
+                'analyst_target_price': info.get('targetMeanPrice', None),
+                'recommendation_key': info.get('recommendationKey', 'none'),
+                'recommendation_mean': info.get('recommendationMean', None),
                 'last_updated': datetime.now().isoformat()
             }
             
@@ -54,21 +91,60 @@ class StockSearchService:
             return None
     
     def get_stock_fundamentals(self, symbol):
-        """Get additional fundamental data for risk analysis"""
+        """Get comprehensive fundamental data for analysis"""
         try:
             stock = yf.Ticker(symbol.upper())
             info = stock.info
             
+            # Get financial statements for deeper analysis
+            try:
+                financials = stock.financials
+                balance_sheet = stock.balance_sheet
+                cash_flow = stock.cashflow
+                
+                # Calculate additional ratios from financial statements
+                total_revenue = financials.loc['Total Revenue'].iloc[0] if 'Total Revenue' in financials.index and len(financials.columns) > 0 else None
+                total_assets = balance_sheet.loc['Total Assets'].iloc[0] if 'Total Assets' in balance_sheet.index and len(balance_sheet.columns) > 0 else None
+                total_debt = balance_sheet.loc['Total Debt'].iloc[0] if 'Total Debt' in balance_sheet.index and len(balance_sheet.columns) > 0 else None
+                
+            except Exception as fs_error:
+                logger.warning(f"Could not fetch financial statements for {symbol}: {fs_error}")
+                total_revenue = None
+                total_assets = None
+                total_debt = None
+            
             fundamentals = {
-                'profit_margin': info.get('profitMargins', 0),
-                'operating_margin': info.get('operatingMargins', 0),
-                'return_on_equity': info.get('returnOnEquity', 0),
-                'debt_to_equity': info.get('debtToEquity', 0),
-                'current_ratio': info.get('currentRatio', 0),
-                'revenue_growth': info.get('revenueGrowth', 0),
-                'earnings_growth': info.get('earningsGrowth', 0),
+                'profit_margin': info.get('profitMargins', None),
+                'operating_margin': info.get('operatingMargins', None),
+                'gross_margin': info.get('grossMargins', None),
+                'return_on_equity': info.get('returnOnEquity', None),
+                'return_on_assets': info.get('returnOnAssets', None),
+                'debt_to_equity': info.get('debtToEquity', None),
+                'current_ratio': info.get('currentRatio', None),
+                'quick_ratio': info.get('quickRatio', None),
+                'revenue_growth': info.get('revenueGrowth', None),
+                'earnings_growth': info.get('earningsGrowth', None),
+                'earnings_quarterly_growth': info.get('earningsQuarterlyGrowth', None),
+                'revenue_per_share': info.get('revenuePerShare', None),
+                'book_value_per_share': info.get('bookValue', None),
+                'operating_cash_flow': info.get('operatingCashflow', None),
+                'free_cash_flow': info.get('freeCashflow', None),
+                'total_cash': info.get('totalCash', None),
+                'total_debt': info.get('totalDebt', None),
+                'ebitda': info.get('ebitda', None),
                 'recommendation_key': info.get('recommendationKey', 'none'),
-                'analyst_rating': info.get('recommendationMean', 3.0)
+                'analyst_rating': info.get('recommendationMean', None),
+                'number_of_analysts': info.get('numberOfAnalystOpinions', None),
+                'price_target_high': info.get('targetHighPrice', None),
+                'price_target_low': info.get('targetLowPrice', None),
+                'price_target_mean': info.get('targetMeanPrice', None),
+                # ESG and other metrics
+                'esg_scores': info.get('esgScores', None),
+                'audit_risk': info.get('auditRisk', None),
+                'board_risk': info.get('boardRisk', None),
+                'compensation_risk': info.get('compensationRisk', None),
+                'shareholder_rights_risk': info.get('shareHolderRightsRisk', None),
+                'overall_risk': info.get('overallRisk', None)
             }
             
             return fundamentals
