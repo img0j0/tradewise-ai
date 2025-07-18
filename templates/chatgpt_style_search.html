@@ -34,6 +34,11 @@
                 </div>
             </div>
             
+            <!-- Search Suggestions -->
+            <div id="search-suggestions" class="search-suggestions">
+                <!-- Dynamic suggestions will appear here -->
+            </div>
+            
             <!-- Search Results Area -->
             <div id="search-results" class="search-results">
                 <!-- Results will appear here -->
@@ -45,9 +50,10 @@
             <div class="input-container">
                 <input type="text" 
                        id="stock-search-input"
-                       placeholder="Ask anything about stocks..."
+                       placeholder="Ask anything about stocks... (try 'google', 'apple', or 'NVDA')"
                        class="search-input"
-                       onkeypress="handleEnterPress(event)">
+                       onkeypress="handleEnterPress(event)"
+                       oninput="showSearchSuggestions(this.value)">
                 <button class="submit-btn" onclick="performSearch()">
                     <i class="fas fa-arrow-up"></i>
                 </button>
@@ -295,6 +301,45 @@
         100% { transform: rotate(360deg); }
     }
 
+    /* Search Suggestions */
+    .search-suggestions {
+        width: 100%;
+        max-width: 500px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        margin-top: 1rem;
+        display: none;
+        overflow: hidden;
+    }
+
+    .suggestion-item {
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .suggestion-item:hover {
+        background: rgba(255, 255, 255, 0.08);
+    }
+
+    .suggestion-item:last-child {
+        border-bottom: none;
+    }
+
+    .suggestion-company {
+        font-weight: 500;
+    }
+
+    .suggestion-symbol {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.9rem;
+    }
+
     /* Responsive Design */
     @media (max-width: 480px) {
         .main-content {
@@ -308,7 +353,100 @@
     </style>
 
     <script>
-    // Simple search functionality
+    // Company name to symbol mapping for intelligent search
+    const companyMap = {
+        'google': 'GOOGL',
+        'alphabet': 'GOOGL',
+        'microsoft': 'MSFT',
+        'apple': 'AAPL',
+        'nvidia': 'NVDA',
+        'tesla': 'TSLA',
+        'amazon': 'AMZN',
+        'meta': 'META',
+        'facebook': 'META',
+        'netflix': 'NFLX',
+        'adobe': 'ADBE',
+        'intel': 'INTC',
+        'amd': 'AMD',
+        'salesforce': 'CRM',
+        'oracle': 'ORCL',
+        'spotify': 'SPOT',
+        'uber': 'UBER',
+        'zoom': 'ZM',
+        'paypal': 'PYPL',
+        'square': 'SQ',
+        'coinbase': 'COIN',
+        'palantir': 'PLTR',
+        'snowflake': 'SNOW',
+        'shopify': 'SHOP',
+        'roblox': 'RBLX',
+        'unity': 'U',
+        'peloton': 'PTON',
+        'roku': 'ROKU',
+        'doordash': 'DASH',
+        'airbnb': 'ABNB',
+        'beyond meat': 'BYND',
+        'moderna': 'MRNA',
+        'pfizer': 'PFE',
+        'johnson': 'JNJ',
+        'berkshire': 'BRK-B',
+        'jpmorgan': 'JPM',
+        'visa': 'V',
+        'mastercard': 'MA',
+        'goldman': 'GS',
+        'morgan stanley': 'MS',
+        'boeing': 'BA',
+        'disney': 'DIS',
+        'coca cola': 'KO',
+        'pepsi': 'PEP',
+        'walmart': 'WMT',
+        'target': 'TGT',
+        'home depot': 'HD',
+        'lowes': 'LOW',
+        'starbucks': 'SBUX',
+        'mcdonalds': 'MCD',
+        'ford': 'F',
+        'general motors': 'GM',
+        'exxon': 'XOM',
+        'chevron': 'CVX',
+        'at&t': 'T',
+        'verizon': 'VZ'
+    };
+
+    // Intelligent search with fuzzy matching
+    function intelligentSearch(query) {
+        const normalizedQuery = query.toLowerCase().trim();
+        
+        // Direct symbol match
+        if (/^[A-Z]{1,5}(-[A-Z])?$/.test(query.toUpperCase())) {
+            return query.toUpperCase();
+        }
+        
+        // Exact company name match
+        if (companyMap[normalizedQuery]) {
+            return companyMap[normalizedQuery];
+        }
+        
+        // Fuzzy matching for partial company names
+        for (const [company, symbol] of Object.entries(companyMap)) {
+            if (company.includes(normalizedQuery) || normalizedQuery.includes(company)) {
+                return symbol;
+            }
+        }
+        
+        // Try first word matching
+        const firstWord = normalizedQuery.split(' ')[0];
+        for (const [company, symbol] of Object.entries(companyMap)) {
+            if (company.startsWith(firstWord) || firstWord.length > 3 && company.includes(firstWord)) {
+                return symbol;
+            }
+        }
+        
+        // Return original if no match found
+        return query.toUpperCase();
+    }
+
+    // Enhanced search functionality
     function searchStock(symbol) {
         console.log('TradeWise AI: Searching for', symbol);
         showLoading();
@@ -329,12 +467,15 @@
 
     function performSearch() {
         const input = document.getElementById('stock-search-input');
-        const query = input.value.trim().toUpperCase();
+        const query = input.value.trim();
         
         if (!query) return;
         
-        // Simple symbol search
-        searchStock(query);
+        // Use intelligent search to convert query to symbol
+        const symbol = intelligentSearch(query);
+        console.log(`TradeWise AI: Converting "${query}" → "${symbol}"`);
+        
+        searchStock(symbol);
         input.value = '';
     }
 
@@ -419,7 +560,59 @@
         }, 3000);
     }
 
-    console.log('TradeWise AI: ChatGPT-style search loaded');
+    // Search suggestions functionality
+    function showSearchSuggestions(query) {
+        const suggestionsDiv = document.getElementById('search-suggestions');
+        const normalizedQuery = query.toLowerCase().trim();
+        
+        if (!query || query.length < 2) {
+            suggestionsDiv.style.display = 'none';
+            return;
+        }
+        
+        // Find matching companies
+        const matches = [];
+        for (const [company, symbol] of Object.entries(companyMap)) {
+            if (company.includes(normalizedQuery) || normalizedQuery.includes(company)) {
+                matches.push({ company, symbol });
+            }
+        }
+        
+        if (matches.length === 0) {
+            suggestionsDiv.style.display = 'none';
+            return;
+        }
+        
+        // Display suggestions
+        suggestionsDiv.innerHTML = matches.slice(0, 5).map(match => `
+            <div class="suggestion-item" onclick="selectSuggestion('${match.symbol}', '${match.company}')">
+                <span class="suggestion-company">${match.company}</span>
+                <span class="suggestion-symbol">${match.symbol}</span>
+            </div>
+        `).join('');
+        
+        suggestionsDiv.style.display = 'block';
+    }
+
+    function selectSuggestion(symbol, company) {
+        const input = document.getElementById('stock-search-input');
+        input.value = company;
+        document.getElementById('search-suggestions').style.display = 'none';
+        searchStock(symbol);
+        input.value = '';
+    }
+
+    // Hide suggestions when clicking outside
+    document.addEventListener('click', function(event) {
+        const suggestionsDiv = document.getElementById('search-suggestions');
+        const searchInput = document.getElementById('stock-search-input');
+        
+        if (!suggestionsDiv.contains(event.target) && event.target !== searchInput) {
+            suggestionsDiv.style.display = 'none';
+        }
+    });
+
+    console.log('TradeWise AI: Intelligent ChatGPT-style search loaded');
     </script>
 </body>
 </html>
