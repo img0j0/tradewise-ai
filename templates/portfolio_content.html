@@ -21,12 +21,36 @@
             margin-bottom: 1rem;
             backdrop-filter: blur(10px);
         }
+        
+        .portfolio-card h1, .portfolio-card h2, .portfolio-card h3, .portfolio-card h4, .portfolio-card h5 {
+            color: #ffffff !important;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+            font-weight: 600;
+        }
+        
+        .portfolio-card p, .portfolio-card small, .portfolio-card .text-muted, .portfolio-card .metric-label {
+            color: rgba(255, 255, 255, 0.9) !important;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+            line-height: 1.6;
+            font-weight: 500;
+        }
+        
+        .portfolio-card .text-secondary {
+            color: rgba(255, 255, 255, 0.8) !important;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+        }
         .stock-row {
             background: rgba(255, 255, 255, 0.03);
             border-radius: 10px;
             padding: 1rem;
             margin-bottom: 0.5rem;
             border-left: 4px solid #00d4ff;
+        }
+        
+        .stock-row, .stock-row p, .stock-row span, .stock-row .small {
+            color: rgba(255, 255, 255, 0.95) !important;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+            font-weight: 500;
         }
         .gain {
             color: #00ff88;

@@ -1,5 +1,29 @@
 /* Text Readability Improvements */
 
+/* Portfolio-specific text improvements */
+.portfolio-card, .portfolio-card p, .portfolio-card small, .portfolio-card .text-muted {
+    color: rgba(255, 255, 255, 0.9) !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+    line-height: 1.6;
+}
+
+.portfolio-card .metric-label, .portfolio-card .small, .portfolio-card .text-secondary {
+    color: rgba(255, 255, 255, 0.8) !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+    font-weight: 500;
+}
+
+.portfolio-card h1, .portfolio-card h2, .portfolio-card h3, .portfolio-card h4, .portfolio-card h5 {
+    color: #ffffff !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+    font-weight: 600;
+}
+
+.stock-row, .stock-row p, .stock-row span {
+    color: rgba(255, 255, 255, 0.95) !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+}
+
 /* Fix search input visibility */
 .chatgpt-search-input {
     color: #ffffff !important;
@@ -33,6 +57,28 @@
     color: rgba(255, 255, 255, 0.9) !important;
     text-shadow: 0 1px 1px rgba(0, 0, 0, 0.6);
     line-height: 1.6;
+}
+
+/* Enhanced readability for all content areas */
+.container-fluid p, .container-fluid small, .container-fluid .text-muted, .container-fluid .metric-description {
+    color: rgba(255, 255, 255, 0.9) !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+    line-height: 1.6;
+    font-weight: 500;
+}
+
+.container-fluid .text-secondary {
+    color: rgba(255, 255, 255, 0.8) !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+    font-weight: 500;
+}
+
+/* Improve alert and analytics content readability */
+.alert-content p, .analytics-content p, .portfolio-content p {
+    color: rgba(255, 255, 255, 0.95) !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+    line-height: 1.7;
+    font-weight: 500;
 }
 
 /* Improve button text contrast */
