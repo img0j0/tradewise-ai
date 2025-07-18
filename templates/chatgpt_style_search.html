@@ -200,9 +200,19 @@
         margin-bottom: 0.5rem;
     }
 
-    .ai-recommendation.buy { background: var(--green); color: white; }
-    .ai-recommendation.sell { background: var(--red); color: white; }
-    .ai-recommendation.hold { background: var(--yellow); color: black; }
+    .ai-recommendation.buy, .ai-recommendation.strong-buy { 
+        background: var(--green); 
+        color: white !important; 
+    }
+    .ai-recommendation.sell, .ai-recommendation.strong-sell { 
+        background: var(--red); 
+        color: white !important; 
+    }
+    .ai-recommendation.hold { 
+        background: var(--yellow); 
+        color: #1a1a1a !important; 
+        font-weight: 600;
+    }
 
     /* Bottom Input Area */
     .input-area {
