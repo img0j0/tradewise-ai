@@ -477,6 +477,209 @@ function addToWatchlist(symbol) {
     alert('Watchlist feature coming soon!');
 }
 
+// Global function for enhanced suggestion selection
+function selectEnhancedSuggestion(suggestion) {
+    const searchInput = document.getElementById('stock-search-input');
+    searchInput.value = suggestion.symbol;
+    hideSuggestions();
+    searchStockAI();
+}
+
+// Global function for theme search
+function searchTheme(themeName) {
+    console.log('Searching theme:', themeName);
+    // Navigate to theme analysis page
+    showThemeAnalysis(themeName);
+}
+
+// Show theme analysis page
+async function showThemeAnalysis(themeName) {
+    const resultsContainer = document.getElementById('ai-analysis-results');
+    
+    // Show loading state
+    resultsContainer.innerHTML = `
+        <div class="col-12">
+            <div class="card bg-dark border-0 shadow">
+                <div class="card-body text-center py-5">
+                    <div class="loading-spinner"></div>
+                    <h3 class="text-white mt-3 mb-2">Analyzing ${themeName} Theme...</h3>
+                    <p class="text-muted">Our AI is gathering market data and generating insights</p>
+                </div>
+            </div>
+        </div>
+    `;
+    resultsContainer.style.display = 'block';
+    
+    try {
+        // Fetch theme analysis
+        const response = await fetch(`/api/search-theme/${encodeURIComponent(themeName)}`, {
+            credentials: 'include'
+        });
+        
+        if (!response.ok) {
+            throw new Error('Failed to fetch theme analysis');
+        }
+        
+        const themeData = await response.json();
+        displayThemeAnalysis(themeData);
+        
+    } catch (error) {
+        console.error('Error fetching theme analysis:', error);
+        showSearchError('Failed to load theme analysis. Please try again.');
+    }
+}
+
+// Display theme analysis results
+function displayThemeAnalysis(themeData) {
+    const resultsContainer = document.getElementById('ai-analysis-results');
+    
+    const topStocks = themeData.top_stocks || [];
+    const themeInsights = themeData.insights || {};
+    const performance = themeData.performance || {};
+    
+    const analysisHTML = `
+        <div class="row">
+            <div class="col-12">
+                <div class="card bg-dark border-0 shadow-lg">
+                    <div class="card-body">
+                        <div class="theme-header mb-4">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h2 class="text-white mb-2">
+                                        <i class="fas ${themeData.icon || 'fa-chart-line'} me-2"></i>
+                                        ${themeData.name} Investment Theme
+                                    </h2>
+                                    <p class="text-muted mb-0">${themeData.description || 'Investment theme analysis'}</p>
+                                </div>
+                                <div class="text-end">
+                                    <div class="theme-performance">
+                                        <div class="performance-metric">
+                                            <span class="text-white">30-Day Return</span>
+                                            <h4 class="mb-0 ${performance.return_30d >= 0 ? 'text-success' : 'text-danger'}">
+                                                ${performance.return_30d >= 0 ? '+' : ''}${performance.return_30d?.toFixed(2) || '0.00'}%
+                                            </h4>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-4">
+                                <div class="metric-card">
+                                    <h6 class="text-white">Market Cap</h6>
+                                    <p class="text-success fs-5 mb-0">${formatMarketCap(themeData.total_market_cap)}</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="metric-card">
+                                    <h6 class="text-white">Stocks in Theme</h6>
+                                    <p class="text-info fs-5 mb-0">${topStocks.length || 0}</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="metric-card">
+                                    <h6 class="text-white">AI Confidence</h6>
+                                    <p class="text-warning fs-5 mb-0">${themeInsights.confidence || 75}%</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="theme-insights mb-4">
+                            <h5 class="text-white mb-3">
+                                <i class="fas fa-brain me-2"></i>AI Theme Analysis
+                            </h5>
+                            <p class="text-light">${themeInsights.analysis || 'Comprehensive analysis of this investment theme.'}</p>
+                        </div>
+                        
+                        <div class="top-stocks-section">
+                            <h5 class="text-white mb-3">
+                                <i class="fas fa-star me-2"></i>Top Stocks in Theme
+                            </h5>
+                            <div class="row">
+                                ${topStocks.map(stock => `
+                                    <div class="col-md-6 mb-3">
+                                        <div class="stock-card">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <h6 class="text-white mb-1">${stock.symbol}</h6>
+                                                    <p class="text-muted mb-0">${stock.name}</p>
+                                                </div>
+                                                <div class="text-end">
+                                                    <div class="text-white">$${stock.current_price?.toFixed(2) || 'N/A'}</div>
+                                                    <div class="text-${stock.change_percent >= 0 ? 'success' : 'danger'}">
+                                                        ${stock.change_percent >= 0 ? '+' : ''}${stock.change_percent?.toFixed(2) || '0.00'}%
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="mt-2">
+                                                <button class="btn btn-sm btn-outline-primary me-2" onclick="searchStockSymbol('${stock.symbol}')">
+                                                    <i class="fas fa-search"></i> Analyze
+                                                </button>
+                                                <button class="btn btn-sm btn-success" onclick="showBuyModal('${stock.symbol}', ${stock.current_price || 0})">
+                                                    <i class="fas fa-shopping-cart"></i> Buy
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                        
+                        <div class="theme-actions mt-4">
+                            <button class="btn btn-outline-secondary" onclick="showNewSearch()">
+                                <i class="fas fa-search me-2"></i>Search Another Theme
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    resultsContainer.innerHTML = analysisHTML;
+    resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// Search stock by symbol
+function searchStockSymbol(symbol) {
+    const searchInput = document.getElementById('stock-search-input');
+    searchInput.value = symbol;
+    searchStockAI();
+}
+
+// Initialize enhanced autocomplete
+const aiAutocomplete = new AIAutocompleteEngine();
+
+// Utility function to format market cap
+function formatMarketCap(marketCap) {
+    if (!marketCap) return 'N/A';
+    
+    if (marketCap >= 1000000000000) {
+        return `$${(marketCap / 1000000000000).toFixed(1)}T`;
+    } else if (marketCap >= 1000000000) {
+        return `$${(marketCap / 1000000000).toFixed(1)}B`;
+    } else if (marketCap >= 1000000) {
+        return `$${(marketCap / 1000000).toFixed(1)}M`;
+    } else {
+        return `$${marketCap.toFixed(0)}`;
+    }
+}
+
+// Show new search interface
+function showNewSearch() {
+    const resultsContainer = document.getElementById('ai-analysis-results');
+    resultsContainer.style.display = 'none';
+    
+    // Clear search input and focus
+    const searchInput = document.getElementById('stock-search-input');
+    searchInput.value = '';
+    searchInput.focus();
+    
+    // Show popular suggestions
+    aiAutocomplete.showPopularSuggestions();
+}
+
 // Generate detailed AI insights
 function generateDetailedInsights(stockData, aiAnalysis) {
     const insights = [];

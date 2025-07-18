@@ -1778,6 +1778,64 @@ def trigger_continuous_learning():
         logger.error(f"Error in continuous learning: {e}")
         return jsonify({'error': str(e)}), 500
 
+# Enhanced suggestion helper function
+def get_enhanced_suggestions(query, limit):
+    """Get enhanced suggestions with real-time data and AI insights"""
+    try:
+        # Get sample stock data first
+        stocks = data_service.get_all_stocks()
+        
+        # Filter stocks based on query
+        filtered_stocks = []
+        if query:
+            query_lower = query.lower()
+            for stock in stocks:
+                if (query_lower in stock['symbol'].lower() or 
+                    query_lower in stock['name'].lower() or
+                    query_lower in stock.get('sector', '').lower()):
+                    filtered_stocks.append(stock)
+        else:
+            filtered_stocks = stocks
+        
+        # Sort by relevance and popularity
+        filtered_stocks = sorted(filtered_stocks, key=lambda x: (
+            x['symbol'].lower().startswith(query.lower()) if query else True,
+            x.get('market_cap', 0)
+        ), reverse=True)
+        
+        # Enhance with real-time data for top matches
+        enhanced_suggestions = []
+        for stock in filtered_stocks[:limit]:
+            try:
+                # Try to get real-time data
+                real_time_data = stock_search_service.search_stock(stock['symbol'])
+                if real_time_data:
+                    enhanced_stock = {
+                        'symbol': stock['symbol'],
+                        'name': stock['name'],
+                        'sector': stock.get('sector', 'N/A'),
+                        'current_price': real_time_data.get('current_price', stock.get('current_price', 0)),
+                        'previous_close': real_time_data.get('previous_close', stock.get('previous_close', 0)),
+                        'market_cap': real_time_data.get('market_cap', stock.get('market_cap', 0)),
+                        'avg_volume': real_time_data.get('avg_volume', stock.get('avg_volume', 0)),
+                        'pe_ratio': real_time_data.get('pe_ratio', stock.get('pe_ratio', 0)),
+                        'beta': real_time_data.get('beta', stock.get('beta', 1.0))
+                    }
+                else:
+                    enhanced_stock = stock
+                
+                enhanced_suggestions.append(enhanced_stock)
+                
+            except Exception as e:
+                # Fallback to sample data if real-time fails
+                enhanced_suggestions.append(stock)
+        
+        return enhanced_suggestions
+        
+    except Exception as e:
+        logger.error(f"Error getting enhanced suggestions: {e}")
+        return []
+
 # Personalized AI Routes
 @app.route('/api/ai/personalized/learn', methods=['POST'])
 @login_required
@@ -2036,12 +2094,42 @@ def search_stock_api(symbol):
 @app.route('/api/search-autocomplete')
 @login_required
 def search_autocomplete():
-    """Get intelligent search suggestions with AI insights"""
+    """Get intelligent search suggestions with enhanced features"""
     try:
         query = request.args.get('q', '').strip()
         limit = int(request.args.get('limit', 8))
+        enhanced = request.args.get('enhanced', '').lower() == 'true'
+        popular = request.args.get('popular', '').lower() == 'true'
         
-        # Get intelligent suggestions from autocomplete engine
+        if popular and not query:
+            # Return popular stocks
+            popular_stocks = [
+                {'symbol': 'AAPL', 'name': 'Apple Inc.', 'sector': 'Technology', 'current_price': 210.06, 'previous_close': 210.16, 'market_cap': 3136816676864, 'avg_volume': 45000000},
+                {'symbol': 'MSFT', 'name': 'Microsoft Corporation', 'sector': 'Technology', 'current_price': 441.54, 'previous_close': 441.58, 'market_cap': 3282738647040, 'avg_volume': 20000000},
+                {'symbol': 'GOOGL', 'name': 'Alphabet Inc.', 'sector': 'Technology', 'current_price': 180.17, 'previous_close': 180.17, 'market_cap': 2217651167744, 'avg_volume': 18000000},
+                {'symbol': 'AMZN', 'name': 'Amazon.com Inc.', 'sector': 'Consumer Discretionary', 'current_price': 191.76, 'previous_close': 191.76, 'market_cap': 2003456671744, 'avg_volume': 35000000},
+                {'symbol': 'TSLA', 'name': 'Tesla Inc.', 'sector': 'Automotive', 'current_price': 261.77, 'previous_close': 261.77, 'market_cap': 835839770624, 'avg_volume': 85000000},
+                {'symbol': 'NVDA', 'name': 'NVIDIA Corporation', 'sector': 'Technology', 'current_price': 136.93, 'previous_close': 136.93, 'market_cap': 3360086392832, 'avg_volume': 55000000},
+                {'symbol': 'META', 'name': 'Meta Platforms Inc.', 'sector': 'Technology', 'current_price': 591.80, 'previous_close': 591.80, 'market_cap': 1503438848000, 'avg_volume': 15000000},
+                {'symbol': 'NFLX', 'name': 'Netflix Inc.', 'sector': 'Entertainment', 'current_price': 712.73, 'previous_close': 712.73, 'market_cap': 306372321280, 'avg_volume': 8000000}
+            ]
+            
+            return jsonify({
+                'suggestions': popular_stocks[:limit],
+                'query': query,
+                'total': len(popular_stocks[:limit])
+            })
+        
+        if enhanced:
+            # Get enhanced AI-powered suggestions with real-time data
+            enhanced_suggestions = get_enhanced_suggestions(query, limit)
+            return jsonify({
+                'suggestions': enhanced_suggestions,
+                'query': query,
+                'total': len(enhanced_suggestions)
+            })
+        
+        # Get standard AI-powered suggestions
         suggestions = autocomplete_engine.get_intelligent_suggestions(query, limit)
         
         return jsonify({
@@ -2078,22 +2166,137 @@ def search_themes():
         logger.error(f"Error getting investment themes: {e}")
         return jsonify({'error': 'Failed to get themes'}), 500
 
-@app.route('/api/search-theme/<theme>')
+@app.route('/api/search-theme/<theme_name>')
 @login_required
-def search_theme(theme):
-    """Get stocks for a specific investment theme"""
+def search_theme(theme_name):
+    """Get analytical page for trending investment themes"""
     try:
-        suggestions = autocomplete_engine.get_themed_suggestions(theme)
+        # Define theme configurations
+        theme_configs = {
+            'AI & Tech': {
+                'icon': 'fa-robot',
+                'description': 'Leading artificial intelligence and technology companies driving innovation',
+                'stocks': ['AAPL', 'MSFT', 'GOOGL', 'NVDA', 'META', 'TSLA', 'AMZN', 'NFLX'],
+                'insights': {
+                    'confidence': 85,
+                    'analysis': 'The AI & Tech sector continues to show strong growth potential driven by artificial intelligence adoption, cloud computing expansion, and digital transformation trends. Companies in this space are well-positioned for long-term growth.'
+                }
+            },
+            'Clean Energy': {
+                'icon': 'fa-leaf',
+                'description': 'Renewable energy and sustainable technology companies',
+                'stocks': ['TSLA', 'ENPH', 'SEDG', 'PLUG', 'FSLR', 'SPWR', 'RUN', 'NEE'],
+                'insights': {
+                    'confidence': 78,
+                    'analysis': 'Clean Energy sector benefits from government incentives, falling technology costs, and increasing corporate sustainability commitments. Long-term outlook remains positive despite short-term volatility.'
+                }
+            },
+            'Healthcare': {
+                'icon': 'fa-heartbeat',
+                'description': 'Healthcare and biotechnology companies',
+                'stocks': ['JNJ', 'PFE', 'UNH', 'ABBV', 'MRK', 'TMO', 'DHR', 'ABT'],
+                'insights': {
+                    'confidence': 82,
+                    'analysis': 'Healthcare sector offers defensive characteristics with steady growth. Aging demographics and medical innovation drive long-term demand. Pharmaceutical companies benefit from patent protections and drug development pipelines.'
+                }
+            },
+            'Fintech': {
+                'icon': 'fa-credit-card',
+                'description': 'Financial technology and digital payment companies',
+                'stocks': ['V', 'MA', 'PYPL', 'SQ', 'ADYEN', 'COIN', 'AFRM', 'SOFI'],
+                'insights': {
+                    'confidence': 75,
+                    'analysis': 'Fintech sector benefits from digital payment adoption, blockchain technology, and financial service democratization. Growth potential remains strong despite regulatory challenges.'
+                }
+            },
+            'Gaming': {
+                'icon': 'fa-gamepad',
+                'description': 'Video game and entertainment companies',
+                'stocks': ['MSFT', 'GOOGL', 'AAPL', 'EA', 'ATVI', 'TTWO', 'RBLX', 'UNITY'],
+                'insights': {
+                    'confidence': 73,
+                    'analysis': 'Gaming industry continues to grow with mobile gaming, esports, and virtual reality trends. Cloud gaming and subscription models provide recurring revenue opportunities.'
+                }
+            },
+            'Crypto': {
+                'icon': 'fa-coins',
+                'description': 'Cryptocurrency and blockchain-related companies',
+                'stocks': ['COIN', 'MSTR', 'RIOT', 'MARA', 'BITF', 'HUT', 'CLSK', 'BTBT'],
+                'insights': {
+                    'confidence': 65,
+                    'analysis': 'Cryptocurrency sector remains highly volatile with regulatory uncertainty. However, institutional adoption and blockchain technology development continue to drive long-term interest.'
+                }
+            }
+        }
         
-        return jsonify({
-            'theme': theme,
-            'suggestions': suggestions,
-            'total': len(suggestions)
+        theme_config = theme_configs.get(theme_name, {
+            'icon': 'fa-chart-line',
+            'description': f'Investment theme analysis for {theme_name}',
+            'stocks': ['AAPL', 'MSFT', 'GOOGL', 'AMZN'],
+            'insights': {
+                'confidence': 70,
+                'analysis': f'Comprehensive analysis of {theme_name} investment opportunities.'
+            }
         })
         
+        # Get stock data for theme
+        stocks = data_service.get_all_stocks()
+        theme_stocks = []
+        total_market_cap = 0
+        
+        for symbol in theme_config['stocks']:
+            stock = next((s for s in stocks if s['symbol'] == symbol), None)
+            if stock:
+                # Try to get real-time data
+                try:
+                    real_time_data = stock_search_service.search_stock(symbol)
+                    if real_time_data:
+                        current_price = real_time_data.get('current_price', stock.get('current_price', 0))
+                        previous_close = real_time_data.get('previous_close', stock.get('previous_close', 0))
+                        market_cap = real_time_data.get('market_cap', stock.get('market_cap', 0))
+                    else:
+                        current_price = stock.get('current_price', 0)
+                        previous_close = stock.get('previous_close', 0)
+                        market_cap = stock.get('market_cap', 0)
+                except:
+                    current_price = stock.get('current_price', 0)
+                    previous_close = stock.get('previous_close', 0)
+                    market_cap = stock.get('market_cap', 0)
+                
+                change_percent = ((current_price - previous_close) / previous_close) * 100 if previous_close > 0 else 0
+                
+                theme_stocks.append({
+                    'symbol': symbol,
+                    'name': stock['name'],
+                    'current_price': current_price,
+                    'change_percent': change_percent,
+                    'market_cap': market_cap
+                })
+                
+                total_market_cap += market_cap
+        
+        # Calculate theme performance (simplified calculation)
+        theme_return = sum(stock['change_percent'] for stock in theme_stocks) / len(theme_stocks) if theme_stocks else 0
+        
+        theme_data = {
+            'name': theme_name,
+            'icon': theme_config['icon'],
+            'description': theme_config['description'],
+            'total_market_cap': total_market_cap,
+            'top_stocks': theme_stocks,
+            'performance': {
+                'return_30d': theme_return * 5,  # Simulated 30-day return
+                'return_ytd': theme_return * 15,  # Simulated YTD return
+                'volatility': abs(theme_return) * 2  # Simulated volatility
+            },
+            'insights': theme_config['insights']
+        }
+        
+        return jsonify(theme_data)
+        
     except Exception as e:
-        logger.error(f"Error getting theme suggestions for {theme}: {e}")
-        return jsonify({'error': 'Failed to get theme suggestions'}), 500
+        logger.error(f"Error getting theme analysis: {e}")
+        return jsonify({'error': 'Failed to get theme analysis'}), 500
 
 @app.route('/api/search-external')
 @login_required

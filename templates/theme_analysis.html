@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Investment Theme Analysis - {{ theme_name }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/ai_autocomplete.css') }}">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('dashboard') }}">
+                <i class="fas fa-chart-line"></i> Trading Analytics
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('dashboard') }}">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="theme-header">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h1 class="mb-3">
+                                <i class="fas {{ theme_icon }}"></i> {{ theme_name }}
+                            </h1>
+                            <p class="lead mb-0">{{ theme_description }}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="theme-performance">
+                                <div class="performance-metric">
+                                    <h5 class="mb-0">{{ "{:.1f}".format(theme_return_30d) }}%</h5>
+                                    <span>30-Day Return</span>
+                                </div>
+                                <div class="performance-metric">
+                                    <h5 class="mb-0">{{ "{:.1f}".format(theme_return_ytd) }}%</h5>
+                                    <span>YTD Return</span>
+                                </div>
+                                <div class="performance-metric">
+                                    <h5 class="mb-0">{{ "{:.1f}".format(theme_volatility) }}%</h5>
+                                    <span>Volatility</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-chart-bar"></i> Top Stocks in {{ theme_name }}
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    {% for stock in theme_stocks %}
+                                    <div class="col-md-6 mb-3">
+                                        <div class="stock-card">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <h6 class="mb-1">{{ stock.symbol }}</h6>
+                                                    <small class="text-muted">{{ stock.name }}</small>
+                                                </div>
+                                                <div class="text-end">
+                                                    <div class="price-info">
+                                                        <span class="current-price">${{ "{:.2f}".format(stock.current_price) }}</span>
+                                                        <div class="price-change {% if stock.change_percent > 0 %}text-success{% else %}text-danger{% endif %}">
+                                                            {% if stock.change_percent > 0 %}
+                                                            <i class="fas fa-arrow-up"></i>
+                                                            {% else %}
+                                                            <i class="fas fa-arrow-down"></i>
+                                                            {% endif %}
+                                                            {{ "{:.2f}".format(stock.change_percent) }}%
+                                                        </div>
+                                                    </div>
+                                                    <div class="market-cap">
+                                                        Market Cap: ${{ "{:.1f}".format(stock.market_cap / 1e9) }}B
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-brain"></i> AI Insights
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span>AI Confidence</span>
+                                        <span class="badge bg-primary">{{ theme_confidence }}%</span>
+                                    </div>
+                                    <div class="progress mb-3">
+                                        <div class="progress-bar" role="progressbar" style="width: {{ theme_confidence }}%"></div>
+                                    </div>
+                                </div>
+                                <p class="text-muted">{{ theme_analysis }}</p>
+                            </div>
+                        </div>
+
+                        <div class="card mt-3">
+                            <div class="card-header">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-info-circle"></i> Key Metrics
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-12 mb-3">
+                                        <div class="metric-card">
+                                            <h6>Total Market Cap</h6>
+                                            <h4 class="mb-0">${{ "{:.1f}".format(total_market_cap / 1e12) }}T</h4>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 mb-3">
+                                        <div class="metric-card">
+                                            <h6>Average P/E Ratio</h6>
+                                            <h4 class="mb-0">{{ "{:.1f}".format(avg_pe_ratio) }}</h4>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="metric-card">
+                                            <h6>Number of Stocks</h6>
+                                            <h4 class="mb-0">{{ theme_stocks|length }}</h4>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-arrows-alt"></i> Actions
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <button class="btn btn-primary btn-lg w-100 mb-3" onclick="createThemePortfolio()">
+                                            <i class="fas fa-plus"></i> Create Theme Portfolio
+                                        </button>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <button class="btn btn-outline-primary btn-lg w-100 mb-3" onclick="setThemeAlerts()">
+                                            <i class="fas fa-bell"></i> Set Theme Alerts
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <button class="btn btn-success btn-lg w-100" onclick="backToSearch()">
+                                            <i class="fas fa-search"></i> Back to Stock Search
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function createThemePortfolio() {
+            alert('Theme portfolio creation feature coming soon!');
+        }
+
+        function setThemeAlerts() {
+            alert('Theme alerts feature coming soon!');
+        }
+
+        function backToSearch() {
+            window.location.href = '{{ url_for("dashboard") }}#stocks';
+        }
+    </script>
+</body>
+</html>
