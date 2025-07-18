@@ -500,17 +500,52 @@ class SmartSearchEngine {
     handleVoiceInput(transcript) {
         const searchInput = document.getElementById('main-search-input');
         if (searchInput) {
-            searchInput.value = transcript;
-            this.addToSearchHistory(transcript);
+            // Convert company names to stock symbols
+            const mappedSymbol = this.mapCompanyNameToSymbol(transcript.toLowerCase());
+            const searchTerm = mappedSymbol || transcript;
             
-            // Show what was heard
-            this.showVoiceResult(transcript);
+            searchInput.value = searchTerm;
+            this.addToSearchHistory(searchTerm);
+            
+            // Show what was heard with mapping if applicable
+            const displayText = mappedSymbol ? 
+                `"${transcript}" → ${mappedSymbol}` : 
+                `"${transcript}"`;
+            this.showVoiceResult(displayText);
             
             // Execute search after a short delay
             setTimeout(() => {
                 this.executeSmartSearch();
             }, 1000);
         }
+    }
+    
+    mapCompanyNameToSymbol(companyName) {
+        const companyMap = {
+            'nvidia': 'NVDA',
+            'apple': 'AAPL',
+            'tesla': 'TSLA',
+            'microsoft': 'MSFT',
+            'google': 'GOOGL',
+            'alphabet': 'GOOGL',
+            'amazon': 'AMZN',
+            'meta': 'META',
+            'facebook': 'META',
+            'netflix': 'NFLX',
+            'amd': 'AMD',
+            'intel': 'INTC',
+            'boeing': 'BA',
+            'walmart': 'WMT',
+            'disney': 'DIS',
+            'paypal': 'PYPL',
+            'uber': 'UBER',
+            'spotify': 'SPOT',
+            'zoom': 'ZM',
+            'salesforce': 'CRM',
+            'adobe': 'ADBE'
+        };
+        
+        return companyMap[companyName] || null;
     }
     
     showVoiceResult(transcript) {

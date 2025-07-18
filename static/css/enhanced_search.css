@@ -448,6 +448,22 @@
 .search-controls .voice-search-btn,
 .search-controls .search-history-btn {
     display: flex !important;
+    background: unset !important;
+    border: unset !important;
+}
+
+/* Force override any bootstrap or other conflicting styles */
+.search-controls-buttons .voice-search-btn,
+.search-controls-buttons .search-history-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    color: white !important;
+    border: none !important;
+    width: 80px !important;
+    height: 80px !important;
+}
+
+.search-controls-buttons .search-history-btn {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%) !important;
 }
 
 .search-controls-buttons {
