@@ -83,12 +83,12 @@ def dashboard():
         return redirect(url_for('login'))
     return render_template('clean_dashboard.html')
 
-@app.route('/simple_stocks')
-def simple_stocks():
-    """Clean tools page"""
+@app.route('/analytics')
+def analytics():
+    """Clean analytics page"""
     if not current_user.is_authenticated:
         return redirect(url_for('login'))
-    return render_template('clean_tools.html')
+    return render_template('clean_analytics.html')
 
 @app.route('/portfolio')
 def portfolio():
@@ -112,14 +112,14 @@ def dashboard_content():
         return redirect(url_for('login'))
     return render_template('index.html')
 
-@app.route('/simple_stocks_content')
-def simple_stocks_content():
-    """Simple stocks content for iframe"""
+@app.route('/analytics_content')
+def analytics_content():
+    """Analytics content for iframe"""
     if not current_user.is_authenticated:
         return redirect(url_for('login'))
-    # Check if simple_stocks.html exists, otherwise use index.html
+    # Show advanced analytics and market intelligence
     try:
-        return render_template('simple_stocks.html')
+        return render_template('analytics_content.html')
     except:
         return render_template('index.html')
 
@@ -1608,7 +1608,7 @@ def logout():
 
 @app.route('/api/analytics', methods=['POST'])
 @login_required
-def analytics():
+def analytics_api():
     """Receive analytics data from frontend"""
     try:
         data = request.get_json()
