@@ -663,8 +663,20 @@ window.aiAutocomplete = aiAutocomplete;
 // Global function for theme buttons
 function searchTheme(themeName) {
     console.log('Searching theme:', themeName);
-    // Open theme analysis page
-    window.open(`/theme-analysis/${encodeURIComponent(themeName)}`, '_blank');
+    // Use the existing theme analysis function from ai_stock_search.js
+    if (typeof showThemeAnalysis === 'function') {
+        showThemeAnalysis(themeName);
+    } else {
+        // Fallback: navigate to theme analysis in same page
+        window.location.hash = 'stocks';
+        showSection('stocks');
+        // Delay to ensure section is loaded
+        setTimeout(() => {
+            if (typeof showThemeAnalysis === 'function') {
+                showThemeAnalysis(themeName);
+            }
+        }, 100);
+    }
 }
 
 // Global function for popular stock buttons
