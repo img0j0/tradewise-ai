@@ -37,7 +37,11 @@ function initializeGoogleSearch() {
     searchInput.addEventListener('focus', handleSearchFocus);
     searchInput.addEventListener('blur', handleSearchBlur);
     
-    searchBtn.addEventListener('click', searchStockAI);
+    searchBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        console.log('Search button clicked');
+        searchStockAI();
+    });
     
     // Click outside to close suggestions
     document.addEventListener('click', function(e) {
@@ -194,13 +198,14 @@ function quickSearch(symbol) {
     hideSuggestions();
     searchStockAI();
 }
-    searchStockAI();
-}
 
 // Main AI stock search function
 async function searchStockAI() {
+    console.log('searchStockAI called');
     const searchInput = document.getElementById('stock-search-input');
     const symbol = searchInput.value.trim().toUpperCase();
+    
+    console.log('Search symbol:', symbol);
     
     if (!symbol) {
         showSearchError('Please enter a stock symbol or company name');
@@ -212,16 +217,22 @@ async function searchStockAI() {
     hideSuggestions();
     
     try {
+        console.log('Fetching stock data for:', symbol);
         // Get stock data
         const stockData = await searchStockData(symbol);
+        console.log('Stock data received:', stockData);
+        
         if (!stockData) {
             throw new Error('Stock not found');
         }
 
+        console.log('Getting AI analysis for:', symbol);
         // Get AI analysis
         const aiAnalysis = await getAIAnalysis(symbol);
+        console.log('AI analysis received:', aiAnalysis);
         
         // Display results
+        console.log('Displaying results...');
         displayStockAnalysis(stockData, aiAnalysis);
         
     } catch (error) {
