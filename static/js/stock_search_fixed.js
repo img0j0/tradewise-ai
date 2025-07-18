@@ -28,6 +28,26 @@ const companySymbols = {
 // Debug: Log company symbols on load
 console.log('TradeWise AI: Company symbols loaded:', companySymbols);
 
+// Get recommendation styles for color-coded badges
+function getRecommendationStyles(recommendation) {
+    const rec = recommendation.toLowerCase();
+    
+    switch(rec) {
+        case 'strong buy':
+            return { backgroundColor: '#059669', color: '#ffffff' };
+        case 'buy':
+            return { backgroundColor: '#10b981', color: '#ffffff' };
+        case 'hold':
+            return { backgroundColor: '#fbbf24', color: '#000000' };
+        case 'sell':
+            return { backgroundColor: '#ef4444', color: '#ffffff' };
+        case 'strong sell':
+            return { backgroundColor: '#dc2626', color: '#ffffff' };
+        default:
+            return { backgroundColor: '#6b7280', color: '#ffffff' };
+    }
+}
+
 // Search by company name function
 function searchStockByName(companyName) {
     console.log('TradeWise AI: Stock chip clicked for company:', companyName);
