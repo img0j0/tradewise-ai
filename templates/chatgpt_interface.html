@@ -4,6 +4,7 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/enhanced_search.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/mobile_search_optimization.css') }}">
 {% endblock %}
 
 {% block content %}
@@ -74,18 +75,33 @@
 </div>
 
 <style>
-/* Clean Search Interface */
+/* Clean Search Interface - Mobile First */
 .main-search-interface {
-    min-height: 85vh;
+    min-height: calc(100vh - 2rem);
     display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
     align-items: center;
-    justify-content: center;
-    padding: 2rem 0;
+    padding: 1rem 0;
+}
+
+@media (min-width: 768px) {
+    .main-search-interface {
+        justify-content: center;
+        padding: 2rem 0;
+    }
 }
 
 .search-welcome {
     text-align: center;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
+    padding-top: 1rem;
+}
+
+@media (min-width: 768px) {
+    .search-welcome {
+        margin-bottom: 2rem;
+    }
 }
 
 /* Clean Navigation */

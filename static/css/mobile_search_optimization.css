@@ -1,0 +1,403 @@
+/* Mobile-First Search Interface Optimization for App Store */
+
+/* iOS Safe Area and Viewport Support */
+:root {
+    --safe-area-inset-top: env(safe-area-inset-top);
+    --safe-area-inset-bottom: env(safe-area-inset-bottom);
+    --safe-area-inset-left: env(safe-area-inset-left);
+    --safe-area-inset-right: env(safe-area-inset-right);
+    
+    /* Dynamic viewport height for mobile browsers */
+    --vh: 1vh;
+    
+    /* App Store optimized colors */
+    --primary-blue: #007AFF;
+    --secondary-blue: #5AC8FA;
+    --green: #34C759;
+    --orange: #FF9500;
+    --red: #FF3B30;
+    --gray: #8E8E93;
+    --light-gray: #F2F2F7;
+    --background: #000000;
+    --card-bg: rgba(255, 255, 255, 0.05);
+}
+
+/* App Store Ready Mobile Interface */
+.main-search-interface {
+    min-height: calc(100vh - var(--safe-area-inset-top) - var(--safe-area-inset-bottom));
+    padding: calc(1rem + var(--safe-area-inset-top)) calc(1rem + var(--safe-area-inset-left)) calc(1rem + var(--safe-area-inset-bottom)) calc(1rem + var(--safe-area-inset-right));
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+}
+
+.container {
+    width: 100%;
+    max-width: 100%;
+    padding: 0 1rem;
+    margin: 0 auto;
+}
+
+/* Search Welcome Section */
+.search-welcome {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-top: 1rem;
+}
+
+.search-title {
+    font-size: clamp(1.5rem, 4vw, 2rem);
+    font-weight: 700;
+    color: white;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(135deg, #00d4ff, #00ff88);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Advanced Search Container */
+.advanced-search-container {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Main Search Box - App Store Style */
+.main-search-wrapper {
+    margin-bottom: 1.5rem;
+}
+
+.chatgpt-search-box {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    min-height: 56px;
+}
+
+.chatgpt-search-box:focus-within {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.2);
+}
+
+.search-icon-wrapper {
+    margin-right: 0.75rem;
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.search-icon {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 18px;
+}
+
+.chatgpt-search-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: white;
+    font-size: 16px;
+    line-height: 1.5;
+    padding: 0.5rem 0;
+    -webkit-appearance: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.chatgpt-search-input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+    font-weight: 400;
+}
+
+.search-shortcut {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.6);
+    margin-right: 0.5rem;
+    font-family: monospace;
+    display: none; /* Hide on mobile */
+}
+
+.chatgpt-search-btn {
+    background: var(--primary-blue);
+    border: none;
+    border-radius: 10px;
+    color: white;
+    padding: 0.5rem 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
+}
+
+.chatgpt-search-btn:hover {
+    background: #005cbf;
+    transform: scale(1.05);
+}
+
+.chatgpt-search-btn:active {
+    transform: scale(0.95);
+}
+
+/* Search Controls */
+.search-controls {
+    margin-bottom: 1.5rem;
+}
+
+.controls-label {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.9rem;
+    margin-bottom: 0.75rem;
+    text-align: center;
+    font-weight: 500;
+}
+
+/* Popular Stocks - Mobile Optimized */
+.popular-stocks {
+    margin-bottom: 2rem;
+}
+
+.stock-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+    align-items: center;
+}
+
+.stock-chip {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 20px;
+    padding: 0.5rem 1rem;
+    color: white;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.stock-chip:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: var(--primary-blue);
+    transform: translateY(-2px);
+}
+
+.stock-chip:active {
+    transform: translateY(0) scale(0.95);
+}
+
+/* Search Results Container */
+.main-search-results {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Search Suggestions */
+.search-suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    z-index: 1000;
+    max-height: 300px;
+    overflow-y: auto;
+    margin-top: 0.5rem;
+}
+
+.search-suggestions.hidden {
+    display: none;
+}
+
+.suggestion-item {
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.2s ease;
+    color: rgba(255, 255, 255, 0.9);
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+}
+
+.suggestion-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.suggestion-item:last-child {
+    border-bottom: none;
+}
+
+/* Loading States */
+.loading-state {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.loading-spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-top: 2px solid var(--primary-blue);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-right: 0.5rem;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Tablet Optimizations */
+@media (min-width: 481px) and (max-width: 1024px) {
+    .container {
+        padding: 0 2rem;
+    }
+    
+    .search-shortcut {
+        display: block;
+    }
+    
+    .stock-chips {
+        max-width: 500px;
+        margin: 0 auto;
+    }
+}
+
+/* Desktop Optimizations */
+@media (min-width: 1025px) {
+    .main-search-interface {
+        justify-content: center;
+        padding: 2rem;
+    }
+    
+    .search-shortcut {
+        display: block;
+    }
+    
+    .container {
+        max-width: 800px;
+        padding: 0 2rem;
+    }
+}
+
+/* App Store Specific Optimizations */
+@media (max-width: 480px) {
+    /* iPhone specific optimizations */
+    .main-search-interface {
+        padding: calc(0.5rem + var(--safe-area-inset-top)) calc(0.5rem + var(--safe-area-inset-left)) calc(0.5rem + var(--safe-area-inset-bottom)) calc(0.5rem + var(--safe-area-inset-right));
+    }
+    
+    .container {
+        padding: 0 0.5rem;
+    }
+    
+    .search-welcome {
+        margin-bottom: 1.5rem;
+    }
+    
+    .chatgpt-search-box {
+        padding: 0.5rem 0.75rem;
+        min-height: 48px;
+    }
+    
+    .stock-chips {
+        gap: 0.375rem;
+    }
+    
+    .stock-chip {
+        padding: 0.375rem 0.75rem;
+        font-size: 0.85rem;
+        min-height: 40px;
+    }
+    
+    .chatgpt-search-btn {
+        min-width: 40px;
+        min-height: 40px;
+        padding: 0.375rem 0.5rem;
+    }
+}
+
+/* Accessibility Improvements */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+    .chatgpt-search-box {
+        background: rgba(255, 255, 255, 0.2);
+        border: 2px solid rgba(255, 255, 255, 0.4);
+    }
+    
+    .stock-chip {
+        background: rgba(255, 255, 255, 0.15);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+    }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+    /* Already optimized for dark mode */
+}
+
+/* Force Hardware Acceleration */
+.chatgpt-search-box,
+.stock-chip,
+.chatgpt-search-btn {
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+}
+
+/* iOS Specific Fixes */
+@supports (-webkit-touch-callout: none) {
+    .chatgpt-search-input {
+        -webkit-appearance: none;
+        -webkit-border-radius: 0;
+        border-radius: 0;
+    }
+    
+    .chatgpt-search-box {
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0);
+    }
+}
