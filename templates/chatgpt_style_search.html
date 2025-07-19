@@ -2354,19 +2354,24 @@
     function intelligentSearch(query) {
         const normalizedQuery = query.toLowerCase().trim();
         
+        console.log('TradeWise AI: Intelligent search processing:', normalizedQuery);
+        
         // Direct symbol match (already ticker symbols like AAPL, TSLA)
         if (/^[A-Z]{1,5}(-[A-Z])?$/.test(query.toUpperCase())) {
+            console.log('TradeWise AI: Direct symbol match:', query.toUpperCase());
             return query.toUpperCase();
         }
         
         // Strategy 1: Exact company name match
         if (companyMap[normalizedQuery]) {
+            console.log('TradeWise AI: Exact match found:', companyMap[normalizedQuery]);
             return companyMap[normalizedQuery];
         }
         
         // Strategy 2: Handle common variations and partial matches
         const cleanQuery = normalizedQuery.replace(/[.,\-\s]+/g, ' ').trim();
         if (companyMap[cleanQuery]) {
+            console.log('TradeWise AI: Clean query match found:', companyMap[cleanQuery]);
             return companyMap[cleanQuery];
         }
         
@@ -2375,6 +2380,7 @@
         if (firstWord.length >= 3) {
             for (const [company, symbol] of Object.entries(companyMap)) {
                 if (company === firstWord) {
+                    console.log('TradeWise AI: First word match found:', symbol);
                     return symbol;
                 }
             }
