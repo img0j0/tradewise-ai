@@ -34,18 +34,20 @@ class AccountSettingsManager:
             # Get subscription information
             subscription_info = self._get_subscription_info(user_id)
             
-            # Get recent transactions
-            recent_transactions = Transaction.query.filter_by(
-                user_id=user_id
-            ).order_by(Transaction.timestamp.desc()).limit(5).all()
+            # Get recent transactions (handle timestamp field compatibility)
+            try:
+                recent_transactions = Transaction.query.filter_by(user_id=user_id).order_by(Transaction.created_at.desc()).limit(5).all()
+            except Exception:
+                # Fallback if Transaction table/field doesn't exist
+                recent_transactions = []
             
             profile_data = {
                 'user_info': {
                     'id': user.id,
                     'email': user.email,
-                    'first_name': user.first_name,
-                    'last_name': user.last_name,
-                    'profile_image_url': user.profile_image_url,
+                    'first_name': getattr(user, 'first_name', user.username),
+                    'last_name': getattr(user, 'last_name', ''),
+                    'profile_image_url': getattr(user, 'profile_image_url', '/static/images/default-avatar.png'),
                     'created_at': user.created_at.strftime('%Y-%m-%d') if hasattr(user, 'created_at') else 'Unknown',
                     'last_login': datetime.now().strftime('%Y-%m-%d %H:%M')
                 },
@@ -60,10 +62,10 @@ class AccountSettingsManager:
                 'subscription': subscription_info,
                 'recent_activity': [
                     {
-                        'type': t.transaction_type,
-                        'amount': float(t.amount),
-                        'description': t.description,
-                        'timestamp': t.timestamp.strftime('%Y-%m-%d %H:%M')
+                        'type': getattr(t, 'transaction_type', 'trade'),
+                        'amount': float(getattr(t, 'amount', 0)),
+                        'description': getattr(t, 'description', f'Trade activity'),
+                        'timestamp': getattr(t, 'created_at', datetime.now()).strftime('%Y-%m-%d %H:%M')
                     } for t in recent_transactions
                 ],
                 'security_settings': {

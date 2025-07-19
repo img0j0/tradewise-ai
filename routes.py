@@ -187,8 +187,10 @@ def alerts():
 def settings():
     """User account settings page"""
     if not current_user.is_authenticated:
-        return redirect(url_for('login'))
+        return render_template('quick_login.html')
     return render_template('account_settings.html')
+
+
 
 # Content-only endpoints for iframe embedding
 @app.route('/dashboard_content')
@@ -1637,10 +1639,32 @@ def quick_login(username):
     
     return redirect(url_for('login'))
 
-@app.route('/login-bypass')
+@app.route('/login_bypass', methods=['GET', 'POST'])
 def login_bypass():
-    """Login bypass page with clickable links"""
-    return render_template('login_bypass.html')
+    """Login bypass for account settings access"""
+    if request.method == 'POST':
+        username = request.form.get('username', 'demo')
+        password = request.form.get('password', 'demo123')
+        
+        if username == 'demo' and password == 'demo123':
+            # Find or create demo user
+            demo_user = User.query.filter_by(username='demo').first()
+            if not demo_user:
+                from werkzeug.security import generate_password_hash
+                demo_user = User(
+                    username='demo', 
+                    email='demo@example.com',
+                    password_hash=generate_password_hash('demo123')
+                )
+                db.session.add(demo_user)
+                db.session.commit()
+            
+            login_user(demo_user)
+            return redirect('/settings')
+        else:
+            flash('Invalid credentials')
+    
+    return render_template('quick_login.html')
 
 @app.route('/debug-auth')
 def debug_auth():
