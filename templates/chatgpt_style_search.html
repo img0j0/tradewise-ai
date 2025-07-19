@@ -2435,12 +2435,12 @@
         }
         
         // Display suggestions
-        suggestionsDiv.innerHTML = matches.slice(0, 5).map(match => `
-            <div class="suggestion-item" onclick="selectSuggestion('${match.symbol}', '${match.company}')">
-                <span class="suggestion-company">${match.company}</span>
-                <span class="suggestion-symbol">${match.symbol}</span>
-            </div>
-        `).join('');
+        suggestionsDiv.innerHTML = matches.slice(0, 5).map(match => 
+            '<div class="suggestion-item" onclick="selectSuggestion(\'' + match.symbol + '\', \'' + match.company + '\')">' +
+                '<span class="suggestion-company">' + match.company + '</span>' +
+                '<span class="suggestion-symbol">' + match.symbol + '</span>' +
+            '</div>'
+        ).join('');
         
         suggestionsDiv.style.display = 'block';
     }
