@@ -449,19 +449,6 @@
         text-align: center;
     }
 
-    .suggestion-card.compact .card-title {
-        font-size: 0.8rem;
-        font-weight: 600;
-        margin-bottom: 0.2rem;
-        line-height: 1.2;
-    }
-
-    .suggestion-card.compact .card-subtitle {
-        font-size: 0.7rem;
-        color: rgba(255, 255, 255, 0.5);
-        line-height: 1.2;
-    }
-
     .suggestion-card {
         background: rgba(255, 255, 255, 0.05);
         border: 1px solid rgba(255, 255, 255, 0.1);
@@ -469,6 +456,28 @@
         padding: 1rem;
         cursor: pointer;
         transition: all 0.2s ease;
+    }
+
+    /* Compact card overrides - must come after base styles */
+    .suggestion-card.compact {
+        padding: 0.6rem !important;
+        text-align: center !important;
+        flex: 1 1 auto !important;
+        min-width: 110px !important;
+        max-width: 150px !important;
+    }
+
+    .suggestion-card.compact .card-title {
+        font-size: 0.8rem !important;
+        font-weight: 600 !important;
+        margin-bottom: 0.2rem !important;
+        line-height: 1.2 !important;
+    }
+
+    .suggestion-card.compact .card-subtitle {
+        font-size: 0.7rem !important;
+        color: rgba(255, 255, 255, 0.5) !important;
+        line-height: 1.2 !important;
     }
 
     .suggestion-card:hover {
