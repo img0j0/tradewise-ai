@@ -2185,6 +2185,58 @@
     </style>
 
     <script>
+    // Define toggle functions first (globally accessible)
+    function togglePopularExpanded() {
+        const expandedContent = document.getElementById('popular-expanded-content');
+        const expandIcon = document.getElementById('popular-expand-icon');
+        
+        if (!expandedContent || !expandIcon) return;
+        
+        const isExpanded = expandedContent.style.display === 'block';
+        
+        if (isExpanded) {
+            expandedContent.style.display = 'none';
+            expandIcon.classList.remove('expanded');
+        } else {
+            expandedContent.style.display = 'block';
+            expandIcon.classList.add('expanded');
+        }
+    }
+    
+    function toggleThemesExpanded() {
+        const expandedContent = document.getElementById('themes-expanded-content');
+        const expandIcon = document.getElementById('themes-expand-icon');
+        
+        if (!expandedContent || !expandIcon) return;
+        
+        const isExpanded = expandedContent.style.display === 'block';
+        
+        if (isExpanded) {
+            expandedContent.style.display = 'none';
+            expandIcon.classList.remove('expanded');
+        } else {
+            expandedContent.style.display = 'block';
+            expandIcon.classList.add('expanded');
+        }
+    }
+    
+    function toggleInsightsExpanded() {
+        const expandedContent = document.getElementById('insights-expanded-content');
+        const expandIcon = document.getElementById('insights-expand-icon');
+        
+        if (!expandedContent || !expandIcon) return;
+        
+        const isExpanded = expandedContent.style.display === 'block';
+        
+        if (isExpanded) {
+            expandedContent.style.display = 'none';
+            expandIcon.classList.remove('expanded');
+        } else {
+            expandedContent.style.display = 'block';
+            expandIcon.classList.add('expanded');
+        }
+    }
+
     // Company name to symbol mapping for intelligent search
     const companyMap = {
         'google': 'GOOGL',
@@ -2470,29 +2522,29 @@
                     '</div>' +
                 '</div>'
                 
-                ${Object.keys(data.key_metrics || {}).length > 0 || data.market_cap || data.pe_ratio ? `
-                <div class="comprehensive-metrics">
-                    <div class="metrics-grid">
-                        ${data.market_cap ? `
-                        <div class="metric-item">
-                            <span class="metric-label">Market Cap</span>
-                            <span class="metric-value">${data.market_cap}</span>
-                        </div>` : ''}
-                        ${data.pe_ratio ? `
-                        <div class="metric-item">
-                            <span class="metric-label">P/E Ratio</span>
-                            <span class="metric-value">${formatMetric(data.pe_ratio)}</span>
-                        </div>` : ''}
-                        ${data.beta ? `
-                        <div class="metric-item">
-                            <span class="metric-label">Beta</span>
-                            <span class="metric-value">${formatMetric(data.beta)}</span>
-                        </div>` : ''}
-                        ${data.volume ? `
-                        <div class="metric-item">
-                            <span class="metric-label">Volume</span>
-                            <span class="metric-value">${data.volume}</span>
-                        </div>` : ''}
+                + (Object.keys(data.key_metrics || {}).length > 0 || data.market_cap || data.pe_ratio ? 
+                '<div class="comprehensive-metrics">' +
+                    '<div class="metrics-grid">' +
+                        (data.market_cap ? 
+                        '<div class="metric-item">' +
+                            '<span class="metric-label">Market Cap</span>' +
+                            '<span class="metric-value">' + data.market_cap + '</span>' +
+                        '</div>' : '') +
+                        (data.pe_ratio ? 
+                        '<div class="metric-item">' +
+                            '<span class="metric-label">P/E Ratio</span>' +
+                            '<span class="metric-value">' + formatMetric(data.pe_ratio) + '</span>' +
+                        '</div>' : '') +
+                        (data.beta ? 
+                        '<div class="metric-item">' +
+                            '<span class="metric-label">Beta</span>' +
+                            '<span class="metric-value">' + formatMetric(data.beta) + '</span>' +
+                        '</div>' : '') +
+                        (data.volume ? 
+                        '<div class="metric-item">' +
+                            '<span class="metric-label">Volume</span>' +
+                            '<span class="metric-value">' + data.volume + '</span>' +
+                        '</div>' : '')
                         ' + (data.week_52_high ? 
                         '<div class="metric-item">' +
                             '<span class="metric-label">52W High</span>' +
@@ -2599,79 +2651,17 @@
 
     console.log('TradeWise AI: Intelligent ChatGPT-style search loaded');
     
-    // Move all toggle functions to global scope
+    // Define all toggle functions in global scope
     window.copilotExpanded = false;
     window.themesExpanded = false;
     window.insightsExpanded = false;
     window.popularExpanded = false;
     
-    function toggleCopilotExpanded() {
-        const expandedContent = document.getElementById('copilot-expanded-content');
-        const expandIcon = document.getElementById('copilot-expand-icon');
-        
-        window.copilotExpanded = !window.copilotExpanded;
-        
-        if (window.copilotExpanded) {
-            expandedContent.style.display = 'block';
-            expandIcon.classList.add('expanded');
-        } else {
-            expandedContent.style.display = 'none';
-            expandIcon.classList.remove('expanded');
-        }
-    }
-    
-    window.toggleCopilotExpanded = toggleCopilotExpanded;
-    
-    function toggleThemesExpanded() {
-        const expandedContent = document.getElementById('themes-expanded-content');
-        const expandIcon = document.getElementById('themes-expand-icon');
-        
-        window.themesExpanded = !window.themesExpanded;
-        
-        if (window.themesExpanded) {
-            expandedContent.style.display = 'block';
-            expandIcon.classList.add('expanded');
-        } else {
-            expandedContent.style.display = 'none';
-            expandIcon.classList.remove('expanded');
-        }
-    }
-    
-    window.toggleThemesExpanded = toggleThemesExpanded;
 
-    function toggleInsightsExpanded() {
-        const expandedContent = document.getElementById('insights-expanded-content');
-        const expandIcon = document.getElementById('insights-expand-icon');
-        
-        window.insightsExpanded = !window.insightsExpanded;
-        
-        if (window.insightsExpanded) {
-            expandedContent.style.display = 'block';
-            expandIcon.classList.add('expanded');
-        } else {
-            expandedContent.style.display = 'none';
-            expandIcon.classList.remove('expanded');
-        }
-    }
     
-    window.toggleInsightsExpanded = toggleInsightsExpanded;
 
-    function togglePopularExpanded() {
-        const expandedContent = document.getElementById('popular-expanded-content');
-        const expandIcon = document.getElementById('popular-expand-icon');
-        
-        window.popularExpanded = !window.popularExpanded;
-        
-        if (window.popularExpanded) {
-            expandedContent.style.display = 'block';
-            expandIcon.classList.add('expanded');
-        } else {
-            expandedContent.style.display = 'none';
-            expandIcon.classList.remove('expanded');
-        }
-    }
-    
-    window.togglePopularExpanded = togglePopularExpanded;
+
+
 
     // Search investment themes
     function searchTheme(themeName) {
