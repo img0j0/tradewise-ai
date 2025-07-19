@@ -4402,6 +4402,54 @@ def get_ui_analysis():
         logger.error(f"Error getting UI analysis: {e}")
         return jsonify({'error': str(e)}), 500
 
+@app.route('/api/ai-team/test-questions')
+def get_ai_team_test_questions():
+    """Get systematic test questions for AI team evaluation"""
+    try:
+        from ai_team_testing_framework import get_all_test_questions
+        
+        test_data = get_all_test_questions()
+        
+        return jsonify({
+            'success': True,
+            'test_framework': test_data,
+            'summary': {
+                'total_members': 3,
+                'total_categories': sum(data['categories'] for key, data in test_data.items() 
+                                     if key.endswith('_chen') or key.endswith('_rodriguez') or key.endswith('_santos')),
+                'total_questions': sum(data['total_questions'] for key, data in test_data.items() 
+                                     if key.endswith('_chen') or key.endswith('_rodriguez') or key.endswith('_santos'))
+            }
+        })
+        
+    except Exception as e:
+        logger.error(f"Error getting AI team test questions: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/ai-team/test-report', methods=['POST'])
+def generate_ai_team_test_report():
+    """Generate test report for AI team member performance"""
+    try:
+        from ai_team_testing_framework import ai_team_testing
+        
+        data = request.get_json()
+        member = data.get('member', '').lower()
+        responses = data.get('responses', [])
+        
+        if member not in ['sarah', 'alex', 'maria']:
+            return jsonify({'error': 'Invalid team member'}), 400
+        
+        report = ai_team_testing.generate_test_report(member, responses)
+        
+        return jsonify({
+            'success': True,
+            'test_report': report
+        })
+        
+    except Exception as e:
+        logger.error(f"Error generating test report: {e}")
+        return jsonify({'error': str(e)}), 500
+
 @app.route('/api/ai-team/members')
 def ai_team_members_list():
     """Get list of available AI team members (public endpoint)"""
