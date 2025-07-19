@@ -4063,7 +4063,7 @@
             // Update balance displays
             const balanceElements = document.querySelectorAll('#accountBalance, .balance');
             balanceElements.forEach(el => {
-                el.textContent = `$${userBalance.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+                el.textContent = '$' + userBalance.toLocaleString('en-US', { minimumFractionDigits: 2 });
             });
         } catch (error) {
             console.error('TradeWise AI: Balance loading error:', error.message || error);
@@ -4077,13 +4077,13 @@
         // Update modal content
         document.getElementById('modalSymbol').textContent = symbol;
         document.getElementById('modalName').textContent = name;
-        document.getElementById('modalPrice').textContent = `$${parseFloat(price).toFixed(2)}`;
-        document.getElementById('pricePerShare').textContent = `$${parseFloat(price).toFixed(2)}`;
+        document.getElementById('modalPrice').textContent = '$' + parseFloat(price).toFixed(2);
+        document.getElementById('pricePerShare').textContent = '$' + parseFloat(price).toFixed(2);
         
         // Set recommendation styling
         const recommendationEl = document.getElementById('modalRecommendation');
         recommendationEl.textContent = recommendation;
-        recommendationEl.className = `recommendation ${recommendation.toLowerCase().replace(/\s+/g, '-')}`;
+        recommendationEl.className = 'recommendation ' + recommendation.toLowerCase().replace(/\s+/g, '-');
         
         // Apply the same color coding as main interface
         const rec = recommendation.toLowerCase();
@@ -4104,7 +4104,7 @@
             recommendationEl.style.color = 'white';
         }
         
-        document.getElementById('modalConfidence').textContent = `${confidence}% confidence`;
+        document.getElementById('modalConfidence').textContent = confidence + '% confidence';
         
         // Load current balance and update totals
         loadAccountBalance();
@@ -4125,7 +4125,7 @@
         const pricePerShare = currentStock.price;
         const totalCost = quantity * pricePerShare;
         
-        document.getElementById('totalCost').textContent = `$${totalCost.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+        document.getElementById('totalCost').textContent = '$' + totalCost.toLocaleString('en-US', { minimumFractionDigits: 2 });
         
         // Enable/disable purchase button based on balance
         const purchaseBtn = document.getElementById('confirmPurchaseBtn');
@@ -4170,13 +4170,13 @@
             
             if (result.success) {
                 // Show success message
-                alert(`Successfully purchased ${quantity} shares of ${currentStock.symbol} for $${totalCost.toFixed(2)}!`);
+                alert('Successfully purchased ' + quantity + ' shares of ' + currentStock.symbol + ' for $' + totalCost.toFixed(2) + '!');
                 
                 // Close modal and refresh balance
                 closePurchaseModal();
                 loadAccountBalance();
             } else {
-                alert(`Error: ${result.message || 'Unable to complete purchase'}`);
+                alert('Error: ' + (result.message || 'Unable to complete purchase'));
             }
         } catch (error) {
             console.error('TradeWise AI: Purchase error', error);
@@ -4202,9 +4202,9 @@
             const result = await response.json();
             
             if (result.success) {
-                alert(`${symbol} added to your watchlist!`);
+                alert(symbol + ' added to your watchlist!');
             } else {
-                alert(`Error: ${result.message || 'Unable to add to watchlist'}`);
+                alert('Error: ' + (result.message || 'Unable to add to watchlist'));
             }
         } catch (error) {
             console.error('TradeWise AI: Watchlist error', error);
@@ -4267,7 +4267,7 @@
                 // Redirect to Stripe checkout
                 window.location.href = result.checkout_url;
             } else {
-                alert(`Error: ${result.message || 'Unable to create payment session'}`);
+                alert('Error: ' + (result.message || 'Unable to create payment session'));
             }
         } catch (error) {
             console.error('TradeWise AI: Funding error', error);
@@ -4626,66 +4626,72 @@
     function updatePortfolioDisplay(data) {
         // Update header portfolio value
         const portfolioValue = document.getElementById('portfolio-value');
-        portfolioValue.textContent = `$${data.total_value.toFixed(2)}`;
+        portfolioValue.textContent = '$' + data.total_value.toFixed(2);
         
         // Update portfolio stats
-        document.getElementById('total-portfolio-value').textContent = `$${data.total_value.toFixed(2)}`;
-        document.getElementById('total-invested').textContent = `$${data.total_invested.toFixed(2)}`;
+        document.getElementById('total-portfolio-value').textContent = '$' + data.total_value.toFixed(2);
+        document.getElementById('total-invested').textContent = '$' + data.total_invested.toFixed(2);
         
         const profitLoss = data.profit_loss;
         const profitLossElement = document.getElementById('profit-loss');
-        profitLossElement.textContent = `$${profitLoss.toFixed(2)}`;
+        profitLossElement.textContent = '$' + profitLoss.toFixed(2);
         profitLossElement.className = 'stat-value profit-loss ' + (profitLoss >= 0 ? 'positive' : 'negative');
         
         // Update holdings
         const holdingsContainer = document.getElementById('portfolio-holdings');
         
         if (data.holdings && data.holdings.length > 0) {
-            holdingsContainer.innerHTML = data.holdings.map(holding => `
-                <div class="holding-item">
-                    <div class="holding-header">
-                        <div class="holding-symbol">${holding.symbol}</div>
-                        <div class="holding-value">$${holding.current_value.toFixed(2)}</div>
-                    </div>
-                    <div class="holding-details">
-                        <div class="detail-small">
-                            <div>Shares</div>
-                            <div style="color: white;">${holding.quantity}</div>
-                        </div>
-                        <div class="detail-small">
-                            <div>Avg Cost</div>
-                            <div style="color: white;">$${holding.avg_price.toFixed(2)}</div>
-                        </div>
-                        <div class="detail-small">
-                            <div>Current</div>
-                            <div style="color: white;">$${holding.current_price.toFixed(2)}</div>
-                        </div>
-                        <div class="detail-small">
-                            <div>P&L</div>
-                            <div style="color: ${holding.profit_loss >= 0 ? '#10b981' : '#ef4444'};">
-                                ${holding.profit_loss >= 0 ? '+' : ''}$${holding.profit_loss.toFixed(2)}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="holding-actions">
-                        <button class="holding-btn buy-btn" onclick="buyMoreStock('${holding.symbol}')">
-                            Buy More
-                        </button>
-                        <button class="holding-btn sell-btn" onclick="sellStock('${holding.symbol}')">
-                            Sell
-                        </button>
-                    </div>
-                </div>
-            `).join('');
+            var holdingsHTML = '';
+            for (var i = 0; i < data.holdings.length; i++) {
+                var holding = data.holdings[i];
+                var plColor = holding.profit_loss >= 0 ? '#10b981' : '#ef4444';
+                var plSign = holding.profit_loss >= 0 ? '+' : '';
+                
+                holdingsHTML += 
+                    '<div class="holding-item">' +
+                        '<div class="holding-header">' +
+                            '<div class="holding-symbol">' + holding.symbol + '</div>' +
+                            '<div class="holding-value">$' + holding.current_value.toFixed(2) + '</div>' +
+                        '</div>' +
+                        '<div class="holding-details">' +
+                            '<div class="detail-small">' +
+                                '<div>Shares</div>' +
+                                '<div style="color: white;">' + holding.quantity + '</div>' +
+                            '</div>' +
+                            '<div class="detail-small">' +
+                                '<div>Avg Cost</div>' +
+                                '<div style="color: white;">$' + holding.avg_price.toFixed(2) + '</div>' +
+                            '</div>' +
+                            '<div class="detail-small">' +
+                                '<div>Current</div>' +
+                                '<div style="color: white;">$' + holding.current_price.toFixed(2) + '</div>' +
+                            '</div>' +
+                            '<div class="detail-small">' +
+                                '<div>P&L</div>' +
+                                '<div style="color: ' + plColor + ';">' +
+                                    plSign + '$' + holding.profit_loss.toFixed(2) +
+                                '</div>' +
+                            '</div>' +
+                        '</div>' +
+                        '<div class="holding-actions">' +
+                            '<button class="holding-btn buy-btn" onclick="buyMoreStock(\'' + holding.symbol + '\')">' +
+                                'Buy More' +
+                            '</button>' +
+                            '<button class="holding-btn sell-btn" onclick="sellStock(\'' + holding.symbol + '\')">' +
+                                'Sell' +
+                            '</button>' +
+                        '</div>' +
+                    '</div>';
+            }
+            holdingsContainer.innerHTML = holdingsHTML;
         } else {
-            holdingsContainer.innerHTML = `
-                <div class="loading-portfolio">
-                    <p style="color: rgba(255,255,255,0.7);">No holdings yet</p>
-                    <p style="color: rgba(255,255,255,0.5); font-size: 0.9rem;">
-                        Start by searching for stocks and making your first purchase!
-                    </p>
-                </div>
-            `;
+            holdingsContainer.innerHTML = 
+                '<div class="loading-portfolio">' +
+                    '<p style="color: rgba(255,255,255,0.7);">No holdings yet</p>' +
+                    '<p style="color: rgba(255,255,255,0.5); font-size: 0.9rem;">' +
+                        'Start by searching for stocks and making your first purchase!' +
+                    '</p>' +
+                '</div>';
         }
     }
     
@@ -4721,7 +4727,7 @@
         fetch('/api/portfolio-summary')
             .then(response => {
                 if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    throw new Error('HTTP ' + response.status + ': ' + response.statusText);
                 }
                 return response.json();
             })
@@ -4729,7 +4735,7 @@
                 if (data && typeof data.total_value === 'number') {
                     const portfolioValue = document.getElementById('portfolio-value');
                     if (portfolioValue) {
-                        portfolioValue.textContent = `$${data.total_value.toFixed(2)}`;
+                        portfolioValue.textContent = '$' + data.total_value.toFixed(2);
                     }
                 } else {
                     console.warn('Invalid portfolio data received:', data);
@@ -5449,8 +5455,8 @@
         // Show greeting message
         messages.innerHTML = `
             <div style="margin-bottom: 1rem; padding: 0.75rem; background: rgba(96,165,250,0.1); border-radius: 8px; border-left: 3px solid #667eea;">
-                <div style="font-weight: 600; color: #667eea; margin-bottom: 0.25rem;">${memberData.name}</div>
-                <div style="color: rgba(255,255,255,0.9);">${memberData.greeting}</div>
+                <div style="font-weight: 600; color: #667eea; margin-bottom: 0.25rem;">' + memberData.name + '</div>
+                <div style="color: rgba(255,255,255,0.9);">' + memberData.greeting + '</div>
                 <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.5rem;">Just now</div>
             </div>
         `;
@@ -5476,7 +5482,7 @@
         userMessage.style.cssText = 'margin-bottom: 1rem; text-align: right;';
         userMessage.innerHTML = `
             <div style="display: inline-block; max-width: 80%; padding: 0.75rem; background: rgba(96,165,250,0.2); border-radius: 8px; text-align: left;">
-                <div style="color: white; margin-bottom: 0.25rem;">${message}</div>
+                <div style="color: white; margin-bottom: 0.25rem;">' + message + '</div>
                 <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; text-align: right;">Just now</div>
             </div>
         `;
@@ -5533,7 +5539,7 @@
                 if (response.suggested_actions && response.suggested_actions.length > 0) {
                     messageContent += '\n\n🎯 Suggested Actions:\n';
                     response.suggested_actions.forEach((action, index) => {
-                        messageContent += `${index + 1}. ${action}\n`;
+                        messageContent += (index + 1) + '. ' + action + '\n';
                     });
                 }
                 
@@ -5541,7 +5547,7 @@
                 if (response.troubleshooting_steps && response.troubleshooting_steps.length > 0) {
                     messageContent += '\n\n🔧 Try these steps:\n';
                     response.troubleshooting_steps.forEach(step => {
-                        messageContent += `• ${step}\n`;
+                        messageContent += '• ' + step + '\n';
                     });
                 }
                 
@@ -5549,19 +5555,19 @@
                 if (response.quick_guides && response.quick_guides.length > 0) {
                     messageContent += '\n\n📚 Quick Guides:\n';
                     response.quick_guides.forEach(guide => {
-                        messageContent += `• ${guide}\n`;
+                        messageContent += '• ' + guide + '\n';
                     });
                 }
                 
                 // Add AI confidence if available (for Sarah)
                 if (response.ai_confidence) {
-                    messageContent += `\n\n🤖 AI Analysis Accuracy: ${response.ai_confidence}`;
+                    messageContent += '\n\n🤖 AI Analysis Accuracy: ' + response.ai_confidence;
                 }
                 
                 aiMessage.innerHTML = `
                     <div style="padding: 0.75rem; background: rgba(96,165,250,0.1); border-radius: 8px; border-left: 3px solid #667eea;">
-                        <div style="font-weight: 600; color: #667eea; margin-bottom: 0.25rem;">${response.member || response.member_name}</div>
-                        <div style="color: rgba(255,255,255,0.9); line-height: 1.4; white-space: pre-line;">${messageContent}</div>
+                        <div style="font-weight: 600; color: #667eea; margin-bottom: 0.25rem;">' + (response.member || response.member_name) + '</div>
+                        <div style="color: rgba(255,255,255,0.9); line-height: 1.4; white-space: pre-line;">' + messageContent + '</div>
                         <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.5rem;">Just now</div>
                     </div>
                 `;
@@ -5586,8 +5592,8 @@
             const fallbackMessage = document.createElement('div');
             fallbackMessage.innerHTML = `
                 <div style="padding: 0.75rem; background: rgba(96,165,250,0.1); border-radius: 8px; border-left: 3px solid #667eea;">
-                    <div style="font-weight: 600; color: #667eea; margin-bottom: 0.25rem;">${fallbackResponse.name}</div>
-                    <div style="color: rgba(255,255,255,0.9);">${fallbackResponse.message}</div>
+                    <div style="font-weight: 600; color: #667eea; margin-bottom: 0.25rem;">' + fallbackResponse.name + '</div>
+                    <div style="color: rgba(255,255,255,0.9);">' + fallbackResponse.message + '</div>
                     <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.5rem;">Just now</div>
                 </div>
             `;
@@ -5606,7 +5612,7 @@
                 if (queryLower.includes('stock') || queryLower.includes('buy') || queryLower.includes('sell')) {
                     return {
                         name: 'Sarah Chen',
-                        message: `Great question about ${query.includes('stock') ? 'stock analysis' : 'trading'}! Based on current market conditions, I'd recommend using our main search to get real-time AI analysis for specific stocks. You can search for any company like "Apple" or "Tesla" to get my comprehensive analysis with confidence ratings and trading recommendations.`
+                        message: 'Great question about ' + (query.includes('stock') ? 'stock analysis' : 'trading') + '! Based on current market conditions, I\'d recommend using our main search to get real-time AI analysis for specific stocks. You can search for any company like "Apple" or "Tesla" to get my comprehensive analysis with confidence ratings and trading recommendations.'
                     };
                 } else if (queryLower.includes('market') || queryLower.includes('trend')) {
                     return {
