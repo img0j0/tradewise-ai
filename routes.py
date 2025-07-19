@@ -73,6 +73,10 @@ risk_management = institutional_features['risk_management']
 
 # Dark pool intelligence services
 dark_pool_analyzer = dark_pool_intelligence['dark_pool_analyzer']
+
+# Initialize watchlist manager
+from watchlist_manager import WatchlistManager
+watchlist_manager = WatchlistManager()
 institutional_flow = dark_pool_intelligence['institutional_flow']
 market_microstructure = dark_pool_intelligence['market_microstructure']
 

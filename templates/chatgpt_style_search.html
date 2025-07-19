@@ -3035,7 +3035,7 @@
                             '<i class="fas fa-shopping-cart"></i>' +
                             'Buy ' + data.symbol +
                         '</button>' +
-                        '<button class="purchase-btn secondary" onclick="addToWatchlist(\'' + data.symbol + '\', \'' + data.name + '\', ' + data.price + ')">' +
+                        '<button class="purchase-btn secondary" onclick="addStockToWatchlist(\'' + data.symbol + '\')">' +
                             '<i class="fas fa-star"></i>' +
                             'Add to Watchlist' +
                         '</button>' +
@@ -3273,7 +3273,7 @@
                         '<i class="fas fa-search"></i>' +
                         'Explore Theme' +
                     '</button>' +
-                    '<button class="action-btn secondary" onclick="addThemeToWatchlist(\'' + themeName + '\')">' +
+                    '<button class="action-btn secondary" onclick="addStockToWatchlist(\'' + getThemeStocks(themeName)[0] + '\')">' +
                         '<i class="fas fa-bookmark"></i>' +
                         'Add to Watchlist' +
                     '</button>' +
@@ -4377,6 +4377,51 @@
             closeFundingModal();
         }
     };
+    
+    // Simple function to add stock to watchlist from search results
+    async function addStockToWatchlist(symbol) {
+        if (!symbol) {
+            showSimpleNotification('No stock symbol provided', 'error');
+            return;
+        }
+        
+        try {
+            const response = await fetch('/api/watchlists/add', {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ 
+                    symbol: symbol.toUpperCase(), 
+                    watchlist_name: 'My Portfolio' 
+                })
+            });
+            
+            const result = await response.json();
+            
+            if (response.ok && result.success) {
+                showSimpleNotification(symbol + ' added to watchlist!', 'success');
+            } else {
+                showSimpleNotification('Error: ' + (result.message || 'Unable to add to watchlist'), 'error');
+            }
+        } catch (error) {
+            console.error('Watchlist error:', error);
+            showSimpleNotification('Error adding to watchlist. Please try again.', 'error');
+        }
+    }
+    
+    // Simple notification system
+    function showSimpleNotification(message, type) {
+        const notification = document.createElement('div');
+        notification.style.cssText = 'position: fixed; top: 20px; right: 20px; padding: 12px 24px; border-radius: 8px; color: white; font-weight: 600; z-index: 10000; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); animation: slideIn 0.3s ease; background: ' + (type === 'success' ? '#00D4AA' : type === 'error' ? '#ef4444' : '#007AFF');
+        notification.textContent = message;
+        document.body.appendChild(notification);
+        setTimeout(function() {
+            notification.style.animation = 'slideOut 0.3s ease';
+            setTimeout(function() { notification.remove(); }, 300);
+        }, 3000);
+    }
     </script>
     
     <!-- Include Premium Modal -->

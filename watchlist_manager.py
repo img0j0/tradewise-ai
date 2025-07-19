@@ -27,7 +27,7 @@ class WatchlistManager:
         }
         logger.info("Watchlist Manager initialized")
     
-    def get_user_watchlists(self, user_id: str) -> Dict:
+    def get_user_watchlists(self, user_id) -> Dict:
         """Get all watchlists for a user"""
         try:
             user = User.query.filter_by(id=user_id).first()
@@ -36,16 +36,28 @@ class WatchlistManager:
                 return self._get_default_watchlists()
             
             # Get saved watchlists from user profile or use defaults
-            watchlists = getattr(user, 'watchlists', None)
-            if not watchlists:
+            watchlists_raw = getattr(user, 'watchlists', None)
+            if not watchlists_raw or watchlists_raw in ['', '{}', 'null']:
                 watchlists = self.default_watchlists.copy()
                 # Save defaults to user
                 self._save_user_watchlists(user_id, watchlists)
+            else:
+                # Parse JSON string if needed
+                if isinstance(watchlists_raw, str):
+                    try:
+                        watchlists = json.loads(watchlists_raw)
+                    except (json.JSONDecodeError, ValueError):
+                        watchlists = self.default_watchlists.copy()
+                else:
+                    watchlists = watchlists_raw
             
             # Add real-time data to watchlists
             enhanced_watchlists = {}
             for name, symbols in watchlists.items():
-                enhanced_watchlists[name] = self._enhance_watchlist_data(symbols)
+                if isinstance(symbols, list):
+                    enhanced_watchlists[name] = self._enhance_watchlist_data(symbols)
+                else:
+                    enhanced_watchlists[name] = []
             
             return {
                 'success': True,
@@ -58,7 +70,7 @@ class WatchlistManager:
             logger.error(f"Error getting watchlists for user {user_id}: {str(e)}")
             return {'success': False, 'error': str(e)}
     
-    def add_to_watchlist(self, user_id: str, watchlist_name: str, symbol: str) -> Dict:
+    def add_to_watchlist(self, user_id, watchlist_name: str, symbol: str) -> Dict:
         """Add symbol to specific watchlist"""
         try:
             # Get current watchlists
@@ -243,20 +255,37 @@ class WatchlistManager:
                 ticker = yf.Ticker(symbol)
                 info = ticker.info
                 
-                if not info or 'symbol' not in info:
+                if not info:
+                    # Create basic fallback data
+                    enhanced_item = {
+                        'symbol': symbol,
+                        'company_name': symbol,
+                        'current_price': 0.0,
+                        'change_percent': 0.0,
+                        'volume': 0,
+                        'market_cap': 0,
+                        'sector': 'Unknown',
+                        'professional_rating': 'HOLD'
+                    }
+                    enhanced_data.append(enhanced_item)
                     continue
                 
                 # Get professional analysis
-                analysis = bloomberg_killer.get_professional_analysis(symbol)
+                try:
+                    analysis = bloomberg_killer.get_professional_analysis(symbol)
+                    professional_rating = analysis.get('professional_rating', 'HOLD') if analysis else 'HOLD'
+                except:
+                    professional_rating = 'HOLD'
                 
                 enhanced_item = {
                     'symbol': symbol,
-                    'company_name': info.get('longName', symbol),
-                    'current_price': info.get('currentPrice', info.get('regularMarketPrice', 0)),
-                    'change_percent': info.get('regularMarketChangePercent', 0),
-                    'volume': info.get('volume', info.get('regularMarketVolume', 0)),
-                    'market_cap': info.get('marketCap', 0),
-                    'sector': info.get('sector', 'Unknown')
+                    'company_name': info.get('longName', info.get('shortName', symbol)),
+                    'current_price': float(info.get('currentPrice', info.get('regularMarketPrice', info.get('previousClose', 0)))),
+                    'change_percent': float(info.get('regularMarketChangePercent', 0)),
+                    'volume': int(info.get('volume', info.get('regularMarketVolume', 0))),
+                    'market_cap': int(info.get('marketCap', 0)),
+                    'sector': info.get('sector', 'Unknown'),
+                    'professional_rating': professional_rating
                 }
                 
                 # Add professional analysis if available
@@ -383,7 +412,7 @@ class WatchlistManager:
         
         return alerts
     
-    def _save_user_watchlists(self, user_id: str, watchlists: Dict):
+    def _save_user_watchlists(self, user_id, watchlists: Dict):
         """Save watchlists to user profile"""
         try:
             user = User.query.filter_by(id=user_id).first()
