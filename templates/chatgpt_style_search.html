@@ -479,11 +479,15 @@
     }
 
     .header {
-        padding: 1rem;
+        padding: 1rem 1.5rem;
         display: flex;
         justify-content: space-between;
         align-items: center;
         border-bottom: 1px solid rgba(255,255,255,0.1);
+        position: sticky;
+        top: 0;
+        background: #0A0B0F;
+        z-index: 100;
     }
 
     .header-title {
@@ -2158,12 +2162,13 @@
 
     .main-content {
         flex: 1;
-        padding: 2rem 1rem;
+        padding: 2rem 1.5rem;
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        max-width: 100%;
+        max-width: 900px;
+        margin: 0 auto;
         overflow-y: auto;
     }
 
@@ -2404,9 +2409,10 @@
 
     /* Bottom Input Area */
     .input-area {
-        padding: 1rem;
+        padding: 1.5rem;
         background: rgba(0, 0, 0, 0.5);
         backdrop-filter: blur(20px);
+        border-top: 1px solid rgba(255,255,255,0.1);
     }
 
     .input-container {
@@ -2542,6 +2548,19 @@
     @media (max-width: 480px) {
         .main-content {
             padding: 1rem;
+        }
+        
+        /* Additional mobile spacing improvements */
+        .portfolio-stats {
+            gap: 0.75rem !important;
+        }
+        
+        .suggestion-cards {
+            gap: 0.5rem !important;
+        }
+        
+        .input-container {
+            margin: 0 auto;
         }
         
         .suggestion-cards {
@@ -4028,10 +4047,17 @@
 
     // Settings/Account functionality
     function openSettings() {
-        // Close dropdown and open settings
+        // Close dropdown and show settings notification
         document.getElementById('tools-dropdown-menu').classList.remove('show');
         toolsDropdownVisible = false;
-        window.open('/settings', '_blank');
+        showSimpleNotification('Account Settings feature coming soon!', 'info');
+    }
+    
+    // Institutional Features functionality
+    function openInstitutionalFeatures() {
+        document.getElementById('tools-dropdown-menu').classList.remove('show');
+        toolsDropdownVisible = false;
+        window.open('/institutional', '_blank');
     }
     
     // Additional tool functions
@@ -4797,6 +4823,52 @@
             showSimpleNotification('Please enter a valid amount ($100 minimum)', 'error');
         }
     }
+    
+    // Ensure all missing functions exist for smooth UI operation
+    if (typeof openSubscriptionPlans === 'undefined') {
+        function openSubscriptionPlans() {
+            if (typeof PremiumManager !== 'undefined' && PremiumManager.showSubscriptionModal) {
+                PremiumManager.showSubscriptionModal();
+            } else {
+                showSimpleNotification('Premium subscription plans coming soon!', 'info');
+            }
+        }
+    }
+    
+    // UI consistency improvements
+    function improveUISpacing() {
+        // Ensure all buttons have consistent minimum height for touch-friendly interaction
+        const buttons = document.querySelectorAll('button');
+        buttons.forEach(button => {
+            if (!button.style.minHeight) {
+                button.style.minHeight = '44px';
+                button.style.display = 'flex';
+                button.style.alignItems = 'center';
+                button.style.justifyContent = 'center';
+            }
+        });
+        
+        // Center all modal content properly
+        const modals = document.querySelectorAll('.modal-content, .portfolio-modal-content, .watchlist-modal-content');
+        modals.forEach(modal => {
+            modal.style.margin = '2rem auto';
+            modal.style.maxWidth = '90vw';
+            modal.style.borderRadius = '12px';
+        });
+        
+        // Ensure dropdown positioning
+        const dropdowns = document.querySelectorAll('.tools-dropdown-menu');
+        dropdowns.forEach(dropdown => {
+            dropdown.style.position = 'absolute';
+            dropdown.style.top = '100%';
+            dropdown.style.right = '0';
+            dropdown.style.zIndex = '1000';
+        });
+    }
+    
+    // Apply UI improvements on DOM ready
+    document.addEventListener('DOMContentLoaded', improveUISpacing);
+    setTimeout(improveUISpacing, 1000); // Backup for dynamic content
     </script>
     
     <!-- Include Premium Modal -->
