@@ -1241,9 +1241,146 @@
         background: rgba(255, 255, 255, 0.02);
         border-radius: 12px;
         border: 1px solid rgba(96, 165, 250, 0.15);
-        margin-top: 0.75rem;
+        margin-bottom: 1rem;
         overflow: hidden;
         transition: all 0.3s ease;
+    }
+
+    /* Mobile responsiveness for Popular Stocks */
+    @media (max-width: 768px) {
+        .popular-pills {
+            display: none;
+        }
+        
+        .popular-label::after {
+            content: " (6 stocks)";
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.8rem;
+        }
+
+        .popular-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.5rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .popular-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .popular-indicator {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem 1rem;
+        cursor: pointer;
+        background: rgba(96, 165, 250, 0.03);
+        transition: all 0.3s ease;
+    }
+
+    .popular-indicator:hover {
+        background: rgba(96, 165, 250, 0.06);
+    }
+
+    .popular-left {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        flex: 1;
+    }
+
+    .popular-label {
+        color: white;
+        font-weight: 600;
+        font-size: 0.9rem;
+        white-space: nowrap;
+    }
+
+    .popular-pills {
+        display: flex;
+        gap: 0.5rem;
+        margin-left: 0.5rem;
+    }
+
+    .popular-pill {
+        background: rgba(96, 165, 250, 0.2);
+        color: white;
+        padding: 0.2rem 0.5rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        white-space: nowrap;
+    }
+
+    .popular-pill.trending {
+        background: rgba(255, 165, 0, 0.2);
+        color: #ffa500;
+    }
+
+    .popular-pill.growth {
+        background: rgba(34, 197, 94, 0.2);
+        color: #22c55e;
+    }
+
+    .popular-pill.tech {
+        background: rgba(168, 85, 247, 0.2);
+        color: #a855f7;
+    }
+
+    .popular-right {
+        display: flex;
+        align-items: center;
+    }
+
+    .popular-expanded-content {
+        background: rgba(255, 255, 255, 0.01);
+        padding: 1rem;
+        border-top: 1px solid rgba(96, 165, 250, 0.1);
+        animation: expandDown 0.3s ease-out;
+    }
+
+    .popular-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 0.75rem;
+    }
+
+    .popular-stock-card {
+        background: rgba(96, 165, 250, 0.05);
+        border: 1px solid rgba(96, 165, 250, 0.15);
+        border-radius: 8px;
+        padding: 0.75rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-align: left;
+        color: white;
+    }
+
+    .popular-stock-card:hover {
+        background: rgba(96, 165, 250, 0.1);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(96, 165, 250, 0.2);
+    }
+
+    .stock-symbol {
+        font-weight: 700;
+        font-size: 0.9rem;
+        color: #60a5fa;
+        margin-bottom: 0.25rem;
+    }
+
+    .stock-name {
+        font-size: 0.8rem;
+        color: rgba(255, 255, 255, 0.7);
+        margin-bottom: 0.25rem;
+    }
+
+    .stock-price {
+        font-weight: 600;
+        color: white;
+        font-size: 0.85rem;
     }
 
     .popular-indicator {
@@ -2510,6 +2647,24 @@
         insightsExpanded = !insightsExpanded;
         
         if (insightsExpanded) {
+            expandedContent.style.display = 'block';
+            expandIcon.classList.add('expanded');
+        } else {
+            expandedContent.style.display = 'none';
+            expandIcon.classList.remove('expanded');
+        }
+    }
+
+    // Toggle popular stocks expanded/condensed view
+    let popularExpanded = false;
+    
+    function togglePopularExpanded() {
+        const expandedContent = document.getElementById('popular-expanded-content');
+        const expandIcon = document.getElementById('popular-expand-icon');
+        
+        popularExpanded = !popularExpanded;
+        
+        if (popularExpanded) {
             expandedContent.style.display = 'block';
             expandIcon.classList.add('expanded');
         } else {
