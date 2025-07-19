@@ -1,106 +1,8 @@
 // TradeWise AI Stock Search - Clean Implementation
 // Stock Search Functionality for TradeWise AI
 
-// Company name to symbol mapping
-const companySymbols = {
-    // Tech Giants
-    'nvidia': 'NVDA',
-    'apple': 'AAPL', 
-    'tesla': 'TSLA',
-    'microsoft': 'MSFT',
-    'amazon': 'AMZN',
-    'google': 'GOOGL',
-    'alphabet': 'GOOGL',
-    'meta': 'META',
-    'facebook': 'META',
-    'netflix': 'NFLX',
-    'adobe': 'ADBE',
-    'salesforce': 'CRM',
-    'oracle': 'ORCL',
-    'intel': 'INTC',
-    'amd': 'AMD',
-    'zoom': 'ZM',
-    'spotify': 'SPOT',
-    'uber': 'UBER',
-    'lyft': 'LYFT',
-    'airbnb': 'ABNB',
-    
-    // Fintech & Trading
-    'robinhood': 'HOOD',
-    'coinbase': 'COIN',
-    'square': 'SQ',
-    'block': 'SQ',
-    'paypal': 'PYPL',
-    'stripe': 'STRIPE',
-    
-    // Popular Stocks
-    'palantir': 'PLTR',
-    'snowflake': 'SNOW',
-    'shopify': 'SHOP',
-    'roblox': 'RBLX',
-    'unity': 'U',
-    'peloton': 'PTON',
-    'roku': 'ROKU',
-    'doordash': 'DASH',
-    'beyond meat': 'BYND',
-    'moderna': 'MRNA',
-    'pfizer': 'PFE',
-    'johnson': 'JNJ',
-    'berkshire': 'BRK-B',
-    'warren buffett': 'BRK-B',
-    
-    // Finance
-    'jpmorgan': 'JPM',
-    'visa': 'V',
-    'mastercard': 'MA',
-    'goldman': 'GS',
-    'morgan stanley': 'MS',
-    'bank of america': 'BAC',
-    'wells fargo': 'WFC',
-    'american express': 'AXP',
-    
-    // Traditional Companies
-    'boeing': 'BA',
-    'disney': 'DIS',
-    'coca cola': 'KO',
-    'pepsi': 'PEP',
-    'walmart': 'WMT',
-    'target': 'TGT',
-    'home depot': 'HD',
-    'lowes': 'LOW',
-    'starbucks': 'SBUX',
-    'mcdonalds': 'MCD',
-    'ford': 'F',
-    'general motors': 'GM',
-    'exxon': 'XOM',
-    'chevron': 'CVX',
-    'att': 'T',
-    'verizon': 'VZ',
-    
-    // Meme Stocks & EVs
-    'gamestop': 'GME',
-    'amc': 'AMC',
-    'blackberry': 'BB',
-    'nokia': 'NOK',
-    'lucid': 'LCID',
-    'lucid motors': 'LCID',
-    'rivian': 'RIVN',
-    'nikola': 'NKLA',
-    'fisker': 'FSR',
-    
-    // International & Auto
-    'toyota': 'TM',
-    'honda': 'HMC',
-    'nissan': 'NSANY',
-    'volkswagen': 'VWAGY',
-    'bmw': 'BMWYY',
-    'mercedes': 'DDAIF',
-    'ferrari': 'RACE',
-    'stellantis': 'STLA'
-};
 
-// Debug: Log company symbols on load
-console.log('TradeWise AI: Company symbols loaded:', companySymbols);
+// Note: Company name to symbol mapping is now handled by the backend S&P 500 database
 
 // Get recommendation styles for color-coded badges
 function getRecommendationStyles(recommendation) {
@@ -154,13 +56,8 @@ function performIntelligentSearch() {
         return;
     }
     
-    // Check if it's a company name and convert to symbol
-    let symbol = searchValue.toUpperCase();
-    const companySymbol = companySymbols[searchValue.toLowerCase()];
-    if (companySymbol) {
-        symbol = companySymbol;
-        searchInput.value = symbol; // Update input with symbol
-    }
+    // Convert search term to symbol (backend handles S&P 500 mapping)
+    let symbol = searchValue;
     
     performIntelligentSearchWithSymbol(symbol);
 }

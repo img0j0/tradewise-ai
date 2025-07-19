@@ -2,6 +2,8 @@ import yfinance as yf
 import json
 from datetime import datetime, timedelta
 import logging
+from sp500_stocks import get_symbol_from_name, is_sp500, get_all_symbols
+from universal_stock_search import universal_search
 
 logger = logging.getLogger(__name__)
 
@@ -11,11 +13,14 @@ class StockSearchService:
     def search_stock(self, symbol):
         """Search for a stock by symbol and return its current data"""
         try:
-            # Clean and validate symbol
-            clean_symbol = symbol.upper().strip()
+            # First try to convert company name to symbol using our comprehensive database
+            clean_symbol = get_symbol_from_name(symbol.strip())
+            
             if not clean_symbol or len(clean_symbol) > 10:
                 logger.warning(f"Invalid symbol format: {symbol}")
                 return None
+            
+            logger.info(f"Searching for stock: {symbol} -> {clean_symbol} (S&P 500: {is_sp500(clean_symbol)})")
             
             # Get stock data from yfinance
             stock = yf.Ticker(clean_symbol)
@@ -27,11 +32,16 @@ class StockSearchService:
                 info.get('shortName'), 
                 info.get('symbol'),
                 info.get('regularMarketPrice'),
-                info.get('currentPrice')
+                info.get('currentPrice'),
+                info.get('previousClose')
             ]
             
-            if not any(valid_indicators):
-                logger.warning(f"Stock {clean_symbol} not found - no valid data available")
+            # Allow stocks with minimal data if they have a price
+            has_price_data = info.get('regularMarketPrice') or info.get('currentPrice') or info.get('previousClose')
+            has_basic_info = info.get('longName') or info.get('shortName') or info.get('symbol')
+            
+            if not (has_price_data and has_basic_info):
+                logger.warning(f"Stock {clean_symbol} not found - insufficient data available")
                 return None
             
             # Try to get current price from multiple sources
@@ -114,6 +124,28 @@ class StockSearchService:
             
         except Exception as e:
             logger.error(f"Error searching for stock {symbol}: {str(e)}")
+            
+            # Fallback to universal search for any publicly traded stock
+            logger.info(f"Trying universal search fallback for: {symbol}")
+            try:
+                fallback_result = universal_search.search_any_stock(symbol)
+                if fallback_result:
+                    logger.info(f"Universal search found: {fallback_result['symbol']}")
+                    # Convert to our standard format
+                    return {
+                        'symbol': fallback_result['symbol'],
+                        'name': fallback_result['name'],
+                        'current_price': fallback_result['current_price'],
+                        'previous_close': fallback_result['current_price'],  # Use same price as fallback
+                        'price_change': 0.0,
+                        'price_change_percent': 0.0,
+                        'sector': fallback_result['sector'],
+                        'market_cap': fallback_result.get('market_cap'),
+                        'is_sp500': fallback_result['is_sp500']
+                    }
+            except Exception as fallback_error:
+                logger.error(f"Universal search also failed: {fallback_error}")
+            
             return None
     
     def get_stock_fundamentals(self, symbol):
