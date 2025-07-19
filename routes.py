@@ -59,6 +59,28 @@ deep_learning_engine = get_deep_learning_engine()
 performance_optimizer = get_performance_optimizer()
 monetization_engine = get_monetization_engine()
 
+# Initialize institutional features
+from institutional_features import institutional_features
+from dark_pool_intelligence import dark_pool_intelligence
+from algorithmic_trading_engine import algorithmic_engine
+
+# Institutional feature services
+smart_order_router = institutional_features['smart_order_router']
+advanced_orders = institutional_features['advanced_orders']
+level2_data = institutional_features['level2_data']
+options_flow = institutional_features['options_flow']
+risk_management = institutional_features['risk_management']
+
+# Dark pool intelligence services
+dark_pool_analyzer = dark_pool_intelligence['dark_pool_analyzer']
+institutional_flow = dark_pool_intelligence['institutional_flow']
+market_microstructure = dark_pool_intelligence['market_microstructure']
+
+# Algorithmic trading services
+algorithm_builder = algorithmic_engine['algorithm_builder']
+backtesting_engine = algorithmic_engine['backtesting_engine']
+strategy_optimizer = algorithmic_engine['strategy_optimizer']
+
 # Train AI model on startup
 stocks_data = data_service.get_all_stocks()
 ai_engine.train_model(stocks_data)

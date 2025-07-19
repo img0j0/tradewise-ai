@@ -156,6 +156,150 @@ class PremiumManager {
         const modal = new bootstrap.Modal(document.getElementById('premiumModal'));
         modal.show();
     }
+}
+
+// Global function for institutional features
+function showInstitutionalFeatures() {
+    console.log('Opening institutional features modal...');
+    
+    // Check if modal already exists
+    if (!document.getElementById('institutionalFeaturesModal')) {
+        // Create modal HTML directly
+        const modalHTML = `
+        <div class="modal fade" id="institutionalFeaturesModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content bg-dark text-white">
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                            <i class="fas fa-university me-2"></i>
+                            Institutional-Grade Trading Features
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-12 text-center mb-4">
+                                <h3 class="text-warning">Bloomberg Terminal Capabilities at 98% Less Cost</h3>
+                                <p class="lead">Professional trading tools previously exclusive to Wall Street institutions</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <div class="card bg-secondary h-100">
+                                    <div class="card-body">
+                                        <h5><i class="fas fa-route text-primary me-2"></i>Smart Order Routing</h5>
+                                        <p>Automatically find best execution across 50+ venues including NYSE, NASDAQ, ARCA, BATS, and IEX.</p>
+                                        <ul class="small">
+                                            <li>Real-time venue analysis</li>
+                                            <li>Market impact minimization</li>
+                                            <li>Commission optimization</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <div class="card bg-secondary h-100">
+                                    <div class="card-body">
+                                        <h5><i class="fas fa-layer-group text-success me-2"></i>Level 2 Market Data</h5>
+                                        <p>Professional order book analysis with bid/ask depth and market maker activity.</p>
+                                        <ul class="small">
+                                            <li>5-level bid/ask depth</li>
+                                            <li>Market maker identification</li>
+                                            <li>Liquidity scoring</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <div class="card bg-secondary h-100">
+                                    <div class="card-body">
+                                        <h5><i class="fas fa-chart-line text-warning me-2"></i>Options Flow Analysis</h5>
+                                        <p>Track institutional options activity and large block trades before they impact prices.</p>
+                                        <ul class="small">
+                                            <li>Unusual activity detection</li>
+                                            <li>Call/Put ratio analysis</li>
+                                            <li>Block trade identification</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <div class="card bg-secondary h-100">
+                                    <div class="card-body">
+                                        <h5><i class="fas fa-eye-slash text-info me-2"></i>Dark Pool Intelligence</h5>
+                                        <p>Monitor institutional block trading across major dark pools and detect accumulation patterns.</p>
+                                        <ul class="small">
+                                            <li>Dark volume tracking</li>
+                                            <li>Major venue monitoring</li>
+                                            <li>Institutional flow patterns</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <div class="card bg-secondary h-100">
+                                    <div class="card-body">
+                                        <h5><i class="fas fa-robot text-danger me-2"></i>Algorithm Builder</h5>
+                                        <p>Create and test custom trading strategies with professional backtesting engines.</p>
+                                        <ul class="small">
+                                            <li>Visual strategy builder</li>
+                                            <li>Kelly Criterion position sizing</li>
+                                            <li>Risk-adjusted metrics</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <div class="card bg-warning text-dark h-100">
+                                    <div class="card-body text-center">
+                                        <h4><i class="fas fa-crown me-2"></i>Elite Plan Only</h4>
+                                        <p class="mb-2"><strong>$39.99/month</strong></p>
+                                        <p class="mb-3">vs Bloomberg Terminal: $2,000/month</p>
+                                        <h5 class="text-success">98% Cost Savings!</h5>
+                                        <button class="btn btn-dark mt-2" onclick="premiumManager?.showPremiumModal()">
+                                            Upgrade to Elite
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-4 p-3 rounded" style="background: rgba(255, 193, 7, 0.1); border: 1px solid rgba(255, 193, 7, 0.3);">
+                            <div class="row text-center">
+                                <div class="col-4">
+                                    <div class="h5 mb-0 text-warning">$2,000</div>
+                                    <small class="text-muted">Bloomberg Terminal</small>
+                                </div>
+                                <div class="col-4">
+                                    <div class="h5 mb-0 text-success">$39.99</div>
+                                    <small class="text-muted">TradeWise Elite</small>
+                                </div>
+                                <div class="col-4">
+                                    <div class="h5 mb-0 text-primary">98%</div>
+                                    <small class="text-muted">Cost Savings</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>`;
+        
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+    }
+    
+    try {
+        const modal = new bootstrap.Modal(document.getElementById('institutionalFeaturesModal'));
+        modal.show();
+    } catch (error) {
+        console.error('Error showing institutional features modal:', error);
+        // Fallback to premium modal with message
+        alert('Institutional Features Available: Smart Order Routing, Level 2 Data, Options Flow Analysis, Dark Pool Intelligence, and Algorithm Builder. These Bloomberg Terminal-level tools are available in our Elite plan for just $39.99/month (98% savings vs Bloomberg Terminal $2,000/month)');
+        if (typeof premiumManager !== 'undefined') {
+            premiumManager.showPremiumModal();
+        }
+    }
 
     async subscribeToPlan(planType) {
         try {
