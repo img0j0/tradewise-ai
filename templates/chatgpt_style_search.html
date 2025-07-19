@@ -373,14 +373,58 @@
                 </button>
             </div>
             
-            <!-- Quick Stock Buttons -->
-            <div class="quick-stocks">
-                <button class="quick-btn" onclick="searchStock('AAPL')">AAPL</button>
-                <button class="quick-btn" onclick="searchStock('TSLA')">TSLA</button>
-                <button class="quick-btn" onclick="searchStock('NVDA')">NVDA</button>
-                <button class="quick-btn" onclick="searchStock('MSFT')">MSFT</button>
-                <button class="quick-btn" onclick="searchStock('GOOGL')">GOOGL</button>
-                <button class="quick-btn" onclick="searchStock('AMZN')">AMZN</button>
+            <!-- Popular Stocks Dropdown -->
+            <div class="popular-stocks-condensed">
+                <div class="popular-indicator" onclick="togglePopularExpanded()">
+                    <div class="popular-left">
+                        <i class="fas fa-star" style="color: #60a5fa; font-size: 0.9rem;"></i>
+                        <span class="popular-label">Popular Stocks</span>
+                        <div class="popular-pills">
+                            <span class="popular-pill trending">Trending</span>
+                            <span class="popular-pill growth">Growth</span>
+                            <span class="popular-pill tech">Tech</span>
+                        </div>
+                    </div>
+                    <div class="popular-right">
+                        <i class="fas fa-chevron-down expand-icon" id="popular-expand-icon"></i>
+                    </div>
+                </div>
+                
+                <!-- Expanded Popular Stocks Content -->
+                <div id="popular-expanded-content" class="popular-expanded-content" style="display: none;">
+                    <div class="popular-grid">
+                        <button class="popular-stock-card" onclick="searchStock('AAPL')">
+                            <div class="stock-symbol">AAPL</div>
+                            <div class="stock-name">Apple Inc.</div>
+                            <div class="stock-price">$180.25</div>
+                        </button>
+                        <button class="popular-stock-card" onclick="searchStock('TSLA')">
+                            <div class="stock-symbol">TSLA</div>
+                            <div class="stock-name">Tesla Inc.</div>
+                            <div class="stock-price">$245.67</div>
+                        </button>
+                        <button class="popular-stock-card" onclick="searchStock('NVDA')">
+                            <div class="stock-symbol">NVDA</div>
+                            <div class="stock-name">NVIDIA Corp.</div>
+                            <div class="stock-price">$425.89</div>
+                        </button>
+                        <button class="popular-stock-card" onclick="searchStock('MSFT')">
+                            <div class="stock-symbol">MSFT</div>
+                            <div class="stock-name">Microsoft Corp.</div>
+                            <div class="stock-price">$385.21</div>
+                        </button>
+                        <button class="popular-stock-card" onclick="searchStock('GOOGL')">
+                            <div class="stock-symbol">GOOGL</div>
+                            <div class="stock-name">Alphabet Inc.</div>
+                            <div class="stock-price">$142.55</div>
+                        </button>
+                        <button class="popular-stock-card" onclick="searchStock('AMZN')">
+                            <div class="stock-symbol">AMZN</div>
+                            <div class="stock-name">Amazon.com Inc.</div>
+                            <div class="stock-price">$155.73</div>
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -1190,6 +1234,187 @@
         }
     }
 
+    /* Popular Stocks Dropdown - Matching other sections */
+    .popular-stocks-condensed {
+        background: rgba(255, 255, 255, 0.02);
+        border-radius: 12px;
+        border: 1px solid rgba(96, 165, 250, 0.15);
+        margin-top: 0.75rem;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .popular-indicator {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem 1rem;
+        cursor: pointer;
+        background: rgba(96, 165, 250, 0.03);
+        transition: all 0.3s ease;
+    }
+
+    .popular-indicator:hover {
+        background: rgba(96, 165, 250, 0.06);
+    }
+
+    .popular-left {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        flex: 1;
+    }
+
+    .popular-label {
+        color: white;
+        font-weight: 600;
+        font-size: 0.9rem;
+        white-space: nowrap;
+    }
+
+    .popular-pills {
+        display: flex;
+        gap: 0.4rem;
+    }
+
+    .popular-pill {
+        background: rgba(96, 165, 250, 0.2);
+        color: white;
+        padding: 0.25rem 0.6rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border: 1px solid rgba(96, 165, 250, 0.3);
+    }
+
+    .popular-pill:hover {
+        background: rgba(96, 165, 250, 0.3);
+        transform: translateY(-1px);
+    }
+
+    .popular-pill.trending {
+        background: rgba(249, 115, 22, 0.2);
+        color: #f97316;
+        border-color: rgba(249, 115, 22, 0.3);
+    }
+
+    .popular-pill.growth {
+        background: rgba(34, 197, 94, 0.2);
+        color: #22c55e;
+        border-color: rgba(34, 197, 94, 0.3);
+    }
+
+    .popular-pill.tech {
+        background: rgba(168, 85, 247, 0.2);
+        color: #a855f7;
+        border-color: rgba(168, 85, 247, 0.3);
+    }
+
+    .popular-right {
+        margin-left: auto;
+    }
+
+    .popular-expanded-content {
+        padding: 0 1rem 1rem 1rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        animation: slideDown 0.3s ease-out;
+    }
+
+    .popular-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 0.75rem;
+        margin-top: 0.75rem;
+    }
+
+    .popular-stock-card {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        padding: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-align: left;
+        color: white;
+    }
+
+    .popular-stock-card:hover {
+        background: rgba(255, 255, 255, 0.08);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .popular-stock-card .stock-symbol {
+        font-weight: 700;
+        font-size: 1rem;
+        color: #60a5fa;
+        margin-bottom: 0.25rem;
+    }
+
+    .popular-stock-card .stock-name {
+        font-size: 0.8rem;
+        color: rgba(255, 255, 255, 0.7);
+        margin-bottom: 0.5rem;
+    }
+
+    .popular-stock-card .stock-price {
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: #22c55e;
+    }
+
+    /* Mobile optimization for popular stocks */
+    @media (max-width: 768px) {
+        .popular-indicator {
+            padding: 0.6rem 0.8rem;
+        }
+        
+        .popular-left {
+            gap: 0.5rem;
+        }
+        
+        .popular-label {
+            font-size: 0.85rem;
+        }
+        
+        .popular-pills {
+            gap: 0.4rem;
+            margin-left: 0.3rem;
+        }
+        
+        .popular-pill {
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+        }
+
+        .popular-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.5rem;
+        }
+
+        .popular-stock-card {
+            padding: 0.75rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .popular-pills {
+            display: none;
+        }
+        
+        .popular-label::after {
+            content: " (6 stocks)";
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.8rem;
+        }
+        
+        .popular-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
     /* Mobile optimization for themes */
     @media (max-width: 768px) {
         .themes-indicator {
@@ -1226,7 +1451,7 @@
         }
         
         .themes-label::after {
-            content: " (3 themes)";
+            content: " (12 themes)";
             color: rgba(255, 255, 255, 0.6);
             font-size: 0.8rem;
         }
@@ -2415,6 +2640,24 @@
 
     function addThemeToWatchlist(theme) {
         alert(theme + ' theme added to your watchlist!');
+    }
+
+    // Toggle popular stocks expanded/condensed view
+    let popularExpanded = false;
+    
+    function togglePopularExpanded() {
+        const expandedContent = document.getElementById('popular-expanded-content');
+        const expandIcon = document.getElementById('popular-expand-icon');
+        
+        popularExpanded = !popularExpanded;
+        
+        if (popularExpanded) {
+            expandedContent.style.display = 'block';
+            expandIcon.classList.add('expanded');
+        } else {
+            expandedContent.style.display = 'none';
+            expandIcon.classList.remove('expanded');
+        }
     }
     </script>
 
