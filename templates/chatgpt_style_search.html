@@ -28,6 +28,10 @@
                     <i class="fas fa-wallet" style="font-size: 0.85rem;"></i>
                     <span class="portfolio-text">Portfolio</span>
                 </button>
+                <button class="settings-button" onclick="openSettings()">
+                    <i class="fas fa-user-cog" style="font-size: 0.85rem;"></i>
+                    <span class="settings-text">Account</span>
+                </button>
             </div>
         </div>
         
@@ -222,6 +226,33 @@
     }
 
     .portfolio-text {
+        font-weight: 500;
+    }
+
+    /* Settings/Account button styling */
+    .settings-button {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 25px;
+        color: white;
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+
+    .settings-button:hover {
+        background: rgba(255, 255, 255, 0.15);
+        transform: translateY(-1px);
+        color: white;
+        text-decoration: none;
+    }
+
+    .settings-text {
         font-weight: 500;
     }
 
@@ -1869,6 +1900,12 @@
             portfolioSection.style.display = 'none';
             searchContent.style.display = 'block';
         }
+    }
+    
+    // Settings/Account functionality
+    function openSettings() {
+        // Open settings page in new tab
+        window.open('/settings', '_blank');
     }
     
     function loadPortfolioData() {

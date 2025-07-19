@@ -151,6 +151,13 @@ def alerts():
         return redirect(url_for('login'))
     return render_template('clean_alerts.html')
 
+@app.route('/settings')
+def settings():
+    """User account settings page"""
+    if not current_user.is_authenticated:
+        return redirect(url_for('login'))
+    return render_template('user_settings.html')
+
 # Content-only endpoints for iframe embedding
 @app.route('/dashboard_content')
 def dashboard_content():
