@@ -300,11 +300,13 @@ function showInstitutionalFeatures() {
             premiumManager.showPremiumModal();
         }
     }
+}
 
-    async subscribeToPlan(planType) {
-        try {
-            // Show loading state
-            const button = event.target;
+// Global function for subscription
+async function subscribeToPlan(planType) {
+    try {
+        // Show loading state
+        const button = event.target;
             const originalText = button.innerHTML;
             button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processing...';
             button.disabled = true;
@@ -327,18 +329,22 @@ function showInstitutionalFeatures() {
                 }
 
                 // Show success modal
-                this.showSuccessModal(result);
+                showSuccessModal(result);
                 
-                // Update status
-                await this.checkPremiumStatus();
+                // Update status if premiumManager available
+                if (typeof premiumManager !== 'undefined' && premiumManager.checkPremiumStatus) {
+                    await premiumManager.checkPremiumStatus();
+                }
                 
                 // Show notification
                 if (window.showNotification) {
                     showNotification(result.message, 'success');
                 }
 
-                // Start loading copilot signals
-                this.loadCopilotSignals();
+                // Start loading copilot signals if available
+                if (typeof premiumManager !== 'undefined' && premiumManager.loadCopilotSignals) {
+                    premiumManager.loadCopilotSignals();
+                }
                 
             } else {
                 throw new Error(result.error || 'Subscription failed');
@@ -358,7 +364,7 @@ function showInstitutionalFeatures() {
         }
     }
 
-    showSuccessModal(result) {
+function showSuccessModal(result) {
         // Instead of showing a redirect modal, show an inline success notification
         if (window.showNotification) {
             showNotification(`🎉 Welcome to AI Copilot ${result.plan.charAt(0).toUpperCase() + result.plan.slice(1)}! Your AI assistant is now active.`, 'success');
@@ -366,16 +372,18 @@ function showInstitutionalFeatures() {
         
         // Update the interface to show premium features immediately
         setTimeout(() => {
-            this.updateUI();
-            this.loadCopilotSignals();
-            this.showAICopilotWidget();
+            if (typeof premiumManager !== 'undefined') {
+                if (premiumManager.updateUI) premiumManager.updateUI();
+                if (premiumManager.loadCopilotSignals) premiumManager.loadCopilotSignals();
+                if (premiumManager.showAICopilotWidget) premiumManager.showAICopilotWidget();
+            }
             
             // Show a brief success banner instead of modal
-            this.showInlineSuccessBanner(result);
+            showInlineSuccessBanner(result);
         }, 500);
     }
-    
-    showInlineSuccessBanner(result) {
+
+function showInlineSuccessBanner(result) {
         // Create a beautiful success overlay instead of modal
         const overlay = document.createElement('div');
         overlay.className = 'position-fixed w-100 h-100 d-flex align-items-center justify-content-center';
@@ -431,7 +439,10 @@ function showInstitutionalFeatures() {
         document.head.appendChild(style);
     }
 
-    async loadCopilotSignals() {
+}
+
+// Global function for loading copilot signals
+async function loadCopilotSignals() {
         console.log('LoadCopilotSignals called, user status:', this.userStatus);
         
         if (!this.userStatus.is_premium) {
