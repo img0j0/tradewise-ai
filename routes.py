@@ -30,6 +30,12 @@ from monetization_strategy import get_monetization_engine
 # Import will be done after setup
 realtime_service = None
 
+# Import AI Trading Copilot for premium features
+try:
+    from ai_trading_copilot import ai_copilot
+except ImportError:
+    ai_copilot = None
+
 # Configure Stripe
 stripe.api_key = os.environ.get('STRIPE_SECRET_KEY')
 

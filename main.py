@@ -5,6 +5,8 @@ import models
 import routes
 from ai_trading_copilot import start_ai_copilot
 
+# Premium routes will be imported directly in routes.py
+
 # Create tables
 with app.app_context():
     db.create_all()

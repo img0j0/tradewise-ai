@@ -1,117 +1,169 @@
 #!/usr/bin/env python3
 """
-Premium Functionality Test Suite
-Validates all premium features are working correctly
+Test premium functionality and UI display
 """
 
 import requests
-import json
-import sys
-from datetime import datetime
+import time
 
-def test_premium_endpoints():
-    """Test all premium API endpoints"""
+def test_premium_functionality():
+    """Test that premium features display properly after subscription"""
     base_url = "http://localhost:5000"
     
-    print("🧪 Testing Premium Functionality...")
-    print("=" * 50)
+    print("🔄 Testing Premium Functionality...")
+    print("=" * 60)
     
-    # Test premium features endpoint (public)
-    print("1. Testing Premium Features Endpoint...")
+    # Test 1: Check premium status API
+    print("1. Testing Premium Status API...")
     try:
-        response = requests.get(f"{base_url}/api/premium/features")
+        response = requests.get(f"{base_url}/api/premium/status", timeout=5)
+        if response.status_code == 200:
+            status = response.json()
+            print(f"✅ Premium status API working")
+            print(f"   - Is Premium: {status.get('is_premium', False)}")
+            print(f"   - Plan: {status.get('plan', 'free')}")
+            print(f"   - Copilot Active: {status.get('copilot_active', False)}")
+        else:
+            print(f"❌ Premium status API failed: {response.status_code}")
+            return False
+    except Exception as e:
+        print(f"❌ Premium status API error: {e}")
+        return False
+    
+    # Test 2: Check copilot signals API
+    print("\n2. Testing Copilot Signals API...")
+    try:
+        response = requests.get(f"{base_url}/api/premium/copilot/signals?limit=3", timeout=5)
         if response.status_code == 200:
             data = response.json()
-            print("✅ Premium features endpoint working")
-            print(f"   - Plans available: {list(data['plans'].keys())}")
-            print(f"   - Pro plan price: ${data['plans']['pro']['price']}")
-            print(f"   - Elite plan price: ${data['plans']['elite']['price']}")
+            print("✅ Copilot signals API working")
+            print(f"   - Signals returned: {data.get('count', 0)}")
+            if data.get('signals'):
+                for signal in data['signals'][:2]:
+                    print(f"   - {signal['symbol']}: {signal['signal_type']} ({signal['confidence']*100:.0f}%)")
+        elif response.status_code == 403:
+            print("✅ Copilot signals API properly protected (403 for non-premium)")
         else:
-            print(f"❌ Premium features endpoint failed: {response.status_code}")
+            print(f"❌ Copilot signals API failed: {response.status_code}")
     except Exception as e:
-        print(f"❌ Premium features endpoint error: {e}")
+        print(f"❌ Copilot signals API error: {e}")
     
-    print("\n2. Testing AI Trading Copilot Import...")
-    try:
-        from ai_trading_copilot import AITradingCopilot, TradingSignal, AlertType
-        copilot = AITradingCopilot()
-        print("✅ AI Trading Copilot imported successfully")
-        print(f"   - Watchlist: {copilot.watchlist[:3]}... ({len(copilot.watchlist)} stocks)")
-        print(f"   - Monitoring status: {copilot.is_monitoring}")
-    except Exception as e:
-        print(f"❌ AI Trading Copilot import error: {e}")
-    
-    print("\n3. Testing Premium Manager JavaScript...")
+    # Test 3: Verify JavaScript files are correct
+    print("\n3. Testing JavaScript Implementation...")
     try:
         with open('static/js/premium.js', 'r') as f:
             content = f.read()
-            if 'subscribeToPlan' in content and 'checkPremiumStatus' in content:
-                print("✅ Premium Manager JavaScript contains required functions")
-                print("   - subscribeToPlan function: Found")
-                print("   - checkPremiumStatus function: Found")
-                print("   - showPremiumModal function: Found")
-            else:
-                print("❌ Premium Manager JavaScript missing required functions")
+        
+        # Check for proper field mapping
+        if 'is_premium' in content:
+            print("✅ JavaScript uses correct API field (is_premium)")
+        else:
+            print("❌ JavaScript may be using wrong field (isPremium vs is_premium)")
+        
+        # Check for debug logging
+        if 'console.log' in content and 'Premium status received' in content:
+            print("✅ Debug logging added for troubleshooting")
+        else:
+            print("❌ Debug logging missing")
+        
+        # Check for AI Copilot widget functions
+        if 'showAICopilotWidget' in content and 'hideAICopilotWidget' in content:
+            print("✅ AI Copilot widget functions present")
+        else:
+            print("❌ AI Copilot widget functions missing")
+        
     except Exception as e:
-        print(f"❌ Premium Manager JavaScript error: {e}")
+        print(f"❌ JavaScript check error: {e}")
+        return False
     
-    print("\n4. Testing Premium Modal Template...")
+    # Test 4: Verify HTML template has copilot widget
+    print("\n4. Testing HTML Template...")
+    try:
+        with open('templates/chatgpt_style_search.html', 'r') as f:
+            content = f.read()
+        
+        if 'ai-copilot-widget' in content:
+            print("✅ AI Copilot widget present in template")
+        else:
+            print("❌ AI Copilot widget missing from template")
+            return False
+        
+        if 'notification-area' in content:
+            print("✅ Notification area present in template")
+        else:
+            print("❌ Notification area missing from template")
+            return False
+        
+    except Exception as e:
+        print(f"❌ Template check error: {e}")
+        return False
+    
+    # Test 5: Check CSS files exist
+    print("\n5. Testing CSS Files...")
+    try:
+        with open('static/css/premium_features.css', 'r') as f:
+            content = f.read()
+        
+        if '.ai-copilot-widget' in content:
+            print("✅ AI Copilot widget styles present")
+        else:
+            print("❌ AI Copilot widget styles missing")
+            return False
+        
+        if '.notification' in content:
+            print("✅ Notification styles present")
+        else:
+            print("❌ Notification styles missing")
+            return False
+        
+    except Exception as e:
+        print(f"❌ CSS check error: {e}")
+        return False
+    
+    # Test 6: Verify premium modal exists
+    print("\n6. Testing Premium Modal...")
     try:
         with open('templates/premium_modal.html', 'r') as f:
             content = f.read()
-            if 'premiumModal' in content and 'subscribeToPlan' in content:
-                print("✅ Premium modal template found")
-                print("   - Modal ID: premiumModal")
-                print("   - Subscription buttons: Present")
-                print("   - Mobile scrolling: Enabled")
-            else:
-                print("❌ Premium modal template incomplete")
-    except Exception as e:
-        print(f"❌ Premium modal template error: {e}")
-    
-    print("\n5. Testing Database Models...")
-    try:
-        from models import User
-        # Check if User model has subscription fields
-        test_user = User()
-        test_user.subscription_type = 'pro'
-        test_user.subscription_expires = datetime.now()
-        print("✅ User model supports subscription fields")
-        print("   - subscription_type field: Present")
-        print("   - subscription_expires field: Present")
-        print("   - Model validation: Passed")
-    except Exception as e:
-        print(f"❌ Database model error: {e}")
-    
-    print("\n6. Testing Premium Routes Import...")
-    try:
-        import routes
-        # Check if premium routes are defined
-        route_names = [rule.rule for rule in routes.app.url_map.iter_rules()]
-        premium_routes = [r for r in route_names if 'premium' in r]
-        if premium_routes:
-            print("✅ Premium routes registered")
-            for route in premium_routes:
-                print(f"   - {route}")
+        
+        if 'premiumModal' in content:
+            print("✅ Premium modal template exists")
         else:
-            print("❌ No premium routes found")
+            print("❌ Premium modal template missing")
+            return False
+        
+        if 'Subscribe to' in content:
+            print("✅ Subscription options present")
+        else:
+            print("❌ Subscription options missing")
+        
     except Exception as e:
-        print(f"❌ Premium routes error: {e}")
+        print(f"❌ Premium modal check error: {e}")
+        return False
     
-    print("\n7. Testing AI Copilot Integration...")
-    try:
-        from ai_trading_copilot import ai_copilot
-        print("✅ AI Copilot singleton instance available")
-        print(f"   - Subscribers: {len(ai_copilot.subscribers)}")
-        print(f"   - Signal history: {len(ai_copilot.signal_history)}")
-        print(f"   - Market data cache: {len(ai_copilot.market_data_cache)} entries")
-    except Exception as e:
-        print(f"❌ AI Copilot integration error: {e}")
+    print("\n" + "=" * 60)
+    print("🎉 Premium Functionality Test Complete!")
+    print("\n📋 WHAT SHOULD HAPPEN AFTER SUBSCRIPTION:")
+    print("1. User clicks subscription plan in modal")
+    print("2. Modal closes and beautiful success overlay appears")
+    print("3. AI Copilot widget becomes visible on main interface")
+    print("4. Widget shows live trading signals from AI")
+    print("5. Upgrade button changes to 'Premium Active'")
+    print("6. User stays on main interface (no redirects)")
     
-    print("\n" + "=" * 50)
-    print("🏁 Premium Functionality Test Complete!")
+    print("\n🔧 DEBUGGING STEPS:")
+    print("1. Open browser dev tools (F12)")
+    print("2. Subscribe to any plan")
+    print("3. Watch console logs for 'Premium status received'")
+    print("4. Look for AI Copilot widget appearing below search")
+    print("5. Check if upgrade button changes color/text")
     
     return True
 
 if __name__ == "__main__":
-    test_premium_endpoints()
+    success = test_premium_functionality()
+    if success:
+        print("\n✨ Ready for premium subscription testing!")
+        print("💡 Subscribe and watch console logs to see what's happening")
+    else:
+        print("\n❌ Issues found - need fixes")
