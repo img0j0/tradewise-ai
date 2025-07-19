@@ -2441,7 +2441,7 @@
     function displayResult(data) {
         const resultsDiv = document.getElementById('search-results');
         
-        if (!data.success) {
+        if (!data.success || !data.ai_recommendation) {
             showError(data.error || 'Stock not found');
             return;
         }
@@ -2486,7 +2486,7 @@
             }
         };
         
-        resultsDiv.innerHTML = 
+        const stockResultHTML = 
             '<div class="stock-result">' +
                 '<div class="stock-header">' +
                     '<div>' +
@@ -2580,7 +2580,7 @@
                 '</div>' : '') +
             '</div>';
         
-        document.getElementById('search-results').innerHTML = stockResultHTML;
+        resultsDiv.innerHTML = stockResultHTML;
     }
 
     function showError(message) {
