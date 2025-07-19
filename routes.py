@@ -4051,12 +4051,26 @@ def get_risk_questionnaire():
 
 # ======= AI TEAM MEMBER ROUTES =======
 
+# Initialize AI Team Systems
+from ai_team_members import AITeamManager
+ai_team_manager = AITeamManager()
+
+# Initialize Super Intelligent Team Manager
+try:
+    from ai_team_intelligence import SuperIntelligentTeamManager
+    super_intelligent_team = SuperIntelligentTeamManager()
+    logger.info("Super Intelligent AI Team Manager initialized successfully")
+except ImportError as e:
+    logger.warning(f"Super Intelligent Team Manager unavailable: {e}")
+    super_intelligent_team = None
+
 @app.route('/api/ai-team/query', methods=['POST'])
 def ai_team_query():
-    """Route user query to appropriate AI team member"""
+    """Route user query to appropriate AI team member with advanced intelligence"""
     try:
         data = request.json
         query = data.get('query', '').strip()
+        member = data.get('member', 'auto').lower()
         
         if not query:
             return jsonify({'error': 'Query is required'}), 400
@@ -4066,11 +4080,16 @@ def ai_team_query():
             'user_id': current_user.id if current_user.is_authenticated else 'anonymous',
             'user_tier': getattr(current_user, 'subscription_tier', 'Free') if current_user.is_authenticated else 'Free',
             'timestamp': datetime.utcnow(),
-            'is_authenticated': current_user.is_authenticated
+            'is_authenticated': current_user.is_authenticated,
+            'platform_context': 'trading_platform'
         }
         
-        # Route to appropriate AI team member
-        response = ai_team_manager.route_query(query, context)
+        # Use super intelligent system if available
+        if super_intelligent_team:
+            response = super_intelligent_team.route_intelligent_query(query, member, context)
+        else:
+            # Fallback to standard system
+            response = ai_team_manager.route_query(query, context)
         
         return jsonify({
             'success': True,
