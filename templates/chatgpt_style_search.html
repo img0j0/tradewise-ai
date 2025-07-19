@@ -819,7 +819,27 @@
                     const recommendations = document.querySelectorAll('.ai-recommendation');
                     recommendations.forEach(el => {
                         const rec = el.textContent.split(' (')[0].toLowerCase();
-                        const styles = getRecommendationStyles(rec);
+                        // Get recommendation styles inline
+                        let styles = '';
+                        switch(rec) {
+                            case 'strong buy':
+                                styles = 'color: white !important; background: #059669 !important;';
+                                break;
+                            case 'buy':
+                                styles = 'color: white !important; background: #10b981 !important;';
+                                break;
+                            case 'hold':
+                                styles = 'color: #000000 !important; background: #fbbf24 !important;';
+                                break;
+                            case 'sell':
+                                styles = 'color: white !important; background: #ef4444 !important;';
+                                break;
+                            case 'strong sell':
+                                styles = 'color: white !important; background: #dc2626 !important;';
+                                break;
+                            default:
+                                styles = 'color: white !important; background: #6b7280 !important;';
+                        }
                         
                         // Apply background and text colors based on recommendation
                         if (rec === 'hold') {

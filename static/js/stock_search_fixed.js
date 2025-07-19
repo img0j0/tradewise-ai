@@ -77,11 +77,26 @@ const companySymbols = {
     'att': 'T',
     'verizon': 'VZ',
     
-    // Meme Stocks
+    // Meme Stocks & EVs
     'gamestop': 'GME',
     'amc': 'AMC',
     'blackberry': 'BB',
-    'nokia': 'NOK'
+    'nokia': 'NOK',
+    'lucid': 'LCID',
+    'lucid motors': 'LCID',
+    'rivian': 'RIVN',
+    'nikola': 'NKLA',
+    'fisker': 'FSR',
+    
+    // International & Auto
+    'toyota': 'TM',
+    'honda': 'HMC',
+    'nissan': 'NSANY',
+    'volkswagen': 'VWAGY',
+    'bmw': 'BMWYY',
+    'mercedes': 'DDAIF',
+    'ferrari': 'RACE',
+    'stellantis': 'STLA'
 };
 
 // Debug: Log company symbols on load
