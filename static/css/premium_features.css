@@ -85,7 +85,7 @@
     }
     
     .copilot-header .fas.fa-robot {
-        font-size: 0.9rem !important;
+        font-size: 1rem !important;
         color: #60a5fa !important;
     }
     
@@ -184,6 +184,22 @@
 .copilot-header .fas.fa-robot {
     color: #60a5fa !important;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.robot-icon-enhanced {
+    animation: robotPulse 2s ease-in-out infinite;
+    filter: drop-shadow(0 0 6px rgba(96, 165, 250, 0.4));
+}
+
+@keyframes robotPulse {
+    0%, 100% {
+        transform: scale(1);
+        filter: drop-shadow(0 0 6px rgba(96, 165, 250, 0.4));
+    }
+    50% {
+        transform: scale(1.1);
+        filter: drop-shadow(0 0 12px rgba(96, 165, 250, 0.8));
+    }
 }
 
 /* Premium button optimizations */
