@@ -454,17 +454,17 @@ class PremiumManager {
     }
     
     showAICopilotWidget() {
-        console.log('Showing AI Copilot widget...');
-        const widget = document.getElementById('ai-copilot-widget');
+        console.log('Showing AI Copilot condensed indicator...');
+        const widget = document.getElementById('ai-copilot-condensed');
         if (widget) {
             widget.style.display = 'block';
             widget.classList.remove('d-none');
-            console.log('AI Copilot widget is now visible');
+            console.log('AI Copilot condensed indicator is now visible');
             
             // Immediately show demo signals since API returns empty
             this.showDemoSignals();
         } else {
-            console.log('AI Copilot widget element not found in DOM');
+            console.log('AI Copilot condensed indicator element not found in DOM');
         }
     }
     
@@ -541,6 +541,13 @@ class PremiumManager {
         });
         
         container.innerHTML = signalsHTML;
+        
+        // Update signal count in condensed indicator
+        const signalCountIndicator = document.getElementById('signal-count-indicator');
+        if (signalCountIndicator) {
+            signalCountIndicator.textContent = `${demoSignals.length} signals`;
+        }
+        
         console.log('Demo signals displayed in AI Copilot widget');
     }
 }

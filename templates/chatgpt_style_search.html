@@ -92,16 +92,22 @@
                 </div>
             </div>
             
-            <!-- AI Copilot Premium Widget (for premium users) -->
-            <div id="ai-copilot-widget" class="ai-copilot-widget" style="display: none;">
-                <div class="copilot-header">
-                    <h5 class="mb-0 d-flex align-items-center text-white">
-                        <i class="fas fa-robot me-2 robot-icon-enhanced" style="color: #60a5fa; font-size: 1.2rem; text-shadow: 0 0 8px rgba(96, 165, 250, 0.6);"></i>
-                        AI Trading Copilot
-                    </h5>
-                    <span class="badge px-2 py-1" style="font-size: 0.65rem; font-weight: 600; background: rgba(59, 130, 246, 0.8) !important; color: #fff !important; border: 1px solid rgba(59, 130, 246, 0.5);">ACTIVE</span>
+            <!-- AI Copilot Condensed Indicator (for premium users) -->
+            <div id="ai-copilot-condensed" class="ai-copilot-condensed" style="display: none;">
+                <div class="copilot-indicator" onclick="toggleCopilotExpanded()">
+                    <div class="indicator-left">
+                        <i class="fas fa-robot robot-icon-pulse" style="color: #60a5fa; font-size: 1rem;"></i>
+                        <span class="copilot-status">AI Copilot</span>
+                        <span class="copilot-badge">ACTIVE</span>
+                        <span class="signal-count" id="signal-count-indicator">2 signals</span>
+                    </div>
+                    <div class="indicator-right">
+                        <i class="fas fa-chevron-down expand-icon" id="copilot-expand-icon"></i>
+                    </div>
                 </div>
-                <div class="copilot-content">
+                
+                <!-- Expanded Copilot Content (hidden by default) -->
+                <div id="copilot-expanded-content" class="copilot-expanded-content" style="display: none;">
                     <div id="copilot-signals" class="copilot-signals">
                         <div class="text-center text-muted p-3">
                             <i class="fas fa-spinner fa-spin mb-2" style="color: #60a5fa; font-size: 1rem;"></i>
@@ -349,6 +355,117 @@
     .portfolio-value {
         font-weight: 600;
         color: #00D4AA;
+    }
+
+    /* Condensed AI Copilot Styling */
+    .ai-copilot-condensed {
+        background: rgba(255, 255, 255, 0.02);
+        border-radius: 12px;
+        border: 1px solid rgba(96, 165, 250, 0.2);
+        margin-bottom: 1rem;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .copilot-indicator {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem 1rem;
+        cursor: pointer;
+        background: rgba(96, 165, 250, 0.05);
+        transition: all 0.3s ease;
+    }
+
+    .copilot-indicator:hover {
+        background: rgba(96, 165, 250, 0.08);
+    }
+
+    .indicator-left {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .robot-icon-pulse {
+        animation: pulse-glow 2s infinite;
+    }
+
+    @keyframes pulse-glow {
+        0%, 100% {
+            text-shadow: 0 0 5px rgba(96, 165, 250, 0.5);
+        }
+        50% {
+            text-shadow: 0 0 15px rgba(96, 165, 250, 0.8);
+        }
+    }
+
+    .copilot-status {
+        color: white;
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    .copilot-badge {
+        background: rgba(96, 165, 250, 0.8);
+        color: white;
+        padding: 0.15rem 0.5rem;
+        border-radius: 10px;
+        font-size: 0.7rem;
+        font-weight: 600;
+    }
+
+    .signal-count {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 0.8rem;
+    }
+
+    .expand-icon {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.8rem;
+        transition: transform 0.3s ease;
+    }
+
+    .expand-icon.expanded {
+        transform: rotate(180deg);
+    }
+
+    .copilot-expanded-content {
+        padding: 0 1rem 1rem 1rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        animation: slideDown 0.3s ease-out;
+    }
+
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            max-height: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            max-height: 500px;
+            transform: translateY(0);
+        }
+    }
+
+    /* Mobile optimization for condensed copilot */
+    @media (max-width: 768px) {
+        .copilot-indicator {
+            padding: 0.6rem 0.8rem;
+        }
+        
+        .indicator-left {
+            gap: 0.4rem;
+        }
+        
+        .copilot-status {
+            font-size: 0.85rem;
+        }
+        
+        .signal-count {
+            font-size: 0.75rem;
+        }
     }
 
     /* Portfolio Section Styles */
@@ -1358,6 +1475,24 @@
     });
 
     console.log('TradeWise AI: Intelligent ChatGPT-style search loaded');
+    
+    // Toggle copilot expanded/condensed view
+    let copilotExpanded = false;
+    
+    function toggleCopilotExpanded() {
+        const expandedContent = document.getElementById('copilot-expanded-content');
+        const expandIcon = document.getElementById('copilot-expand-icon');
+        
+        copilotExpanded = !copilotExpanded;
+        
+        if (copilotExpanded) {
+            expandedContent.style.display = 'block';
+            expandIcon.classList.add('expanded');
+        } else {
+            expandedContent.style.display = 'none';
+            expandIcon.classList.remove('expanded');
+        }
+    }
     </script>
 
     <!-- Purchase Modal -->
