@@ -2786,23 +2786,7 @@
         alert(theme + ' theme added to your watchlist!');
     }
 
-    // Toggle popular stocks expanded/condensed view
-    let popularExpanded = false;
-    
-    function togglePopularExpanded() {
-        const expandedContent = document.getElementById('popular-expanded-content');
-        const expandIcon = document.getElementById('popular-expand-icon');
-        
-        popularExpanded = !popularExpanded;
-        
-        if (popularExpanded) {
-            expandedContent.style.display = 'block';
-            expandIcon.classList.add('expanded');
-        } else {
-            expandedContent.style.display = 'none';
-            expandIcon.classList.remove('expanded');
-        }
-    }
+    // Note: Toggle functions are defined at the beginning of the script
     </script>
 
     <!-- Purchase Modal -->
