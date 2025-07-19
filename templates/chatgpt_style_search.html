@@ -4346,7 +4346,6 @@
                 returnElement.style.color = totalReturn >= 0 ? '#10b981' : '#ef4444';
             }
             
-            const loadingEl = document.getElementById('enhanced-portfolio-loading');
             if (loadingEl) loadingEl.style.display = 'none';
             
             // Update enhanced holdings
@@ -4378,13 +4377,15 @@
                 `).join('');
                 holdingsContainer.style.display = 'grid';
             } else {
-                document.getElementById('enhanced-portfolio-empty').style.display = 'block';
+                if (emptyEl) emptyEl.style.display = 'block';
             }
         } catch (error) {
             console.error('Error loading portfolio:', error);
-            document.getElementById('enhanced-portfolio-loading').style.display = 'none';
-            document.getElementById('enhanced-holdings-grid').innerHTML = '<div style="text-align: center; padding: 20px; color: rgba(255, 255, 255, 0.7);">Error loading portfolio data. Please try again.</div>';
-            document.getElementById('enhanced-holdings-grid').style.display = 'block';
+            if (loadingEl) loadingEl.style.display = 'none';
+            if (gridEl) {
+                gridEl.innerHTML = '<div style="text-align: center; padding: 20px; color: rgba(255, 255, 255, 0.7);">Error loading portfolio data. Please try again.</div>';
+                gridEl.style.display = 'block';
+            }
         }
     }
 
