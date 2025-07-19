@@ -1,7 +1,7 @@
 <!-- Premium Subscription Modal -->
 <div class="modal fade" id="premiumModal" tabindex="-1" aria-labelledby="premiumModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content bg-dark text-light">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content bg-dark text-light" style="max-height: 90vh; overflow-y: auto;">
             <div class="modal-header border-secondary">
                 <h5 class="modal-title" id="premiumModalLabel">
                     <i class="fas fa-rocket me-2 text-warning"></i>
@@ -172,6 +172,26 @@
 
 .modal-content {
     border: 1px solid rgba(255, 255, 255, 0.125);
+}
+
+/* Mobile scrolling fixes */
+@media (max-width: 768px) {
+    .modal-dialog {
+        margin: 1rem;
+        max-height: calc(100vh - 2rem);
+    }
+    
+    .modal-content {
+        max-height: calc(100vh - 2rem);
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .modal-body {
+        padding: 1rem;
+        max-height: calc(100vh - 150px);
+        overflow-y: auto;
+    }
 }
 
 .card {
