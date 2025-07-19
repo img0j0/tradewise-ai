@@ -2523,13 +2523,25 @@
         
         // Always update the header value
         fetch('/api/portfolio-summary')
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                return response.json();
+            })
             .then(data => {
-                const portfolioValue = document.getElementById('portfolio-value');
-                portfolioValue.textContent = `$${data.total_value.toFixed(2)}`;
+                if (data && typeof data.total_value === 'number') {
+                    const portfolioValue = document.getElementById('portfolio-value');
+                    if (portfolioValue) {
+                        portfolioValue.textContent = `$${data.total_value.toFixed(2)}`;
+                    }
+                } else {
+                    console.warn('Invalid portfolio data received:', data);
+                }
             })
             .catch(error => {
-                console.error('Error updating portfolio value:', error);
+                console.error('Error updating portfolio value:', error.message || error);
+                // Graceful fallback - don't show error to user for this non-critical update
             });
     }
 
