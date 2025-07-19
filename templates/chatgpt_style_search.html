@@ -2558,6 +2558,15 @@
         // Hide suggestion cards
         document.querySelector('.suggestion-cards').style.display = 'none';
     }
+    
+    function showLoadingState(message = 'Loading...') {
+        const resultsDiv = document.getElementById('search-results');
+        resultsDiv.innerHTML = 
+            '<div class="loading">' +
+                '<div class="loading-spinner"></div>' +
+                '<span>' + message + '</span>' +
+            '</div>';
+    }
 
     function hideLoading() {
         // Show suggestion cards if no results
