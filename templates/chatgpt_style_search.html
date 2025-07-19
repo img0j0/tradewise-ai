@@ -4597,7 +4597,7 @@
             const data = {};
             
             // Regular form fields
-            for (let [key, value] = formData.entries()) {
+            for (let [key, value] of formData.entries()) {
                 data[key] = value;
             }
             
