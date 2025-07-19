@@ -598,24 +598,68 @@ class AITeamManager:
             return self._generate_error_response(query)
 
     def _select_team_member(self, query: str, context: Dict) -> Optional[AITeamMember]:
-        """Select the best team member for the query"""
-        # Score each team member's ability to handle the query
-        scores = []
+        """Select the best team member for the query with improved routing logic"""
+        query_lower = query.lower()
         
+        # Define clear routing keywords for each specialist
+        routing_keywords = {
+            'sarah': [  # Market Analyst keywords
+                'stock', 'buy', 'sell', 'trade', 'trading', 'investment', 'invest', 'market', 
+                'price', 'analysis', 'portfolio', 'apple', 'tesla', 'nvidia', 'microsoft',
+                'aapl', 'tsla', 'nvda', 'msft', 'recommendations', 'forecast', 'prediction'
+            ],
+            'alex': [   # Technical Support keywords  
+                'problem', 'issue', 'error', 'bug', 'not working', 'broken', 'slow', 
+                'login', 'account', 'password', 'loading', 'search not', 'cant find',
+                'help with', 'technical', 'support', 'fix', 'troubleshoot'
+            ],
+            'maria': [  # Customer Success keywords
+                'how', 'start', 'begin', 'tutorial', 'guide', 'learn', 'new', 'beginner',
+                'getting started', 'onboarding', 'features', 'help me', 'show me', 
+                'walkthrough', 'instructions', 'first time', 'never used'
+            ]
+        }
+        
+        # Score each team member based on keyword matches
+        scores = []
         for member in self.team_members:
-            if member.can_handle_query(query, context):
-                # Calculate confidence score
-                specialty_matches = sum(1 for specialty in member.specialties 
-                                     if specialty.lower() in query.lower())
-                scores.append((member, specialty_matches))
+            if member.name == "Sarah Chen":
+                score = sum(1 for keyword in routing_keywords['sarah'] if keyword in query_lower)
+                if score > 0:
+                    scores.append((member, score))
+            elif member.name == "Alex Rodriguez":
+                score = sum(1 for keyword in routing_keywords['alex'] if keyword in query_lower)
+                if score > 0:
+                    scores.append((member, score))
+            elif member.name == "Maria Santos":
+                score = sum(1 for keyword in routing_keywords['maria'] if keyword in query_lower)
+                if score > 0:
+                    scores.append((member, score))
         
         if scores:
-            # Return member with highest score
-            return max(scores, key=lambda x: x[1])[0]
+            # Return the member with highest score
+            best_member = max(scores, key=lambda x: x[1])[0]
+            return best_member
         
-        # If no specific match, use Customer Success as default
-        return next((member for member in self.team_members 
-                    if isinstance(member, CustomerSuccessAI)), None)
+        # Default fallback - if no keywords match, route based on general question type
+        if any(word in query_lower for word in ['buy', 'sell', 'stock', 'invest', 'trade']):
+            # Market-related questions go to Sarah
+            for member in self.team_members:
+                if member.name == "Sarah Chen":
+                    return member
+        elif any(word in query_lower for word in ['problem', 'error', 'not working', 'issue']):
+            # Technical issues go to Alex
+            for member in self.team_members:
+                if member.name == "Alex Rodriguez":
+                    return member
+        else:
+            # General help questions go to Maria
+            for member in self.team_members:
+                if member.name == "Maria Santos":
+                    return member
+        
+        # Final fallback - return Sarah as default
+        return self.team_members[0] if self.team_members else None
 
     def _generate_fallback_response(self, query: str, context: Dict) -> Dict:
         """Generate fallback response when no specialist can handle the query"""
