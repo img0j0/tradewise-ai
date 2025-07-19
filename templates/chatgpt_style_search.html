@@ -119,19 +119,39 @@
             
             <!-- Stock Search Content (default view) -->
             <div id="search-content" class="search-content">
-                <!-- Suggestion Cards - Horizontal Layout -->
-                <div class="suggestion-cards" style="display: flex !important; flex-direction: row !important; flex-wrap: wrap !important; gap: 0.5rem !important; justify-content: center !important; max-width: 100% !important; margin-bottom: 1rem !important;">
-                    <div class="suggestion-card" style="flex: 1 1 auto !important; min-width: 110px !important; max-width: 150px !important; padding: 0.6rem !important; text-align: center !important;" onclick="searchStock('NVDA')">
-                        <div class="card-title" style="font-size: 0.8rem !important; font-weight: 600 !important; margin-bottom: 0.2rem !important;">Best AI stocks</div>
-                        <div class="card-subtitle" style="font-size: 0.7rem !important; color: rgba(255, 255, 255, 0.5) !important;">for tech portfolio growth</div>
+                <!-- Condensed Investment Themes -->
+                <div class="investment-themes-condensed">
+                    <div class="themes-indicator" onclick="toggleThemesExpanded()">
+                        <div class="themes-left">
+                            <i class="fas fa-chart-pie" style="color: #60a5fa; font-size: 0.9rem;"></i>
+                            <span class="themes-label">Investment Themes</span>
+                            <div class="theme-pills">
+                                <span class="theme-pill" onclick="event.stopPropagation(); searchStock('NVDA')">AI</span>
+                                <span class="theme-pill" onclick="event.stopPropagation(); searchStock('TSLA')">EV</span>
+                                <span class="theme-pill" onclick="event.stopPropagation(); searchStock('AAPL')">Blue Chip</span>
+                            </div>
+                        </div>
+                        <div class="themes-right">
+                            <i class="fas fa-chevron-down expand-icon" id="themes-expand-icon"></i>
+                        </div>
                     </div>
-                    <div class="suggestion-card" style="flex: 1 1 auto !important; min-width: 110px !important; max-width: 150px !important; padding: 0.6rem !important; text-align: center !important;" onclick="searchStock('TSLA')">
-                        <div class="card-title" style="font-size: 0.8rem !important; font-weight: 600 !important; margin-bottom: 0.2rem !important;">EV leaders</div>
-                        <div class="card-subtitle" style="font-size: 0.7rem !important; color: rgba(255, 255, 255, 0.5) !important;">for sustainable investing</div>
-                    </div>
-                    <div class="suggestion-card" style="flex: 1 1 auto !important; min-width: 110px !important; max-width: 150px !important; padding: 0.6rem !important; text-align: center !important;" onclick="searchStock('AAPL')">
-                        <div class="card-title" style="font-size: 0.8rem !important; font-weight: 600 !important; margin-bottom: 0.2rem !important;">Blue chip stocks</div>
-                        <div class="card-subtitle" style="font-size: 0.7rem !important; color: rgba(255, 255, 255, 0.5) !important;">for stable returns</div>
+                    
+                    <!-- Expanded Themes Content (hidden by default) -->
+                    <div id="themes-expanded-content" class="themes-expanded-content" style="display: none;">
+                        <div class="suggestion-cards">
+                            <div class="suggestion-card" onclick="searchStock('NVDA')">
+                                <div class="card-title">Best AI stocks</div>
+                                <div class="card-subtitle">for tech portfolio growth</div>
+                            </div>
+                            <div class="suggestion-card" onclick="searchStock('TSLA')">
+                                <div class="card-title">EV leaders</div>
+                                <div class="card-subtitle">for sustainable investing</div>
+                            </div>
+                            <div class="suggestion-card" onclick="searchStock('AAPL')">
+                                <div class="card-title">Blue chip stocks</div>
+                                <div class="card-subtitle">for stable returns</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 
@@ -465,6 +485,155 @@
         
         .signal-count {
             font-size: 0.75rem;
+        }
+    }
+
+    /* Condensed Investment Themes Styling */
+    .investment-themes-condensed {
+        background: rgba(255, 255, 255, 0.02);
+        border-radius: 12px;
+        border: 1px solid rgba(96, 165, 250, 0.15);
+        margin-bottom: 1rem;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .themes-indicator {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem 1rem;
+        cursor: pointer;
+        background: rgba(96, 165, 250, 0.03);
+        transition: all 0.3s ease;
+    }
+
+    .themes-indicator:hover {
+        background: rgba(96, 165, 250, 0.06);
+    }
+
+    .themes-left {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        flex: 1;
+    }
+
+    .themes-label {
+        color: white;
+        font-weight: 600;
+        font-size: 0.9rem;
+        white-space: nowrap;
+    }
+
+    .theme-pills {
+        display: flex;
+        gap: 0.5rem;
+        margin-left: 0.5rem;
+    }
+
+    .theme-pill {
+        background: rgba(96, 165, 250, 0.2);
+        color: white;
+        padding: 0.25rem 0.6rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border: 1px solid rgba(96, 165, 250, 0.3);
+    }
+
+    .theme-pill:hover {
+        background: rgba(96, 165, 250, 0.3);
+        transform: translateY(-1px);
+    }
+
+    .themes-right {
+        margin-left: auto;
+    }
+
+    .themes-expanded-content {
+        padding: 0 1rem 1rem 1rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        animation: slideDown 0.3s ease-out;
+    }
+
+    .themes-expanded-content .suggestion-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 0.75rem;
+        margin-top: 0.75rem;
+    }
+
+    .themes-expanded-content .suggestion-card {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        padding: 1rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .themes-expanded-content .suggestion-card:hover {
+        background: rgba(255, 255, 255, 0.08);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .themes-expanded-content .card-title {
+        color: white;
+        font-size: 0.9rem;
+        font-weight: 600;
+        margin-bottom: 0.3rem;
+    }
+
+    .themes-expanded-content .card-subtitle {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.75rem;
+        line-height: 1.3;
+    }
+
+    /* Mobile optimization for themes */
+    @media (max-width: 768px) {
+        .themes-indicator {
+            padding: 0.6rem 0.8rem;
+        }
+        
+        .themes-left {
+            gap: 0.5rem;
+        }
+        
+        .themes-label {
+            font-size: 0.85rem;
+        }
+        
+        .theme-pills {
+            gap: 0.4rem;
+            margin-left: 0.3rem;
+        }
+        
+        .theme-pill {
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+        }
+
+        .themes-expanded-content .suggestion-cards {
+            grid-template-columns: 1fr;
+            gap: 0.5rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .theme-pills {
+            display: none;
+        }
+        
+        .themes-label::after {
+            content: " (3 themes)";
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.8rem;
         }
     }
 
@@ -1486,6 +1655,24 @@
         copilotExpanded = !copilotExpanded;
         
         if (copilotExpanded) {
+            expandedContent.style.display = 'block';
+            expandIcon.classList.add('expanded');
+        } else {
+            expandedContent.style.display = 'none';
+            expandIcon.classList.remove('expanded');
+        }
+    }
+    
+    // Toggle themes expanded/condensed view
+    let themesExpanded = false;
+    
+    function toggleThemesExpanded() {
+        const expandedContent = document.getElementById('themes-expanded-content');
+        const expandIcon = document.getElementById('themes-expand-icon');
+        
+        themesExpanded = !themesExpanded;
+        
+        if (themesExpanded) {
             expandedContent.style.display = 'block';
             expandIcon.classList.add('expanded');
         } else {
