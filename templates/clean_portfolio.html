@@ -9,12 +9,25 @@
         <p class="page-subtitle">Track your investments and performance</p>
     </div>
     
-    <!-- Portfolio content -->
+    <!-- Enhanced Portfolio content -->
     <div class="portfolio-wrapper">
-        <iframe src="/portfolio_content" 
-                style="width: 100%; height: 80vh; border: none; border-radius: 15px; background: rgba(255,255,255,0.05);" 
-                frameborder="0">
+        <iframe src="/portfolio_content?v={{ timestamp }}" 
+                style="width: 100%; height: 90vh; border: none; border-radius: 15px; background: rgba(255,255,255,0.05);" 
+                frameborder="0"
+                onload="this.style.background='transparent';">
         </iframe>
     </div>
+    
+    <script>
+        // Force iframe refresh to show enhanced portfolio
+        document.addEventListener('DOMContentLoaded', function() {
+            const iframe = document.querySelector('iframe');
+            if (iframe) {
+                // Add timestamp to force cache refresh
+                const timestamp = new Date().getTime();
+                iframe.src = '/portfolio_content?v=' + timestamp;
+            }
+        });
+    </script>
 </div>
 {% endblock %}

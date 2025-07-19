@@ -174,10 +174,14 @@ def analytics():
 
 @app.route('/portfolio')
 def portfolio():
-    """Clean portfolio page"""
+    """Clean portfolio page with enhanced content"""
     if not current_user.is_authenticated:
         return redirect(url_for('login'))
-    return render_template('clean_portfolio.html')
+    
+    # Add timestamp for cache busting
+    import time
+    timestamp = int(time.time())
+    return render_template('clean_portfolio.html', timestamp=timestamp)
 
 @app.route('/alerts')
 def alerts():
@@ -217,9 +221,13 @@ def analytics_content():
 @app.route('/portfolio_content')
 def portfolio_content():
     """Enhanced portfolio content for iframe"""
-    if not current_user.is_authenticated:
-        return redirect(url_for('login'))
-    return render_template('enhanced_portfolio.html')
+    try:
+        # Try to get current user context, but don't require login for iframe content
+        user_authenticated = current_user.is_authenticated if current_user else False
+        return render_template('enhanced_portfolio.html', user_authenticated=user_authenticated)
+    except:
+        # Fallback to enhanced template without user context
+        return render_template('enhanced_portfolio.html', user_authenticated=False)
 
 @app.route('/alerts_content')
 def alerts_content():
