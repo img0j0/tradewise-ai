@@ -538,7 +538,7 @@ function showDemoSignals() {
         displayCopilotSignals(demoSignals);
     }
 
-function startCopilotUpdates() {
+    startCopilotUpdates() {
         // Update signals every 30 seconds for premium users
         setInterval(() => {
             if (this.userStatus.is_premium) {

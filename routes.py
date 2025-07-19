@@ -3583,4 +3583,4 @@ def institutional_algorithm_builder():
 @login_required
 def institutional_features_page():
     """Institutional features page for professional trading tools"""
-    return render_template('institutional_features.html')
+    return render_template('institutional_features_new.html')

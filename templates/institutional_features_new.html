@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Institutional Features - TradeWise AI</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-primary: #0A0B0F;
+            --bg-secondary: #1A1B23;
+            --accent-blue: #007AFF;
+            --accent-green: #00D4AA;
+            --text-primary: #FFFFFF;
+            --text-secondary: #B0B3B8;
+            --border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            min-height: 100vh;
+        }
+
+        .institutional-header {
+            background: linear-gradient(135deg, var(--bg-secondary), #2A2B35);
+            padding: 2rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .feature-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(0, 122, 255, 0.1);
+            border-color: var(--accent-blue);
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-green));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            margin-bottom: 1rem;
+        }
+
+        .feature-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .feature-description {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .demo-section {
+            background: rgba(0, 122, 255, 0.05);
+            border: 1px solid rgba(0, 122, 255, 0.2);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        .input-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-control {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            padding: 0.75rem;
+        }
+
+        .form-control:focus {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 0.2rem rgba(0, 122, 255, 0.25);
+            color: var(--text-primary);
+        }
+
+        .btn-professional {
+            background: linear-gradient(135deg, var(--accent-blue), #0056D3);
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-professional:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 16px rgba(0, 122, 255, 0.3);
+        }
+
+        .results-card {
+            background: rgba(0, 212, 170, 0.05);
+            border: 1px solid rgba(0, 212, 170, 0.2);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .metric-value {
+            color: var(--accent-green);
+            font-weight: 600;
+        }
+
+        .back-button {
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 0.75rem;
+            color: var(--text-primary);
+            text-decoration: none;
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: var(--accent-blue);
+            transform: translateY(-1px);
+        }
+
+        .premium-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: linear-gradient(135deg, #F59E0B, #D97706);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .institutional-header {
+                padding: 1rem 0;
+            }
+            
+            .feature-card {
+                margin-bottom: 1rem;
+                padding: 1rem;
+            }
+            
+            .feature-icon {
+                width: 50px;
+                height: 50px;
+                font-size: 1.25rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Back Button -->
+    <a href="/" class="back-button">
+        <i class="fas fa-arrow-left me-2"></i>Back to Search
+    </a>
+
+    <!-- Header -->
+    <div class="institutional-header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-12">
+                    <h1 class="mb-2">
+                        <i class="fas fa-university me-3" style="color: var(--accent-blue);"></i>
+                        Institutional Features
+                    </h1>
+                    <p class="text-secondary mb-0">Professional-grade trading tools at 98% cost savings vs Bloomberg Terminal</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container py-4">
+        <div class="row">
+            <!-- Smart Order Routing -->
+            <div class="col-lg-6 col-md-12">
+                <div class="feature-card">
+                    <div class="premium-badge">PREMIUM</div>
+                    <div class="feature-icon">
+                        <i class="fas fa-route"></i>
+                    </div>
+                    <div class="feature-title">Smart Order Routing</div>
+                    <div class="feature-description">
+                        Automatically find optimal execution across 50+ venues including NYSE, NASDAQ, ARCA, and BATS with institutional-grade routing algorithms.
+                    </div>
+                    
+                    <div class="demo-section">
+                        <h6 class="mb-3"><i class="fas fa-play-circle me-2"></i>Try Demo</h6>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="sor-symbol" placeholder="Stock Symbol (e.g., AAPL)" value="AAPL">
+                        </div>
+                        <div class="input-group">
+                            <input type="number" class="form-control" id="sor-quantity" placeholder="Quantity" value="100">
+                        </div>
+                        <button class="btn btn-professional w-100" onclick="analyzeSOR()">
+                            <i class="fas fa-search me-2"></i>Analyze Optimal Execution
+                        </button>
+                        
+                        <div id="sor-results" class="results-card">
+                            <h6 class="mb-3">Execution Analysis</h6>
+                            <div class="metric">
+                                <span class="metric-label">Recommended Venue:</span>
+                                <span class="metric-value" id="sor-venue">NASDAQ</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">Execution Score:</span>
+                                <span class="metric-value" id="sor-score">0.945/1.0</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">Estimated Fee:</span>
+                                <span class="metric-value" id="sor-fee">$0.03</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">Market Impact:</span>
+                                <span class="metric-value" id="sor-impact">0%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Level 2 Market Data -->
+            <div class="col-lg-6 col-md-12">
+                <div class="feature-card">
+                    <div class="premium-badge">PREMIUM</div>
+                    <div class="feature-icon">
+                        <i class="fas fa-layer-group"></i>
+                    </div>
+                    <div class="feature-title">Level 2 Market Data</div>
+                    <div class="feature-description">
+                        Professional order book analysis with bid/ask depth, market maker activity, and liquidity scoring for informed trading decisions.
+                    </div>
+                    
+                    <div class="demo-section">
+                        <h6 class="mb-3"><i class="fas fa-play-circle me-2"></i>Try Demo</h6>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="l2-symbol" placeholder="Stock Symbol (e.g., TSLA)" value="TSLA">
+                        </div>
+                        <button class="btn btn-professional w-100" onclick="analyzeLevel2()">
+                            <i class="fas fa-chart-bar me-2"></i>Analyze Order Book
+                        </button>
+                        
+                        <div id="l2-results" class="results-card">
+                            <h6 class="mb-3">Order Book Analysis</h6>
+                            <div class="metric">
+                                <span class="metric-label">Bid Depth (5-Level):</span>
+                                <span class="metric-value" id="l2-bids">7,959</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">Ask Depth (5-Level):</span>
+                                <span class="metric-value" id="l2-asks">12,073</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">Spread:</span>
+                                <span class="metric-value" id="l2-spread">$0.10</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">Liquidity Score:</span>
+                                <span class="metric-value" id="l2-liquidity">89.1%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Options Flow Analysis -->
+            <div class="col-lg-6 col-md-12">
+                <div class="feature-card">
+                    <div class="premium-badge">PREMIUM</div>
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="feature-title">Options Flow Analysis</div>
+                    <div class="feature-description">
+                        Track unusual institutional options activity and large block trades to follow smart money and identify market sentiment shifts.
+                    </div>
+                    
+                    <div class="demo-section">
+                        <h6 class="mb-3"><i class="fas fa-play-circle me-2"></i>Try Demo</h6>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="flow-symbol" placeholder="Stock Symbol (e.g., NVDA)" value="NVDA">
+                        </div>
+                        <button class="btn btn-professional w-100" onclick="analyzeOptionsFlow()">
+                            <i class="fas fa-eye me-2"></i>Track Options Flow
+                        </button>
+                        
+                        <div id="flow-results" class="results-card">
+                            <h6 class="mb-3">Unusual Activity Detected</h6>
+                            <div class="metric">
+                                <span class="metric-label">PUT Activity:</span>
+                                <span class="metric-value" id="flow-puts">146.55 calls | $6.63 premium</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">CALL Activity:</span>
+                                <span class="metric-value" id="flow-calls">172.41 calls | $4.74 premium</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">Put/Call Ratio:</span>
+                                <span class="metric-value" id="flow-ratio">1.07</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dark Pool Intelligence -->
+            <div class="col-lg-6 col-md-12">
+                <div class="feature-card">
+                    <div class="premium-badge">PREMIUM</div>
+                    <div class="feature-icon">
+                        <i class="fas fa-eye-slash"></i>
+                    </div>
+                    <div class="feature-title">Dark Pool Intelligence</div>
+                    <div class="feature-description">
+                        Monitor hidden institutional block trading activity and dark pool flows to anticipate major price movements before they happen.
+                    </div>
+                    
+                    <div class="demo-section">
+                        <h6 class="mb-3"><i class="fas fa-play-circle me-2"></i>Try Demo</h6>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="dark-symbol" placeholder="Stock Symbol (e.g., AAPL)" value="AAPL">
+                        </div>
+                        <button class="btn btn-professional w-100" onclick="analyzeDarkPool()">
+                            <i class="fas fa-search me-2"></i>Scan Dark Pools
+                        </button>
+                        
+                        <div id="dark-results" class="results-card">
+                            <h6 class="mb-3">Dark Pool Activity</h6>
+                            <div class="metric">
+                                <span class="metric-label">Block Volume:</span>
+                                <span class="metric-value" id="dark-volume">2.4M shares</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">Avg Block Size:</span>
+                                <span class="metric-value" id="dark-size">15,200 shares</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">Activity Score:</span>
+                                <span class="metric-value" id="dark-activity">High (8.7/10)</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">Sentiment:</span>
+                                <span class="metric-value" id="dark-sentiment">Bullish accumulation</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Upgrade CTA -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="feature-card text-center">
+                    <div class="feature-icon mx-auto">
+                        <i class="fas fa-crown"></i>
+                    </div>
+                    <div class="feature-title">Unlock All Institutional Features</div>
+                    <div class="feature-description">
+                        Get access to all professional-grade trading tools for just $39.99/month - 98% savings vs Bloomberg Terminal ($2,000/month)
+                    </div>
+                    <button class="btn btn-professional btn-lg mt-3" onclick="showUpgradeModal()">
+                        <i class="fas fa-crown me-2"></i>Upgrade to Elite Plan
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Smart Order Routing Analysis
+        function analyzeSOR() {
+            const symbol = document.getElementById('sor-symbol').value || 'AAPL';
+            const quantity = document.getElementById('sor-quantity').value || 100;
+            
+            // Show loading state
+            const button = event.target;
+            const originalText = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Analyzing...';
+            
+            setTimeout(() => {
+                // Simulate API call and show results
+                document.getElementById('sor-venue').textContent = 'NASDAQ';
+                document.getElementById('sor-score').textContent = '0.945/1.0';
+                document.getElementById('sor-fee').textContent = '$0.03';
+                document.getElementById('sor-impact').textContent = '0%';
+                
+                document.getElementById('sor-results').style.display = 'block';
+                button.innerHTML = originalText;
+            }, 1500);
+        }
+
+        // Level 2 Market Data Analysis
+        function analyzeLevel2() {
+            const symbol = document.getElementById('l2-symbol').value || 'TSLA';
+            
+            const button = event.target;
+            const originalText = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Analyzing...';
+            
+            setTimeout(() => {
+                document.getElementById('l2-bids').textContent = '7,959';
+                document.getElementById('l2-asks').textContent = '12,073';
+                document.getElementById('l2-spread').textContent = '$0.10';
+                document.getElementById('l2-liquidity').textContent = '89.1%';
+                
+                document.getElementById('l2-results').style.display = 'block';
+                button.innerHTML = originalText;
+            }, 1500);
+        }
+
+        // Options Flow Analysis
+        function analyzeOptionsFlow() {
+            const symbol = document.getElementById('flow-symbol').value || 'NVDA';
+            
+            const button = event.target;
+            const originalText = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Scanning...';
+            
+            setTimeout(() => {
+                document.getElementById('flow-puts').textContent = '146.55 exp 2025-08-23';
+                document.getElementById('flow-calls').textContent = '172.41 exp 2025-08-02';
+                document.getElementById('flow-ratio').textContent = '1.07';
+                
+                document.getElementById('flow-results').style.display = 'block';
+                button.innerHTML = originalText;
+            }, 1500);
+        }
+
+        // Dark Pool Analysis
+        function analyzeDarkPool() {
+            const symbol = document.getElementById('dark-symbol').value || 'AAPL';
+            
+            const button = event.target;
+            const originalText = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Scanning...';
+            
+            setTimeout(() => {
+                document.getElementById('dark-volume').textContent = '2.4M shares';
+                document.getElementById('dark-size').textContent = '15,200 shares';
+                document.getElementById('dark-activity').textContent = 'High (8.7/10)';
+                document.getElementById('dark-sentiment').textContent = 'Bullish accumulation';
+                
+                document.getElementById('dark-results').style.display = 'block';
+                button.innerHTML = originalText;
+            }, 1500);
+        }
+
+        function showUpgradeModal() {
+            // Integration with existing premium modal
+            if (window.premiumManager && window.premiumManager.showPremiumModal) {
+                window.premiumManager.showPremiumModal();
+            } else {
+                alert('Upgrade functionality will redirect to subscription page');
+            }
+        }
+    </script>
+</body>
+</html>
