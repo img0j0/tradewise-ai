@@ -20,7 +20,7 @@
 }
 
 .notification.success {
-    background: linear-gradient(135deg, #00ff88, #00cc6a);
+    background: linear-gradient(135deg, #10b981, #059669);
     color: white;
     border-left: 4px solid #ffffff;
 }
@@ -57,12 +57,12 @@
 /* AI Copilot Widget */
 .ai-copilot-widget {
     background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
-    border: 2px solid #00ff88;
+    border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: 16px;
     margin-bottom: 24px;
     padding: 20px;
     overflow: hidden;
-    box-shadow: 0 8px 24px rgba(0, 255, 136, 0.2);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
     animation: pulse 3s infinite;
 }
 
@@ -128,7 +128,7 @@
 }
 
 .signal-card.buy {
-    border-left-color: #28a745;
+    border-left-color: #d1d5db;
 }
 
 .signal-card.strong-buy {
