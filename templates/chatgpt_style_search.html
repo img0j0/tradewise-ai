@@ -1693,6 +1693,23 @@
         color: white;
         font-weight: 600;
     }
+    
+    /* Business summary expand/collapse styling */
+    .business-summary-text {
+        transition: max-height 0.3s ease, overflow 0.3s ease;
+    }
+    
+    .expand-business-btn:hover {
+        color: #93c5fd !important;
+        background: rgba(96, 165, 250, 0.1) !important;
+        border-radius: 4px;
+        padding-left: 0.5rem !important;
+        padding-right: 0.5rem !important;
+    }
+    
+    .expand-business-btn:hover .expand-icon {
+        color: #93c5fd;
+    }
 
     .portfolio-holdings {
         max-height: 400px;
@@ -2590,6 +2607,30 @@
             input.focus();
         }
     }
+    
+    function toggleBusinessSummary(symbol) {
+        const container = document.getElementById('business-summary-' + symbol);
+        const textElement = container.querySelector('.business-summary-text');
+        const button = container.querySelector('.expand-business-btn');
+        const expandText = button.querySelector('.expand-text');
+        const expandIcon = button.querySelector('.expand-icon');
+        
+        const isExpanded = textElement.style.maxHeight === 'none';
+        
+        if (isExpanded) {
+            // Collapse
+            textElement.style.maxHeight = '4.2em';
+            textElement.style.overflow = 'hidden';
+            expandText.textContent = 'Show more';
+            expandIcon.style.transform = 'rotate(0deg)';
+        } else {
+            // Expand
+            textElement.style.maxHeight = 'none';
+            textElement.style.overflow = 'visible';
+            expandText.textContent = 'Show less';
+            expandIcon.style.transform = 'rotate(180deg)';
+        }
+    }
 
     function displayResult(data) {
         const resultsDiv = document.getElementById('search-results');
@@ -2730,9 +2771,15 @@
                 (data.business_summary && data.business_summary.length > 50 ? 
                 '<div class="business-section">' +
                     '<h4 style="margin: 1rem 0 0.5rem 0; color: rgba(255,255,255,0.9); font-size: 0.95rem;">About ' + data.name + '</h4>' +
-                    '<p style="color: rgba(255,255,255,0.7); line-height: 1.4; margin: 0; font-size: 0.85rem;">' +
-                        data.business_summary +
-                    '</p>' +
+                    '<div class="business-summary-container" id="business-summary-' + data.symbol + '">' +
+                        '<p class="business-summary-text" style="color: rgba(255,255,255,0.7); line-height: 1.4; margin: 0; font-size: 0.85rem; max-height: 4.2em; overflow: hidden; position: relative;">' +
+                            data.business_summary +
+                        '</p>' +
+                        '<button class="expand-business-btn" onclick="toggleBusinessSummary(\'' + data.symbol + '\')" style="background: none; border: none; color: #60a5fa; cursor: pointer; font-size: 0.8rem; padding: 0.25rem 0; margin-top: 0.25rem; display: flex; align-items: center; gap: 0.25rem;">' +
+                            '<span class="expand-text">Show more</span>' +
+                            '<i class="fas fa-chevron-down expand-icon" style="font-size: 0.7rem; transition: transform 0.3s ease;"></i>' +
+                        '</button>' +
+                    '</div>' +
                 '</div>' : '') +
             '</div>';
         
