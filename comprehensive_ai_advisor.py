@@ -46,7 +46,7 @@ class ComprehensiveAIAdvisor:
                 'week_52_low': round(float(stock_data.get('week_52_low', 0)), 2) if stock_data.get('week_52_low') else None,
                 'dividend_yield': stock_data.get('dividend_yield'),
                 'ai_analysis': analysis,
-                'business_summary': stock_data.get('business_summary', '')[:500] + '...' if stock_data.get('business_summary', '') else 'No business summary available',
+                'business_summary': stock_data.get('business_summary', '') if stock_data.get('business_summary', '') else 'No business summary available',
                 'website': stock_data.get('website', ''),
                 'last_updated': stock_data.get('last_updated')
             }
