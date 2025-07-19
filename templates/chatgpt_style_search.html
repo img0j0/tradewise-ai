@@ -2563,6 +2563,24 @@
             margin: 0 auto;
         }
         
+        /* Mobile modal optimizations */
+        .modal-content {
+            width: 95% !important;
+            margin: 2rem auto !important;
+        }
+        
+        .modal-header {
+            padding: 1rem 2.5rem 1rem 1rem !important;
+        }
+        
+        .modal-close {
+            right: 0.5rem !important;
+            top: 0.5rem !important;
+            width: 28px !important;
+            height: 28px !important;
+            font-size: 1.4rem !important;
+        }
+        
         .suggestion-cards {
             max-width: 100%;
             flex-direction: column !important;
@@ -3507,10 +3525,11 @@
     }
 
     .modal-header {
-        padding: 1.5rem 2rem;
+        padding: 1.5rem 3.5rem 1.5rem 2rem;
         border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.1));
         border-radius: 20px 20px 0 0;
+        position: relative;
     }
 
     .modal-header h2 {
@@ -3527,14 +3546,25 @@
         right: 1rem;
         top: 1rem;
         color: rgba(255, 255, 255, 0.6);
-        font-size: 2rem;
+        font-size: 1.8rem;
         font-weight: bold;
         cursor: pointer;
-        transition: color 0.3s ease;
+        transition: all 0.3s ease;
+        z-index: 1001;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
     }
 
     .modal-close:hover {
         color: white;
+        background: rgba(255, 255, 255, 0.2);
+        transform: scale(1.1);
     }
 
     .modal-body {
