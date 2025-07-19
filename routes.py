@@ -3681,8 +3681,21 @@ def professional_terminal():
 def get_user_watchlists():
     """Get all watchlists for current user"""
     try:
-        user_id = str(current_user.id)
-        result = watchlist_manager.get_user_watchlists(user_id)
+        result = watchlist_manager.get_user_watchlists(current_user.id)
+        
+        # Fix JSON serialization issues
+        if isinstance(result, dict) and 'watchlists' in result:
+            for watchlist_name, stocks in result['watchlists'].items():
+                for stock in stocks:
+                    # Convert any problematic types to JSON serializable types
+                    for key, value in list(stock.items()):
+                        if hasattr(value, 'item'):  # numpy types
+                            stock[key] = float(value.item())
+                        elif isinstance(value, (bool, int, float, str)) or value is None:
+                            continue  # Already serializable
+                        else:
+                            stock[key] = str(value)
+        
         return jsonify(result)
     except Exception as e:
         logger.error(f"Error getting user watchlists: {str(e)}")
@@ -3694,14 +3707,13 @@ def add_to_watchlist():
     """Add symbol to watchlist"""
     try:
         data = request.get_json()
-        user_id = str(current_user.id)
         watchlist_name = data.get('watchlist_name', 'My Portfolio')
         symbol = data.get('symbol', '').upper()
         
         if not symbol:
             return jsonify({'success': False, 'error': 'Symbol required'}), 400
             
-        result = watchlist_manager.add_to_watchlist(user_id, watchlist_name, symbol)
+        result = watchlist_manager.add_to_watchlist(current_user.id, watchlist_name, symbol)
         return jsonify(result)
     except Exception as e:
         logger.error(f"Error adding to watchlist: {str(e)}")
