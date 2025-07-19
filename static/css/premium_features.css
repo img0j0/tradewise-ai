@@ -406,6 +406,65 @@
     border-radius: 20px;
 }
 
+/* Premium Crown Badge */
+.premium-crown-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, #ffd700, #ffed4e);
+    border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
+    animation: crownShimmer 2s infinite;
+    margin-right: 0.5rem;
+}
+
+.premium-crown-badge .fas.fa-crown {
+    color: #1a1a1a;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+@keyframes crownShimmer {
+    0%, 100% {
+        box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
+    }
+    50% {
+        box-shadow: 0 2px 12px rgba(255, 215, 0, 0.6);
+    }
+}
+
+/* Hide upgrade button when premium */
+.upgrade-button-seamless.hidden {
+    display: none !important;
+}
+
+/* Mobile optimization for crown badge */
+@media (max-width: 576px) {
+    .premium-crown-badge {
+        width: 28px;
+        height: 28px;
+        margin-right: 0.4rem;
+    }
+    
+    .premium-crown-badge .fas.fa-crown {
+        font-size: 0.75rem;
+    }
+}
+
+@media (max-width: 375px) {
+    .premium-crown-badge {
+        width: 26px;
+        height: 26px;
+        margin-right: 0.3rem;
+    }
+    
+    .premium-crown-badge .fas.fa-crown {
+        font-size: 0.7rem;
+    }
+}
+
 .copilot-header {
     background: linear-gradient(135deg, #00ff88, #00cc6a);
     color: #000;

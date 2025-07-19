@@ -82,6 +82,9 @@ class PremiumManager {
 
         // Show/hide premium features
         this.togglePremiumFeatures();
+        
+        // Update crown badge for premium users
+        this.updateCrownBadge();
     }
 
     togglePremiumFeatures() {
@@ -104,6 +107,29 @@ class PremiumManager {
                 eliteFeatures.classList.remove('d-none');
             } else {
                 eliteFeatures.classList.add('d-none');
+            }
+        }
+    }
+    
+    updateCrownBadge() {
+        const crownBadge = document.getElementById('premium-crown-badge');
+        const upgradeButton = document.getElementById('upgrade-button');
+        
+        if (this.userStatus.is_premium) {
+            // Show crown badge and hide upgrade button for premium users
+            if (crownBadge) {
+                crownBadge.style.display = 'flex';
+            }
+            if (upgradeButton) {
+                upgradeButton.classList.add('hidden');
+            }
+        } else {
+            // Hide crown badge and show upgrade button for free users
+            if (crownBadge) {
+                crownBadge.style.display = 'none';
+            }
+            if (upgradeButton) {
+                upgradeButton.classList.remove('hidden');
             }
         }
     }

@@ -17,7 +17,10 @@
         <div class="header">
             <div class="header-title">TradeWise AI</div>
             <div class="header-actions">
-                <button class="upgrade-button-seamless" onclick="premiumManager?.showPremiumModal()">
+                <div id="premium-crown-badge" class="premium-crown-badge" style="display: none;">
+                    <i class="fas fa-crown"></i>
+                </div>
+                <button class="upgrade-button-seamless" id="upgrade-button" onclick="premiumManager?.showPremiumModal()">
                     <i class="fas fa-crown" style="font-size: 0.85rem;"></i>
                     <span>Upgrade</span>
                 </button>
