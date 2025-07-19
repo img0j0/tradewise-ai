@@ -740,9 +740,10 @@ def calculate_portfolio_performance():
             'avg_confidence': 0
         }
 
-# Import comprehensive advisor and market predictor
+# Import comprehensive advisor, market predictor, and Bloomberg killer
 from comprehensive_ai_advisor import comprehensive_advisor
 from ai_market_predictor import ai_market_predictor
+from bloomberg_killer_intelligence import bloomberg_killer
 
 # AI Assistant Routes
 @app.route('/api/stock-analysis/<symbol>')
@@ -3614,3 +3615,57 @@ def get_stock_forecast(symbol):
     except Exception as e:
         logger.error(f"Error getting stock forecast for {symbol}: {str(e)}")
         return jsonify({'error': str(e)}), 500
+
+@app.route('/api/professional-analysis/<symbol>')
+def get_professional_analysis(symbol):
+    """Get Bloomberg-level professional analysis for any stock"""
+    try:
+        analysis = bloomberg_killer.get_professional_analysis(symbol.upper())
+        if 'error' in analysis:
+            return jsonify(analysis), 404
+        return jsonify(analysis)
+    except Exception as e:
+        logger.error(f"Error getting professional analysis for {symbol}: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/trading-dashboard')
+def get_trading_dashboard():
+    """Get comprehensive trading dashboard with key metrics"""
+    try:
+        # Get analysis for key stocks
+        key_symbols = ['SPY', 'QQQ', 'AAPL', 'MSFT', 'GOOGL', 'TSLA', 'NVDA']
+        dashboard_data = {}
+        
+        for symbol in key_symbols:
+            analysis = bloomberg_killer.get_professional_analysis(symbol)
+            if 'error' not in analysis:
+                dashboard_data[symbol] = {
+                    'symbol': symbol,
+                    'current_price': analysis['price_data']['current_price'],
+                    'change_1d': analysis['price_data']['change_1d'],
+                    'rating': analysis['professional_rating']['overall_rating'],
+                    'risk_level': analysis['risk_analysis']['risk_level'],
+                    'momentum_ranking': analysis['momentum_analysis']['momentum_ranking'],
+                    'volume_unusual': analysis['volume_intelligence']['unusual_volume']
+                }
+        
+        return jsonify({
+            'success': True,
+            'dashboard_data': dashboard_data,
+            'market_summary': {
+                'total_analyzed': len(dashboard_data),
+                'strong_buy_count': len([d for d in dashboard_data.values() if d['rating'] == 'STRONG BUY']),
+                'buy_count': len([d for d in dashboard_data.values() if d['rating'] == 'BUY']),
+                'high_momentum': len([d for d in dashboard_data.values() if 'POSITIVE' in d['momentum_ranking']])
+            },
+            'generated_at': datetime.now().isoformat()
+        })
+        
+    except Exception as e:
+        logger.error(f"Error generating trading dashboard: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/professional-terminal')
+def professional_terminal():
+    """Professional trading terminal page"""
+    return render_template('professional_trading_terminal.html')

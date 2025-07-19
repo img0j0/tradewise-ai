@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TradeWise AI - Professional Trading Terminal</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #1a1a1a;
+            --bg-card: #2a2a2a;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --accent-blue: #007bff;
+            --accent-green: #28a745;
+            --accent-red: #dc3545;
+            --accent-orange: #fd7e14;
+            --border-color: #444;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--bg-primary) 0%, #1a1a2e 100%);
+            color: var(--text-primary);
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .terminal-header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            padding: 1rem;
+            border-bottom: 2px solid var(--accent-blue);
+        }
+
+        .terminal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0;
+            color: white;
+        }
+
+        .terminal-subtitle {
+            color: #b3d9ff;
+            margin: 0;
+            font-size: 0.9rem;
+        }
+
+        .professional-dashboard {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1rem;
+            padding: 1rem;
+        }
+
+        .pro-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .pro-card:hover {
+            border-color: var(--accent-blue);
+            box-shadow: 0 4px 20px rgba(0, 123, 255, 0.2);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .card-symbol {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            background: var(--bg-primary);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            margin-left: auto;
+        }
+
+        .price-data {
+            margin-bottom: 1rem;
+        }
+
+        .current-price {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .price-change {
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .price-change.positive {
+            color: var(--accent-green);
+        }
+
+        .price-change.negative {
+            color: var(--accent-red);
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .metric {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            padding: 0.5rem;
+            background: var(--bg-primary);
+            border-radius: 4px;
+        }
+
+        .metric-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .metric-value {
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .professional-rating {
+            text-align: center;
+            padding: 0.75rem;
+            border-radius: 6px;
+            margin: 0.5rem 0;
+            font-weight: bold;
+        }
+
+        .rating-strong-buy {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+        }
+
+        .rating-buy {
+            background: linear-gradient(135deg, #20c997, #17a2b8);
+            color: white;
+        }
+
+        .rating-hold {
+            background: linear-gradient(135deg, #ffc107, #fd7e14);
+            color: #212529;
+        }
+
+        .rating-sell {
+            background: linear-gradient(135deg, #fd7e14, #dc3545);
+            color: white;
+        }
+
+        .rating-strong-sell {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            color: white;
+        }
+
+        .risk-indicator {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .risk-low {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .risk-moderate {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .risk-high {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .risk-extreme {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .momentum-indicator {
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .momentum-strong-positive {
+            background: #28a745;
+            color: white;
+        }
+
+        .momentum-positive {
+            background: #20c997;
+            color: white;
+        }
+
+        .momentum-neutral {
+            background: #6c757d;
+            color: white;
+        }
+
+        .momentum-negative {
+            background: #fd7e14;
+            color: white;
+        }
+
+        .momentum-strong-negative {
+            background: #dc3545;
+            color: white;
+        }
+
+        .market-summary {
+            grid-column: 1 / -1;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .summary-item {
+            text-align: center;
+        }
+
+        .summary-number {
+            font-size: 2rem;
+            font-weight: bold;
+            display: block;
+        }
+
+        .summary-label {
+            font-size: 0.9rem;
+            color: #b3d9ff;
+        }
+
+        .terminal-controls {
+            padding: 1rem;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .terminal-btn {
+            background: var(--accent-blue);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .terminal-btn:hover {
+            background: #0056b3;
+            transform: translateY(-1px);
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .loading-spinner {
+            border: 4px solid #333;
+            border-top: 4px solid var(--accent-blue);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 1200px) {
+            .professional-dashboard {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .professional-dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .summary-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <div class="terminal-header">
+        <h1 class="terminal-title">
+            <i class="fas fa-chart-line"></i>
+            TradeWise AI Professional Trading Terminal
+        </h1>
+        <p class="terminal-subtitle">Bloomberg Terminal-level intelligence at consumer pricing</p>
+    </div>
+
+    <div class="professional-dashboard" id="professionalDashboard">
+        <!-- Market summary will be inserted here -->
+    </div>
+
+    <div class="terminal-controls">
+        <button class="terminal-btn" onclick="refreshData()">
+            <i class="fas fa-sync-alt"></i> Refresh Data
+        </button>
+        <button class="terminal-btn" onclick="exportData()">
+            <i class="fas fa-download"></i> Export Analysis
+        </button>
+        <span style="margin-left: auto; color: var(--text-secondary); font-size: 0.9rem;">
+            Last updated: <span id="lastUpdate">Loading...</span>
+        </span>
+    </div>
+
+    <script>
+        let dashboardData = null;
+
+        // Initialize professional terminal
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProfessionalDashboard();
+            
+            // Auto-refresh every 30 seconds
+            setInterval(loadProfessionalDashboard, 30000);
+        });
+
+        function showLoading() {
+            document.getElementById('loadingOverlay').style.display = 'flex';
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingOverlay').style.display = 'none';
+        }
+
+        function loadProfessionalDashboard() {
+            showLoading();
+            
+            fetch('/api/trading-dashboard')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        dashboardData = data;
+                        renderDashboard(data);
+                        document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString();
+                    } else {
+                        console.error('Error loading dashboard:', data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                })
+                .finally(() => {
+                    hideLoading();
+                });
+        }
+
+        function renderDashboard(data) {
+            const dashboard = document.getElementById('professionalDashboard');
+            
+            let html = `
+                <div class="market-summary">
+                    <h3 style="margin-bottom: 1rem;">
+                        <i class="fas fa-globe"></i> Market Overview
+                    </h3>
+                    <div class="summary-grid">
+                        <div class="summary-item">
+                            <span class="summary-number">${data.market_summary.total_analyzed}</span>
+                            <span class="summary-label">Stocks Analyzed</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-number">${data.market_summary.strong_buy_count}</span>
+                            <span class="summary-label">Strong Buy Signals</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-number">${data.market_summary.buy_count}</span>
+                            <span class="summary-label">Buy Signals</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-number">${data.market_summary.high_momentum}</span>
+                            <span class="summary-label">High Momentum</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Add individual stock cards
+            Object.entries(data.dashboard_data).forEach(([symbol, stockData]) => {
+                html += createStockCard(stockData);
+            });
+
+            dashboard.innerHTML = html;
+        }
+
+        function createStockCard(stockData) {
+            const changeClass = stockData.change_1d >= 0 ? 'positive' : 'negative';
+            const changePrefix = stockData.change_1d >= 0 ? '+' : '';
+            
+            return `
+                <div class="pro-card" onclick="showDetailedAnalysis('${stockData.symbol}')">
+                    <div class="card-header">
+                        <h4 class="card-title">${stockData.symbol}</h4>
+                        <span class="card-symbol">${stockData.symbol}</span>
+                    </div>
+                    
+                    <div class="price-data">
+                        <div class="current-price">$${stockData.current_price.toFixed(2)}</div>
+                        <div class="price-change ${changeClass}">
+                            ${changePrefix}${stockData.change_1d.toFixed(2)}%
+                        </div>
+                    </div>
+
+                    <div class="professional-rating rating-${stockData.rating.toLowerCase().replace(' ', '-')}">
+                        ${stockData.rating}
+                    </div>
+
+                    <div class="metrics-grid">
+                        <div class="metric">
+                            <span class="metric-label">Risk</span>
+                            <span class="risk-indicator risk-${stockData.risk_level.toLowerCase()}">${stockData.risk_level}</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Momentum</span>
+                            <span class="momentum-indicator momentum-${stockData.momentum_ranking.toLowerCase().replace(' ', '-')}">${stockData.momentum_ranking}</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Volume</span>
+                            <span class="metric-value ${stockData.volume_unusual ? 'text-warning' : ''}">
+                                ${stockData.volume_unusual ? 'UNUSUAL' : 'NORMAL'}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div style="text-align: center; margin-top: 1rem; color: var(--text-secondary); font-size: 0.8rem;">
+                        Click for detailed analysis
+                    </div>
+                </div>
+            `;
+        }
+
+        function showDetailedAnalysis(symbol) {
+            // Show loading
+            showLoading();
+            
+            fetch(`/api/professional-analysis/${symbol}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        alert('Error loading detailed analysis: ' + data.error);
+                        return;
+                    }
+                    displayDetailedAnalysis(data);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error loading detailed analysis');
+                })
+                .finally(() => {
+                    hideLoading();
+                });
+        }
+
+        function displayDetailedAnalysis(data) {
+            // Create modal or new page with detailed analysis
+            const analysisWindow = window.open('', '_blank', 'width=1200,height=800,scrollbars=yes');
+            
+            const detailedHTML = `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Detailed Analysis - ${data.symbol}</title>
+                    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+                    <style>
+                        body { background: #0a0a0a; color: white; font-family: system-ui; }
+                        .analysis-section { margin: 2rem 0; padding: 1rem; background: #1a1a1a; border-radius: 8px; }
+                        .metric-row { display: flex; justify-content: between; margin: 0.5rem 0; }
+                        .positive { color: #28a745; }
+                        .negative { color: #dc3545; }
+                        .neutral { color: #ffc107; }
+                    </style>
+                </head>
+                <body>
+                    <div class="container mt-4">
+                        <h1>${data.company_name} (${data.symbol})</h1>
+                        <p>${data.sector} - ${data.industry}</p>
+                        
+                        <div class="analysis-section">
+                            <h3>Price Analysis</h3>
+                            <div class="metric-row">
+                                <span>Current Price:</span>
+                                <span>$${data.price_data.current_price}</span>
+                            </div>
+                            <div class="metric-row">
+                                <span>52W High:</span>
+                                <span>$${data.price_data.high_52w}</span>
+                            </div>
+                            <div class="metric-row">
+                                <span>52W Low:</span>
+                                <span>$${data.price_data.low_52w}</span>
+                            </div>
+                            <div class="metric-row">
+                                <span>Position in Range:</span>
+                                <span>${data.price_data.position_in_range}%</span>
+                            </div>
+                        </div>
+
+                        <div class="analysis-section">
+                            <h3>Professional Rating</h3>
+                            <h4 class="${data.professional_rating.overall_rating.includes('BUY') ? 'positive' : data.professional_rating.overall_rating.includes('SELL') ? 'negative' : 'neutral'}">
+                                ${data.professional_rating.overall_rating}
+                            </h4>
+                            <p>Confidence: ${(data.professional_rating.confidence * 100).toFixed(1)}%</p>
+                        </div>
+
+                        <div class="analysis-section">
+                            <h3>Risk Analysis</h3>
+                            <div class="metric-row">
+                                <span>Risk Level:</span>
+                                <span>${data.risk_analysis.risk_level}</span>
+                            </div>
+                            <div class="metric-row">
+                                <span>Volatility (1M):</span>
+                                <span>${data.risk_analysis.volatility_1m}%</span>
+                            </div>
+                            <div class="metric-row">
+                                <span>Max Drawdown:</span>
+                                <span>${data.risk_analysis.max_drawdown}%</span>
+                            </div>
+                        </div>
+
+                        <div class="analysis-section">
+                            <h3>Technical Indicators</h3>
+                            <div class="metric-row">
+                                <span>RSI:</span>
+                                <span>${data.trading_metrics.rsi}</span>
+                            </div>
+                            <div class="metric-row">
+                                <span>Price vs MA20:</span>
+                                <span class="${data.trading_metrics.price_vs_ma20 >= 0 ? 'positive' : 'negative'}">
+                                    ${data.trading_metrics.price_vs_ma20.toFixed(2)}%
+                                </span>
+                            </div>
+                            <div class="metric-row">
+                                <span>Beta:</span>
+                                <span>${data.trading_metrics.beta || 'N/A'}</span>
+                            </div>
+                        </div>
+                    </div>
+                </body>
+                </html>
+            `;
+            
+            analysisWindow.document.write(detailedHTML);
+            analysisWindow.document.close();
+        }
+
+        function refreshData() {
+            loadProfessionalDashboard();
+        }
+
+        function exportData() {
+            if (!dashboardData) {
+                alert('No data to export');
+                return;
+            }
+            
+            const dataStr = JSON.stringify(dashboardData, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `tradewise_analysis_${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>
