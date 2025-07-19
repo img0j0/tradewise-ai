@@ -55,12 +55,66 @@ class AITeamChat {
         const launcher = document.getElementById('ai-team-launcher');
         
         if (!widget || !launcher) {
-            console.warn('AI Team widget elements not found');
+            console.warn('AI Team widget elements not found - creating elements');
+            this.createFallbackWidget();
             return;
         }
         
         // Show launcher by default
         launcher.style.display = 'flex';
+        launcher.style.visibility = 'visible';
+        console.log('AI Team launcher is now visible');
+    }
+
+    createFallbackWidget() {
+        // Create launcher if missing
+        const launcher = document.createElement('div');
+        launcher.id = 'ai-team-launcher';
+        launcher.className = 'ai-team-launcher';
+        launcher.innerHTML = `
+            <div class="launcher-icon">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="launcher-tooltip">AI Support Team</div>
+        `;
+        
+        // Add styles
+        launcher.style.cssText = `
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+            z-index: 999;
+            transition: all 0.3s ease;
+            color: white;
+            font-size: 24px;
+        `;
+        
+        document.body.appendChild(launcher);
+        console.log('AI Team launcher created as fallback');
+        
+        // Bind click event
+        launcher.addEventListener('click', () => {
+            console.log('AI Team launcher clicked - opening simple chat');
+            this.showSimpleChat();
+        });
+    }
+
+    showSimpleChat() {
+        // Simple fallback chat interface
+        const message = prompt('Ask your question to our AI team:');
+        if (message && message.trim()) {
+            alert('Thank you! Our AI team will process your question: "' + message + '"');
+            this.routeToAITeam(message);
+        }
     }
 
     bindEvents() {
@@ -539,12 +593,17 @@ class AITeamChat {
 
 // Initialize AI Team Chat when DOM is ready
 document.addEventListener('DOMContentLoaded', function() {
-    // Only initialize if the widget elements exist
-    const launcher = document.getElementById('ai-team-launcher');
-    if (launcher) {
-        window.aiTeamChat = new AITeamChat();
-        console.log('AI Team Chat System ready');
-    }
+    console.log('DOM loaded, initializing AI Team Chat...');
+    
+    // Wait for page to fully load before initializing
+    setTimeout(() => {
+        try {
+            window.aiTeamChat = new AITeamChat();
+            console.log('AI Team Chat System ready');
+        } catch (error) {
+            console.error('Error initializing AI Team Chat:', error);
+        }
+    }, 1000);
 });
 
 // Export for external access

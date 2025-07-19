@@ -5035,5 +5035,65 @@
     
     <!-- Premium JavaScript -->
     <script src="{{ url_for('static', filename='js/premium.js') }}"></script>
+    
+    <!-- AI Team Chat Widget (Direct Implementation) -->
+    <div class="ai-team-launcher" id="ai-team-launcher" style="position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3); z-index: 999; transition: all 0.3s ease; color: white; font-size: 24px;">
+        <i class="fas fa-users"></i>
+        <div class="launcher-tooltip" style="position: absolute; bottom: 70px; right: 0; background: rgba(0, 0, 0, 0.8); color: white; padding: 0.5rem; border-radius: 8px; font-size: 0.8rem; white-space: nowrap; opacity: 0; transition: opacity 0.3s; pointer-events: none;">AI Support Team</div>
+    </div>
+    
+    <!-- Simple AI Team Modal -->
+    <div id="simple-ai-team-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; align-items: center; justify-content: center;">
+        <div style="background: #1a1a2e; border-radius: 12px; padding: 2rem; max-width: 500px; margin: 2rem; color: white;">
+            <h3 style="color: #667eea; margin-bottom: 1rem;">🤖 AI Support Team</h3>
+            <p style="margin-bottom: 1.5rem;">Our AI specialists are here to help you with:</p>
+            <ul style="margin-bottom: 2rem; line-height: 1.6;">
+                <li><strong>Sarah Chen</strong> - Market Analysis & Trading Questions</li>
+                <li><strong>Alex Rodriguez</strong> - Technical Support & Platform Help</li>
+                <li><strong>Maria Santos</strong> - Feature Guidance & Customer Success</li>
+            </ul>
+            <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                <button onclick="closeAITeamModal()" style="background: #667eea; color: white; border: none; padding: 0.7rem 1.5rem; border-radius: 8px; cursor: pointer; font-weight: 600;">Got it!</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+    // AI Team launcher functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const launcher = document.getElementById('ai-team-launcher');
+        const modal = document.getElementById('simple-ai-team-modal');
+        const tooltip = launcher.querySelector('.launcher-tooltip');
+        
+        if (launcher) {
+            launcher.addEventListener('click', function() {
+                modal.style.display = 'flex';
+                console.log('AI Team launcher clicked - showing modal');
+            });
+            
+            launcher.addEventListener('mouseenter', function() {
+                if (tooltip) tooltip.style.opacity = '1';
+            });
+            
+            launcher.addEventListener('mouseleave', function() {
+                if (tooltip) tooltip.style.opacity = '0';
+            });
+            
+            console.log('AI Team launcher initialized successfully');
+        }
+        
+        window.closeAITeamModal = function() {
+            modal.style.display = 'none';
+        };
+        
+        // Close modal when clicking outside
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+    });
+    </script>
+    
 </body>
 </html>
