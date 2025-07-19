@@ -20,7 +20,7 @@
                 <div id="premium-crown-badge" class="premium-crown-badge" style="display: none;">
                     <i class="fas fa-crown"></i>
                 </div>
-                <button class="upgrade-button-seamless" id="upgrade-button" onclick="premiumManager?.showPremiumModal()">
+                <button class="upgrade-button-seamless" id="upgrade-button" onclick="openSubscriptionPlans()">
                     <i class="fas fa-crown" style="font-size: 0.85rem;"></i>
                     <span>Upgrade</span>
                 </button>
@@ -43,7 +43,7 @@
                             <i class="fas fa-user-cog"></i>
                             <span>Account Settings</span>
                         </div>
-                        <div class="dropdown-item" onclick="premiumManager?.showPremiumModal()">
+                        <div class="dropdown-item" onclick="openSubscriptionPlans()">
                             <i class="fas fa-star"></i>
                             <span>Subscription Plans</span>
                         </div>
@@ -2371,6 +2371,27 @@
         document.getElementById('tools-dropdown-menu').classList.remove('show');
         toolsDropdownVisible = false;
         window.open('/institutional-features', '_blank');
+    }
+    
+    // Subscription Plans function
+    function openSubscriptionPlans() {
+        document.getElementById('tools-dropdown-menu').classList.remove('show');
+        toolsDropdownVisible = false;
+        
+        // Try to use premium manager if available, otherwise show basic modal
+        if (window.premiumManager && typeof window.premiumManager.showPremiumModal === 'function') {
+            window.premiumManager.showPremiumModal();
+        } else {
+            // Fallback - create premium manager if it doesn't exist
+            setTimeout(() => {
+                if (window.PremiumManager) {
+                    window.premiumManager = new PremiumManager();
+                    window.premiumManager.showPremiumModal();
+                } else {
+                    alert('Subscription plans feature loading... Please try again in a moment.');
+                }
+            }, 100);
+        }
     }
     
     function loadPortfolioData() {
