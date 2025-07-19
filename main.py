@@ -3,10 +3,14 @@ from app import app, db
 # Import models and routes after app is created
 import models
 import routes
+from ai_trading_copilot import start_ai_copilot
 
 # Create tables
 with app.app_context():
     db.create_all()
+    
+# Start AI copilot service for premium users
+start_ai_copilot()
 
 # WebSocket optimization for App Store deployment
 # Disabled WebSocket features to prevent memory issues and worker crashes

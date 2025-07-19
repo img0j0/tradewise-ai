@@ -12,6 +12,11 @@ class User(UserMixin, db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     last_login = db.Column(db.DateTime)
     
+    # Premium subscription fields
+    subscription_type = db.Column(db.String(20), default='free')  # 'free', 'pro', 'elite'
+    subscription_expires = db.Column(db.DateTime, nullable=True)
+    subscription_created = db.Column(db.DateTime, nullable=True)
+    
     # Relationships
     user_account = db.relationship('UserAccount', backref='user', uselist=False, cascade='all, delete-orphan')
     trades = db.relationship('Trade', backref='user', lazy='dynamic', cascade='all, delete-orphan')

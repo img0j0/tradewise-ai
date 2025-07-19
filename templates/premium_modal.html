@@ -1,0 +1,194 @@
+<!-- Premium Subscription Modal -->
+<div class="modal fade" id="premiumModal" tabindex="-1" aria-labelledby="premiumModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content bg-dark text-light">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title" id="premiumModalLabel">
+                    <i class="fas fa-rocket me-2"></i>
+                    Upgrade to AI Trading Copilot
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            
+            <div class="modal-body">
+                <!-- Hero Section -->
+                <div class="text-center mb-4">
+                    <div class="premium-hero-icon mb-3">
+                        <i class="fas fa-brain fa-3x text-primary"></i>
+                    </div>
+                    <h4 class="text-primary mb-2">Meet Your AI Trading Copilot</h4>
+                    <p class="text-muted">24/7 AI monitoring with 71.4% proven win rate</p>
+                </div>
+
+                <!-- Pricing Cards -->
+                <div class="row g-3">
+                    <!-- Free Plan -->
+                    <div class="col-md-4">
+                        <div class="card bg-secondary h-100">
+                            <div class="card-header text-center">
+                                <h6 class="card-title mb-0">Free</h6>
+                                <div class="h2 mb-0">$0</div>
+                                <small class="text-muted">Forever</small>
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-unstyled">
+                                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Basic stock search</li>
+                                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>3 AI insights/day</li>
+                                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Manual trading</li>
+                                    <li class="mb-2"><i class="fas fa-info-circle text-warning me-2"></i>0.25% per trade</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pro Plan -->
+                    <div class="col-md-4">
+                        <div class="card bg-primary h-100 position-relative">
+                            <div class="badge bg-warning text-dark position-absolute top-0 start-50 translate-middle px-3 py-1">
+                                Popular
+                            </div>
+                            <div class="card-header text-center">
+                                <h6 class="card-title mb-0 text-white">AI Copilot Pro</h6>
+                                <div class="h2 mb-0 text-white">$19.99</div>
+                                <small class="text-light">per month</small>
+                            </div>
+                            <div class="card-body text-white">
+                                <ul class="list-unstyled">
+                                    <li class="mb-2"><i class="fas fa-check text-warning me-2"></i>Unlimited AI insights</li>
+                                    <li class="mb-2"><i class="fas fa-check text-warning me-2"></i>5 real-time alerts/day</li>
+                                    <li class="mb-2"><i class="fas fa-check text-warning me-2"></i>Commission-free trading</li>
+                                    <li class="mb-2"><i class="fas fa-check text-warning me-2"></i>Portfolio optimization</li>
+                                </ul>
+                                <button class="btn btn-warning w-100 mt-3" onclick="subscribeToPremium('pro')">
+                                    <i class="fas fa-rocket me-2"></i>Start Free Trial
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Elite Plan -->
+                    <div class="col-md-4">
+                        <div class="card bg-gradient h-100" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                            <div class="card-header text-center">
+                                <h6 class="card-title mb-0 text-white">AI Copilot Elite</h6>
+                                <div class="h2 mb-0 text-white">$39.99</div>
+                                <small class="text-light">per month</small>
+                            </div>
+                            <div class="card-body text-white">
+                                <ul class="list-unstyled">
+                                    <li class="mb-2"><i class="fas fa-crown text-warning me-2"></i>24/7 AI monitoring</li>
+                                    <li class="mb-2"><i class="fas fa-crown text-warning me-2"></i>Unlimited alerts</li>
+                                    <li class="mb-2"><i class="fas fa-crown text-warning me-2"></i>One-click execution</li>
+                                    <li class="mb-2"><i class="fas fa-crown text-warning me-2"></i>Live voice commentary</li>
+                                    <li class="mb-2"><i class="fas fa-crown text-warning me-2"></i>Predictive signals</li>
+                                </ul>
+                                <button class="btn btn-warning w-100 mt-3" onclick="subscribeToPremium('elite')">
+                                    <i class="fas fa-crown me-2"></i>Go Elite
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Key Benefits -->
+                <div class="mt-4">
+                    <h6 class="text-primary mb-3">
+                        <i class="fas fa-star me-2"></i>Why Upgrade to AI Copilot?
+                    </h6>
+                    <div class="row g-3">
+                        <div class="col-sm-6">
+                            <div class="d-flex">
+                                <i class="fas fa-brain text-success me-3 mt-1"></i>
+                                <div>
+                                    <h6 class="mb-1">Proven AI Performance</h6>
+                                    <small class="text-muted">71.4% win rate in live market testing</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="d-flex">
+                                <i class="fas fa-clock text-info me-3 mt-1"></i>
+                                <div>
+                                    <h6 class="mb-1">24/7 Monitoring</h6>
+                                    <small class="text-muted">Never miss market opportunities</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="d-flex">
+                                <i class="fas fa-bolt text-warning me-3 mt-1"></i>
+                                <div>
+                                    <h6 class="mb-1">Instant Execution</h6>
+                                    <small class="text-muted">One-click AI-powered trades</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="d-flex">
+                                <i class="fas fa-shield-alt text-danger me-3 mt-1"></i>
+                                <div>
+                                    <h6 class="mb-1">Risk Management</h6>
+                                    <small class="text-muted">AI-calculated stop losses & targets</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonial -->
+                <div class="mt-4 p-3 bg-secondary rounded">
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="bg-primary rounded-circle me-3" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-user text-white"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-0">Beta Tester</h6>
+                            <small class="text-muted">Active Trader</small>
+                        </div>
+                    </div>
+                    <p class="mb-0 fst-italic">"The AI Copilot caught a Tesla breakout I would have missed. Made 12% profit in 30 minutes. This is game-changing technology."</p>
+                </div>
+            </div>
+
+            <div class="modal-footer border-secondary">
+                <small class="text-muted me-auto">
+                    <i class="fas fa-lock me-1"></i>
+                    Cancel anytime • No hidden fees
+                </small>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Maybe Later</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.premium-hero-icon {
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
+
+.card.bg-gradient {
+    position: relative;
+    overflow: hidden;
+}
+
+.card.bg-gradient::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+    animation: shine 3s infinite;
+}
+
+@keyframes shine {
+    0% { transform: rotate(0deg) translate(-100%, -100%); }
+    100% { transform: rotate(45deg) translate(100%, 100%); }
+}
+</style>

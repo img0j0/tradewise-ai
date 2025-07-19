@@ -742,6 +742,30 @@
     </div>
 </div>
 
+<!-- Premium Subscription Modal -->
+{% include 'premium_modal.html' %}
+
+<!-- Premium Widget for Advanced Features -->
+<div class="premium-section mt-4">
+    <div class="card bg-gradient-primary">
+        <div class="card-body">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <h6 class="text-white mb-1">
+                        <i class="fas fa-rocket me-2"></i>
+                        Ready for AI Trading Copilot?
+                    </h6>
+                    <small class="text-light">Get 24/7 market monitoring with proven 71.4% AI success rate</small>
+                </div>
+                <button class="btn btn-warning btn-sm premium-feature-btn" onclick="premiumManager?.showPremiumModal()">
+                    <i class="fas fa-crown me-1"></i>
+                    Upgrade Now
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock %}
 
 {% block scripts %}

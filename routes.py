@@ -3294,4 +3294,155 @@ def monetization_dashboard():
     """Display monetization dashboard"""
     return render_template('monetization_dashboard.html')
 
-# Duplicate section removed - keeping only the original routes
+# ============================================
+# PREMIUM AI TRADING COPILOT ROUTES
+# ============================================
+
+@app.route('/api/premium/status')
+@login_required 
+def premium_status():
+    """Get user's premium subscription status"""
+    try:
+        user = current_user
+        
+        is_premium = (
+            hasattr(user, 'subscription_type') and 
+            user.subscription_type in ['pro', 'elite'] and
+            hasattr(user, 'subscription_expires') and
+            user.subscription_expires and
+            user.subscription_expires > datetime.now()
+        )
+        
+        return jsonify({
+            'is_premium': is_premium,
+            'plan': getattr(user, 'subscription_type', 'free'),
+            'expires': getattr(user, 'subscription_expires', None),
+            'copilot_active': is_premium
+        })
+        
+    except Exception as e:
+        logger.error(f"Error checking premium status: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/premium/subscribe', methods=['POST'])
+@login_required
+def subscribe_premium():
+    """Subscribe user to premium plan"""
+    try:
+        from ai_trading_copilot import ai_copilot
+        from datetime import timedelta
+        
+        data = request.get_json()
+        plan_type = data.get('plan', 'pro')  # 'pro' or 'elite'
+        
+        user = current_user
+        if plan_type == 'elite':
+            user.subscription_type = 'elite'
+            user.subscription_expires = datetime.now() + timedelta(days=30)
+            monthly_price = 39.99
+        else:
+            user.subscription_type = 'pro'
+            user.subscription_expires = datetime.now() + timedelta(days=30)
+            monthly_price = 19.99
+        
+        user.subscription_created = datetime.now()
+        db.session.commit()
+        
+        # Add user to AI copilot subscribers
+        ai_copilot.add_subscriber(str(user.id))
+        
+        logger.info(f"User {user.id} subscribed to {plan_type} plan")
+        
+        return jsonify({
+            'success': True,
+            'plan': plan_type,
+            'price': monthly_price,
+            'expires': user.subscription_expires.isoformat(),
+            'message': f'Welcome to AI Copilot {plan_type.title()}! Your AI assistant is now monitoring markets 24/7.'
+        })
+        
+    except Exception as e:
+        logger.error(f"Error subscribing user: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/premium/copilot/signals')
+@login_required
+def get_copilot_signals():
+    """Get recent AI trading signals for premium users"""
+    try:
+        from ai_trading_copilot import ai_copilot
+        
+        user = current_user
+        
+        # Check if user has premium subscription
+        is_premium = (
+            hasattr(user, 'subscription_type') and 
+            user.subscription_type in ['pro', 'elite'] and
+            hasattr(user, 'subscription_expires') and
+            user.subscription_expires and
+            user.subscription_expires > datetime.now()
+        )
+        
+        if not is_premium:
+            return jsonify({
+                'success': False,
+                'error': 'Premium subscription required',
+                'upgrade_message': 'Upgrade to AI Copilot Pro to access real-time trading signals'
+            }), 403
+        
+        limit = request.args.get('limit', 10, type=int)
+        signals = ai_copilot.get_recent_signals(limit)
+        
+        return jsonify({
+            'success': True,
+            'signals': signals,
+            'count': len(signals)
+        })
+        
+    except Exception as e:
+        logger.error(f"Error fetching copilot signals: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/premium/features')
+def premium_features():
+    """Get available premium features and pricing"""
+    return jsonify({
+        'success': True,
+        'plans': {
+            'free': {
+                'name': 'Free',
+                'price': 0,
+                'features': [
+                    'Basic stock search',
+                    '3 AI insights per day',
+                    'Manual trading',
+                    '0.25% commission per trade'
+                ]
+            },
+            'pro': {
+                'name': 'AI Copilot Pro',
+                'price': 19.99,
+                'features': [
+                    'Unlimited AI insights',
+                    '5 real-time alerts per day',
+                    'Commission-free trading',
+                    'Basic portfolio optimization',
+                    'Email support'
+                ]
+            },
+            'elite': {
+                'name': 'AI Copilot Elite',
+                'price': 39.99,
+                'features': [
+                    '24/7 AI market monitoring',
+                    'Unlimited real-time alerts',
+                    'One-click AI trade execution',
+                    'Live voice commentary',
+                    'Predictive market signals',
+                    'Advanced risk management',
+                    'Priority support',
+                    'Custom watchlists'
+                ]
+            }
+        }
+    })

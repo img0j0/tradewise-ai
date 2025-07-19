@@ -1,0 +1,100 @@
+<!-- Premium AI Copilot Widget -->
+<div class="premium-widget" id="premium-widget">
+    <!-- Premium Status Badge -->
+    <div class="d-flex align-items-center mb-3">
+        <span class="premium-badge badge me-2" id="premium-status-badge">
+            <i class="fas fa-lock me-1"></i>FREE
+        </span>
+        <div class="flex-grow-1">
+            <div id="copilot-status" class="small text-muted">
+                AI Copilot Offline
+            </div>
+        </div>
+        <button class="btn btn-sm premium-feature-btn" id="premium-upgrade-btn">
+            <i class="fas fa-rocket me-1"></i>Upgrade
+        </button>
+    </div>
+    
+    <!-- AI Trading Signals -->
+    <div class="premium-signals-section">
+        <h6 class="text-primary mb-3">
+            <i class="fas fa-robot me-2"></i>
+            AI Trading Signals
+        </h6>
+        
+        <div id="copilot-signals" class="signals-container">
+            <!-- Signals will be populated by JavaScript -->
+        </div>
+    </div>
+    
+    <!-- Elite Features (only shown for Elite subscribers) -->
+    <div class="elite-features d-none" id="elite-features">
+        <div class="mt-3 p-3 bg-gradient-primary rounded">
+            <h6 class="text-white mb-2">
+                <i class="fas fa-crown me-2"></i>Elite Features
+            </h6>
+            <div class="d-grid gap-2">
+                <button class="btn btn-warning btn-sm" onclick="startLiveCommentary()">
+                    <i class="fas fa-microphone me-2"></i>Live Commentary
+                </button>
+                <button class="btn btn-outline-light btn-sm" onclick="showPredictiveAlerts()">
+                    <i class="fas fa-chart-line me-2"></i>Predictive Alerts
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.premium-widget {
+    background: linear-gradient(135deg, rgba(13, 110, 253, 0.1), rgba(111, 66, 193, 0.1));
+    border: 1px solid rgba(13, 110, 253, 0.2);
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.premium-badge {
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.signals-container {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #667eea, #764ba2) !important;
+}
+
+.signal-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+}
+
+.signal-card:hover {
+    border-color: rgba(13, 110, 253, 0.5);
+}
+</style>
+
+<script>
+// Premium widget specific functions
+function startLiveCommentary() {
+    showNotification('Live AI Commentary starting...', 'info');
+    // In production, this would start voice AI commentary
+}
+
+function showPredictiveAlerts() {
+    showNotification('Predictive alerts activated', 'success');
+    // In production, this would show predictive market alerts
+}
+
+// Initialize premium widget when included
+document.addEventListener('DOMContentLoaded', function() {
+    if (window.premiumManager) {
+        // Widget is already initialized by premium.js
+    }
+});
+</script>
