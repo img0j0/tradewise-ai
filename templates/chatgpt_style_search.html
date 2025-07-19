@@ -3198,6 +3198,18 @@
             '</div>';
     }
 
+    function hideLoadingState() {
+        // Clear loading state - this function was missing!
+        const resultsDiv = document.getElementById('search-results');
+        if (resultsDiv) {
+            // Check if there's a loading element and clear it
+            const loadingElement = resultsDiv.querySelector('.loading');
+            if (loadingElement) {
+                resultsDiv.innerHTML = '';
+            }
+        }
+    }
+
     function hideLoading() {
         // Show suggestion cards if no results
         const resultsDiv = document.getElementById('search-results');
