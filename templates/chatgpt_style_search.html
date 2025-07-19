@@ -89,18 +89,18 @@
             <!-- Stock Search Content (default view) -->
             <div id="search-content" class="search-content">
                 <!-- Suggestion Cards - Horizontal Layout -->
-                <div class="suggestion-cards horizontal-layout">
-                    <div class="suggestion-card compact" onclick="searchStock('NVDA')">
-                        <div class="card-title">Best AI stocks</div>
-                        <div class="card-subtitle">for tech portfolio growth</div>
+                <div class="suggestion-cards" style="display: flex !important; flex-direction: row !important; flex-wrap: wrap !important; gap: 0.5rem !important; justify-content: center !important; max-width: 100% !important; margin-bottom: 1rem !important;">
+                    <div class="suggestion-card" style="flex: 1 1 auto !important; min-width: 110px !important; max-width: 150px !important; padding: 0.6rem !important; text-align: center !important;" onclick="searchStock('NVDA')">
+                        <div class="card-title" style="font-size: 0.8rem !important; font-weight: 600 !important; margin-bottom: 0.2rem !important;">Best AI stocks</div>
+                        <div class="card-subtitle" style="font-size: 0.7rem !important; color: rgba(255, 255, 255, 0.5) !important;">for tech portfolio growth</div>
                     </div>
-                    <div class="suggestion-card compact" onclick="searchStock('TSLA')">
-                        <div class="card-title">EV leaders</div>
-                        <div class="card-subtitle">for sustainable investing</div>
+                    <div class="suggestion-card" style="flex: 1 1 auto !important; min-width: 110px !important; max-width: 150px !important; padding: 0.6rem !important; text-align: center !important;" onclick="searchStock('TSLA')">
+                        <div class="card-title" style="font-size: 0.8rem !important; font-weight: 600 !important; margin-bottom: 0.2rem !important;">EV leaders</div>
+                        <div class="card-subtitle" style="font-size: 0.7rem !important; color: rgba(255, 255, 255, 0.5) !important;">for sustainable investing</div>
                     </div>
-                    <div class="suggestion-card compact" onclick="searchStock('AAPL')">
-                        <div class="card-title">Blue chip stocks</div>
-                        <div class="card-subtitle">for stable returns</div>
+                    <div class="suggestion-card" style="flex: 1 1 auto !important; min-width: 110px !important; max-width: 150px !important; padding: 0.6rem !important; text-align: center !important;" onclick="searchStock('AAPL')">
+                        <div class="card-title" style="font-size: 0.8rem !important; font-weight: 600 !important; margin-bottom: 0.2rem !important;">Blue chip stocks</div>
+                        <div class="card-subtitle" style="font-size: 0.7rem !important; color: rgba(255, 255, 255, 0.5) !important;">for stable returns</div>
                     </div>
                 </div>
                 
@@ -800,17 +800,13 @@
         
         .suggestion-cards {
             max-width: 100%;
-        }
-
-        .suggestion-cards.horizontal-layout {
             flex-direction: column !important;
-            gap: 0.5rem;
         }
 
-        .suggestion-card.compact {
-            max-width: 100%;
-            flex: none;
-            text-align: left;
+        .suggestion-cards .suggestion-card {
+            max-width: 100% !important;
+            flex: none !important;
+            text-align: left !important;
         }
     }
 
