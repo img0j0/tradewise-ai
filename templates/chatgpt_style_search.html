@@ -2392,7 +2392,7 @@
                 }, 100);
             })
             .catch(error => {
-                console.error('TradeWise AI: Error', error);
+                console.error('TradeWise AI: Search Error:', error.message || error);
                 hideLoading();
                 showError('Unable to find stock "' + symbol + '". Please verify the symbol is correct or try searching for the company name.');
             });
@@ -3194,7 +3194,7 @@
                 el.textContent = `$${userBalance.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
             });
         } catch (error) {
-            console.error('TradeWise AI: Error loading balance', error);
+            console.error('TradeWise AI: Balance loading error:', error.message || error);
         }
     }
 
