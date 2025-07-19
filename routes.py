@@ -3595,6 +3595,111 @@ def institutional_features_page():
     """Institutional features page for professional trading tools"""
     return render_template('institutional_features_new.html')
 
+# ============================================
+# INSTITUTIONAL SUBSCRIPTION MANAGEMENT
+# ============================================
+
+from institutional_subscription_manager import institutional_subscription_manager
+
+@app.route('/api/institutional/subscription-tiers')
+def get_institutional_subscription_tiers():
+    """Get available institutional subscription tiers"""
+    try:
+        tiers = institutional_subscription_manager.get_subscription_tiers()
+        return jsonify({
+            'success': True,
+            'subscription_tiers': tiers
+        })
+    except Exception as e:
+        logger.error(f"Error getting subscription tiers: {e}")
+        return jsonify({'error': 'Failed to load subscription tiers'}), 500
+
+@app.route('/api/institutional/feature-access/<feature>')
+@login_required
+def check_institutional_feature_access(feature):
+    """Check if user has access to specific institutional feature"""
+    try:
+        # Get user's current subscription tier
+        user_subscription = getattr(current_user, 'subscription_tier', 'Free')
+        
+        has_access = institutional_subscription_manager.check_feature_access(user_subscription, feature)
+        limits = institutional_subscription_manager.get_feature_limits(user_subscription)
+        
+        return jsonify({
+            'has_access': has_access,
+            'current_tier': user_subscription,
+            'limits': limits,
+            'feature': feature
+        })
+    except Exception as e:
+        logger.error(f"Error checking feature access for {feature}: {e}")
+        return jsonify({'error': 'Failed to check feature access'}), 500
+
+@app.route('/api/institutional/upgrade-recommendation')
+@login_required
+def get_upgrade_recommendation():
+    """Get personalized upgrade recommendation for institutional features"""
+    try:
+        # Analyze user activity (this would come from actual usage data)
+        user_activity = {
+            'daily_api_calls': 500,  # This would be tracked from actual usage
+            'uses_advanced_features': True,
+            'portfolio_positions': len(get_portfolio_data(current_user.id).get('holdings', [])),
+            'trades_per_week': 5  # This would be calculated from trade history
+        }
+        
+        recommendation = institutional_subscription_manager.generate_upgrade_recommendation(user_activity)
+        demo_features = institutional_subscription_manager.get_institutional_demo_features()
+        
+        return jsonify({
+            'success': True,
+            'recommendation': recommendation,
+            'demo_features': demo_features,
+            'current_usage': user_activity
+        })
+    except Exception as e:
+        logger.error(f"Error generating upgrade recommendation: {e}")
+        return jsonify({'error': 'Failed to generate recommendation'}), 500
+
+@app.route('/api/institutional/onboarding-flow/<tier>')
+def get_institutional_onboarding_flow(tier):
+    """Get onboarding flow for specific institutional tier"""
+    try:
+        onboarding_steps = institutional_subscription_manager.get_institutional_onboarding_flow(tier)
+        
+        return jsonify({
+            'success': True,
+            'tier': tier,
+            'onboarding_steps': onboarding_steps,
+            'total_estimated_time': sum(int(step.get('estimated_time', '0').split()[0]) for step in onboarding_steps)
+        })
+    except Exception as e:
+        logger.error(f"Error getting onboarding flow for {tier}: {e}")
+        return jsonify({'error': 'Failed to load onboarding flow'}), 500
+
+@app.route('/api/institutional/upgrade-calculation', methods=['POST'])
+def calculate_institutional_upgrade():
+    """Calculate upgrade costs and benefits"""
+    try:
+        data = request.get_json()
+        current_tier = data.get('current_tier', 'Free')
+        target_tier = data.get('target_tier', 'Pro')
+        
+        if target_tier not in institutional_subscription_manager.get_subscription_tiers():
+            return jsonify({'error': 'Invalid subscription tier'}), 400
+        
+        upgrade_info = institutional_subscription_manager.calculate_upgrade_savings(current_tier, target_tier)
+        
+        return jsonify({
+            'success': True,
+            'upgrade_calculation': upgrade_info,
+            'current_tier': current_tier,
+            'target_tier': target_tier
+        })
+    except Exception as e:
+        logger.error(f"Error calculating upgrade: {e}")
+        return jsonify({'error': 'Failed to calculate upgrade'}), 500
+
 @app.route('/api/market-predictions')
 def get_market_predictions():
     """Get AI-powered market predictions for top stocks"""

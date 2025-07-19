@@ -1,0 +1,495 @@
+<!-- Institutional Upgrade Modal -->
+<div class="modal fade" id="institutionalUpgradeModal" tabindex="-1" aria-labelledby="institutionalUpgradeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content institutional-modal">
+            <div class="modal-header">
+                <h5 class="modal-title" id="institutionalUpgradeModalLabel">
+                    <i class="fas fa-rocket me-2"></i>
+                    Unlock Institutional-Grade Trading Features
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Feature Access Notification -->
+                <div class="alert alert-info mb-4">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>Demo Available:</strong> You're currently viewing institutional features in demo mode. 
+                    Upgrade to unlock full access with live data and unlimited usage.
+                </div>
+
+                <!-- Subscription Tiers -->
+                <div class="row mb-4">
+                    <!-- Pro Tier -->
+                    <div class="col-md-4">
+                        <div class="subscription-card pro-tier">
+                            <div class="tier-header">
+                                <h4><i class="fas fa-star me-2"></i>Pro</h4>
+                                <div class="tier-price">
+                                    <span class="price">$19.99</span>
+                                    <span class="period">/month</span>
+                                </div>
+                                <div class="annual-discount">Save $40/year with annual plan</div>
+                            </div>
+                            <div class="tier-features">
+                                <div class="feature-item">
+                                    <i class="fas fa-check text-success me-2"></i>Level 2 Market Data
+                                </div>
+                                <div class="feature-item">
+                                    <i class="fas fa-check text-success me-2"></i>Smart Order Routing
+                                </div>
+                                <div class="feature-item">
+                                    <i class="fas fa-check text-success me-2"></i>Basic Options Flow
+                                </div>
+                                <div class="feature-item">
+                                    <i class="fas fa-check text-success me-2"></i>Portfolio Risk Analytics
+                                </div>
+                                <div class="feature-item">
+                                    <i class="fas fa-check text-success me-2"></i>Extended Trading Hours
+                                </div>
+                                <div class="feature-item">
+                                    <i class="fas fa-check text-success me-2"></i>10,000 API calls/day
+                                </div>
+                            </div>
+                            <button class="btn btn-outline-primary tier-btn" onclick="selectTier('Pro')">
+                                Select Pro
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Elite Tier -->
+                    <div class="col-md-4">
+                        <div class="subscription-card elite-tier featured">
+                            <div class="popular-badge">
+                                <i class="fas fa-crown me-1"></i>Most Popular
+                            </div>
+                            <div class="tier-header">
+                                <h4><i class="fas fa-crown me-2"></i>Elite</h4>
+                                <div class="tier-price">
+                                    <span class="price">$39.99</span>
+                                    <span class="period">/month</span>
+                                </div>
+                                <div class="annual-discount">Save $80/year with annual plan</div>
+                            </div>
+                            <div class="tier-features">
+                                <div class="feature-item">
+                                    <i class="fas fa-check text-success me-2"></i>All Pro features
+                                </div>
+                                <div class="feature-item">
+                                    <i class="fas fa-check text-success me-2"></i>Dark Pool Intelligence
+                                </div>
+                                <div class="feature-item">
+                                    <i class="fas fa-check text-success me-2"></i>Advanced Options Flow
+                                </div>
+                                <div class="feature-item">
+                                    <i class="fas fa-check text-success me-2"></i>Algorithm Builder
+                                </div>
+                                <div class="feature-item">
+                                    <i class="fas fa-check text-success me-2"></i>Market Microstructure
+                                </div>
+                                <div class="feature-item">
+                                    <i class="fas fa-check text-success me-2"></i>50,000 API calls/day
+                                </div>
+                                <div class="feature-item">
+                                    <i class="fas fa-check text-success me-2"></i>Custom Algorithms (10)
+                                </div>
+                            </div>
+                            <button class="btn btn-primary tier-btn" onclick="selectTier('Elite')">
+                                Select Elite
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Institutional Tier -->
+                    <div class="col-md-4">
+                        <div class="subscription-card institutional-tier">
+                            <div class="tier-header">
+                                <h4><i class="fas fa-building me-2"></i>Institutional</h4>
+                                <div class="tier-price">
+                                    <span class="price">$199.99</span>
+                                    <span class="period">/month</span>
+                                </div>
+                                <div class="annual-discount">Save $400/year with annual plan</div>
+                            </div>
+                            <div class="tier-features">
+                                <div class="feature-item">
+                                    <i class="fas fa-check text-success me-2"></i>All Elite features
+                                </div>
+                                <div class="feature-item">
+                                    <i class="fas fa-check text-success me-2"></i>Direct Market Access
+                                </div>
+                                <div class="feature-item">
+                                    <i class="fas fa-check text-success me-2"></i>Prime Brokerage Integration
+                                </div>
+                                <div class="feature-item">
+                                    <i class="fas fa-check text-success me-2"></i>Custom API Access
+                                </div>
+                                <div class="feature-item">
+                                    <i class="fas fa-check text-success me-2"></i>Dedicated Account Manager
+                                </div>
+                                <div class="feature-item">
+                                    <i class="fas fa-check text-success me-2"></i>1M+ API calls/day
+                                </div>
+                                <div class="feature-item">
+                                    <i class="fas fa-check text-success me-2"></i>25 Team Members
+                                </div>
+                            </div>
+                            <button class="btn btn-outline-warning tier-btn" onclick="selectTier('Institutional')">
+                                Contact Sales
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Value Proposition -->
+                <div class="value-proposition mb-4">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="comparison-card">
+                                <h6><i class="fas fa-chart-bar me-2"></i>Traditional Bloomberg Terminal</h6>
+                                <div class="comparison-price">$2,000+/month</div>
+                                <div class="comparison-features">
+                                    <div class="feature-item limited">
+                                        <i class="fas fa-times text-danger me-2"></i>Complex interface
+                                    </div>
+                                    <div class="feature-item limited">
+                                        <i class="fas fa-times text-danger me-2"></i>Expensive hardware required
+                                    </div>
+                                    <div class="feature-item limited">
+                                        <i class="fas fa-times text-danger me-2"></i>No AI-powered insights
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="comparison-card tradewise">
+                                <h6><i class="fas fa-robot me-2"></i>TradeWise AI Elite</h6>
+                                <div class="comparison-price">$39.99/month</div>
+                                <div class="comparison-features">
+                                    <div class="feature-item">
+                                        <i class="fas fa-check text-success me-2"></i>Intuitive AI-powered interface
+                                    </div>
+                                    <div class="feature-item">
+                                        <i class="fas fa-check text-success me-2"></i>Works on any device
+                                    </div>
+                                    <div class="feature-item">
+                                        <i class="fas fa-check text-success me-2"></i>Advanced AI market analysis
+                                    </div>
+                                    <div class="feature-item savings">
+                                        <i class="fas fa-piggy-bank text-warning me-2"></i>Save $23,520/year
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Personalized Recommendation -->
+                <div id="personalizedRecommendation" class="recommendation-section" style="display: none;">
+                    <div class="alert alert-success">
+                        <i class="fas fa-lightbulb me-2"></i>
+                        <strong>AI Recommendation:</strong>
+                        <span id="recommendationText">Based on your trading activity, we recommend the Elite tier.</span>
+                    </div>
+                    <div class="recommendation-details">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6>Your Usage Analysis</h6>
+                                <div id="usageAnalysis"></div>
+                            </div>
+                            <div class="col-md-6">
+                                <h6>Estimated Monthly Value</h6>
+                                <div id="monthlyValue" class="value-display">$300+</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Onboarding Preview -->
+                <div id="onboardingPreview" class="onboarding-section" style="display: none;">
+                    <h6><i class="fas fa-route me-2"></i>Your Onboarding Journey</h6>
+                    <div id="onboardingSteps" class="steps-container"></div>
+                    <div class="onboarding-time">
+                        <i class="fas fa-clock me-2"></i>
+                        Total estimated time: <span id="totalTime">25 minutes</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Continue with Demo
+                </button>
+                <button type="button" class="btn btn-primary" id="upgradeNowBtn" onclick="processUpgrade()">
+                    <i class="fas fa-rocket me-2"></i>Upgrade Now
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.institutional-modal {
+    background: linear-gradient(145deg, #1a1a2e, #16213e);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+}
+
+.subscription-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 1.5rem;
+    height: 100%;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.subscription-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.subscription-card.featured {
+    border-color: #10b981;
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
+}
+
+.popular-badge {
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, #10b981, #059669);
+    padding: 0.25rem 1rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.tier-header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.tier-price {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #10b981;
+    margin: 0.5rem 0;
+}
+
+.tier-price .period {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.annual-discount {
+    font-size: 0.8rem;
+    color: #10b981;
+    font-weight: 500;
+}
+
+.tier-features {
+    margin-bottom: 1.5rem;
+}
+
+.feature-item {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.feature-item:last-child {
+    border-bottom: none;
+}
+
+.tier-btn {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.comparison-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 1rem;
+    height: 100%;
+}
+
+.comparison-card.tradewise {
+    border-color: #10b981;
+    background: rgba(16, 185, 129, 0.05);
+}
+
+.comparison-price {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #10b981;
+    margin: 0.5rem 0;
+}
+
+.feature-item.limited {
+    opacity: 0.6;
+}
+
+.feature-item.savings {
+    color: #f59e0b;
+    font-weight: 600;
+}
+
+.value-display {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #10b981;
+}
+
+.steps-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.step-item {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    gap: 1rem;
+}
+
+.step-number {
+    background: #10b981;
+    color: white;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.onboarding-time {
+    margin-top: 1rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+</style>
+
+<script>
+let selectedTier = null;
+
+function selectTier(tier) {
+    selectedTier = tier;
+    
+    // Update UI to show selection
+    document.querySelectorAll('.subscription-card').forEach(card => {
+        card.classList.remove('selected');
+    });
+    
+    const selectedCard = document.querySelector(`.${tier.toLowerCase()}-tier`);
+    if (selectedCard) {
+        selectedCard.classList.add('selected');
+    }
+    
+    // Load personalized recommendation
+    loadPersonalizedRecommendation(tier);
+    
+    // Load onboarding preview
+    loadOnboardingPreview(tier);
+    
+    // Update upgrade button
+    const upgradeBtn = document.getElementById('upgradeNowBtn');
+    if (tier === 'Institutional') {
+        upgradeBtn.innerHTML = '<i class="fas fa-phone me-2"></i>Contact Sales';
+    } else {
+        upgradeBtn.innerHTML = '<i class="fas fa-rocket me-2"></i>Upgrade to ' + tier;
+    }
+}
+
+function loadPersonalizedRecommendation(tier) {
+    fetch('/api/institutional/upgrade-recommendation')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const recommendationSection = document.getElementById('personalizedRecommendation');
+                const recommendationText = document.getElementById('recommendationText');
+                const usageAnalysis = document.getElementById('usageAnalysis');
+                const monthlyValue = document.getElementById('monthlyValue');
+                
+                recommendationText.textContent = `Based on your trading activity (${data.current_usage.trades_per_week} trades/week), we recommend the ${data.recommendation.recommended_tier} tier.`;
+                
+                usageAnalysis.innerHTML = data.recommendation.reasons.map(reason => 
+                    `<div class="usage-item"><i class="fas fa-check-circle text-success me-2"></i>${reason}</div>`
+                ).join('');
+                
+                monthlyValue.textContent = `$${data.recommendation.potential_monthly_value.toFixed(0)}+`;
+                
+                recommendationSection.style.display = 'block';
+            }
+        })
+        .catch(error => console.error('Error loading recommendation:', error));
+}
+
+function loadOnboardingPreview(tier) {
+    fetch(`/api/institutional/onboarding-flow/${tier}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const onboardingSection = document.getElementById('onboardingPreview');
+                const stepsContainer = document.getElementById('onboardingSteps');
+                const totalTime = document.getElementById('totalTime');
+                
+                stepsContainer.innerHTML = data.onboarding_steps.map(step => `
+                    <div class="step-item">
+                        <div class="step-number">${step.step}</div>
+                        <div class="step-content">
+                            <div class="step-title">${step.title}</div>
+                            <div class="step-description">${step.description}</div>
+                            <div class="step-time">${step.estimated_time}</div>
+                        </div>
+                    </div>
+                `).join('');
+                
+                totalTime.textContent = `${data.total_estimated_time} minutes`;
+                
+                onboardingSection.style.display = 'block';
+            }
+        })
+        .catch(error => console.error('Error loading onboarding flow:', error));
+}
+
+function processUpgrade() {
+    if (!selectedTier) {
+        alert('Please select a subscription tier first.');
+        return;
+    }
+    
+    if (selectedTier === 'Institutional') {
+        // Open contact form or redirect to sales
+        alert('Thank you for your interest! Our sales team will contact you within 24 hours.');
+        return;
+    }
+    
+    // Process subscription upgrade
+    alert(`Upgrading to ${selectedTier} tier... (This would integrate with your payment system)`);
+    
+    // In a real implementation, this would:
+    // 1. Integrate with Stripe for payment processing
+    // 2. Update user subscription in database
+    // 3. Activate institutional features
+    // 4. Redirect to onboarding flow
+}
+
+// Auto-load recommendation on modal open
+document.addEventListener('DOMContentLoaded', function() {
+    const modal = document.getElementById('institutionalUpgradeModal');
+    modal.addEventListener('shown.bs.modal', function() {
+        // Auto-select Elite tier (most popular)
+        selectTier('Elite');
+    });
+});
+</script>

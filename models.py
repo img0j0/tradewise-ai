@@ -17,6 +17,12 @@ class User(UserMixin, db.Model):
     subscription_expires = db.Column(db.DateTime, nullable=True)
     subscription_created = db.Column(db.DateTime, nullable=True)
     
+    # Institutional subscription fields
+    subscription_tier = db.Column(db.String(20), default='Free')  # Free, Pro, Elite, Institutional
+    subscription_start_date = db.Column(db.DateTime, nullable=True)
+    subscription_end_date = db.Column(db.DateTime, nullable=True)
+    subscription_status = db.Column(db.String(20), default='active')  # active, expired, cancelled
+    
     # Watchlist data stored as JSON
     watchlists = db.Column(db.Text)
     

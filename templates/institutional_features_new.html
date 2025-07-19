@@ -501,14 +501,22 @@
             }, 1500);
         }
 
+        function showInstitutionalUpgrade() {
+            // Show the institutional upgrade modal
+            const modal = new bootstrap.Modal(document.getElementById('institutionalUpgradeModal'));
+            modal.show();
+        }
+
         function showUpgradeModal() {
-            // Integration with existing premium modal
-            if (window.premiumManager && window.premiumManager.showPremiumModal) {
-                window.premiumManager.showPremiumModal();
-            } else {
-                alert('Upgrade functionality will redirect to subscription page');
-            }
+            showInstitutionalUpgrade();
+        }
+
+        function showSubscriptionPlans() {
+            showInstitutionalUpgrade();
         }
     </script>
+    
+    <!-- Include Institutional Upgrade Modal -->
+    {% include 'institutional_upgrade_modal.html' %}
 </body>
 </html>
