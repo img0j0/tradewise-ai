@@ -413,6 +413,23 @@
             </div>
         </div>
         
+        <!-- Watchlist Modal -->
+        <div id="watchlistModal" class="watchlist-modal">
+            <div class="watchlist-modal-content">
+                <div class="watchlist-modal-header">
+                    <h3><i class="fas fa-list"></i> Smart Watchlist</h3>
+                    <button class="watchlist-close-btn" onclick="closeWatchlistModal()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="watchlist-modal-body">
+                    <div id="watchlistContainer">
+                        <!-- Watchlists will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        
         <!-- Bottom Input Area -->
         <div class="input-area">
             <div class="input-container">
@@ -1194,6 +1211,284 @@
         font-size: 0.75rem;
     }
 
+    /* Watchlist Modal Styling */
+    .watchlist-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(10px);
+        z-index: 10000;
+        padding: 1rem;
+    }
+
+    .watchlist-modal-content {
+        background: linear-gradient(135deg, #1a1a2e, #16213e);
+        border-radius: 16px;
+        border: 1px solid rgba(0, 212, 170, 0.3);
+        max-width: 700px;
+        width: 100%;
+        max-height: 90vh;
+        margin: 2rem auto;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .watchlist-modal-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: rgba(0, 212, 170, 0.1);
+    }
+
+    .watchlist-modal-header h3 {
+        margin: 0;
+        color: white;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .watchlist-close-btn {
+        background: none;
+        border: none;
+        color: rgba(255, 255, 255, 0.7);
+        cursor: pointer;
+        padding: 0.5rem;
+        border-radius: 50%;
+        transition: all 0.3s ease;
+    }
+
+    .watchlist-close-btn:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+    }
+
+    .watchlist-modal-body {
+        padding: 1.5rem;
+        overflow-y: auto;
+        flex: 1;
+    }
+
+    .watchlist-group {
+        margin-bottom: 1.5rem;
+        background: rgba(255, 255, 255, 0.02);
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        overflow: hidden;
+    }
+
+    .watchlist-header {
+        padding: 1rem;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.03);
+        transition: all 0.3s ease;
+    }
+
+    .watchlist-header:hover {
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    .watchlist-name {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        color: white;
+        font-weight: 600;
+    }
+
+    .watchlist-count {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.9rem;
+    }
+
+    .watchlist-chevron {
+        color: rgba(255, 255, 255, 0.6);
+        transition: transform 0.3s ease;
+    }
+
+    .watchlist-chevron.rotated {
+        transform: rotate(180deg);
+    }
+
+    .watchlist-content {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease;
+    }
+
+    .watchlist-content.expanded {
+        max-height: 1000px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .watchlist-stock {
+        display: flex;
+        align-items: center;
+        padding: 1rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .watchlist-stock:hover {
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    .watchlist-stock:last-child {
+        border-bottom: none;
+    }
+
+    .stock-info {
+        flex: 1;
+    }
+
+    .stock-symbol {
+        color: white;
+        font-weight: 600;
+        font-size: 1rem;
+    }
+
+    .stock-name {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.8rem;
+        margin-top: 0.25rem;
+    }
+
+    .stock-data {
+        text-align: right;
+        margin-right: 1rem;
+    }
+
+    .stock-price {
+        color: white;
+        font-weight: 600;
+    }
+
+    .stock-change {
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+
+    .stock-change.positive {
+        color: #00D4AA;
+    }
+
+    .stock-change.negative {
+        color: #ef4444;
+    }
+
+    .stock-rating {
+        padding: 0.25rem 0.5rem;
+        border-radius: 6px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        margin-right: 1rem;
+    }
+
+    .stock-rating.rating-strong-buy {
+        background: #00D4AA;
+        color: black;
+    }
+
+    .stock-rating.rating-buy {
+        background: #60a5fa;
+        color: white;
+    }
+
+    .stock-rating.rating-hold {
+        background: #fbbf24;
+        color: black;
+    }
+
+    .stock-rating.rating-sell {
+        background: #f87171;
+        color: white;
+    }
+
+    .stock-rating.rating-strong-sell {
+        background: #dc2626;
+        color: white;
+    }
+
+    .stock-actions {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .stock-action-btn {
+        background: rgba(255, 255, 255, 0.1);
+        border: none;
+        border-radius: 6px;
+        padding: 0.5rem;
+        color: rgba(255, 255, 255, 0.7);
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .stock-action-btn:hover {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+    }
+
+    .remove-btn:hover {
+        background: rgba(239, 68, 68, 0.2);
+        color: #ef4444;
+    }
+
+    .watchlist-actions {
+        margin-top: 1.5rem;
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .watchlist-btn {
+        flex: 1;
+        min-width: 200px;
+        padding: 0.75rem 1rem;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .watchlist-btn.primary {
+        background: linear-gradient(135deg, #00D4AA, #007AFF);
+        color: white;
+    }
+
+    .watchlist-btn.primary:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 20px rgba(0, 212, 170, 0.3);
+    }
+
+    .watchlist-btn.secondary {
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .watchlist-btn.secondary:hover {
+        background: rgba(255, 255, 255, 0.15);
+        transform: translateY(-1px);
+    }
+
     /* Mobile optimization for insights - matching themes */
     @media (max-width: 768px) {
         .insights-indicator {
@@ -1202,6 +1497,34 @@
         
         .insights-left {
             gap: 0.5rem;
+        }
+        
+        .watchlist-modal {
+            padding: 0.5rem;
+        }
+        
+        .watchlist-modal-content {
+            margin: 1rem auto;
+            max-height: 95vh;
+        }
+        
+        .watchlist-stock {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+        
+        .stock-data {
+            text-align: left;
+            margin-right: 0;
+        }
+        
+        .watchlist-actions {
+            flex-direction: column;
+        }
+        
+        .watchlist-btn {
+            min-width: auto;
         }
         
         .insights-label {
@@ -3702,7 +4025,153 @@
     function showWatchlist() {
         document.getElementById('tools-dropdown-menu').classList.remove('show');
         toolsDropdownVisible = false;
-        alert('Watchlist feature coming soon!');
+        toggleWatchlistModal();
+    }
+    
+    function toggleWatchlistModal() {
+        const modal = document.getElementById('watchlistModal');
+        if (modal) {
+            modal.style.display = 'block';
+            loadUserWatchlists();
+        }
+    }
+    
+    function closeWatchlistModal() {
+        const modal = document.getElementById('watchlistModal');
+        if (modal) {
+            modal.style.display = 'none';
+        }
+    }
+    
+    // Watchlist Management Functions
+    function loadUserWatchlists() {
+        fetch('/api/watchlists')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    renderWatchlists(data.watchlists);
+                } else {
+                    console.error('Error loading watchlists:', data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
+    
+    function renderWatchlists(watchlists) {
+        const container = document.getElementById('watchlistContainer');
+        if (!container) return;
+        
+        let html = '';
+        
+        Object.entries(watchlists).forEach(([name, stocks]) => {
+            html += '<div class="watchlist-group">';
+            html += '<div class="watchlist-header" onclick="toggleWatchlistGroup(\'' + name + '\')">';
+            html += '<div class="watchlist-name">';
+            html += '<i class="fas fa-folder-open"></i>';
+            html += '<span>' + name + '</span>';
+            html += '<span class="watchlist-count">(' + stocks.length + ')</span>';
+            html += '</div>';
+            html += '<i class="fas fa-chevron-down watchlist-chevron" id="chevron-' + name.replace(/\s+/g, '') + '"></i>';
+            html += '</div>';
+            
+            html += '<div class="watchlist-content" id="content-' + name.replace(/\s+/g, '') + '">';
+            
+            stocks.forEach(stock => {
+                const changeClass = (stock.change_percent || 0) >= 0 ? 'positive' : 'negative';
+                const changePrefix = (stock.change_percent || 0) >= 0 ? '+' : '';
+                
+                html += '<div class="watchlist-stock" onclick="searchStock(\'' + stock.symbol + '\')">';
+                html += '<div class="stock-info">';
+                html += '<div class="stock-symbol">' + stock.symbol + '</div>';
+                html += '<div class="stock-name">' + (stock.company_name || stock.symbol) + '</div>';
+                html += '</div>';
+                html += '<div class="stock-data">';
+                html += '<div class="stock-price">$' + (stock.current_price || 0).toFixed(2) + '</div>';
+                html += '<div class="stock-change ' + changeClass + '">' + changePrefix + (stock.change_percent || 0).toFixed(2) + '%</div>';
+                html += '</div>';
+                
+                if (stock.professional_rating) {
+                    html += '<div class="stock-rating rating-' + stock.professional_rating.toLowerCase().replace(' ', '-') + '">';
+                    html += stock.professional_rating;
+                    html += '</div>';
+                }
+                
+                html += '<div class="stock-actions">';
+                html += '<button class="stock-action-btn remove-btn" onclick="event.stopPropagation(); removeFromWatchlist(\'' + name + '\', \'' + stock.symbol + '\')">';
+                html += '<i class="fas fa-times"></i>';
+                html += '</button>';
+                html += '</div>';
+                html += '</div>';
+            });
+            
+            html += '</div>';
+            html += '</div>';
+        });
+        
+        html += '<div class="watchlist-actions">';
+        html += '<button class="watchlist-btn primary" onclick="showAddToWatchlistModal()">';
+        html += '<i class="fas fa-plus"></i> Add Stock to Watchlist';
+        html += '</button>';
+        html += '<button class="watchlist-btn secondary" onclick="createNewWatchlist()">';
+        html += '<i class="fas fa-folder-plus"></i> New Watchlist';
+        html += '</button>';
+        html += '</div>';
+        
+        container.innerHTML = html;
+    }
+    
+    function toggleWatchlistGroup(name) {
+        const content = document.getElementById('content-' + name.replace(/\s+/g, ''));
+        const chevron = document.getElementById('chevron-' + name.replace(/\s+/g, ''));
+        
+        if (content && chevron) {
+            content.classList.toggle('expanded');
+            chevron.classList.toggle('rotated');
+        }
+    }
+    
+    function addToWatchlist(symbol, watchlistName = 'My Portfolio') {
+        fetch('/api/watchlists/add', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ symbol: symbol, watchlist_name: watchlistName })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                loadUserWatchlists();
+                showNotification('success', data.message);
+            } else {
+                showNotification('error', data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('error', 'Error adding to watchlist');
+        });
+    }
+    
+    function removeFromWatchlist(watchlistName, symbol) {
+        fetch('/api/watchlists/remove', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ watchlist_name: watchlistName, symbol: symbol })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                loadUserWatchlists();
+                showNotification('success', data.message);
+            } else {
+                showNotification('error', data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('error', 'Error removing from watchlist');
+        });
     }
     
     // Institutional Features function

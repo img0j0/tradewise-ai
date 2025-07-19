@@ -740,10 +740,11 @@ def calculate_portfolio_performance():
             'avg_confidence': 0
         }
 
-# Import comprehensive advisor, market predictor, and Bloomberg killer
+# Import comprehensive advisor, market predictor, Bloomberg killer, and watchlist manager
 from comprehensive_ai_advisor import comprehensive_advisor
 from ai_market_predictor import ai_market_predictor
 from bloomberg_killer_intelligence import bloomberg_killer
+from watchlist_manager import watchlist_manager
 
 # AI Assistant Routes
 @app.route('/api/stock-analysis/<symbol>')
@@ -3669,3 +3670,102 @@ def get_trading_dashboard():
 def professional_terminal():
     """Professional trading terminal page"""
     return render_template('professional_trading_terminal.html')
+
+# Watchlist API Endpoints
+@app.route('/api/watchlists')
+@login_required
+def get_user_watchlists():
+    """Get all watchlists for current user"""
+    try:
+        user_id = str(current_user.id)
+        result = watchlist_manager.get_user_watchlists(user_id)
+        return jsonify(result)
+    except Exception as e:
+        logger.error(f"Error getting user watchlists: {str(e)}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/watchlists/add', methods=['POST'])
+@login_required
+def add_to_watchlist():
+    """Add symbol to watchlist"""
+    try:
+        data = request.get_json()
+        user_id = str(current_user.id)
+        watchlist_name = data.get('watchlist_name', 'My Portfolio')
+        symbol = data.get('symbol', '').upper()
+        
+        if not symbol:
+            return jsonify({'success': False, 'error': 'Symbol required'}), 400
+            
+        result = watchlist_manager.add_to_watchlist(user_id, watchlist_name, symbol)
+        return jsonify(result)
+    except Exception as e:
+        logger.error(f"Error adding to watchlist: {str(e)}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/watchlists/remove', methods=['POST'])
+@login_required
+def remove_from_watchlist():
+    """Remove symbol from watchlist"""
+    try:
+        data = request.get_json()
+        user_id = str(current_user.id)
+        watchlist_name = data.get('watchlist_name')
+        symbol = data.get('symbol', '').upper()
+        
+        if not symbol or not watchlist_name:
+            return jsonify({'success': False, 'error': 'Watchlist name and symbol required'}), 400
+            
+        result = watchlist_manager.remove_from_watchlist(user_id, watchlist_name, symbol)
+        return jsonify(result)
+    except Exception as e:
+        logger.error(f"Error removing from watchlist: {str(e)}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/watchlists/create', methods=['POST'])
+@login_required
+def create_watchlist():
+    """Create new watchlist"""
+    try:
+        data = request.get_json()
+        user_id = str(current_user.id)
+        watchlist_name = data.get('watchlist_name', '').strip()
+        
+        if not watchlist_name:
+            return jsonify({'success': False, 'error': 'Watchlist name required'}), 400
+            
+        result = watchlist_manager.create_watchlist(user_id, watchlist_name)
+        return jsonify(result)
+    except Exception as e:
+        logger.error(f"Error creating watchlist: {str(e)}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/watchlists/delete', methods=['POST'])
+@login_required
+def delete_watchlist():
+    """Delete watchlist"""
+    try:
+        data = request.get_json()
+        user_id = str(current_user.id)
+        watchlist_name = data.get('watchlist_name')
+        
+        if not watchlist_name:
+            return jsonify({'success': False, 'error': 'Watchlist name required'}), 400
+            
+        result = watchlist_manager.delete_watchlist(user_id, watchlist_name)
+        return jsonify(result)
+    except Exception as e:
+        logger.error(f"Error deleting watchlist: {str(e)}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/watchlists/alerts')
+@login_required
+def get_watchlist_alerts():
+    """Get intelligent alerts for watchlist stocks"""
+    try:
+        user_id = str(current_user.id)
+        result = watchlist_manager.get_watchlist_alerts(user_id)
+        return jsonify(result)
+    except Exception as e:
+        logger.error(f"Error getting watchlist alerts: {str(e)}")
+        return jsonify({'success': False, 'error': str(e)}), 500

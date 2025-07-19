@@ -17,6 +17,9 @@ class User(UserMixin, db.Model):
     subscription_expires = db.Column(db.DateTime, nullable=True)
     subscription_created = db.Column(db.DateTime, nullable=True)
     
+    # Watchlist data stored as JSON
+    watchlists = db.Column(db.Text)
+    
     # Relationships
     user_account = db.relationship('UserAccount', backref='user', uselist=False, cascade='all, delete-orphan')
     trades = db.relationship('Trade', backref='user', lazy='dynamic', cascade='all, delete-orphan')
