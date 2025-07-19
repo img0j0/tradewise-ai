@@ -174,14 +174,12 @@ def analytics():
 
 @app.route('/portfolio')
 def portfolio():
-    """Clean portfolio page with enhanced content"""
+    """Enhanced portfolio page - direct implementation"""
     if not current_user.is_authenticated:
         return redirect(url_for('login'))
     
-    # Add timestamp for cache busting
-    import time
-    timestamp = int(time.time())
-    return render_template('clean_portfolio.html', timestamp=timestamp)
+    # Use direct enhanced portfolio template
+    return render_template('portfolio_enhanced_direct.html')
 
 @app.route('/alerts')
 def alerts():

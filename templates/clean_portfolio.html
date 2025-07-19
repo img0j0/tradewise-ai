@@ -25,7 +25,12 @@
             if (iframe) {
                 // Add timestamp to force cache refresh
                 const timestamp = new Date().getTime();
-                iframe.src = '/portfolio_content?v=' + timestamp;
+                iframe.src = '/portfolio_content?v=' + timestamp + '&cache_bust=' + Math.random();
+                
+                // Force reload after 1 second if still showing old content
+                setTimeout(() => {
+                    iframe.src = '/portfolio_content?v=' + new Date().getTime() + '&force_refresh=1';
+                }, 1000);
             }
         });
     </script>
