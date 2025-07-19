@@ -2283,7 +2283,7 @@
         console.log('TradeWise AI: Searching for', symbol);
         showLoading();
         
-        fetch(`/api/stock-analysis/${symbol}`)
+        fetch('/api/stock-analysis/' + symbol)
             .then(response => response.json())
             .then(data => {
                 console.log('TradeWise AI: API Response', data);
@@ -2342,7 +2342,7 @@
             .catch(error => {
                 console.error('TradeWise AI: Error', error);
                 hideLoading();
-                showError(`Unable to find stock "${symbol}". Please verify the symbol is correct or try searching for the company name.`);
+                showError('Unable to find stock "' + symbol + '". Please verify the symbol is correct or try searching for the company name.');
             });
     }
 
@@ -2354,7 +2354,7 @@
         
         // Use intelligent search to convert query to symbol
         const symbol = intelligentSearch(query);
-        console.log(`TradeWise AI: Converting "${query}" → "${symbol}"`);
+        console.log('TradeWise AI: Converting "' + query + '" → "' + symbol + '"');
         
         searchStock(symbol);
         input.value = '';
@@ -2368,12 +2368,11 @@
 
     function showLoading() {
         const resultsDiv = document.getElementById('search-results');
-        resultsDiv.innerHTML = `
-            <div class="loading">
-                <div class="loading-spinner"></div>
-                <span>Analyzing stock...</span>
-            </div>
-        `;
+        resultsDiv.innerHTML = 
+            '<div class="loading">' +
+                '<div class="loading-spinner"></div>' +
+                '<span>Analyzing stock...</span>' +
+            '</div>';
         
         // Hide suggestion cards
         document.querySelector('.suggestion-cards').style.display = 'none';
@@ -2402,7 +2401,7 @@
         const formatMetric = (value, suffix = '') => {
             if (value === null || value === undefined || value === 'N/A') return 'N/A';
             if (typeof value === 'number') {
-                if (suffix === '%') return `${(value * 100).toFixed(2)}%`;
+                if (suffix === '%') return (value * 100).toFixed(2) + '%';
                 return value.toFixed(2);
             }
             return value;
@@ -2494,21 +2493,21 @@
                             <span class="metric-label">Volume</span>
                             <span class="metric-value">${data.volume}</span>
                         </div>` : ''}
-                        ${data.week_52_high ? `
-                        <div class="metric-item">
-                            <span class="metric-label">52W High</span>
-                            <span class="metric-value">$${formatPrice(data.week_52_high)}</span>
-                        </div>` : ''}
-                        ${data.week_52_low ? `
-                        <div class="metric-item">
-                            <span class="metric-label">52W Low</span>
-                            <span class="metric-value">$${formatPrice(data.week_52_low)}</span>
-                        </div>` : ''}
-                        ${data.dividend_yield ? `
-                        <div class="metric-item">
-                            <span class="metric-label">Dividend Yield</span>
-                            <span class="metric-value">${formatMetric(data.dividend_yield, '%')}</span>
-                        </div>` : ''}
+                        ' + (data.week_52_high ? 
+                        '<div class="metric-item">' +
+                            '<span class="metric-label">52W High</span>' +
+                            '<span class="metric-value">$' + formatPrice(data.week_52_high) + '</span>' +
+                        '</div>' : '') +
+                        (data.week_52_low ? 
+                        '<div class="metric-item">' +
+                            '<span class="metric-label">52W Low</span>' +
+                            '<span class="metric-value">$' + formatPrice(data.week_52_low) + '</span>' +
+                        '</div>' : '') +
+                        (data.dividend_yield ? 
+                        '<div class="metric-item">' +
+                            '<span class="metric-label">Dividend Yield</span>' +
+                            '<span class="metric-value">' + formatMetric(data.dividend_yield, '%') + '</span>' +
+                        '</div>' : '') + '
                     </div>
                 </div>` : ''}
                 
@@ -2533,13 +2532,12 @@
 
     function showError(message) {
         const resultsDiv = document.getElementById('search-results');
-        resultsDiv.innerHTML = `
-            <div class="stock-result" style="text-align: center;">
-                <div style="color: var(--red); font-size: 2rem; margin-bottom: 1rem;">⚠️</div>
-                <div style="font-size: 1.1rem; margin-bottom: 0.5rem;">Search Error</div>
-                <div style="color: rgba(255,255,255,0.7);">${message}</div>
-            </div>
-        `;
+        resultsDiv.innerHTML = 
+            '<div class="stock-result" style="text-align: center;">' +
+                '<div style="color: var(--red); font-size: 2rem; margin-bottom: 1rem;">⚠️</div>' +
+                '<div style="font-size: 1.1rem; margin-bottom: 0.5rem;">Search Error</div>' +
+                '<div style="color: rgba(255,255,255,0.7);">' + message + '</div>' +
+            '</div>';
         
         // Show suggestion cards again
         setTimeout(() => {
@@ -2601,16 +2599,19 @@
 
     console.log('TradeWise AI: Intelligent ChatGPT-style search loaded');
     
-    // Toggle copilot expanded/condensed view
-    let copilotExpanded = false;
+    // Move all toggle functions to global scope
+    window.copilotExpanded = false;
+    window.themesExpanded = false;
+    window.insightsExpanded = false;
+    window.popularExpanded = false;
     
     function toggleCopilotExpanded() {
         const expandedContent = document.getElementById('copilot-expanded-content');
         const expandIcon = document.getElementById('copilot-expand-icon');
         
-        copilotExpanded = !copilotExpanded;
+        window.copilotExpanded = !window.copilotExpanded;
         
-        if (copilotExpanded) {
+        if (window.copilotExpanded) {
             expandedContent.style.display = 'block';
             expandIcon.classList.add('expanded');
         } else {
@@ -2619,16 +2620,15 @@
         }
     }
     
-    // Toggle themes expanded/condensed view
-    let themesExpanded = false;
+    window.toggleCopilotExpanded = toggleCopilotExpanded;
     
     function toggleThemesExpanded() {
         const expandedContent = document.getElementById('themes-expanded-content');
         const expandIcon = document.getElementById('themes-expand-icon');
         
-        themesExpanded = !themesExpanded;
+        window.themesExpanded = !window.themesExpanded;
         
-        if (themesExpanded) {
+        if (window.themesExpanded) {
             expandedContent.style.display = 'block';
             expandIcon.classList.add('expanded');
         } else {
@@ -2636,17 +2636,16 @@
             expandIcon.classList.remove('expanded');
         }
     }
-
-    // Toggle insights expanded/condensed view
-    let insightsExpanded = false;
     
+    window.toggleThemesExpanded = toggleThemesExpanded;
+
     function toggleInsightsExpanded() {
         const expandedContent = document.getElementById('insights-expanded-content');
         const expandIcon = document.getElementById('insights-expand-icon');
         
-        insightsExpanded = !insightsExpanded;
+        window.insightsExpanded = !window.insightsExpanded;
         
-        if (insightsExpanded) {
+        if (window.insightsExpanded) {
             expandedContent.style.display = 'block';
             expandIcon.classList.add('expanded');
         } else {
@@ -2654,17 +2653,16 @@
             expandIcon.classList.remove('expanded');
         }
     }
-
-    // Toggle popular stocks expanded/condensed view
-    let popularExpanded = false;
     
+    window.toggleInsightsExpanded = toggleInsightsExpanded;
+
     function togglePopularExpanded() {
         const expandedContent = document.getElementById('popular-expanded-content');
         const expandIcon = document.getElementById('popular-expand-icon');
         
-        popularExpanded = !popularExpanded;
+        window.popularExpanded = !window.popularExpanded;
         
-        if (popularExpanded) {
+        if (window.popularExpanded) {
             expandedContent.style.display = 'block';
             expandIcon.classList.add('expanded');
         } else {
@@ -2672,6 +2670,8 @@
             expandIcon.classList.remove('expanded');
         }
     }
+    
+    window.togglePopularExpanded = togglePopularExpanded;
 
     // Search investment themes
     function searchTheme(themeName) {
@@ -3624,24 +3624,24 @@
     
     function buyMoreStock(symbol) {
         // Get stock data and open purchase modal for existing holding
-        fetch(`/api/stock-analysis/${symbol}`)
+        fetch('/api/stock-analysis/' + symbol)
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
                     openPurchaseModal(data);
                 } else {
-                    alert(`Unable to get current data for ${symbol}. Please try again.`);
+                    alert('Unable to get current data for ' + symbol + '. Please try again.');
                 }
             })
             .catch(error => {
                 console.error('Error getting stock data:', error);
-                alert(`Error loading ${symbol} data. Please try again.`);
+                alert('Error loading ' + symbol + ' data. Please try again.');
             });
     }
 
     function sellStock(symbol) {
         // For now, show a simple notification
-        alert(`Sell functionality for ${symbol} coming soon!`);
+        alert('Sell functionality for ' + symbol + ' coming soon!');
     }
     
     // Update portfolio summary when purchases are made
