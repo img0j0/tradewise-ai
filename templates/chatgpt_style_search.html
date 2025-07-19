@@ -333,6 +333,16 @@
         flex: 1;
     }
 
+    .buy-btn {
+        background: rgba(16, 185, 129, 0.2);
+        color: #10b981;
+        border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .buy-btn:hover {
+        background: rgba(16, 185, 129, 0.3);
+    }
+
     .sell-btn {
         background: rgba(239, 68, 68, 0.2);
         color: #ef4444;
@@ -1795,6 +1805,9 @@
                         </div>
                     </div>
                     <div class="holding-actions">
+                        <button class="holding-btn buy-btn" onclick="buyMoreStock('${holding.symbol}')">
+                            Buy More
+                        </button>
                         <button class="holding-btn sell-btn" onclick="sellStock('${holding.symbol}')">
                             Sell
                         </button>
@@ -1813,6 +1826,23 @@
         }
     }
     
+    function buyMoreStock(symbol) {
+        // Get stock data and open purchase modal for existing holding
+        fetch(`/api/stock-analysis/${symbol}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    openPurchaseModal(data);
+                } else {
+                    alert(`Unable to get current data for ${symbol}. Please try again.`);
+                }
+            })
+            .catch(error => {
+                console.error('Error getting stock data:', error);
+                alert(`Error loading ${symbol} data. Please try again.`);
+            });
+    }
+
     function sellStock(symbol) {
         // For now, show a simple notification
         alert(`Sell functionality for ${symbol} coming soon!`);
