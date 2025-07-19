@@ -3600,6 +3600,7 @@ def institutional_features_page():
 # ============================================
 
 from institutional_subscription_manager import institutional_subscription_manager
+from ai_team_members import ai_team_manager
 
 @app.route('/api/institutional/subscription-tiers')
 def get_institutional_subscription_tiers():
@@ -3644,7 +3645,7 @@ def get_upgrade_recommendation():
         user_activity = {
             'daily_api_calls': 500,  # This would be tracked from actual usage
             'uses_advanced_features': True,
-            'portfolio_positions': len(get_portfolio_data(current_user.id).get('holdings', [])),
+            'portfolio_positions': len(Portfolio.query.filter_by(user_id=current_user.id).all()),
             'trades_per_week': 5  # This would be calculated from trade history
         }
         
@@ -4047,3 +4048,83 @@ def get_risk_questionnaire():
     except Exception as e:
         logger.error(f"Error getting risk questionnaire: {str(e)}")
         return jsonify({'success': False, 'error': str(e)}), 500
+
+# ======= AI TEAM MEMBER ROUTES =======
+
+@app.route('/api/ai-team/query', methods=['POST'])
+@login_required
+def ai_team_query():
+    """Route user query to appropriate AI team member"""
+    try:
+        data = request.json
+        query = data.get('query', '').strip()
+        
+        if not query:
+            return jsonify({'error': 'Query is required'}), 400
+        
+        # Add user context
+        context = {
+            'user_id': current_user.id,
+            'user_tier': getattr(current_user, 'subscription_tier', 'Free'),
+            'timestamp': datetime.utcnow()
+        }
+        
+        # Route to appropriate AI team member
+        response = ai_team_manager.route_query(query, context)
+        
+        return jsonify({
+            'success': True,
+            'response': response,
+            'timestamp': datetime.utcnow().isoformat()
+        })
+        
+    except Exception as e:
+        logger.error(f"Error processing AI team query: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/ai-team/status')
+@login_required  
+def ai_team_status():
+    """Get AI team status and available specialists"""
+    try:
+        status = ai_team_manager.get_team_status()
+        return jsonify({
+            'success': True,
+            'team_status': status
+        })
+        
+    except Exception as e:
+        logger.error(f"Error getting AI team status: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/ai-team/members')
+def ai_team_members_list():
+    """Get list of available AI team members (public endpoint)"""
+    try:
+        return jsonify({
+            'success': True,
+            'members': [
+                {
+                    'name': 'Sarah Chen',
+                    'role': 'AI Market Analyst',
+                    'specialties': ['Stock Analysis', 'Market Trends', 'Trading Strategies', 'Portfolio Optimization'],
+                    'description': 'Provides expert market analysis and trading insights using AI-powered data analysis.'
+                },
+                {
+                    'name': 'Alex Rodriguez', 
+                    'role': 'AI Technical Support Specialist',
+                    'specialties': ['Technical Issues', 'Account Problems', 'Platform Guidance', 'Troubleshooting'],
+                    'description': 'Helps resolve technical issues and provides platform support with patience and expertise.'
+                },
+                {
+                    'name': 'Maria Santos',
+                    'role': 'AI Customer Success Manager', 
+                    'specialties': ['Onboarding', 'Feature Tutorials', 'User Guidance', 'Best Practices'],
+                    'description': 'Guides users through platform features and helps optimize their trading experience.'
+                }
+            ]
+        })
+        
+    except Exception as e:
+        logger.error(f"Error getting AI team members: {e}")
+        return jsonify({'error': str(e)}), 500

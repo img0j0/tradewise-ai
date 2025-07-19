@@ -100,6 +100,9 @@
         {% block content %}{% endblock %}
     </main>
     
+    <!-- AI Team Chat Widget -->
+    {% include 'ai_team_chat_widget.html' %}
+    
 
     
     <!-- Bootstrap JS -->
@@ -138,6 +141,7 @@
     <script src="{{ url_for('static', filename='js/ai_stock_search.js') }}"></script>
     <script src="{{ url_for('static', filename='js/ai_autocomplete_enhanced.js') }}"></script>
     <script src="{{ url_for('static', filename='js/premium.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/ai_team_chat.js') }}"></script>
     
     <!-- Scripts -->
     {% block scripts %}{% endblock %}

@@ -1,0 +1,631 @@
+<!-- AI Team Chat Widget -->
+<div id="ai-team-widget" class="ai-team-widget" style="display: none;">
+    <div class="ai-team-header">
+        <div class="team-info">
+            <div class="team-avatar">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="team-details">
+                <div class="team-name">AI Support Team</div>
+                <div class="team-status" id="team-status">3 specialists online</div>
+            </div>
+        </div>
+        <div class="team-controls">
+            <button class="btn-team-control" id="minimize-team-widget" title="Minimize">
+                <i class="fas fa-minus"></i>
+            </button>
+            <button class="btn-team-control" id="close-team-widget" title="Close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+    
+    <div class="ai-team-content">
+        <!-- Team Member Selection -->
+        <div class="team-members" id="team-members-list">
+            <div class="team-member" data-member="auto">
+                <div class="member-avatar">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="member-info">
+                    <div class="member-name">Auto-Route</div>
+                    <div class="member-role">Smart Routing</div>
+                </div>
+                <div class="member-status online"></div>
+            </div>
+            
+            <div class="team-member" data-member="sarah">
+                <div class="member-avatar">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="member-info">
+                    <div class="member-name">Sarah Chen</div>
+                    <div class="member-role">Market Analyst</div>
+                </div>
+                <div class="member-status online"></div>
+            </div>
+            
+            <div class="team-member" data-member="alex">
+                <div class="member-avatar">
+                    <i class="fas fa-tools"></i>
+                </div>
+                <div class="member-info">
+                    <div class="member-name">Alex Rodriguez</div>
+                    <div class="member-role">Technical Support</div>
+                </div>
+                <div class="member-status online"></div>
+            </div>
+            
+            <div class="team-member" data-member="maria">
+                <div class="member-avatar">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <div class="member-info">
+                    <div class="member-name">Maria Santos</div>
+                    <div class="member-role">Customer Success</div>
+                </div>
+                <div class="member-status online"></div>
+            </div>
+        </div>
+        
+        <!-- Chat Interface -->
+        <div class="team-chat-interface" id="team-chat-interface" style="display: none;">
+            <div class="chat-header">
+                <div class="active-member-info">
+                    <div class="active-member-avatar" id="active-member-avatar">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="active-member-details">
+                        <div class="active-member-name" id="active-member-name">Auto-Route</div>
+                        <div class="active-member-role" id="active-member-role">Smart Routing</div>
+                    </div>
+                </div>
+                <button class="btn-back-to-team" id="back-to-team-list" title="Back to team">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+            </div>
+            
+            <div class="chat-messages" id="team-chat-messages">
+                <div class="welcome-message">
+                    <div class="message-avatar">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="message-content">
+                        <div class="message-text">Hi! I'm here to help you with any questions. What can I assist you with today?</div>
+                        <div class="message-time">Now</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="chat-input-container">
+                <div class="chat-input-wrapper">
+                    <input type="text" id="team-chat-input" placeholder="Ask me anything..." class="chat-input">
+                    <button id="send-team-message" class="btn-send-message">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+                <div class="quick-actions" id="team-quick-actions">
+                    <button class="quick-action-btn" data-action="help">Need Help</button>
+                    <button class="quick-action-btn" data-action="trading">Trading Question</button>
+                    <button class="quick-action-btn" data-action="technical">Technical Issue</button>
+                    <button class="quick-action-btn" data-action="features">Learn Features</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- AI Team Launcher Button -->
+<div class="ai-team-launcher" id="ai-team-launcher">
+    <div class="launcher-icon">
+        <i class="fas fa-users"></i>
+    </div>
+    <div class="launcher-badge" id="team-notification-badge" style="display: none;">
+        <span id="team-notification-count">0</span>
+    </div>
+    <div class="launcher-tooltip">AI Support Team</div>
+</div>
+
+<style>
+/* AI Team Widget Styles */
+.ai-team-widget {
+    position: fixed;
+    bottom: 100px;
+    right: 20px;
+    width: 380px;
+    height: 500px;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid #e1e5e9;
+}
+
+.ai-team-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.team-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.team-avatar {
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+}
+
+.team-details .team-name {
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.team-details .team-status {
+    font-size: 12px;
+    opacity: 0.9;
+}
+
+.team-controls {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-team-control {
+    background: none;
+    border: none;
+    color: white;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-team-control:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.ai-team-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Team Members List */
+.team-members {
+    padding: 15px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.team-member {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    border-radius: 12px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.team-member:hover {
+    background: #f8f9fa;
+    transform: translateX(2px);
+}
+
+.team-member.selected {
+    background: linear-gradient(135deg, #667eea15, #764ba215);
+    border: 1px solid #667eea30;
+}
+
+.member-avatar {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 16px;
+    margin-right: 12px;
+}
+
+.member-info {
+    flex: 1;
+}
+
+.member-name {
+    font-weight: 600;
+    font-size: 14px;
+    color: #2c3e50;
+}
+
+.member-role {
+    font-size: 12px;
+    color: #7f8c8d;
+    margin-top: 2px;
+}
+
+.member-status {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #27ae60;
+    position: absolute;
+    top: 12px;
+    right: 12px;
+}
+
+.member-status.busy {
+    background: #f39c12;
+}
+
+.member-status.offline {
+    background: #95a5a6;
+}
+
+/* Chat Interface */
+.team-chat-interface {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.chat-header {
+    background: #f8f9fa;
+    padding: 12px 15px;
+    border-bottom: 1px solid #e9ecef;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.active-member-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.active-member-avatar {
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 14px;
+}
+
+.active-member-name {
+    font-weight: 600;
+    font-size: 14px;
+    color: #2c3e50;
+}
+
+.active-member-role {
+    font-size: 12px;
+    color: #7f8c8d;
+}
+
+.btn-back-to-team {
+    background: none;
+    border: none;
+    color: #7f8c8d;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+}
+
+.btn-back-to-team:hover {
+    background: #e9ecef;
+    color: #2c3e50;
+}
+
+.chat-messages {
+    flex: 1;
+    padding: 15px;
+    overflow-y: auto;
+    max-height: 300px;
+}
+
+.message {
+    display: flex;
+    margin-bottom: 15px;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.welcome-message {
+    display: flex;
+    margin-bottom: 15px;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.message-avatar {
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 14px;
+    flex-shrink: 0;
+}
+
+.message-content {
+    flex: 1;
+    background: #f8f9fa;
+    padding: 12px;
+    border-radius: 12px;
+    max-width: 80%;
+}
+
+.message-text {
+    font-size: 14px;
+    color: #2c3e50;
+    line-height: 1.4;
+    margin-bottom: 4px;
+}
+
+.message-time {
+    font-size: 11px;
+    color: #7f8c8d;
+}
+
+.user-message .message-content {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    margin-left: auto;
+    margin-right: 0;
+}
+
+.user-message {
+    flex-direction: row-reverse;
+}
+
+.chat-input-container {
+    border-top: 1px solid #e9ecef;
+    padding: 12px 15px;
+}
+
+.chat-input-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.chat-input {
+    flex: 1;
+    border: 1px solid #e9ecef;
+    border-radius: 20px;
+    padding: 10px 16px;
+    font-size: 14px;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.chat-input:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+}
+
+.btn-send-message {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-send-message:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.quick-actions {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.quick-action-btn {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 16px;
+    padding: 6px 12px;
+    font-size: 12px;
+    color: #667eea;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.quick-action-btn:hover {
+    background: #667eea;
+    color: white;
+    transform: translateY(-1px);
+}
+
+/* AI Team Launcher */
+.ai-team-launcher {
+    position: fixed;
+    bottom: 20px;
+    right: 80px;
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+    z-index: 999;
+    transition: all 0.3s ease;
+    color: white;
+    font-size: 24px;
+}
+
+.ai-team-launcher:hover {
+    transform: scale(1.1);
+    box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4);
+}
+
+.launcher-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: #e74c3c;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.launcher-tooltip {
+    position: absolute;
+    bottom: 70px;
+    right: 0;
+    background: #2c3e50;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.2s ease;
+    transform: translateY(5px);
+}
+
+.ai-team-launcher:hover .launcher-tooltip {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .ai-team-widget {
+        width: 100%;
+        height: 100%;
+        bottom: 0;
+        right: 0;
+        border-radius: 0;
+        max-width: 100vw;
+        max-height: 100vh;
+    }
+    
+    .ai-team-launcher {
+        right: 20px;
+        width: 56px;
+        height: 56px;
+        font-size: 20px;
+    }
+}
+
+/* Animation Classes */
+@keyframes slideInUp {
+    from {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOutDown {
+    from {
+        transform: translateY(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+}
+
+.ai-team-widget.show {
+    animation: slideInUp 0.3s ease-out;
+}
+
+.ai-team-widget.hide {
+    animation: slideOutDown 0.3s ease-in;
+}
+
+/* Typing Indicator */
+.typing-indicator {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 12px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    margin-bottom: 15px;
+}
+
+.typing-dot {
+    width: 8px;
+    height: 8px;
+    background: #7f8c8d;
+    border-radius: 50%;
+    animation: typing 1.4s infinite ease-in-out;
+}
+
+.typing-dot:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.typing-dot:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes typing {
+    0%, 60%, 100% {
+        transform: translateY(0);
+        opacity: 0.5;
+    }
+    30% {
+        transform: translateY(-10px);
+        opacity: 1;
+    }
+}
+</style>
