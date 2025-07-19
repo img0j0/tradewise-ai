@@ -216,10 +216,10 @@ def analytics_content():
 
 @app.route('/portfolio_content')
 def portfolio_content():
-    """Portfolio content for iframe"""
+    """Enhanced portfolio content for iframe"""
     if not current_user.is_authenticated:
         return redirect(url_for('login'))
-    return render_template('portfolio_content.html')
+    return render_template('enhanced_portfolio.html')
 
 @app.route('/alerts_content')
 def alerts_content():
