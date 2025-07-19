@@ -496,14 +496,14 @@ class PremiumManager {
             signalsHTML += `
                 <div class="signal-card ${signalClass} mb-2">
                     <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <div class="fw-bold">${signal.symbol}</div>
-                            <div class="signal-type">${signal.signal_type.replace('_', ' ')}</div>
-                            <small class="text-muted">${signal.reason}</small>
+                        <div class="flex-fill">
+                            <div class="fw-bold text-light">${signal.symbol}</div>
+                            <div class="signal-type ${signalClass}">${signal.signal_type.replace('_', ' ')}</div>
+                            <small class="text-muted" style="display: block; margin-top: 4px; line-height: 1.3;">${signal.reason}</small>
                         </div>
-                        <div class="text-end">
-                            <div class="price">$${signal.price}</div>
-                            <div class="confidence">${confidencePercent}% confidence</div>
+                        <div class="text-end ms-3" style="min-width: 90px;">
+                            <div class="price text-light">${typeof signal.price === 'number' ? '$' + signal.price.toFixed(2) : signal.price}</div>
+                            <div class="confidence" style="font-size: 0.8rem; margin-top: 2px;">${confidencePercent}% confidence</div>
                         </div>
                     </div>
                 </div>

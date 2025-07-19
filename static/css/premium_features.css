@@ -58,11 +58,38 @@
 .ai-copilot-widget {
     background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
     border: 2px solid #00ff88;
-    border-radius: 12px;
+    border-radius: 16px;
     margin-bottom: 24px;
+    padding: 20px;
     overflow: hidden;
     box-shadow: 0 8px 24px rgba(0, 255, 136, 0.2);
     animation: pulse 3s infinite;
+}
+
+/* Mobile optimizations for AI Copilot */
+@media (max-width: 768px) {
+    .ai-copilot-widget {
+        margin: 16px 0;
+        padding: 16px;
+        border-radius: 12px;
+    }
+    
+    .copilot-header h5 {
+        font-size: 1.1rem;
+    }
+    
+    .signal-card {
+        padding: 12px;
+        margin-bottom: 8px;
+    }
+    
+    .signal-card .fw-bold {
+        font-size: 1rem;
+    }
+    
+    .signal-card .price {
+        font-size: 1rem;
+    }
 }
 
 @keyframes pulse {
@@ -136,6 +163,183 @@
     margin: 0;
     color: #00ff88;
     font-weight: 600;
+}
+
+/* Premium button optimizations */
+.upgrade-button-seamless {
+    transition: all 0.3s ease;
+    border-radius: 25px;
+    padding: 8px 16px;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.upgrade-button-seamless:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Enhanced signal type styling */
+.signal-card .signal-type.buy {
+    color: #28a745;
+}
+
+.signal-card .signal-type.strong-buy {
+    color: #00ff88;
+}
+
+.signal-card .signal-type.hold {
+    color: #ffc107;
+}
+
+.signal-card .signal-type.sell {
+    color: #dc3545;
+}
+
+/* Better mobile spacing */
+@media (max-width: 576px) {
+    .quick-actions {
+        gap: 8px;
+    }
+    
+    .quick-action-btn {
+        padding: 8px 12px;
+        font-size: 0.8rem;
+    }
+    
+    .search-container {
+        padding: 0 16px;
+    }
+    
+    /* Mobile-specific improvements for premium UI */
+    .ai-copilot-widget {
+        margin: 12px 16px;
+        padding: 14px;
+        border-radius: 10px;
+    }
+    
+    .signal-card {
+        padding: 10px;
+        margin-bottom: 6px;
+        border-radius: 8px;
+    }
+    
+    .signal-card .fw-bold {
+        font-size: 0.95rem;
+        font-weight: 700;
+    }
+    
+    .signal-card .signal-type {
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+    
+    .signal-card .price {
+        font-size: 0.95rem;
+        font-weight: 700;
+    }
+    
+    .signal-card .confidence {
+        font-size: 0.8rem;
+    }
+    
+    .copilot-header {
+        margin-bottom: 12px;
+    }
+    
+    .copilot-header h5 {
+        font-size: 1rem;
+    }
+}
+
+/* Ultra-small mobile screens */
+@media (max-width: 375px) {
+    .ai-copilot-widget {
+        margin: 8px 12px;
+        padding: 12px;
+    }
+    
+    .signal-card {
+        padding: 8px;
+    }
+    
+    .signal-card .fw-bold {
+        font-size: 0.9rem;
+    }
+    
+    .signal-card .price {
+        font-size: 0.9rem;
+    }
+}
+
+/* Improved animation performance on mobile */
+@media (max-width: 768px) {
+    .ai-copilot-widget {
+        animation: none; /* Disable heavy animations on mobile */
+    }
+    
+    .signal-card:hover {
+        transform: none; /* Disable hover transform on mobile */
+    }
+}
+
+/* Better scrolling and touch handling */
+.ai-copilot-widget {
+    -webkit-overflow-scrolling: touch;
+    overflow-x: hidden;
+}
+
+.signal-card {
+    -webkit-tap-highlight-color: rgba(0, 255, 136, 0.1);
+    tap-highlight-color: rgba(0, 255, 136, 0.1);
+}
+
+/* Enhanced text contrast and readability */
+.signal-card .text-muted {
+    color: #bbb !important;
+    opacity: 0.9;
+}
+
+.signal-card .fw-bold {
+    color: #ffffff !important;
+    font-weight: 700;
+}
+
+.signal-card .price {
+    color: #ffffff !important;
+    font-weight: 700;
+}
+
+/* Premium status indicator improvements */
+.premium-badge {
+    animation: shimmer 2s infinite;
+    background: linear-gradient(45deg, #ffd700, #ffed4e, #ffd700);
+    background-size: 300% 300%;
+}
+
+@keyframes shimmer {
+    0%, 100% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+/* Smooth entrance animation for AI Copilot */
+.ai-copilot-widget {
+    animation: slideInUp 0.6s ease-out;
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .copilot-header {
