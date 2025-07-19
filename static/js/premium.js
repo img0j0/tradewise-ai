@@ -509,9 +509,9 @@ class PremiumManager {
         ];
         
         let signalsHTML = `
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h6 class="mb-0"><i class="fas fa-chart-line me-2" style="font-size: 0.9rem;"></i>Live Trading Signals</h6>
-                <span class="badge bg-success" style="font-size: 0.65rem;">ACTIVE</span>
+            <div class="d-flex justify-content-between align-items-center mb-3" style="padding: 8px 12px; background: rgba(0, 255, 136, 0.05); border-radius: 6px;">
+                <h6 class="mb-0 text-white" style="font-weight: 700;"><i class="fas fa-chart-line me-2" style="font-size: 0.9rem; color: #00ff88;"></i>Live Trading Signals</h6>
+                <span class="badge" style="font-size: 0.65rem; background: rgba(0, 255, 136, 0.9); color: #000; font-weight: 600;">ACTIVE</span>
             </div>
         `;
         
