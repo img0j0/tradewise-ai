@@ -4279,7 +4279,10 @@
         if (portfolioVisible) {
             portfolioSection.style.display = 'block';
             searchContent.style.display = 'none';
-            loadEnhancedPortfolioData();
+            // Load enhanced portfolio data
+            setTimeout(() => {
+                loadEnhancedPortfolioData();
+            }, 100);
         } else {
             portfolioSection.style.display = 'none';
             searchContent.style.display = 'block';
@@ -4311,24 +4314,40 @@
 
     // Enhanced Portfolio data loading function
     async function loadEnhancedPortfolioData() {
+        console.log('Loading enhanced portfolio data...');
         try {
-            document.getElementById('enhanced-portfolio-loading').style.display = 'block';
-            document.getElementById('enhanced-portfolio-empty').style.display = 'none';
-            document.getElementById('enhanced-holdings-grid').style.display = 'none';
+            // Ensure elements exist before trying to access them
+            const loadingEl = document.getElementById('enhanced-portfolio-loading');
+            const emptyEl = document.getElementById('enhanced-portfolio-empty');
+            const gridEl = document.getElementById('enhanced-holdings-grid');
+            
+            if (loadingEl) loadingEl.style.display = 'block';
+            if (emptyEl) emptyEl.style.display = 'none';
+            if (gridEl) gridEl.style.display = 'none';
             
             const response = await fetch('/api/portfolio');
             const data = await response.json();
             
-            // Update enhanced portfolio values
-            document.getElementById('enhanced-total-value').textContent = '$' + (data.total_value || 0).toLocaleString('en-US', {minimumFractionDigits: 2});
-            document.getElementById('enhanced-total-invested').textContent = '$' + (data.total_invested || 0).toLocaleString('en-US', {minimumFractionDigits: 2});
-            
-            const totalReturn = (data.total_value || 0) - (data.total_invested || 0);
+            // Update enhanced portfolio values with safety checks
+            const totalValueEl = document.getElementById('enhanced-total-value');
+            const totalInvestedEl = document.getElementById('enhanced-total-invested');
             const returnElement = document.getElementById('enhanced-total-return');
-            returnElement.textContent = '$' + totalReturn.toLocaleString('en-US', {minimumFractionDigits: 2});
-            returnElement.style.color = totalReturn >= 0 ? '#10b981' : '#ef4444';
             
-            document.getElementById('enhanced-portfolio-loading').style.display = 'none';
+            if (totalValueEl) {
+                totalValueEl.textContent = '$' + (data.total_value || 0).toLocaleString('en-US', {minimumFractionDigits: 2});
+            }
+            if (totalInvestedEl) {
+                totalInvestedEl.textContent = '$' + (data.total_invested || 0).toLocaleString('en-US', {minimumFractionDigits: 2});
+            }
+            
+            if (returnElement) {
+                const totalReturn = (data.total_value || 0) - (data.total_invested || 0);
+                returnElement.textContent = '$' + totalReturn.toLocaleString('en-US', {minimumFractionDigits: 2});
+                returnElement.style.color = totalReturn >= 0 ? '#10b981' : '#ef4444';
+            }
+            
+            const loadingEl = document.getElementById('enhanced-portfolio-loading');
+            if (loadingEl) loadingEl.style.display = 'none';
             
             // Update enhanced holdings
             const holdingsContainer = document.getElementById('enhanced-holdings-grid');
