@@ -77,6 +77,9 @@ dark_pool_analyzer = dark_pool_intelligence['dark_pool_analyzer']
 # Initialize watchlist manager
 from watchlist_manager import WatchlistManager
 watchlist_manager = WatchlistManager()
+
+# Initialize portfolio builder
+from portfolio_builder import portfolio_builder
 institutional_flow = dark_pool_intelligence['institutional_flow']
 market_microstructure = dark_pool_intelligence['market_microstructure']
 
@@ -3784,4 +3787,158 @@ def get_watchlist_alerts():
         return jsonify(result)
     except Exception as e:
         logger.error(f"Error getting watchlist alerts: {str(e)}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+# Portfolio Builder API Endpoints
+@app.route('/api/portfolio-builder/strategies')
+@login_required
+def get_portfolio_strategies():
+    """Get available portfolio strategies"""
+    try:
+        strategies = []
+        for key, strategy in portfolio_builder.portfolio_strategies.items():
+            strategies.append({
+                'id': key,
+                'name': strategy['name'],
+                'description': strategy['description'],
+                'risk_level': strategy['risk_level'],
+                'expected_return': strategy['expected_return']
+            })
+        
+        return jsonify({
+            'success': True,
+            'strategies': strategies
+        })
+    except Exception as e:
+        logger.error(f"Error getting portfolio strategies: {str(e)}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/portfolio-builder/recommendations', methods=['POST'])
+@login_required  
+def get_strategy_recommendations():
+    """Get personalized strategy recommendations"""
+    try:
+        data = request.get_json()
+        user_profile = {
+            'age': data.get('age', 30),
+            'risk_tolerance': data.get('risk_tolerance', 'medium'),
+            'time_horizon': data.get('time_horizon', 5),
+            'investment_goals': data.get('investment_goals', ['growth'])
+        }
+        
+        recommendations = portfolio_builder.get_strategy_recommendations(user_profile)
+        
+        return jsonify({
+            'success': True,
+            'recommendations': recommendations,
+            'user_profile': user_profile
+        })
+    except Exception as e:
+        logger.error(f"Error getting strategy recommendations: {str(e)}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/portfolio-builder/build', methods=['POST'])
+@login_required
+def build_portfolio():
+    """Build a diversified portfolio"""
+    try:
+        data = request.get_json()
+        strategy = data.get('strategy')
+        investment_amount = float(data.get('investment_amount', 1000))
+        user_preferences = data.get('user_preferences', {})
+        
+        if not strategy:
+            return jsonify({'success': False, 'error': 'Strategy required'}), 400
+        
+        if investment_amount < 100:
+            return jsonify({'success': False, 'error': 'Minimum investment amount is $100'}), 400
+            
+        portfolio = portfolio_builder.build_portfolio(
+            strategy, investment_amount, user_preferences
+        )
+        
+        if 'error' in portfolio:
+            return jsonify({'success': False, 'error': portfolio['error']}), 400
+        
+        return jsonify({
+            'success': True,
+            'portfolio': portfolio
+        })
+    except Exception as e:
+        logger.error(f"Error building portfolio: {str(e)}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/portfolio-builder/questionnaire')
+@login_required
+def get_risk_questionnaire():
+    """Get risk tolerance questionnaire"""
+    try:
+        questionnaire = {
+            'title': 'Investment Profile Assessment',
+            'description': 'Help us understand your investment goals and risk tolerance',
+            'questions': [
+                {
+                    'id': 'age',
+                    'type': 'number',
+                    'question': 'What is your age?',
+                    'min': 18,
+                    'max': 100,
+                    'default': 30
+                },
+                {
+                    'id': 'risk_tolerance',
+                    'type': 'select',
+                    'question': 'How would you describe your risk tolerance?',
+                    'options': [
+                        {'value': 'low', 'label': 'Conservative - I prefer stability over growth'},
+                        {'value': 'medium', 'label': 'Moderate - I want balanced growth and stability'},
+                        {'value': 'high', 'label': 'Aggressive - I prioritize maximum growth potential'}
+                    ],
+                    'default': 'medium'
+                },
+                {
+                    'id': 'time_horizon',
+                    'type': 'select',
+                    'question': 'When do you plan to use this money?',
+                    'options': [
+                        {'value': 1, 'label': 'Within 1 year'},
+                        {'value': 3, 'label': '1-3 years'},
+                        {'value': 5, 'label': '3-5 years'},
+                        {'value': 10, 'label': '5-10 years'},
+                        {'value': 20, 'label': 'More than 10 years'}
+                    ],
+                    'default': 5
+                },
+                {
+                    'id': 'investment_goals',
+                    'type': 'multi-select',
+                    'question': 'What are your primary investment goals? (Select all that apply)',
+                    'options': [
+                        {'value': 'growth', 'label': 'Capital growth'},
+                        {'value': 'income', 'label': 'Regular income'},
+                        {'value': 'stability', 'label': 'Capital preservation'},
+                        {'value': 'retirement', 'label': 'Retirement planning'},
+                        {'value': 'education', 'label': 'Education funding'},
+                        {'value': 'house', 'label': 'Home purchase'}
+                    ],
+                    'default': ['growth']
+                },
+                {
+                    'id': 'investment_amount',
+                    'type': 'number',
+                    'question': 'How much would you like to invest initially?',
+                    'min': 100,
+                    'max': 1000000,
+                    'default': 1000,
+                    'prefix': '$'
+                }
+            ]
+        }
+        
+        return jsonify({
+            'success': True,
+            'questionnaire': questionnaire
+        })
+    except Exception as e:
+        logger.error(f"Error getting risk questionnaire: {str(e)}")
         return jsonify({'success': False, 'error': str(e)}), 500
