@@ -61,12 +61,21 @@
                     <div class="balance-display compact">
                         <span class="balance-amount" id="account-balance">$0.00</span>
                         <div class="balance-actions mt-2">
+                            <button class="btn btn-sm btn-warning premium-feature-btn" onclick="premiumManager?.showPremiumModal()">
+                                <i class="fas fa-crown"></i> Upgrade
+                            </button>
                             <button class="btn btn-sm btn-success" onclick="showDepositModal()">
                                 <i class="fas fa-plus"></i> Deposit
                             </button>
                             <button class="btn btn-sm btn-outline-info" onclick="showTransactionHistory()">
                                 <i class="fas fa-history"></i> History
                             </button>
+                        </div>
+                        <div class="mt-2">
+                            <small id="premium-status-badge" class="badge bg-secondary">
+                                <i class="fas fa-lock me-1"></i>FREE PLAN
+                            </small>
+                            <small id="copilot-status" class="small text-muted ms-2">AI Copilot Offline</small>
                         </div>
                     </div>
                 </div>
