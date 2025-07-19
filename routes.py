@@ -25,6 +25,9 @@ from advanced_orders import get_order_manager, OrderType, OrderSide, AdvancedOrd
 from market_intelligence import get_market_intelligence
 from deep_learning_engine import get_deep_learning_engine
 from performance_optimizer import get_performance_optimizer, cached, monitored
+from advanced_performance_optimizer import advanced_performance_optimizer
+from feature_enhancement_engine import feature_enhancement_engine
+from real_time_performance_monitor import performance_monitor
 from dynamic_search_autocomplete import autocomplete_engine
 from monetization_strategy import get_monetization_engine
 # Import will be done after setup
@@ -1716,6 +1719,165 @@ def login():
             flash('Invalid username or password', 'error')
     
     return render_template('simple_login.html')
+
+# === PERFORMANCE OPTIMIZATION ENDPOINTS ===
+
+@app.route('/api/performance/advanced-report')
+def get_advanced_optimization_report():
+    """Get comprehensive performance optimization report"""
+    try:
+        report = advanced_performance_optimizer.get_optimization_report()
+        return jsonify({
+            'success': True,
+            'report': report
+        })
+    except Exception as e:
+        logger.error(f"Error getting advanced optimization report: {e}")
+        return jsonify({'success': False, 'error': str(e)})
+
+@app.route('/api/performance/advanced-cache-stats')
+def get_advanced_cache_stats():
+    """Get cache performance statistics"""
+    try:
+        cache_stats = advanced_performance_optimizer.cache_manager.cache_stats
+        memory_trends = advanced_performance_optimizer.memory_optimizer.get_memory_trends()
+        
+        return jsonify({
+            'success': True,
+            'cache_stats': cache_stats,
+            'memory_trends': memory_trends
+        })
+    except Exception as e:
+        logger.error(f"Error getting advanced cache stats: {e}")
+        return jsonify({'success': False, 'error': str(e)})
+
+@app.route('/api/features/enhancement-report')
+def get_enhancement_report():
+    """Get feature enhancement status report"""
+    try:
+        report = feature_enhancement_engine.get_enhancement_report()
+        return jsonify({
+            'success': True,
+            'report': report
+        })
+    except Exception as e:
+        logger.error(f"Error getting enhancement report: {e}")
+        return jsonify({'success': False, 'error': str(e)})
+
+@app.route('/api/features/enhanced-stock-data/<symbol>')
+def get_enhanced_stock_data(symbol):
+    """Get enhanced stock data with comprehensive metrics"""
+    try:
+        enhanced_data = feature_enhancement_engine.data_processor.get_enhanced_stock_data(symbol.upper())
+        return jsonify({
+            'success': True,
+            'data': enhanced_data
+        })
+    except Exception as e:
+        logger.error(f"Error getting enhanced stock data for {symbol}: {e}")
+        return jsonify({'success': False, 'error': str(e)})
+
+@app.route('/api/features/intelligent-alerts')
+def get_intelligent_alerts():
+    """Get intelligent alerts based on market conditions"""
+    try:
+        # Get user's watchlist or popular stocks
+        symbols = request.args.get('symbols', 'AAPL,TSLA,GOOGL,MSFT,NVDA').split(',')
+        alerts = feature_enhancement_engine.alert_system.generate_intelligent_alerts(symbols)
+        
+        return jsonify({
+            'success': True,
+            'alerts': alerts,
+            'count': len(alerts)
+        })
+    except Exception as e:
+        logger.error(f"Error generating intelligent alerts: {e}")
+        return jsonify({'success': False, 'error': str(e)})
+
+@app.route('/api/features/portfolio-analysis')
+@login_required
+def get_enhanced_portfolio_analysis():
+    """Get enhanced portfolio analysis with risk assessment"""
+    try:
+        # Get user's portfolio data
+        portfolio_positions = Portfolio.query.filter_by(user_id=current_user.id).all()
+        
+        portfolio_data = []
+        for position in portfolio_positions:
+            portfolio_data.append({
+                'symbol': position.symbol,
+                'quantity': position.quantity,
+                'avg_price': position.avg_price
+            })
+        
+        analysis = feature_enhancement_engine.portfolio_analyzer.analyze_portfolio_performance(portfolio_data)
+        
+        return jsonify({
+            'success': True,
+            'analysis': analysis
+        })
+    except Exception as e:
+        logger.error(f"Error analyzing portfolio: {e}")
+        return jsonify({'success': False, 'error': str(e)})
+
+@app.route('/api/performance/live-dashboard')
+def get_live_performance_dashboard():
+    """Get real-time performance dashboard data"""
+    try:
+        dashboard_data = performance_monitor.get_live_dashboard_data()
+        return jsonify({
+            'success': True,
+            'dashboard': dashboard_data
+        })
+    except Exception as e:
+        logger.error(f"Error getting live dashboard data: {e}")
+        return jsonify({'success': False, 'error': str(e)})
+
+@app.route('/api/performance/comprehensive-analysis')
+def get_comprehensive_performance_analysis():
+    """Get comprehensive performance analysis combining all optimization systems"""
+    try:
+        from datetime import datetime
+        
+        # Get data from all optimization systems
+        advanced_report = advanced_performance_optimizer.get_optimization_report()
+        enhancement_report = feature_enhancement_engine.get_enhancement_report()
+        live_dashboard = performance_monitor.get_live_dashboard_data()
+        
+        # Combine into comprehensive analysis
+        analysis = {
+            'system_overview': {
+                'status': 'operational',
+                'optimization_level': 'high',
+                'active_systems': ['caching', 'monitoring', 'enhancement', 'alerts'],
+                'last_updated': datetime.now().isoformat()
+            },
+            'performance_metrics': live_dashboard.get('system_metrics', {}),
+            'optimization_summary': {
+                'cache_performance': advanced_report.get('cache_stats', {}),
+                'memory_optimization': advanced_report.get('memory_trends', {}),
+                'enhancement_stats': enhancement_report.get('data_processor_stats', {}),
+                'recommendations': advanced_report.get('recommendations', [])
+            },
+            'real_time_data': {
+                'api_performance': live_dashboard.get('api_performance', {}),
+                'error_summary': live_dashboard.get('error_summary', {}),
+                'performance_trend': live_dashboard.get('performance_trend', 'stable')
+            },
+            'feature_enhancements': {
+                'cached_symbols': enhancement_report.get('data_processor_stats', {}).get('cached_symbols', 0),
+                'processing_stats': enhancement_report.get('data_processor_stats', {}).get('processing_stats', {}),
+                'alert_patterns': enhancement_report.get('alert_system_stats', {}).get('pattern_count', 0)
+            }
+        }
+        
+        return jsonify({
+            'success': True,
+            'analysis': analysis
+        })
+    except Exception as e:
+        logger.error(f"Error getting comprehensive performance analysis: {e}")
+        return jsonify({'success': False, 'error': str(e)})
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():

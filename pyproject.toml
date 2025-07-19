@@ -37,4 +37,5 @@ dependencies = [
     "seaborn>=0.13.2",
     "anthropic>=0.58.2",
     "trafilatura>=2.0.0",
+    "psutil>=7.0.0",
 ]
