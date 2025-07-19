@@ -4349,33 +4349,24 @@
             if (loadingEl) loadingEl.style.display = 'none';
             
             // Update enhanced holdings
-            const holdingsContainer = document.getElementById('enhanced-holdings-grid');
-            if (data.holdings && data.holdings.length > 0) {
-                holdingsContainer.innerHTML = data.holdings.map(holding => `
-                    <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 10px; padding: 12px;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                            <div style="display: flex; align-items: center; gap: 10px;">
-                                <div style="background: linear-gradient(135deg, #3b82f6, #8b5cf6); color: white; padding: 4px 8px; border-radius: 6px; font-weight: 600; font-size: 0.8rem;">${holding.symbol}</div>
-                                <div style="font-size: 0.85rem; color: rgba(255, 255, 255, 0.7);">${holding.quantity} shares</div>
-                            </div>
-                        </div>
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap: 8px; font-size: 0.75rem;">
-                            <div style="text-align: center;">
-                                <div style="color: rgba(255, 255, 255, 0.5);">Avg Price</div>
-                                <div style="font-weight: 600;">$${(holding.avg_price || 0).toFixed(2)}</div>
-                            </div>
-                            <div style="text-align: center;">
-                                <div style="color: rgba(255, 255, 255, 0.5);">Current</div>
-                                <div style="font-weight: 600;">$${(holding.current_price || holding.avg_price || 0).toFixed(2)}</div>
-                            </div>
-                            <div style="text-align: center;">
-                                <div style="color: rgba(255, 255, 255, 0.5);">Value</div>
-                                <div style="font-weight: 600;">$${((holding.current_price || holding.avg_price || 0) * holding.quantity).toFixed(2)}</div>
-                            </div>
-                        </div>
-                    </div>
-                `).join('');
-                holdingsContainer.style.display = 'grid';
+            if (gridEl && data.holdings && data.holdings.length > 0) {
+                var holdingsHTML = '';
+                for (var i = 0; i < data.holdings.length; i++) {
+                    var holding = data.holdings[i];
+                    holdingsHTML += '<div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 10px; padding: 12px;">';
+                    holdingsHTML += '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">';
+                    holdingsHTML += '<div style="display: flex; align-items: center; gap: 10px;">';
+                    holdingsHTML += '<div style="background: linear-gradient(135deg, #3b82f6, #8b5cf6); color: white; padding: 4px 8px; border-radius: 6px; font-weight: 600; font-size: 0.8rem;">' + holding.symbol + '</div>';
+                    holdingsHTML += '<div style="font-size: 0.85rem; color: rgba(255, 255, 255, 0.7);">' + holding.quantity + ' shares</div>';
+                    holdingsHTML += '</div></div>';
+                    holdingsHTML += '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap: 8px; font-size: 0.75rem;">';
+                    holdingsHTML += '<div style="text-align: center;"><div style="color: rgba(255, 255, 255, 0.5);">Avg Price</div><div style="font-weight: 600;">$' + (holding.avg_price || 0).toFixed(2) + '</div></div>';
+                    holdingsHTML += '<div style="text-align: center;"><div style="color: rgba(255, 255, 255, 0.5);">Current</div><div style="font-weight: 600;">$' + (holding.current_price || holding.avg_price || 0).toFixed(2) + '</div></div>';
+                    holdingsHTML += '<div style="text-align: center;"><div style="color: rgba(255, 255, 255, 0.5);">Value</div><div style="font-weight: 600;">$' + ((holding.current_price || holding.avg_price || 0) * holding.quantity).toFixed(2) + '</div></div>';
+                    holdingsHTML += '</div></div>';
+                }
+                gridEl.innerHTML = holdingsHTML;
+                gridEl.style.display = 'grid';
             } else {
                 if (emptyEl) emptyEl.style.display = 'block';
             }
