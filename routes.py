@@ -4052,7 +4052,6 @@ def get_risk_questionnaire():
 # ======= AI TEAM MEMBER ROUTES =======
 
 @app.route('/api/ai-team/query', methods=['POST'])
-@login_required
 def ai_team_query():
     """Route user query to appropriate AI team member"""
     try:
@@ -4064,9 +4063,10 @@ def ai_team_query():
         
         # Add user context
         context = {
-            'user_id': current_user.id,
-            'user_tier': getattr(current_user, 'subscription_tier', 'Free'),
-            'timestamp': datetime.utcnow()
+            'user_id': current_user.id if current_user.is_authenticated else 'anonymous',
+            'user_tier': getattr(current_user, 'subscription_tier', 'Free') if current_user.is_authenticated else 'Free',
+            'timestamp': datetime.utcnow(),
+            'is_authenticated': current_user.is_authenticated
         }
         
         # Route to appropriate AI team member
