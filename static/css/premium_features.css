@@ -202,6 +202,86 @@
     }
 }
 
+/* Premium Card Animations */
+.premium-card-animate {
+    animation: slideInFromBottom 0.6s ease-out forwards;
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+@keyframes slideInFromBottom {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Premium Interactive Elements */
+.premium-symbol-glow {
+    transition: all 0.3s ease;
+}
+
+.premium-symbol-glow:hover {
+    text-shadow: 0 0 8px rgba(96, 165, 250, 0.6);
+    transform: scale(1.05);
+}
+
+.premium-indicator-badge {
+    transition: all 0.3s ease;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: rgba(59, 130, 246, 0.1);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.premium-price-glow {
+    transition: all 0.3s ease;
+}
+
+.premium-price-section:hover .premium-price-glow {
+    text-shadow: 0 0 6px rgba(255, 255, 255, 0.4);
+}
+
+.premium-confidence-badge {
+    transition: all 0.3s ease;
+    background: rgba(59, 130, 246, 0.1);
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.premium-confidence-badge:hover {
+    background: rgba(59, 130, 246, 0.2);
+    border-color: rgba(59, 130, 246, 0.4);
+}
+
+/* Enhanced Signal Cards */
+.signal-card {
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.signal-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+    transition: left 0.5s ease;
+}
+
+.signal-card:hover::before {
+    left: 100%;
+}
+
+.signal-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.2);
+}
+
 /* Premium button optimizations */
 .upgrade-button-seamless {
     transition: all 0.3s ease;

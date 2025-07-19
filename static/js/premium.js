@@ -515,21 +515,25 @@ class PremiumManager {
             </div>
         `;
         
-        demoSignals.forEach(signal => {
+        demoSignals.forEach((signal, index) => {
             const signalClass = signal.signal_type.toLowerCase().replace('_', '-');
             const confidencePercent = Math.round(signal.confidence * 100);
+            const delay = index * 0.15; // Stagger animation for premium effect
             
             signalsHTML += `
-                <div class="signal-card ${signalClass} mb-2">
+                <div class="signal-card ${signalClass} mb-2 premium-card-animate" style="animation-delay: ${delay}s;">
                     <div class="d-flex justify-content-between align-items-start">
                         <div class="flex-fill">
-                            <div class="fw-bold text-light">${signal.symbol}</div>
-                            <div class="signal-type ${signalClass}">${signal.signal_type.replace('_', ' ')}</div>
-                            <small class="text-muted" style="display: block; margin-top: 4px; line-height: 1.3;">${signal.reason}</small>
+                            <div class="fw-bold text-light premium-symbol-glow">${signal.symbol}</div>
+                            <div class="signal-type ${signalClass} premium-indicator-badge">${signal.signal_type.replace('_', ' ')}</div>
+                            <small class="text-muted premium-description" style="display: block; margin-top: 4px; line-height: 1.3;">${signal.reason}</small>
                         </div>
-                        <div class="text-end ms-3" style="min-width: 90px;">
-                            <div class="price text-light">${typeof signal.price === 'number' ? '$' + signal.price.toFixed(2) : signal.price}</div>
-                            <div class="confidence" style="font-size: 0.8rem; margin-top: 2px;">${confidencePercent}% confidence</div>
+                        <div class="text-end ms-3 premium-price-section" style="min-width: 90px;">
+                            <div class="price text-light premium-price-glow">${typeof signal.price === 'number' ? '$' + signal.price.toFixed(2) : signal.price}</div>
+                            <div class="confidence premium-confidence-badge" style="font-size: 0.8rem; margin-top: 2px;">
+                                <i class="fas fa-chart-line me-1" style="color: #60a5fa; font-size: 0.7rem;"></i>
+                                ${confidencePercent}% confidence
+                            </div>
                         </div>
                     </div>
                 </div>
