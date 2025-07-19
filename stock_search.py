@@ -11,23 +11,49 @@ class StockSearchService:
     def search_stock(self, symbol):
         """Search for a stock by symbol and return its current data"""
         try:
+            # Clean and validate symbol
+            clean_symbol = symbol.upper().strip()
+            if not clean_symbol or len(clean_symbol) > 10:
+                logger.warning(f"Invalid symbol format: {symbol}")
+                return None
+            
             # Get stock data from yfinance
-            stock = yf.Ticker(symbol.upper())
+            stock = yf.Ticker(clean_symbol)
             info = stock.info
             
-            # Validate stock exists by checking if longName or shortName is available
-            if not info.get('longName') and not info.get('shortName'):
-                logger.warning(f"Stock {symbol} not found - no company name available")
+            # Enhanced validation - check multiple indicators of valid stock
+            valid_indicators = [
+                info.get('longName'),
+                info.get('shortName'), 
+                info.get('symbol'),
+                info.get('regularMarketPrice'),
+                info.get('currentPrice')
+            ]
+            
+            if not any(valid_indicators):
+                logger.warning(f"Stock {clean_symbol} not found - no valid data available")
                 return None
             
-            # Get current price data
-            history = stock.history(period="2d", interval="1d")
-            if history.empty:
-                logger.warning(f"No price history available for {symbol}")
-                return None
-                
-            current_price = history['Close'].iloc[-1]
-            previous_close = history['Close'].iloc[-2] if len(history) > 1 else current_price
+            # Try to get current price from multiple sources
+            current_price = None
+            previous_close = None
+            
+            # First try from info object (real-time)
+            if info.get('regularMarketPrice'):
+                current_price = float(info['regularMarketPrice'])
+                previous_close = float(info.get('previousClose', current_price))
+            elif info.get('currentPrice'):
+                current_price = float(info['currentPrice'])
+                previous_close = float(info.get('previousClose', current_price))
+            else:
+                # Fallback to historical data
+                history = stock.history(period="2d", interval="1d")
+                if not history.empty:
+                    current_price = float(history['Close'].iloc[-1])
+                    previous_close = float(history['Close'].iloc[-2]) if len(history) > 1 else current_price
+                else:
+                    logger.warning(f"No price data available for {clean_symbol}")
+                    return None
             
             # Get intraday data for volatility analysis
             intraday = stock.history(period="1d", interval="5m")
@@ -45,7 +71,7 @@ class StockSearchService:
             
             # Build comprehensive stock data object
             stock_data = {
-                'symbol': symbol.upper(),
+                'symbol': clean_symbol,
                 'name': info.get('longName', info.get('shortName', symbol.upper())),
                 'sector': info.get('sector', 'Unknown'),
                 'industry': info.get('industry', 'Unknown'),

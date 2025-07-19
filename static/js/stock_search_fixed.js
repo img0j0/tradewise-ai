@@ -3,6 +3,7 @@
 
 // Company name to symbol mapping
 const companySymbols = {
+    // Tech Giants
     'nvidia': 'NVDA',
     'apple': 'AAPL', 
     'tesla': 'TSLA',
@@ -22,7 +23,65 @@ const companySymbols = {
     'spotify': 'SPOT',
     'uber': 'UBER',
     'lyft': 'LYFT',
-    'airbnb': 'ABNB'
+    'airbnb': 'ABNB',
+    
+    // Fintech & Trading
+    'robinhood': 'HOOD',
+    'coinbase': 'COIN',
+    'square': 'SQ',
+    'block': 'SQ',
+    'paypal': 'PYPL',
+    'stripe': 'STRIPE',
+    
+    // Popular Stocks
+    'palantir': 'PLTR',
+    'snowflake': 'SNOW',
+    'shopify': 'SHOP',
+    'roblox': 'RBLX',
+    'unity': 'U',
+    'peloton': 'PTON',
+    'roku': 'ROKU',
+    'doordash': 'DASH',
+    'beyond meat': 'BYND',
+    'moderna': 'MRNA',
+    'pfizer': 'PFE',
+    'johnson': 'JNJ',
+    'berkshire': 'BRK-B',
+    'warren buffett': 'BRK-B',
+    
+    // Finance
+    'jpmorgan': 'JPM',
+    'visa': 'V',
+    'mastercard': 'MA',
+    'goldman': 'GS',
+    'morgan stanley': 'MS',
+    'bank of america': 'BAC',
+    'wells fargo': 'WFC',
+    'american express': 'AXP',
+    
+    // Traditional Companies
+    'boeing': 'BA',
+    'disney': 'DIS',
+    'coca cola': 'KO',
+    'pepsi': 'PEP',
+    'walmart': 'WMT',
+    'target': 'TGT',
+    'home depot': 'HD',
+    'lowes': 'LOW',
+    'starbucks': 'SBUX',
+    'mcdonalds': 'MCD',
+    'ford': 'F',
+    'general motors': 'GM',
+    'exxon': 'XOM',
+    'chevron': 'CVX',
+    'att': 'T',
+    'verizon': 'VZ',
+    
+    // Meme Stocks
+    'gamestop': 'GME',
+    'amc': 'AMC',
+    'blackberry': 'BB',
+    'nokia': 'NOK'
 };
 
 // Debug: Log company symbols on load
@@ -91,9 +150,22 @@ function performIntelligentSearch() {
     performIntelligentSearchWithSymbol(symbol);
 }
 
+// Enhanced stock symbol validation
+function isValidStockSymbol(symbol) {
+    // Allow 1-10 characters, letters, numbers, hyphens, dots
+    const symbolRegex = /^[A-Z0-9.-]{1,10}$/;
+    return symbolRegex.test(symbol.toUpperCase());
+}
+
 // Perform search with specific symbol
 function performIntelligentSearchWithSymbol(symbol) {
     console.log('TradeWise AI: Performing search for symbol:', symbol);
+    
+    // Validate symbol format before making API call
+    if (!isValidStockSymbol(symbol)) {
+        showErrorMessage(`"${symbol}" is not a valid stock symbol. Please use 1-10 characters (letters, numbers, hyphens, dots only).`);
+        return;
+    }
     
     // Show loading state
     const resultsDiv = document.getElementById('main-search-results');
@@ -120,7 +192,12 @@ function performIntelligentSearchWithSymbol(symbol) {
         })
         .catch(error => {
             console.error('TradeWise AI: Search error:', error);
-            showErrorMessage(`Error searching for ${symbol}: ${error.message}`);
+            showErrorMessage(`Unable to find "${symbol}". This could mean:
+            • The stock symbol doesn't exist
+            • It's a foreign stock not available in US markets  
+            • There's a temporary data issue
+            
+            Try searching for the full company name or verify the symbol on a financial website.`);
         });
 }
 

@@ -845,7 +845,7 @@
             .catch(error => {
                 console.error('TradeWise AI: Error', error);
                 hideLoading();
-                showError('Failed to fetch stock data');
+                showError(`Unable to find stock "${symbol}". Please verify the symbol is correct or try searching for the company name.`);
             });
     }
 
