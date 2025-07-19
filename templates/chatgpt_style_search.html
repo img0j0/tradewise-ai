@@ -2785,6 +2785,38 @@
         
         resultsDiv.innerHTML = stockResultHTML;
     }
+    
+    // Recently viewed stocks functionality
+    function addToRecentlyViewed(symbol, name, price) {
+        const recentStocks = JSON.parse(localStorage.getItem('recently_viewed_stocks') || '[]');
+        
+        // Remove if already exists to avoid duplicates
+        const filtered = recentStocks.filter(stock => stock.symbol !== symbol);
+        
+        // Add to beginning
+        filtered.unshift({
+            symbol: symbol,
+            name: name,
+            price: price,
+            timestamp: Date.now()
+        });
+        
+        // Keep only last 5 viewed stocks
+        const updated = filtered.slice(0, 5);
+        localStorage.setItem('recently_viewed_stocks', JSON.stringify(updated));
+        
+        // Update recently viewed display if visible
+        updateRecentlyViewedDisplay();
+    }
+    
+    function updateRecentlyViewedDisplay() {
+        const recentStocks = JSON.parse(localStorage.getItem('recently_viewed_stocks') || '[]');
+        
+        if (recentStocks.length === 0) return;
+        
+        // Could add recently viewed section to UI
+        console.log('Recently viewed stocks:', recentStocks.map(s => s.symbol).join(', '));
+    }
 
     function showError(message) {
         const resultsDiv = document.getElementById('search-results');
