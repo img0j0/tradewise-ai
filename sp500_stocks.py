@@ -497,6 +497,16 @@ def get_symbol_from_name(search_term):
     if search_lower in ADDITIONAL_MAPPINGS:
         return ADDITIONAL_MAPPINGS[search_lower]
     
+    # Special handling for common search terms that should map directly
+    direct_mappings = {
+        'lucid': 'LCID',
+        'toyota': 'TM', 
+        'costco': 'COST',
+        'rambus': 'RMBS'
+    }
+    if search_lower in direct_mappings:
+        return direct_mappings[search_lower]
+    
     # Exact match in company name mapping
     if search_lower in COMPANY_NAME_MAPPING:
         return COMPANY_NAME_MAPPING[search_lower]
