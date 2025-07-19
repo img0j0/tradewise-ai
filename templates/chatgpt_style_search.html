@@ -2357,7 +2357,8 @@
         console.log('TradeWise AI: Intelligent search processing:', normalizedQuery);
         
         // Direct symbol match (already ticker symbols like AAPL, TSLA)
-        if (/^[A-Z]{1,5}(-[A-Z])?$/.test(query.toUpperCase())) {
+        // Only match if the original query is already in uppercase or mixed case ticker format
+        if (/^[A-Z]{1,5}(-[A-Z])?$/.test(query) && query === query.toUpperCase()) {
             console.log('TradeWise AI: Direct symbol match:', query.toUpperCase());
             return query.toUpperCase();
         }
@@ -2426,9 +2427,11 @@
         };
         
         if (abbreviations[normalizedQuery]) {
+            console.log('TradeWise AI: Abbreviation match found:', abbreviations[normalizedQuery]);
             return abbreviations[normalizedQuery];
         }
         
+        console.log('TradeWise AI: No intelligent match found, returning uppercase:', query.toUpperCase());
         // If no intelligent match found, return as uppercase (might be a valid symbol)
         return query.toUpperCase();
     }
