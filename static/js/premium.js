@@ -484,8 +484,8 @@ class PremiumManager {
         
         let signalsHTML = `
             <div class="d-flex justify-content-between align-items-center mb-3">
-                <h6 class="mb-0"><i class="fas fa-chart-line me-2"></i>Live Trading Signals</h6>
-                <span class="badge bg-success">ACTIVE</span>
+                <h6 class="mb-0"><i class="fas fa-chart-line me-2" style="font-size: 0.9rem;"></i>Live Trading Signals</h6>
+                <span class="badge bg-success" style="font-size: 0.65rem;">ACTIVE</span>
             </div>
         `;
         

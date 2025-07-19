@@ -18,11 +18,11 @@
             <div class="header-title">TradeWise AI</div>
             <div class="header-actions">
                 <button class="upgrade-button-seamless" onclick="premiumManager?.showPremiumModal()">
-                    <i class="fas fa-crown"></i>
+                    <i class="fas fa-crown" style="font-size: 0.85rem;"></i>
                     <span>Upgrade</span>
                 </button>
                 <button class="portfolio-toggle" onclick="togglePortfolio()">
-                    <i class="fas fa-wallet"></i>
+                    <i class="fas fa-wallet" style="font-size: 0.85rem;"></i>
                     <span class="portfolio-text">Portfolio</span>
                 </button>
             </div>
@@ -36,9 +36,9 @@
             <!-- Portfolio Section -->
             <div id="portfolio-section" class="portfolio-section" style="display: none;">
                 <div class="portfolio-header">
-                    <h3><i class="fas fa-chart-line"></i> Your Portfolio</h3>
+                    <h3><i class="fas fa-chart-line" style="font-size: 1.1rem;"></i> Your Portfolio</h3>
                     <button class="close-portfolio" onclick="togglePortfolio()">
-                        <i class="fas fa-times"></i>
+                        <i class="fas fa-times" style="font-size: 0.9rem;"></i>
                     </button>
                 </div>
                 
@@ -68,16 +68,16 @@
             <div id="ai-copilot-widget" class="ai-copilot-widget" style="display: none;">
                 <div class="copilot-header">
                     <h5 class="mb-0 d-flex align-items-center">
-                        <i class="fas fa-robot me-2" style="color: #00ff88;"></i>
+                        <i class="fas fa-robot me-2" style="color: #00ff88; font-size: 1rem;"></i>
                         AI Trading Copilot
                     </h5>
-                    <span class="badge bg-success px-2 py-1" style="font-size: 0.7rem; font-weight: 600;">ACTIVE</span>
+                    <span class="badge bg-success px-2 py-1" style="font-size: 0.65rem; font-weight: 600;">ACTIVE</span>
                 </div>
                 <div class="copilot-content">
                     <div id="copilot-signals" class="copilot-signals">
                         <div class="text-center text-muted p-3">
-                            <i class="fas fa-spinner fa-spin mb-2" style="color: #00ff88;"></i>
-                            <p class="mb-0" style="color: #888;">AI scanning markets...</p>
+                            <i class="fas fa-spinner fa-spin mb-2" style="color: #00ff88; font-size: 1rem;"></i>
+                            <p class="mb-0" style="color: #888; font-size: 0.9rem;">AI scanning markets...</p>
                         </div>
                     </div>
                 </div>
@@ -123,7 +123,7 @@
                        onkeypress="handleEnterPress(event)"
                        oninput="showSearchSuggestions(this.value)">
                 <button class="submit-btn" onclick="performSearch()">
-                    <i class="fas fa-arrow-up"></i>
+                    <i class="fas fa-arrow-up" style="font-size: 0.9rem;"></i>
                 </button>
             </div>
             
