@@ -35,6 +35,10 @@
                             <i class="fas fa-wallet"></i>
                             <span>Portfolio</span>
                         </div>
+                        <div class="dropdown-item" onclick="openInstitutionalFeatures()">
+                            <i class="fas fa-university"></i>
+                            <span>Institutional Features</span>
+                        </div>
                         <div class="dropdown-item" onclick="openSettings()">
                             <i class="fas fa-user-cog"></i>
                             <span>Account Settings</span>
@@ -2360,6 +2364,13 @@
         document.getElementById('tools-dropdown-menu').classList.remove('show');
         toolsDropdownVisible = false;
         alert('Watchlist feature coming soon!');
+    }
+    
+    // Institutional Features function
+    function openInstitutionalFeatures() {
+        document.getElementById('tools-dropdown-menu').classList.remove('show');
+        toolsDropdownVisible = false;
+        window.open('/institutional-features', '_blank');
     }
     
     function loadPortfolioData() {

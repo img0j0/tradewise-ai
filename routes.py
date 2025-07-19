@@ -3578,3 +3578,9 @@ def institutional_algorithm_builder():
     except Exception as e:
         logger.error(f"Error in algorithm builder: {e}")
         return jsonify({'error': 'Algorithm creation failed'}), 500
+
+@app.route('/institutional-features')
+@login_required
+def institutional_features_page():
+    """Institutional features page for professional trading tools"""
+    return render_template('institutional_features.html')
