@@ -1,10 +1,10 @@
 <!-- Premium Subscription Modal -->
 <div class="modal fade" id="premiumModal" tabindex="-1" aria-labelledby="premiumModalLabel" aria-hidden="true" style="z-index: 1060;">
     <div class="modal-dialog modal-lg modal-dialog-scrollable" style="margin: 0.5rem; max-width: calc(100vw - 1rem);">
-        <div class="modal-content bg-dark text-light" style="max-height: calc(100vh - 1rem); border-radius: 12px;">
-            <div class="modal-header border-secondary">
+        <div class="modal-content text-light" style="background: #000000 !important; max-height: calc(100vh - 1rem); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.1) !important;">
+            <div class="modal-header" style="border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;">
                 <h5 class="modal-title" id="premiumModalLabel">
-                    <i class="fas fa-rocket me-2 text-warning"></i>
+                    <i class="fas fa-rocket me-2" style="color: #60a5fa !important;"></i>
                     Upgrade to AI Trading Copilot
                 </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -14,42 +14,42 @@
                 <div class="row g-3">
                     <!-- Free Plan (Current) -->
                     <div class="col-md-4">
-                        <div class="card h-100" style="background: linear-gradient(135deg, #e9ecef, #f8f9fa) !important; border: 2px solid #6c757d;">
-                            <div class="card-header text-center" style="background: #6c757d !important; color: white !important;">
+                        <div class="card h-100" style="background: #000000 !important; border: 1px solid rgba(255, 255, 255, 0.1) !important;">
+                            <div class="card-header text-center" style="background: rgba(255, 255, 255, 0.05) !important; color: white !important; border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;">
                                 <h6 class="mb-0" style="color: white !important; font-weight: bold;">Free</h6>
-                                <div class="h4 mb-0" style="color: white !important;">$0<small style="color: #dee2e6;">/month</small></div>
+                                <div class="h4 mb-0" style="color: white !important;">$0<small style="color: rgba(255, 255, 255, 0.6);">/month</small></div>
                             </div>
                             <div class="card-body">
                                 <ul class="list-unstyled">
-                                    <li style="color: #333 !important; font-weight: 500;"><i class="fas fa-check text-success me-2"></i><strong>Basic stock search</strong></li>
-                                    <li style="color: #333 !important; font-weight: 500;"><i class="fas fa-check text-success me-2"></i><strong>3 AI insights per day</strong></li>
-                                    <li style="color: #333 !important; font-weight: 500;"><i class="fas fa-check text-success me-2"></i><strong>Manual trading</strong></li>
-                                    <li style="color: #333 !important; font-weight: 500;"><i class="fas fa-check text-success me-2"></i><strong>0.25% commission per trade</strong></li>
+                                    <li style="color: white !important; font-weight: 500;"><i class="fas fa-check me-2" style="color: #60a5fa !important;"></i><strong>Basic stock search</strong></li>
+                                    <li style="color: white !important; font-weight: 500;"><i class="fas fa-check me-2" style="color: #60a5fa !important;"></i><strong>3 AI insights per day</strong></li>
+                                    <li style="color: white !important; font-weight: 500;"><i class="fas fa-check me-2" style="color: #60a5fa !important;"></i><strong>Manual trading</strong></li>
+                                    <li style="color: white !important; font-weight: 500;"><i class="fas fa-check me-2" style="color: #60a5fa !important;"></i><strong>0.25% commission per trade</strong></li>
                                 </ul>
-                                <button class="btn btn-outline-secondary w-100" disabled style="color: #6c757d !important; border-color: #6c757d !important; font-weight: bold;">Current Plan</button>
+                                <button class="btn w-100" disabled style="background: rgba(255, 255, 255, 0.1) !important; color: rgba(255, 255, 255, 0.6) !important; border: 1px solid rgba(255, 255, 255, 0.2) !important; font-weight: bold;">Current Plan</button>
                             </div>
                         </div>
                     </div>
                     
                     <!-- Pro Plan -->
                     <div class="col-md-4">
-                        <div class="card h-100 border-warning" style="background: linear-gradient(135deg, #fff, #f8f9fa) !important; color: #333 !important;">
-                            <div class="card-header text-center" style="background: linear-gradient(135deg, #ffc107, #e0a800) !important;">
-                                <h6 class="mb-0" style="color: #000 !important; font-weight: bold;">
-                                    <i class="fas fa-star me-1" style="color: #000 !important;"></i>Pro
+                        <div class="card h-100" style="background: #000000 !important; border: 1px solid #60a5fa !important; color: white !important;">
+                            <div class="card-header text-center" style="background: rgba(96, 165, 250, 0.1) !important; border-bottom: 1px solid rgba(96, 165, 250, 0.3) !important;">
+                                <h6 class="mb-0" style="color: white !important; font-weight: bold;">
+                                    <i class="fas fa-star me-1" style="color: #60a5fa !important;"></i>Pro
                                 </h6>
-                                <div class="h4 mb-0" style="color: #000 !important; font-weight: bold;">$19.99<small style="color: #333;">/month</small></div>
-                                <small class="badge text-dark" style="background: #000 !important; color: #ffc107 !important;">POPULAR</small>
+                                <div class="h4 mb-0" style="color: white !important; font-weight: bold;">$19.99<small style="color: rgba(255, 255, 255, 0.6);">/month</small></div>
+                                <small class="badge" style="background: #60a5fa !important; color: #000 !important;">POPULAR</small>
                             </div>
                             <div class="card-body">
-                                <ul class="list-unstyled" style="color: #333 !important;">
-                                    <li style="color: #333 !important;"><i class="fas fa-check text-success me-2"></i><strong>Unlimited AI insights</strong></li>
-                                    <li style="color: #333 !important;"><i class="fas fa-check text-success me-2"></i><strong>5 real-time alerts per day</strong></li>
-                                    <li style="color: #333 !important;"><i class="fas fa-check text-success me-2"></i><strong>Commission-free trading</strong></li>
-                                    <li style="color: #333 !important;"><i class="fas fa-check text-success me-2"></i><strong>Basic portfolio optimization</strong></li>
-                                    <li style="color: #333 !important;"><i class="fas fa-check text-success me-2"></i><strong>Email support</strong></li>
+                                <ul class="list-unstyled">
+                                    <li style="color: white !important;"><i class="fas fa-check me-2" style="color: #60a5fa !important;"></i><strong>Unlimited AI insights</strong></li>
+                                    <li style="color: white !important;"><i class="fas fa-check me-2" style="color: #60a5fa !important;"></i><strong>5 real-time alerts per day</strong></li>
+                                    <li style="color: white !important;"><i class="fas fa-check me-2" style="color: #60a5fa !important;"></i><strong>Commission-free trading</strong></li>
+                                    <li style="color: white !important;"><i class="fas fa-check me-2" style="color: #60a5fa !important;"></i><strong>Basic portfolio optimization</strong></li>
+                                    <li style="color: white !important;"><i class="fas fa-check me-2" style="color: #60a5fa !important;"></i><strong>Email support</strong></li>
                                 </ul>
-                                <button class="btn btn-warning w-100" onclick="subscribeToPlan('pro')">
+                                <button class="btn w-100" onclick="subscribeToPlan('pro')" style="background: #60a5fa !important; border: none !important; color: #000 !important; font-weight: 600 !important;">
                                     <i class="fas fa-rocket me-2"></i>Upgrade to Pro
                                 </button>
                             </div>
@@ -58,25 +58,25 @@
                     
                     <!-- Elite Plan -->
                     <div class="col-md-4">
-                        <div class="card bg-gradient-elite h-100 border-gold">
-                            <div class="card-header text-center">
-                                <h6 class="mb-0 text-warning">
+                        <div class="card h-100" style="background: #000000 !important; border: 2px solid #3b82f6 !important; box-shadow: 0 0 20px rgba(59, 130, 246, 0.3) !important;">
+                            <div class="card-header text-center" style="background: rgba(59, 130, 246, 0.1) !important; border-bottom: 1px solid rgba(59, 130, 246, 0.3) !important;">
+                                <h6 class="mb-0" style="color: #3b82f6 !important; font-weight: bold;">
                                     <i class="fas fa-crown me-1"></i>Elite
                                 </h6>
                                 <div class="h4 mb-0 text-white">$39.99<small class="text-light">/month</small></div>
-                                <small class="badge bg-gold text-dark">REVOLUTIONARY</small>
+                                <small class="badge" style="background: #3b82f6 !important; color: white !important;">REVOLUTIONARY</small>
                             </div>
                             <div class="card-body">
                                 <ul class="list-unstyled" style="color: white !important;">
-                                    <li style="color: white !important; text-shadow: 1px 1px 2px rgba(0,0,0,0.8);"><i class="fas fa-check text-warning me-2"></i><strong>24/7 AI market monitoring</strong></li>
-                                    <li style="color: white !important; text-shadow: 1px 1px 2px rgba(0,0,0,0.8);"><i class="fas fa-check text-warning me-2"></i><strong>Unlimited real-time alerts</strong></li>
-                                    <li style="color: white !important; text-shadow: 1px 1px 2px rgba(0,0,0,0.8);"><i class="fas fa-check text-warning me-2"></i><strong>One-click AI trade execution</strong></li>
-                                    <li style="color: white !important; text-shadow: 1px 1px 2px rgba(0,0,0,0.8);"><i class="fas fa-check text-warning me-2"></i><strong>Live voice commentary</strong></li>
-                                    <li style="color: white !important; text-shadow: 1px 1px 2px rgba(0,0,0,0.8);"><i class="fas fa-check text-warning me-2"></i><strong>Predictive market signals</strong></li>
-                                    <li style="color: white !important; text-shadow: 1px 1px 2px rgba(0,0,0,0.8);"><i class="fas fa-check text-warning me-2"></i><strong>Advanced risk management</strong></li>
-                                    <li style="color: white !important; text-shadow: 1px 1px 2px rgba(0,0,0,0.8);"><i class="fas fa-check text-warning me-2"></i><strong>Priority support</strong></li>
+                                    <li style="color: white !important;"><i class="fas fa-check me-2" style="color: #3b82f6 !important;"></i><strong>24/7 AI market monitoring</strong></li>
+                                    <li style="color: white !important;"><i class="fas fa-check me-2" style="color: #3b82f6 !important;"></i><strong>Unlimited real-time alerts</strong></li>
+                                    <li style="color: white !important;"><i class="fas fa-check me-2" style="color: #3b82f6 !important;"></i><strong>One-click AI trade execution</strong></li>
+                                    <li style="color: white !important;"><i class="fas fa-check me-2" style="color: #3b82f6 !important;"></i><strong>Live voice commentary</strong></li>
+                                    <li style="color: white !important;"><i class="fas fa-check me-2" style="color: #3b82f6 !important;"></i><strong>Predictive market signals</strong></li>
+                                    <li style="color: white !important;"><i class="fas fa-check me-2" style="color: #3b82f6 !important;"></i><strong>Advanced risk management</strong></li>
+                                    <li style="color: white !important;"><i class="fas fa-check me-2" style="color: #3b82f6 !important;"></i><strong>Priority support</strong></li>
                                 </ul>
-                                <button class="btn btn-gold w-100" onclick="subscribeToPlan('elite')">
+                                <button class="btn w-100" onclick="subscribeToPlan('elite')" style="background: #3b82f6 !important; border: none !important; color: white !important; font-weight: 600 !important;">
                                     <i class="fas fa-crown me-2"></i>Upgrade to Elite
                                 </button>
                             </div>
@@ -85,26 +85,26 @@
                 </div>
                 
                 <!-- AI Performance Stats -->
-                <div class="mt-4 p-3 bg-gradient-success rounded">
+                <div class="mt-4 p-3 rounded" style="background: #000000 !important; border: 1px solid rgba(96, 165, 250, 0.3) !important;">
                     <div class="row text-center">
                         <div class="col-4">
                             <div class="h3 mb-0 text-white">71.4%</div>
-                            <small class="text-light">AI Win Rate</small>
+                            <small style="color: rgba(255, 255, 255, 0.7) !important;">AI Win Rate</small>
                         </div>
                         <div class="col-4">
                             <div class="h3 mb-0 text-white">24/7</div>
-                            <small class="text-light">Market Monitoring</small>
+                            <small style="color: rgba(255, 255, 255, 0.7) !important;">Market Monitoring</small>
                         </div>
                         <div class="col-4">
                             <div class="h3 mb-0 text-white">1000+</div>
-                            <small class="text-light">Stocks Tracked</small>
+                            <small style="color: rgba(255, 255, 255, 0.7) !important;">Stocks Tracked</small>
                         </div>
                     </div>
                 </div>
                 
                 <!-- Market Gap Message -->
-                <div class="alert alert-warning mt-3 mb-0">
-                    <i class="fas fa-lightbulb me-2"></i>
+                <div class="mt-3 mb-0 p-3 rounded" style="background: rgba(96, 165, 250, 0.1) !important; border: 1px solid rgba(96, 165, 250, 0.3) !important; color: white !important;">
+                    <i class="fas fa-lightbulb me-2" style="color: #60a5fa !important;"></i>
                     <strong>Revolutionary Technology:</strong> First platform to offer 24/7 AI monitoring with one-click execution. No competitor has this capability!
                 </div>
             </div>
