@@ -56,13 +56,13 @@
 
 /* AI Copilot Widget */
 .ai-copilot-widget {
-    background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(37, 99, 235, 0.05));
+    border: 1px solid rgba(59, 130, 246, 0.3);
     border-radius: 16px;
     margin-bottom: 24px;
     padding: 20px;
     overflow: hidden;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 8px 24px rgba(59, 130, 246, 0.15);
     animation: pulse 3s infinite;
 }
 
@@ -86,7 +86,7 @@
     
     .copilot-header .fas.fa-robot {
         font-size: 0.9rem !important;
-        color: #9ca3af !important;
+        color: #60a5fa !important;
     }
     
     .signal-card {
@@ -105,10 +105,10 @@
 
 @keyframes pulse {
     0%, 100% { 
-        box-shadow: 0 8px 24px rgba(255, 255, 255, 0.1);
+        box-shadow: 0 8px 24px rgba(59, 130, 246, 0.2);
     }
     50% { 
-        box-shadow: 0 8px 32px rgba(255, 255, 255, 0.2);
+        box-shadow: 0 8px 32px rgba(59, 130, 246, 0.3);
     }
 }
 
@@ -128,23 +128,23 @@
 }
 
 .signal-card.buy {
-    border-left-color: #d1d5db;
+    border-left-color: #60a5fa;
 }
 
 .signal-card.strong-buy {
-    border-left-color: #e5e7eb;
+    border-left-color: #3b82f6;
 }
 
 .signal-card.hold {
-    border-left-color: #9ca3af;
+    border-left-color: #93c5fd;
 }
 
 .signal-card.sell {
-    border-left-color: #6b7280;
+    border-left-color: #1d4ed8;
 }
 
 .signal-card .signal-type {
-    color: #d1d5db;
+    color: #60a5fa;
     font-weight: 600;
     font-size: 0.9rem;
     text-transform: uppercase;
@@ -157,7 +157,7 @@
 }
 
 .signal-card .confidence {
-    color: #9ca3af;
+    color: #93c5fd;
     font-size: 0.85rem;
     font-weight: 500;
 }
@@ -168,9 +168,9 @@
     align-items: center;
     margin-bottom: 20px;
     padding: 12px 16px;
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(59, 130, 246, 0.1);
     border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(59, 130, 246, 0.2);
 }
 
 .copilot-header h5 {
@@ -182,7 +182,7 @@
 }
 
 .copilot-header .fas.fa-robot {
-    color: #9ca3af !important;
+    color: #60a5fa !important;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
