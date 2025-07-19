@@ -2303,56 +2303,53 @@
             
             const themeCard = document.createElement('div');
             themeCard.className = 'stock-result theme-result';
-            themeCard.innerHTML = `
-                <div class="stock-header">
-                    <div>
-                        <div class="stock-symbol">${themeName} Investment Theme</div>
-                        <div class="stock-name">Curated investment opportunities</div>
-                    </div>
-                    <div class="theme-performance">
-                        <div class="price-change positive">
-                            <span class="performance-text">+${getThemePerformance(themeName)}% YTD</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="stock-metrics">
-                    <div class="metric">
-                        <div class="metric-label">Top Holdings</div>
-                        <div class="metric-value">${getThemeStocks(themeName).join(', ')}</div>
-                    </div>
-                    <div class="metric">
-                        <div class="metric-label">Market Focus</div>
-                        <div class="metric-value">${getThemeDescription(themeName)}</div>
-                    </div>
-                    <div class="metric">
-                        <div class="metric-label">Risk Level</div>
-                        <div class="metric-value">${getThemeRisk(themeName)}</div>
-                    </div>
-                </div>
-                
-                <div class="ai-analysis">
-                    <div class="analysis-header">
-                        <i class="fas fa-brain"></i>
-                        <span>AI Theme Analysis</span>
-                        <span class="confidence-badge">90% confident</span>
-                    </div>
-                    <div class="analysis-content">
-                        <p>${getThemeAnalysis(themeName)}</p>
-                    </div>
-                </div>
-                
-                <div class="stock-actions">
-                    <button class="action-btn primary" onclick="exploreTheme('${themeName}')">
-                        <i class="fas fa-search"></i>
-                        Explore Theme
-                    </button>
-                    <button class="action-btn secondary" onclick="addThemeToWatchlist('${themeName}')">
-                        <i class="fas fa-bookmark"></i>
-                        Add to Watchlist
-                    </button>
-                </div>
-            `;
+            themeCard.innerHTML = 
+                '<div class="stock-header">' +
+                    '<div>' +
+                        '<div class="stock-symbol">' + themeName + ' Investment Theme</div>' +
+                        '<div class="stock-name">Curated investment opportunities</div>' +
+                    '</div>' +
+                    '<div class="theme-performance">' +
+                        '<div class="price-change positive">' +
+                            '<span class="performance-text">+' + getThemePerformance(themeName) + '% YTD</span>' +
+                        '</div>' +
+                    '</div>' +
+                '</div>'
+                +
+                '<div class="stock-metrics">' +
+                    '<div class="metric">' +
+                        '<div class="metric-label">Top Holdings</div>' +
+                        '<div class="metric-value">' + getThemeStocks(themeName).join(', ') + '</div>' +
+                    '</div>' +
+                    '<div class="metric">' +
+                        '<div class="metric-label">Market Focus</div>' +
+                        '<div class="metric-value">' + getThemeDescription(themeName) + '</div>' +
+                    '</div>' +
+                    '<div class="metric">' +
+                        '<div class="metric-label">Risk Level</div>' +
+                        '<div class="metric-value">' + getThemeRisk(themeName) + '</div>' +
+                    '</div>' +
+                '</div>' +
+                '<div class="ai-analysis">' +
+                    '<div class="analysis-header">' +
+                        '<i class="fas fa-brain"></i>' +
+                        '<span>AI Theme Analysis</span>' +
+                        '<span class="confidence-badge">90% confident</span>' +
+                    '</div>' +
+                    '<div class="analysis-content">' +
+                        '<p>' + getThemeAnalysis(themeName) + '</p>' +
+                    '</div>' +
+                '</div>' +
+                '<div class="stock-actions">' +
+                    '<button class="action-btn primary" onclick="exploreTheme(\'' + themeName + '\')">' +
+                        '<i class="fas fa-search"></i>' +
+                        'Explore Theme' +
+                    '</button>' +
+                    '<button class="action-btn secondary" onclick="addThemeToWatchlist(\'' + themeName + '\')">' +
+                        '<i class="fas fa-bookmark"></i>' +
+                        'Add to Watchlist' +
+                    '</button>' +
+                '</div>';
             
             const resultsContainer = document.getElementById('search-results');
             resultsContainer.innerHTML = '';
