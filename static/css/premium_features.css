@@ -74,6 +74,70 @@
     }
 }
 
+/* Signal Cards */
+.signal-card {
+    background: linear-gradient(135deg, #2a2a2a, #1f1f1f);
+    border-radius: 12px;
+    padding: 15px;
+    border-left: 4px solid;
+    transition: all 0.3s ease;
+    color: #fff;
+}
+
+.signal-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.signal-card.buy {
+    border-left-color: #28a745;
+}
+
+.signal-card.strong-buy {
+    border-left-color: #00ff88;
+}
+
+.signal-card.hold {
+    border-left-color: #ffc107;
+}
+
+.signal-card.sell {
+    border-left-color: #dc3545;
+}
+
+.signal-card .signal-type {
+    color: #00ff88;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+}
+
+.signal-card .price {
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+.signal-card .confidence {
+    color: #00ff88;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.copilot-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    color: #ffffff;
+}
+
+.copilot-header h5 {
+    margin: 0;
+    color: #00ff88;
+    font-weight: 600;
+}
+
 .copilot-header {
     background: linear-gradient(135deg, #00ff88, #00cc6a);
     color: #000;
