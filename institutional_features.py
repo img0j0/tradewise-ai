@@ -28,7 +28,7 @@ class SmartOrderRouter:
             'IEX': {'fee': 0.0000, 'liquidity': 0.5, 'speed': 0.7}
         }
     
-    def find_best_execution(self, symbol: str, quantity: int, order_type: str = 'market') -> Dict:
+    def analyze_execution(self, symbol: str, quantity: int, order_type: str = 'market') -> Dict:
         """Find optimal venue for trade execution"""
         try:
             stock = yf.Ticker(symbol)
@@ -146,7 +146,7 @@ class Level2MarketData:
     Professional Level 2 market data and order book analysis
     """
     
-    def get_order_book_analysis(self, symbol: str) -> Dict:
+    def get_order_book(self, symbol: str) -> Dict:
         """Simulate Level 2 order book data"""
         try:
             stock = yf.Ticker(symbol)
@@ -211,7 +211,7 @@ class OptionsFlowAnalyzer:
     Professional options flow analysis and unusual activity detection
     """
     
-    def analyze_options_flow(self, symbol: str) -> Dict:
+    def analyze_unusual_activity(self, symbol: str) -> Dict:
         """Analyze options flow for unusual activity"""
         try:
             stock = yf.Ticker(symbol)

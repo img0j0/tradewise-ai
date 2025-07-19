@@ -30,7 +30,7 @@ class DarkPoolAnalyzer:
             'ITG POSIT': {'market_share': 0.05, 'avg_size': 65000}
         }
     
-    def analyze_dark_pool_activity(self, symbol: str) -> Dict:
+    def analyze_activity(self, symbol: str) -> Dict:
         """Analyze dark pool trading activity for a symbol"""
         try:
             stock = yf.Ticker(symbol)

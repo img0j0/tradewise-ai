@@ -3550,8 +3550,28 @@ def institutional_algorithm_builder():
         data = request.get_json()
         strategy_config = data.get('strategy', {})
         
-        # Create and backtest algorithm
-        algorithm_result = algorithmic_engine.create_and_backtest(strategy_config)
+        # Create and backtest algorithm using algorithm builder
+        algorithm_builder = algorithmic_engine['algorithm_builder']
+        backtesting_engine = algorithmic_engine['backtesting_engine']
+        
+        # Create strategy
+        strategy = algorithm_builder.create_strategy(strategy_config)
+        
+        # Backtest strategy
+        if strategy.get('validation', {}).get('is_valid', False):
+            backtest_result = backtesting_engine.backtest_strategy(
+                strategy_config.get('symbol', 'AAPL'), 
+                strategy
+            )
+            algorithm_result = {
+                'strategy': strategy,
+                'backtest': backtest_result
+            }
+        else:
+            algorithm_result = {
+                'strategy': strategy,
+                'error': 'Strategy validation failed'
+            }
         
         return jsonify(algorithm_result)
         
