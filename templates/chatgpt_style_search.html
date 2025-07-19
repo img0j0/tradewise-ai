@@ -1672,6 +1672,27 @@
     .profit-loss.negative {
         color: #ef4444;
     }
+    
+    /* Enhanced stock result styling */
+    .close-search-btn:hover {
+        background: rgba(255,255,255,0.2) !important;
+        transform: scale(1.1);
+    }
+    
+    .stock-header {
+        padding: 20px;
+    }
+    
+    .stock-symbol {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #60a5fa;
+    }
+    
+    .stock-price {
+        color: white;
+        font-weight: 600;
+    }
 
     .portfolio-holdings {
         max-height: 400px;
@@ -2545,6 +2566,21 @@
             document.querySelector('.suggestion-cards').style.display = 'flex';
         }
     }
+    
+    function closeSearchResults() {
+        const resultsDiv = document.getElementById('search-results');
+        resultsDiv.innerHTML = '';
+        
+        // Show suggestion cards again
+        document.querySelector('.suggestion-cards').style.display = 'flex';
+        
+        // Clear search input
+        const input = document.getElementById('stock-search-input');
+        if (input) {
+            input.value = '';
+            input.focus();
+        }
+    }
 
     function displayResult(data) {
         const resultsDiv = document.getElementById('search-results');
@@ -2596,17 +2632,20 @@
         
         const stockResultHTML = 
             '<div class="stock-result">' +
-                '<div class="stock-header">' +
-                    '<div>' +
-                        '<div class="stock-symbol">' + data.symbol + '</div>' +
-                        '<div class="stock-name" style="color: rgba(255,255,255,0.7); font-size: 0.9rem;">' +
+                '<div class="stock-header" style="position: relative;">' +
+                    '<button class="close-search-btn" onclick="closeSearchResults()" style="position: absolute; top: -10px; right: -10px; background: rgba(255,255,255,0.1); border: none; border-radius: 50%; width: 32px; height: 32px; color: rgba(255,255,255,0.8); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; transition: all 0.2s;">' +
+                        '×' +
+                    '</button>' +
+                    '<div style="text-align: center; width: 100%;">' +
+                        '<div class="stock-symbol" style="margin: 0 auto;">' + data.symbol + '</div>' +
+                        '<div class="stock-name" style="color: rgba(255,255,255,0.7); font-size: 0.9rem; margin: 0 auto;">' +
                             data.name +
                             (data.sector && data.sector !== 'Unknown' ? '<span style="color: rgba(255,255,255,0.5);"> • ' + data.sector + '</span>' : '') +
                         '</div>' +
                     '</div>' +
-                    '<div style="text-align: right;">' +
-                        '<div class="stock-price">$' + formatPrice(data.price) + '</div>' +
-                        '<div class="stock-change ' + changeClass + '">' +
+                    '<div style="text-align: center; margin-top: 15px;">' +
+                        '<div class="stock-price" style="font-size: 2rem; font-weight: bold; margin: 0;">$' + formatPrice(data.price) + '</div>' +
+                        '<div class="stock-change ' + changeClass + '" style="font-size: 1rem; margin: 5px 0 0 0;">' +
                             changeSymbol + '$' + Math.abs(data.change).toFixed(2) + ' (' + data.change_percent + '%)' +
                         '</div>' +
                     '</div>' +
