@@ -4100,31 +4100,37 @@ def ai_team_query():
             'platform_context': 'trading_platform'
         }
         
-        # Use autonomous AI system for comprehensive solo launch support
-        if autonomous_ai:
-            # Analyze user intent and generate autonomous response
-            intent = autonomous_ai.analyze_user_intent(query, context)
-            autonomous_response = autonomous_ai.generate_autonomous_response(intent)
-            
-            # Convert autonomous response to standard format
-            response = {
-                'message': autonomous_response['message'],
-                'member': 'Autonomous AI Assistant',
-                'confidence': autonomous_response.get('ai_confidence', 0.9),
-                'autonomous_features': autonomous_response,
-                'intent_analysis': {
-                    'primary_intent': intent.primary_intent,
-                    'confidence': intent.confidence,
-                    'urgency_level': intent.urgency_level,
-                    'experience_level': intent.user_experience_level
+        # Use enhanced AI specialists for deep specialty focus
+        try:
+            from ai_team_specialist_upgrade import enhanced_specialists
+            response = enhanced_specialists.get_specialist_response(member, query, context)
+            response['enhanced_specialist'] = True
+        except ImportError:
+            # Use autonomous AI system for comprehensive solo launch support
+            if autonomous_ai:
+                # Analyze user intent and generate autonomous response
+                intent = autonomous_ai.analyze_user_intent(query, context)
+                autonomous_response = autonomous_ai.generate_autonomous_response(intent)
+                
+                # Convert autonomous response to standard format
+                response = {
+                    'message': autonomous_response['message'],
+                    'member': 'Autonomous AI Assistant',
+                    'confidence': autonomous_response.get('ai_confidence', 0.9),
+                    'autonomous_features': autonomous_response,
+                    'intent_analysis': {
+                        'primary_intent': intent.primary_intent,
+                        'confidence': intent.confidence,
+                        'urgency_level': intent.urgency_level,
+                        'experience_level': intent.user_experience_level
+                    }
                 }
-            }
-        elif super_intelligent_team:
-            # Fallback to super intelligent system
-            response = super_intelligent_team.route_intelligent_query(query, member, context)
-        else:
-            # Final fallback to standard system
-            response = ai_team_manager.route_query(query, context)
+            elif super_intelligent_team:
+                # Fallback to super intelligent system
+                response = super_intelligent_team.route_intelligent_query(query, member, context)
+            else:
+                # Final fallback to standard system
+                response = ai_team_manager.route_query(query, context)
         
         # Train AI team with this conversation
         if ai_team_trainer:
