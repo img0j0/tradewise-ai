@@ -24,14 +24,35 @@
                     <i class="fas fa-crown" style="font-size: 0.85rem;"></i>
                     <span>Upgrade</span>
                 </button>
-                <button class="portfolio-toggle" onclick="togglePortfolio()">
-                    <i class="fas fa-wallet" style="font-size: 0.85rem;"></i>
-                    <span class="portfolio-text">Portfolio</span>
-                </button>
-                <button class="settings-button" onclick="openSettings()">
-                    <i class="fas fa-user-cog" style="font-size: 0.85rem;"></i>
-                    <span class="settings-text">Account</span>
-                </button>
+                <div class="tools-dropdown">
+                    <button class="tools-toggle" onclick="toggleToolsDropdown()">
+                        <i class="fas fa-tools" style="font-size: 0.85rem;"></i>
+                        <span class="tools-text">Tools</span>
+                        <i class="fas fa-chevron-down" style="font-size: 0.7rem; margin-left: 0.25rem;"></i>
+                    </button>
+                    <div class="tools-dropdown-menu" id="tools-dropdown-menu">
+                        <div class="dropdown-item" onclick="togglePortfolio()">
+                            <i class="fas fa-wallet"></i>
+                            <span>Portfolio</span>
+                        </div>
+                        <div class="dropdown-item" onclick="openSettings()">
+                            <i class="fas fa-user-cog"></i>
+                            <span>Account Settings</span>
+                        </div>
+                        <div class="dropdown-item" onclick="premiumManager?.showPremiumModal()">
+                            <i class="fas fa-star"></i>
+                            <span>Subscription Plans</span>
+                        </div>
+                        <div class="dropdown-item" onclick="showTradingHistory()">
+                            <i class="fas fa-history"></i>
+                            <span>Trading History</span>
+                        </div>
+                        <div class="dropdown-item" onclick="showWatchlist()">
+                            <i class="fas fa-eye"></i>
+                            <span>Watchlist</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         
@@ -229,8 +250,13 @@
         font-weight: 500;
     }
 
-    /* Settings/Account button styling */
-    .settings-button {
+    /* Tools Dropdown Styling */
+    .tools-dropdown {
+        position: relative;
+        display: inline-block;
+    }
+
+    .tools-toggle {
         display: flex;
         align-items: center;
         gap: 0.5rem;
@@ -245,15 +271,79 @@
         text-decoration: none;
     }
 
-    .settings-button:hover {
+    .tools-toggle:hover {
         background: rgba(255, 255, 255, 0.15);
         transform: translateY(-1px);
         color: white;
         text-decoration: none;
     }
 
-    .settings-text {
+    .tools-text {
         font-weight: 500;
+    }
+
+    .tools-dropdown-menu {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        background: rgba(20, 20, 30, 0.95);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 12px;
+        min-width: 200px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        z-index: 1000;
+        margin-top: 0.5rem;
+        display: none;
+        overflow: hidden;
+    }
+
+    .tools-dropdown-menu.show {
+        display: block;
+        animation: dropdownSlide 0.3s ease-out;
+    }
+
+    @keyframes dropdownSlide {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .dropdown-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem 1rem;
+        color: white;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        font-size: 0.9rem;
+    }
+
+    .dropdown-item:last-child {
+        border-bottom: none;
+    }
+
+    .dropdown-item:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: #60a5fa;
+    }
+
+    .dropdown-item i {
+        width: 16px;
+        text-align: center;
+        opacity: 0.8;
+    }
+
+    .dropdown-item:hover i {
+        opacity: 1;
+        color: #60a5fa;
     }
 
     .portfolio-value {
@@ -1890,6 +1980,10 @@
         const portfolioSection = document.getElementById('portfolio-section');
         const searchContent = document.getElementById('search-content');
         
+        // Close tools dropdown when portfolio is toggled
+        document.getElementById('tools-dropdown-menu').classList.remove('show');
+        toolsDropdownVisible = false;
+        
         portfolioVisible = !portfolioVisible;
         
         if (portfolioVisible) {
@@ -1902,10 +1996,48 @@
         }
     }
     
+    // Tools Dropdown functionality
+    let toolsDropdownVisible = false;
+    
+    function toggleToolsDropdown() {
+        const dropdown = document.getElementById('tools-dropdown-menu');
+        toolsDropdownVisible = !toolsDropdownVisible;
+        
+        if (toolsDropdownVisible) {
+            dropdown.classList.add('show');
+        } else {
+            dropdown.classList.remove('show');
+        }
+    }
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(event) {
+        const dropdown = document.querySelector('.tools-dropdown');
+        if (!dropdown.contains(event.target)) {
+            document.getElementById('tools-dropdown-menu').classList.remove('show');
+            toolsDropdownVisible = false;
+        }
+    });
+
     // Settings/Account functionality
     function openSettings() {
-        // Open settings page in new tab
+        // Close dropdown and open settings
+        document.getElementById('tools-dropdown-menu').classList.remove('show');
+        toolsDropdownVisible = false;
         window.open('/settings', '_blank');
+    }
+    
+    // Additional tool functions
+    function showTradingHistory() {
+        document.getElementById('tools-dropdown-menu').classList.remove('show');
+        toolsDropdownVisible = false;
+        alert('Trading History feature coming soon!');
+    }
+    
+    function showWatchlist() {
+        document.getElementById('tools-dropdown-menu').classList.remove('show');
+        toolsDropdownVisible = false;
+        alert('Watchlist feature coming soon!');
     }
     
     function loadPortfolioData() {
