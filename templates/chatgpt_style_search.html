@@ -2378,19 +2378,32 @@
         document.getElementById('tools-dropdown-menu').classList.remove('show');
         toolsDropdownVisible = false;
         
-        // Try to use premium manager if available, otherwise show basic modal
+        // Ensure premium manager is available and try to show modal
         if (window.premiumManager && typeof window.premiumManager.showPremiumModal === 'function') {
+            console.log('Using existing premium manager');
             window.premiumManager.showPremiumModal();
-        } else {
-            // Fallback - create premium manager if it doesn't exist
+        } else if (window.PremiumManager) {
+            console.log('Creating new premium manager');
+            window.premiumManager = new PremiumManager();
             setTimeout(() => {
-                if (window.PremiumManager) {
-                    window.premiumManager = new PremiumManager();
-                    window.premiumManager.showPremiumModal();
+                window.premiumManager.showPremiumModal();
+            }, 200);
+        } else {
+            console.log('Fallback: Direct modal display');
+            // Direct fallback to show modal
+            const modalElement = document.getElementById('premiumModal');
+            if (modalElement) {
+                if (typeof bootstrap !== 'undefined') {
+                    const modal = new bootstrap.Modal(modalElement);
+                    modal.show();
                 } else {
-                    alert('Subscription plans feature loading... Please try again in a moment.');
+                    modalElement.style.display = 'block';
+                    modalElement.classList.add('show');
                 }
-            }, 100);
+            } else {
+                console.error('Premium modal element not found in DOM');
+                alert('Subscription plans are loading. Please wait a moment and try again.');
+            }
         }
     }
     

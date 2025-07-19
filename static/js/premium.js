@@ -153,8 +153,62 @@ class PremiumManager {
     }
 
     showPremiumModal() {
-        const modal = new bootstrap.Modal(document.getElementById('premiumModal'));
-        modal.show();
+        console.log('Attempting to show premium modal...');
+        const modalElement = document.getElementById('premiumModal');
+        
+        if (!modalElement) {
+            console.error('Premium modal element not found');
+            alert('Premium modal not found. Please refresh the page and try again.');
+            return;
+        }
+        
+        try {
+            // Check if Bootstrap is available
+            if (typeof bootstrap !== 'undefined') {
+                const modal = new bootstrap.Modal(modalElement);
+                modal.show();
+                console.log('Premium modal shown via Bootstrap');
+            } else {
+                // Fallback - show modal manually
+                console.log('Bootstrap not found, showing modal manually');
+                modalElement.style.display = 'block';
+                modalElement.classList.add('show');
+                modalElement.setAttribute('aria-hidden', 'false');
+                
+                // Add backdrop
+                const backdrop = document.createElement('div');
+                backdrop.className = 'modal-backdrop fade show';
+                backdrop.id = 'premium-modal-backdrop';
+                document.body.appendChild(backdrop);
+                
+                // Close button functionality
+                const closeBtn = modalElement.querySelector('.btn-close');
+                if (closeBtn) {
+                    closeBtn.onclick = () => this.closePremiumModal();
+                }
+                
+                // Click outside to close
+                backdrop.onclick = () => this.closePremiumModal();
+            }
+        } catch (error) {
+            console.error('Error showing premium modal:', error);
+            alert('Unable to show subscription plans. Please try refreshing the page.');
+        }
+    }
+    
+    closePremiumModal() {
+        const modalElement = document.getElementById('premiumModal');
+        const backdrop = document.getElementById('premium-modal-backdrop');
+        
+        if (modalElement) {
+            modalElement.style.display = 'none';
+            modalElement.classList.remove('show');
+            modalElement.setAttribute('aria-hidden', 'true');
+        }
+        
+        if (backdrop) {
+            backdrop.remove();
+        }
     }
 }
 
