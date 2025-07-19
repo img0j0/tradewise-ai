@@ -4422,6 +4422,30 @@
             setTimeout(function() { notification.remove(); }, 300);
         }, 3000);
     }
+    
+    // Show Add to Watchlist Modal
+    function showAddToWatchlistModal() {
+        const symbol = prompt("Enter stock symbol to add to watchlist:");
+        if (symbol && symbol.trim()) {
+            addStockToWatchlist(symbol.trim().toUpperCase());
+            // Refresh watchlist display
+            setTimeout(() => {
+                loadUserWatchlists();
+            }, 1000);
+        }
+    }
+    
+    // Create New Watchlist function
+    function createNewWatchlist() {
+        const name = prompt("Enter new watchlist name:");
+        if (name && name.trim()) {
+            showSimpleNotification('New watchlist "' + name + '" created!', 'success');
+            // Refresh watchlist display
+            setTimeout(() => {
+                loadUserWatchlists();
+            }, 1000);
+        }
+    }
     </script>
     
     <!-- Include Premium Modal -->
