@@ -5036,39 +5036,122 @@
     <!-- Premium JavaScript -->
     <script src="{{ url_for('static', filename='js/premium.js') }}"></script>
     
-    <!-- AI Team Chat Widget (Direct Implementation) -->
-    <div class="ai-team-launcher" id="ai-team-launcher" style="position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3); z-index: 999; transition: all 0.3s ease; color: white; font-size: 24px;">
+    <!-- AI Team Chat Widget (Full Implementation) -->
+    <div class="ai-team-launcher" id="ai-team-launcher" style="position: fixed; bottom: 30px; left: 30px; width: 60px; height: 60px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3); z-index: 999; transition: all 0.3s ease; color: white; font-size: 24px;">
         <i class="fas fa-users"></i>
-        <div class="launcher-tooltip" style="position: absolute; bottom: 70px; right: 0; background: rgba(0, 0, 0, 0.8); color: white; padding: 0.5rem; border-radius: 8px; font-size: 0.8rem; white-space: nowrap; opacity: 0; transition: opacity 0.3s; pointer-events: none;">AI Support Team</div>
+        <div class="launcher-tooltip" style="position: absolute; bottom: 70px; left: 50%; transform: translateX(-50%); background: rgba(0, 0, 0, 0.9); color: white; padding: 0.5rem 0.75rem; border-radius: 8px; font-size: 0.8rem; white-space: nowrap; opacity: 0; transition: opacity 0.3s; pointer-events: none;">AI Support Team</div>
     </div>
     
-    <!-- Simple AI Team Modal -->
-    <div id="simple-ai-team-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; align-items: center; justify-content: center;">
-        <div style="background: #1a1a2e; border-radius: 12px; padding: 2rem; max-width: 500px; margin: 2rem; color: white;">
-            <h3 style="color: #667eea; margin-bottom: 1rem;">🤖 AI Support Team</h3>
-            <p style="margin-bottom: 1.5rem;">Our AI specialists are here to help you with:</p>
-            <ul style="margin-bottom: 2rem; line-height: 1.6;">
-                <li><strong>Sarah Chen</strong> - Market Analysis & Trading Questions</li>
-                <li><strong>Alex Rodriguez</strong> - Technical Support & Platform Help</li>
-                <li><strong>Maria Santos</strong> - Feature Guidance & Customer Success</li>
-            </ul>
-            <div style="display: flex; gap: 1rem; justify-content: flex-end;">
-                <button onclick="closeAITeamModal()" style="background: #667eea; color: white; border: none; padding: 0.7rem 1.5rem; border-radius: 8px; cursor: pointer; font-weight: 600;">Got it!</button>
+    <!-- AI Team Interactive Modal -->
+    <div id="ai-team-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; align-items: center; justify-content: center;">
+        <div style="background: linear-gradient(135deg, #1a1a2e, #16213e); border-radius: 16px; padding: 0; max-width: 600px; width: 90%; max-height: 80vh; margin: 2rem; color: white; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.4);">
+            <!-- Header -->
+            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <h3 style="margin: 0; font-size: 1.2rem; font-weight: 700;">🤖 AI Support Team</h3>
+                        <p style="margin: 0.5rem 0 0 0; opacity: 0.9; font-size: 0.9rem;">Choose a specialist or let us auto-route your question</p>
+                    </div>
+                    <button onclick="closeAITeamModal()" style="background: rgba(255,255,255,0.2); border: none; color: white; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s;">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Team Members -->
+            <div style="padding: 1.5rem; max-height: 50vh; overflow-y: auto;">
+                <div id="team-members-container">
+                    <!-- Auto-Route Option -->
+                    <div class="team-member-card" onclick="selectTeamMember('auto')" style="display: flex; align-items: center; padding: 1rem; background: rgba(96,165,250,0.1); border: 1px solid rgba(96,165,250,0.2); border-radius: 12px; margin-bottom: 1rem; cursor: pointer; transition: all 0.3s;">
+                        <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 1rem;">
+                            <i class="fas fa-robot" style="font-size: 1.2rem; color: white;"></i>
+                        </div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 600; font-size: 1rem; margin-bottom: 0.25rem;">Smart Auto-Route</div>
+                            <div style="color: rgba(255,255,255,0.7); font-size: 0.85rem;">AI will automatically choose the best specialist for your question</div>
+                        </div>
+                        <div style="width: 12px; height: 12px; background: #00D4AA; border-radius: 50%; margin-left: 1rem;"></div>
+                    </div>
+                    
+                    <!-- Sarah Chen -->
+                    <div class="team-member-card" onclick="selectTeamMember('sarah')" style="display: flex; align-items: center; padding: 1rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; margin-bottom: 1rem; cursor: pointer; transition: all 0.3s;">
+                        <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #00D4AA, #007AFF); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 1rem;">
+                            <i class="fas fa-chart-line" style="font-size: 1.2rem; color: white;"></i>
+                        </div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 600; font-size: 1rem; margin-bottom: 0.25rem;">Sarah Chen</div>
+                            <div style="color: rgba(255,255,255,0.7); font-size: 0.85rem;">AI Market Analyst - Trading strategies, market insights, stock analysis</div>
+                        </div>
+                        <div style="width: 12px; height: 12px; background: #00D4AA; border-radius: 50%; margin-left: 1rem;"></div>
+                    </div>
+                    
+                    <!-- Alex Rodriguez -->
+                    <div class="team-member-card" onclick="selectTeamMember('alex')" style="display: flex; align-items: center; padding: 1rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; margin-bottom: 1rem; cursor: pointer; transition: all 0.3s;">
+                        <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #FF6B35, #F7931E); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 1rem;">
+                            <i class="fas fa-tools" style="font-size: 1.2rem; color: white;"></i>
+                        </div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 600; font-size: 1rem; margin-bottom: 0.25rem;">Alex Rodriguez</div>
+                            <div style="color: rgba(255,255,255,0.7); font-size: 0.85rem;">Technical Support - Platform issues, account help, feature guidance</div>
+                        </div>
+                        <div style="width: 12px; height: 12px; background: #00D4AA; border-radius: 50%; margin-left: 1rem;"></div>
+                    </div>
+                    
+                    <!-- Maria Santos -->
+                    <div class="team-member-card" onclick="selectTeamMember('maria')" style="display: flex; align-items: center; padding: 1rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; margin-bottom: 1rem; cursor: pointer; transition: all 0.3s;">
+                        <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #8B5CF6, #A855F7); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 1rem;">
+                            <i class="fas fa-graduation-cap" style="font-size: 1.2rem; color: white;"></i>
+                        </div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 600; font-size: 1rem; margin-bottom: 0.25rem;">Maria Santos</div>
+                            <div style="color: rgba(255,255,255,0.7); font-size: 0.85rem;">Customer Success - Getting started, feature tutorials, best practices</div>
+                        </div>
+                        <div style="width: 12px; height: 12px; background: #00D4AA; border-radius: 50%; margin-left: 1rem;"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Chat Interface (Initially Hidden) -->
+            <div id="chat-interface" style="display: none; padding: 1.5rem; border-top: 1px solid rgba(255,255,255,0.1);">
+                <div id="selected-member-info" style="display: flex; align-items: center; margin-bottom: 1rem; padding: 0.75rem; background: rgba(96,165,250,0.1); border-radius: 8px;">
+                    <div id="selected-avatar" style="width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 0.75rem;"></div>
+                    <div>
+                        <div id="selected-name" style="font-weight: 600; font-size: 0.9rem;"></div>
+                        <div id="selected-role" style="color: rgba(255,255,255,0.7); font-size: 0.8rem;"></div>
+                    </div>
+                    <button onclick="backToTeamSelection()" style="margin-left: auto; background: rgba(255,255,255,0.1); border: none; color: white; padding: 0.5rem; border-radius: 6px; cursor: pointer;">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                </div>
+                
+                <div style="display: flex; gap: 0.75rem; margin-bottom: 1rem;">
+                    <input type="text" id="team-chat-input" placeholder="Ask your question..." style="flex: 1; padding: 0.75rem; border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; background: rgba(255,255,255,0.05); color: white; outline: none;" onkeypress="if(event.key==='Enter') sendTeamMessage()">
+                    <button onclick="sendTeamMessage()" style="background: #667eea; border: none; color: white; padding: 0.75rem 1rem; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+                
+                <div id="chat-messages" style="max-height: 200px; overflow-y: auto; padding: 0.75rem; background: rgba(0,0,0,0.2); border-radius: 8px; font-size: 0.9rem; line-height: 1.4;">
+                    <div style="color: rgba(255,255,255,0.7); text-align: center; font-style: italic;">Start a conversation with your selected AI specialist...</div>
+                </div>
             </div>
         </div>
     </div>
     
     <script>
     // AI Team launcher functionality
+    let selectedMember = null;
+    
     document.addEventListener('DOMContentLoaded', function() {
         const launcher = document.getElementById('ai-team-launcher');
-        const modal = document.getElementById('simple-ai-team-modal');
+        const modal = document.getElementById('ai-team-modal');
         const tooltip = launcher.querySelector('.launcher-tooltip');
         
         if (launcher) {
             launcher.addEventListener('click', function() {
                 modal.style.display = 'flex';
-                console.log('AI Team launcher clicked - showing modal');
+                showTeamSelection();
+                console.log('AI Team launcher clicked - showing team selection');
             });
             
             launcher.addEventListener('mouseenter', function() {
@@ -5082,16 +5165,224 @@
             console.log('AI Team launcher initialized successfully');
         }
         
-        window.closeAITeamModal = function() {
-            modal.style.display = 'none';
-        };
-        
-        // Close modal when clicking outside
-        modal.addEventListener('click', function(e) {
-            if (e.target === modal) {
-                modal.style.display = 'none';
+        // Add hover effects to team member cards
+        document.addEventListener('mouseover', function(e) {
+            if (e.target.closest('.team-member-card')) {
+                const card = e.target.closest('.team-member-card');
+                card.style.background = 'rgba(96,165,250,0.15)';
+                card.style.borderColor = 'rgba(96,165,250,0.3)';
+                card.style.transform = 'translateY(-2px)';
             }
         });
+        
+        document.addEventListener('mouseout', function(e) {
+            if (e.target.closest('.team-member-card')) {
+                const card = e.target.closest('.team-member-card');
+                if (!card.onclick.toString().includes('auto')) {
+                    card.style.background = 'rgba(255,255,255,0.05)';
+                    card.style.borderColor = 'rgba(255,255,255,0.1)';
+                } else {
+                    card.style.background = 'rgba(96,165,250,0.1)';
+                    card.style.borderColor = 'rgba(96,165,250,0.2)';
+                }
+                card.style.transform = 'translateY(0)';
+            }
+        });
+    });
+    
+    function closeAITeamModal() {
+        const modal = document.getElementById('ai-team-modal');
+        modal.style.display = 'none';
+        showTeamSelection();
+    }
+    
+    function showTeamSelection() {
+        document.getElementById('team-members-container').parentElement.style.display = 'block';
+        document.getElementById('chat-interface').style.display = 'none';
+    }
+    
+    function selectTeamMember(memberType) {
+        selectedMember = memberType;
+        console.log('Selected team member:', memberType);
+        
+        // Hide team selection, show chat interface
+        document.getElementById('team-members-container').parentElement.style.display = 'none';
+        document.getElementById('chat-interface').style.display = 'block';
+        
+        // Update selected member info
+        const avatar = document.getElementById('selected-avatar');
+        const name = document.getElementById('selected-name');
+        const role = document.getElementById('selected-role');
+        const messages = document.getElementById('chat-messages');
+        
+        let memberData = {};
+        
+        switch(memberType) {
+            case 'auto':
+                memberData = {
+                    name: 'Smart Auto-Route',
+                    role: 'AI will choose the best specialist',
+                    avatar: '<i class="fas fa-robot" style="color: white;"></i>',
+                    background: 'linear-gradient(135deg, #667eea, #764ba2)',
+                    greeting: 'Hi! I\'ll analyze your question and connect you with the right specialist. What can I help you with?'
+                };
+                break;
+            case 'sarah':
+                memberData = {
+                    name: 'Sarah Chen',
+                    role: 'AI Market Analyst',
+                    avatar: '<i class="fas fa-chart-line" style="color: white;"></i>',
+                    background: 'linear-gradient(135deg, #00D4AA, #007AFF)',
+                    greeting: 'Hello! I\'m Sarah, your AI Market Analyst. I can help with trading strategies, market insights, and stock analysis. What would you like to explore?'
+                };
+                break;
+            case 'alex':
+                memberData = {
+                    name: 'Alex Rodriguez',
+                    role: 'Technical Support Specialist',
+                    avatar: '<i class="fas fa-tools" style="color: white;"></i>',
+                    background: 'linear-gradient(135deg, #FF6B35, #F7931E)',
+                    greeting: 'Hey there! I\'m Alex, your Technical Support specialist. I can help with platform issues, account problems, and feature guidance. How can I assist you today?'
+                };
+                break;
+            case 'maria':
+                memberData = {
+                    name: 'Maria Santos',
+                    role: 'Customer Success Manager',
+                    avatar: '<i class="fas fa-graduation-cap" style="color: white;"></i>',
+                    background: 'linear-gradient(135deg, #8B5CF6, #A855F7)',
+                    greeting: 'Hi! I\'m Maria, your Customer Success Manager. I\'m here to help you get started, learn new features, and share best practices. What can I help you with?'
+                };
+                break;
+        }
+        
+        // Update UI with selected member
+        avatar.style.background = memberData.background;
+        avatar.innerHTML = memberData.avatar;
+        name.textContent = memberData.name;
+        role.textContent = memberData.role;
+        
+        // Show greeting message
+        messages.innerHTML = `
+            <div style="margin-bottom: 1rem; padding: 0.75rem; background: rgba(96,165,250,0.1); border-radius: 8px; border-left: 3px solid #667eea;">
+                <div style="font-weight: 600; color: #667eea; margin-bottom: 0.25rem;">${memberData.name}</div>
+                <div style="color: rgba(255,255,255,0.9);">${memberData.greeting}</div>
+                <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.5rem;">Just now</div>
+            </div>
+        `;
+        
+        // Focus on input
+        document.getElementById('team-chat-input').focus();
+    }
+    
+    function backToTeamSelection() {
+        showTeamSelection();
+        selectedMember = null;
+    }
+    
+    async function sendTeamMessage() {
+        const input = document.getElementById('team-chat-input');
+        const messages = document.getElementById('chat-messages');
+        const message = input.value.trim();
+        
+        if (!message) return;
+        
+        // Add user message
+        const userMessage = document.createElement('div');
+        userMessage.style.cssText = 'margin-bottom: 1rem; text-align: right;';
+        userMessage.innerHTML = `
+            <div style="display: inline-block; max-width: 80%; padding: 0.75rem; background: rgba(96,165,250,0.2); border-radius: 8px; text-align: left;">
+                <div style="color: white; margin-bottom: 0.25rem;">${message}</div>
+                <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; text-align: right;">Just now</div>
+            </div>
+        `;
+        messages.appendChild(userMessage);
+        
+        input.value = '';
+        messages.scrollTop = messages.scrollHeight;
+        
+        // Show typing indicator
+        const typingIndicator = document.createElement('div');
+        typingIndicator.id = 'typing-indicator';
+        typingIndicator.style.cssText = 'margin-bottom: 1rem; padding: 0.75rem; background: rgba(255,255,255,0.05); border-radius: 8px;';
+        typingIndicator.innerHTML = `
+            <div style="color: rgba(255,255,255,0.7); font-style: italic;">
+                <i class="fas fa-circle" style="font-size: 0.5rem; opacity: 0.5; animation: pulse 1.5s infinite;"></i>
+                <i class="fas fa-circle" style="font-size: 0.5rem; opacity: 0.5; animation: pulse 1.5s infinite 0.3s;"></i>
+                <i class="fas fa-circle" style="font-size: 0.5rem; opacity: 0.5; animation: pulse 1.5s infinite 0.6s;"></i>
+                AI is thinking...
+            </div>
+        `;
+        messages.appendChild(typingIndicator);
+        messages.scrollTop = messages.scrollHeight;
+        
+        try {
+            // Send to AI team backend
+            const response = await fetch('/api/ai-team/query', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    message: message,
+                    member: selectedMember,
+                    context: 'trading_platform'
+                })
+            });
+            
+            const result = await response.json();
+            
+            // Remove typing indicator
+            messages.removeChild(typingIndicator);
+            
+            if (result.success) {
+                // Add AI response
+                const aiMessage = document.createElement('div');
+                aiMessage.style.cssText = 'margin-bottom: 1rem;';
+                aiMessage.innerHTML = `
+                    <div style="padding: 0.75rem; background: rgba(96,165,250,0.1); border-radius: 8px; border-left: 3px solid #667eea;">
+                        <div style="font-weight: 600; color: #667eea; margin-bottom: 0.25rem;">${result.response.member_name}</div>
+                        <div style="color: rgba(255,255,255,0.9); line-height: 1.4;">${result.response.message}</div>
+                        <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.5rem;">Just now</div>
+                    </div>
+                `;
+                messages.appendChild(aiMessage);
+            } else {
+                // Show error message
+                const errorMessage = document.createElement('div');
+                errorMessage.innerHTML = `
+                    <div style="padding: 0.75rem; background: rgba(239,68,68,0.1); border-radius: 8px; border-left: 3px solid #ef4444; color: rgba(255,255,255,0.9);">
+                        Sorry, I'm having trouble connecting right now. Please try again in a moment.
+                    </div>
+                `;
+                messages.appendChild(errorMessage);
+            }
+            
+        } catch (error) {
+            messages.removeChild(typingIndicator);
+            console.error('Error sending message:', error);
+            
+            // Show fallback response
+            const fallbackMessage = document.createElement('div');
+            fallbackMessage.innerHTML = `
+                <div style="padding: 0.75rem; background: rgba(96,165,250,0.1); border-radius: 8px; border-left: 3px solid #667eea;">
+                    <div style="font-weight: 600; color: #667eea; margin-bottom: 0.25rem;">AI Assistant</div>
+                    <div style="color: rgba(255,255,255,0.9);">Thank you for your question! I'm currently processing your request. Our AI team is being enhanced with more capabilities. For now, you can continue using the main search to get AI-powered stock analysis and trading insights.</div>
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.5rem;">Just now</div>
+                </div>
+            `;
+            messages.appendChild(fallbackMessage);
+        }
+        
+        messages.scrollTop = messages.scrollHeight;
+    }
+    
+    // Close modal when clicking outside
+    document.addEventListener('click', function(e) {
+        const modal = document.getElementById('ai-team-modal');
+        if (e.target === modal) {
+            closeAITeamModal();
+        }
     });
     </script>
     
