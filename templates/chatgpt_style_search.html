@@ -88,17 +88,17 @@
             
             <!-- Stock Search Content (default view) -->
             <div id="search-content" class="search-content">
-                <!-- Suggestion Cards -->
-                <div class="suggestion-cards">
-                    <div class="suggestion-card" onclick="searchStock('NVDA')">
+                <!-- Suggestion Cards - Horizontal Layout -->
+                <div class="suggestion-cards horizontal-layout">
+                    <div class="suggestion-card compact" onclick="searchStock('NVDA')">
                         <div class="card-title">Best AI stocks</div>
                         <div class="card-subtitle">for tech portfolio growth</div>
                     </div>
-                    <div class="suggestion-card" onclick="searchStock('TSLA')">
+                    <div class="suggestion-card compact" onclick="searchStock('TSLA')">
                         <div class="card-title">EV leaders</div>
                         <div class="card-subtitle">for sustainable investing</div>
                     </div>
-                    <div class="suggestion-card" onclick="searchStock('AAPL')">
+                    <div class="suggestion-card compact" onclick="searchStock('AAPL')">
                         <div class="card-title">Blue chip stocks</div>
                         <div class="card-subtitle">for stable returns</div>
                     </div>
@@ -431,6 +431,35 @@
         margin-bottom: 2rem;
     }
 
+    /* Horizontal Layout for Compact Display */
+    .suggestion-cards.horizontal-layout {
+        flex-direction: row;
+        flex-wrap: wrap;
+        max-width: 100%;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .suggestion-card.compact {
+        flex: 1;
+        min-width: 120px;
+        max-width: 160px;
+        padding: 0.75rem;
+    }
+
+    .suggestion-card.compact .card-title {
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-bottom: 0.2rem;
+        line-height: 1.2;
+    }
+
+    .suggestion-card.compact .card-subtitle {
+        font-size: 0.7rem;
+        color: rgba(255, 255, 255, 0.5);
+        line-height: 1.2;
+    }
+
     .suggestion-card {
         background: rgba(255, 255, 255, 0.05);
         border: 1px solid rgba(255, 255, 255, 0.1);
@@ -760,6 +789,23 @@
         
         .suggestion-cards {
             max-width: 100%;
+        }
+
+        .suggestion-cards.horizontal-layout {
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .suggestion-card.compact {
+            max-width: 100%;
+            flex: none;
+        }
+    }
+
+    @media (min-width: 481px) and (max-width: 768px) {
+        .suggestion-card.compact {
+            min-width: 140px;
+            max-width: 180px;
         }
     }
     </style>
