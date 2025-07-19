@@ -133,6 +133,8 @@
                                 <span class="theme-pill" onclick="event.stopPropagation(); searchStock('NVDA')">AI</span>
                                 <span class="theme-pill" onclick="event.stopPropagation(); searchStock('TSLA')">EV</span>
                                 <span class="theme-pill" onclick="event.stopPropagation(); searchStock('AAPL')">Blue Chip</span>
+                                <span class="theme-pill" onclick="event.stopPropagation(); searchTheme('ESG')">ESG</span>
+                                <span class="theme-pill-more">+9 more</span>
                             </div>
                         </div>
                         <div class="themes-right">
@@ -143,17 +145,203 @@
                     <!-- Expanded Themes Content (hidden by default) -->
                     <div id="themes-expanded-content" class="themes-expanded-content" style="display: none;">
                         <div class="suggestion-cards">
-                            <div class="suggestion-card" onclick="searchStock('NVDA')">
-                                <div class="card-title">Best AI stocks</div>
-                                <div class="card-subtitle">for tech portfolio growth</div>
+                            <div class="suggestion-card ai-theme" onclick="searchTheme('AI')">
+                                <div class="card-icon"><i class="fas fa-robot"></i></div>
+                                <div class="card-content">
+                                    <div class="card-title">Artificial Intelligence</div>
+                                    <div class="card-subtitle">Next-gen tech revolutionizing industries</div>
+                                    <div class="card-performance">+127% YTD</div>
+                                </div>
                             </div>
-                            <div class="suggestion-card" onclick="searchStock('TSLA')">
-                                <div class="card-title">EV leaders</div>
-                                <div class="card-subtitle">for sustainable investing</div>
+                            <div class="suggestion-card ev-theme" onclick="searchTheme('EV')">
+                                <div class="card-icon"><i class="fas fa-car-battery"></i></div>
+                                <div class="card-content">
+                                    <div class="card-title">Electric Vehicles</div>
+                                    <div class="card-subtitle">Sustainable transportation leaders</div>
+                                    <div class="card-performance">+89% YTD</div>
+                                </div>
                             </div>
-                            <div class="suggestion-card" onclick="searchStock('AAPL')">
-                                <div class="card-title">Blue chip stocks</div>
-                                <div class="card-subtitle">for stable returns</div>
+                            <div class="suggestion-card crypto-theme" onclick="searchTheme('Crypto')">
+                                <div class="card-icon"><i class="fas fa-coins"></i></div>
+                                <div class="card-content">
+                                    <div class="card-title">Cryptocurrency</div>
+                                    <div class="card-subtitle">Digital asset ecosystem</div>
+                                    <div class="card-performance">+156% YTD</div>
+                                </div>
+                            </div>
+                            <div class="suggestion-card biotech-theme" onclick="searchTheme('Biotech')">
+                                <div class="card-icon"><i class="fas fa-dna"></i></div>
+                                <div class="card-content">
+                                    <div class="card-title">Biotechnology</div>
+                                    <div class="card-subtitle">Healthcare innovation pipeline</div>
+                                    <div class="card-performance">+67% YTD</div>
+                                </div>
+                            </div>
+                            <div class="suggestion-card fintech-theme" onclick="searchTheme('Fintech')">
+                                <div class="card-icon"><i class="fas fa-credit-card"></i></div>
+                                <div class="card-content">
+                                    <div class="card-title">Financial Technology</div>
+                                    <div class="card-subtitle">Digital banking revolution</div>
+                                    <div class="card-performance">+45% YTD</div>
+                                </div>
+                            </div>
+                            <div class="suggestion-card cloud-theme" onclick="searchTheme('Cloud')">
+                                <div class="card-icon"><i class="fas fa-cloud"></i></div>
+                                <div class="card-content">
+                                    <div class="card-title">Cloud Computing</div>
+                                    <div class="card-subtitle">Enterprise digital transformation</div>
+                                    <div class="card-performance">+78% YTD</div>
+                                </div>
+                            </div>
+                            <div class="suggestion-card space-theme" onclick="searchTheme('Space')">
+                                <div class="card-icon"><i class="fas fa-rocket"></i></div>
+                                <div class="card-content">
+                                    <div class="card-title">Space Technology</div>
+                                    <div class="card-subtitle">Commercial space exploration</div>
+                                    <div class="card-performance">+112% YTD</div>
+                                </div>
+                            </div>
+                            <div class="suggestion-card energy-theme" onclick="searchTheme('CleanEnergy')">
+                                <div class="card-icon"><i class="fas fa-solar-panel"></i></div>
+                                <div class="card-content">
+                                    <div class="card-title">Clean Energy</div>
+                                    <div class="card-subtitle">Renewable power infrastructure</div>
+                                    <div class="card-performance">+92% YTD</div>
+                                </div>
+                            </div>
+                            <div class="suggestion-card gaming-theme" onclick="searchTheme('Gaming')">
+                                <div class="card-icon"><i class="fas fa-gamepad"></i></div>
+                                <div class="card-content">
+                                    <div class="card-title">Gaming & Esports</div>
+                                    <div class="card-subtitle">Interactive entertainment growth</div>
+                                    <div class="card-performance">+34% YTD</div>
+                                </div>
+                            </div>
+                            <div class="suggestion-card esg-theme" onclick="searchTheme('ESG')">
+                                <div class="card-icon"><i class="fas fa-leaf"></i></div>
+                                <div class="card-content">
+                                    <div class="card-title">ESG Investing</div>
+                                    <div class="card-subtitle">Sustainable & responsible companies</div>
+                                    <div class="card-performance">+56% YTD</div>
+                                </div>
+                            </div>
+                            <div class="suggestion-card defensive-theme" onclick="searchTheme('Defensive')">
+                                <div class="card-icon"><i class="fas fa-shield-alt"></i></div>
+                                <div class="card-content">
+                                    <div class="card-title">Defensive Stocks</div>
+                                    <div class="card-subtitle">Stable dividend-paying companies</div>
+                                    <div class="card-performance">+23% YTD</div>
+                                </div>
+                            </div>
+                            <div class="suggestion-card emerging-theme" onclick="searchTheme('Emerging')">
+                                <div class="card-icon"><i class="fas fa-globe-asia"></i></div>
+                                <div class="card-content">
+                                    <div class="card-title">Emerging Markets</div>
+                                    <div class="card-subtitle">High-growth developing economies</div>
+                                    <div class="card-performance">+43% YTD</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Market Insights Dropdown -->
+                <div class="market-insights-condensed">
+                    <div class="insights-indicator" onclick="toggleInsightsExpanded()">
+                        <div class="insights-left">
+                            <i class="fas fa-chart-line" style="color: #00D4AA; font-size: 0.9rem;"></i>
+                            <span class="insights-label">Market Insights</span>
+                            <div class="insight-pills">
+                                <span class="insight-pill live">Live</span>
+                                <span class="insight-pill trend">Trending</span>
+                                <span class="insight-pill risk">Risk Alert</span>
+                            </div>
+                        </div>
+                        <div class="insights-right">
+                            <i class="fas fa-chevron-down expand-icon" id="insights-expand-icon"></i>
+                        </div>
+                    </div>
+                    
+                    <!-- Expanded Insights Content -->
+                    <div id="insights-expanded-content" class="insights-expanded-content" style="display: none;">
+                        <div class="insight-cards">
+                            <div class="insight-card market-card">
+                                <div class="insight-header">
+                                    <i class="fas fa-chart-area"></i>
+                                    <span>Market Overview</span>
+                                    <span class="live-indicator">LIVE</span>
+                                </div>
+                                <div class="insight-content">
+                                    <div class="market-stats">
+                                        <div class="stat">
+                                            <span class="stat-label">S&P 500</span>
+                                            <span class="stat-value positive">+0.8%</span>
+                                        </div>
+                                        <div class="stat">
+                                            <span class="stat-label">NASDAQ</span>
+                                            <span class="stat-value positive">+1.2%</span>
+                                        </div>
+                                        <div class="stat">
+                                            <span class="stat-label">VIX</span>
+                                            <span class="stat-value neutral">16.4</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="insight-card trending-card">
+                                <div class="insight-header">
+                                    <i class="fas fa-fire"></i>
+                                    <span>Trending Now</span>
+                                    <span class="trend-indicator">HOT</span>
+                                </div>
+                                <div class="insight-content">
+                                    <div class="trending-list">
+                                        <div class="trending-item" onclick="searchStock('NVDA')">
+                                            <span class="symbol">NVDA</span>
+                                            <span class="trend-change">+8.7%</span>
+                                        </div>
+                                        <div class="trending-item" onclick="searchStock('TSLA')">
+                                            <span class="symbol">TSLA</span>
+                                            <span class="trend-change">+5.2%</span>
+                                        </div>
+                                        <div class="trending-item" onclick="searchStock('AAPL')">
+                                            <span class="symbol">AAPL</span>
+                                            <span class="trend-change">+2.1%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="insight-card ai-card">
+                                <div class="insight-header">
+                                    <i class="fas fa-brain"></i>
+                                    <span>AI Predictions</span>
+                                    <span class="confidence-indicator">89% confident</span>
+                                </div>
+                                <div class="insight-content">
+                                    <div class="prediction-text">
+                                        Tech sector showing strong momentum. AI-driven stocks expected to outperform through Q4.
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="insight-card risk-card">
+                                <div class="insight-header">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    <span>Risk Alerts</span>
+                                    <span class="risk-indicator">2 active</span>
+                                </div>
+                                <div class="insight-content">
+                                    <div class="risk-list">
+                                        <div class="risk-item moderate">
+                                            <span class="risk-text">Bond yields rising - monitor duration risk</span>
+                                        </div>
+                                        <div class="risk-item low">
+                                            <span class="risk-text">Crypto volatility elevated this week</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -597,6 +785,341 @@
         color: rgba(255, 255, 255, 0.6);
         font-size: 0.75rem;
         line-height: 1.3;
+    }
+
+    /* Enhanced Theme Cards Styling */
+    .themes-expanded-content .suggestion-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 0.75rem;
+        padding: 1rem;
+        max-height: 400px;
+        overflow-y: auto;
+    }
+
+    .themes-expanded-content .suggestion-card {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(96, 165, 250, 0.1);
+        border-radius: 12px;
+        padding: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        position: relative;
+        overflow: hidden;
+        text-align: left;
+    }
+
+    .themes-expanded-content .suggestion-card:before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, #00D4AA, #007AFF);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .themes-expanded-content .suggestion-card:hover {
+        background: rgba(96, 165, 250, 0.05);
+        border-color: rgba(96, 165, 250, 0.2);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .themes-expanded-content .suggestion-card:hover:before {
+        opacity: 1;
+    }
+
+    .card-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        background: linear-gradient(135deg, #00D4AA, #007AFF);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.1rem;
+        flex-shrink: 0;
+    }
+
+    .card-content {
+        flex: 1;
+    }
+
+    .themes-expanded-content .card-title {
+        color: white;
+        font-weight: 600;
+        font-size: 0.95rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .themes-expanded-content .card-subtitle {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 0.8rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .card-performance {
+        color: #00D4AA;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+
+    .theme-pill-more {
+        background: rgba(255, 255, 255, 0.1);
+        color: rgba(255, 255, 255, 0.6);
+        padding: 0.25rem 0.5rem;
+        border-radius: 12px;
+        font-size: 0.7rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .theme-pill-more:hover {
+        background: rgba(255, 255, 255, 0.15);
+        color: rgba(255, 255, 255, 0.8);
+    }
+
+    /* Market Insights Styling */
+    .market-insights-condensed {
+        background: rgba(255, 255, 255, 0.02);
+        border-radius: 12px;
+        border: 1px solid rgba(0, 212, 170, 0.15);
+        margin-bottom: 1rem;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .insights-indicator {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem 1rem;
+        cursor: pointer;
+        background: rgba(0, 212, 170, 0.03);
+        transition: all 0.3s ease;
+    }
+
+    .insights-indicator:hover {
+        background: rgba(0, 212, 170, 0.06);
+    }
+
+    .insights-left {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        flex: 1;
+    }
+
+    .insights-label {
+        color: white;
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    .insight-pills {
+        display: flex;
+        gap: 0.4rem;
+    }
+
+    .insight-pill {
+        padding: 0.2rem 0.5rem;
+        border-radius: 10px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .insight-pill.live {
+        background: rgba(239, 68, 68, 0.2);
+        color: #ef4444;
+    }
+
+    .insight-pill.trend {
+        background: rgba(249, 115, 22, 0.2);
+        color: #f97316;
+    }
+
+    .insight-pill.risk {
+        background: rgba(234, 179, 8, 0.2);
+        color: #eab308;
+    }
+
+    .insights-expanded-content {
+        padding: 0;
+        animation: slideDown 0.3s ease-out;
+    }
+
+    .insight-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 0.75rem;
+        padding: 1rem;
+        max-height: 350px;
+        overflow-y: auto;
+    }
+
+    .insight-card {
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 10px;
+        padding: 0.75rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .insight-header {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.75rem;
+        color: white;
+        font-weight: 600;
+        font-size: 0.85rem;
+    }
+
+    .live-indicator {
+        background: #ef4444;
+        color: white;
+        padding: 0.1rem 0.4rem;
+        border-radius: 8px;
+        font-size: 0.6rem;
+        margin-left: auto;
+    }
+
+    .trend-indicator {
+        background: #f97316;
+        color: white;
+        padding: 0.1rem 0.4rem;
+        border-radius: 8px;
+        font-size: 0.6rem;
+        margin-left: auto;
+    }
+
+    .confidence-indicator {
+        background: #00D4AA;
+        color: white;
+        padding: 0.1rem 0.4rem;
+        border-radius: 8px;
+        font-size: 0.6rem;
+        margin-left: auto;
+    }
+
+    .risk-indicator {
+        background: #eab308;
+        color: white;
+        padding: 0.1rem 0.4rem;
+        border-radius: 8px;
+        font-size: 0.6rem;
+        margin-left: auto;
+    }
+
+    .market-stats {
+        display: flex;
+        justify-content: space-between;
+        gap: 0.5rem;
+    }
+
+    .stat {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        flex: 1;
+    }
+
+    .stat-label {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 0.7rem;
+        margin-bottom: 0.2rem;
+    }
+
+    .stat-value {
+        color: white;
+        font-weight: 600;
+        font-size: 0.8rem;
+    }
+
+    .stat-value.positive {
+        color: #00D4AA;
+    }
+
+    .stat-value.negative {
+        color: #ef4444;
+    }
+
+    .stat-value.neutral {
+        color: white;
+    }
+
+    .trending-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+    }
+
+    .trending-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.3rem 0.5rem;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .trending-item:hover {
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    .symbol {
+        color: white;
+        font-weight: 600;
+        font-size: 0.8rem;
+    }
+
+    .trend-change {
+        color: #00D4AA;
+        font-weight: 600;
+        font-size: 0.8rem;
+    }
+
+    .prediction-text {
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 0.8rem;
+        line-height: 1.4;
+    }
+
+    .risk-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+    }
+
+    .risk-item {
+        padding: 0.4rem;
+        border-radius: 6px;
+        border-left: 3px solid;
+    }
+
+    .risk-item.moderate {
+        background: rgba(249, 115, 22, 0.1);
+        border-color: #f97316;
+    }
+
+    .risk-item.low {
+        background: rgba(234, 179, 8, 0.1);
+        border-color: #eab308;
+    }
+
+    .risk-text {
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 0.75rem;
     }
 
     /* Mobile optimization for themes */
@@ -1683,6 +2206,150 @@
             expandedContent.style.display = 'none';
             expandIcon.classList.remove('expanded');
         }
+    }
+
+    // Toggle insights expanded/condensed view
+    let insightsExpanded = false;
+    
+    function toggleInsightsExpanded() {
+        const expandedContent = document.getElementById('insights-expanded-content');
+        const expandIcon = document.getElementById('insights-expand-icon');
+        
+        insightsExpanded = !insightsExpanded;
+        
+        if (insightsExpanded) {
+            expandedContent.style.display = 'block';
+            expandIcon.classList.add('expanded');
+        } else {
+            expandedContent.style.display = 'none';
+            expandIcon.classList.remove('expanded');
+        }
+    }
+
+    // Search investment themes
+    function searchTheme(themeName) {
+        showLoadingState('Loading ' + themeName + ' investment theme...');
+        
+        setTimeout(() => {
+            hideLoadingState();
+            
+            const themeCard = document.createElement('div');
+            themeCard.className = 'stock-result theme-result';
+            themeCard.innerHTML = `
+                <div class="stock-header">
+                    <div>
+                        <div class="stock-symbol">${themeName} Investment Theme</div>
+                        <div class="stock-name">Curated investment opportunities</div>
+                    </div>
+                    <div class="theme-performance">
+                        <div class="price-change positive">
+                            <span class="performance-text">+${getThemePerformance(themeName)}% YTD</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stock-metrics">
+                    <div class="metric">
+                        <div class="metric-label">Top Holdings</div>
+                        <div class="metric-value">${getThemeStocks(themeName).join(', ')}</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Market Focus</div>
+                        <div class="metric-value">${getThemeDescription(themeName)}</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Risk Level</div>
+                        <div class="metric-value">${getThemeRisk(themeName)}</div>
+                    </div>
+                </div>
+                
+                <div class="ai-analysis">
+                    <div class="analysis-header">
+                        <i class="fas fa-brain"></i>
+                        <span>AI Theme Analysis</span>
+                        <span class="confidence-badge">90% confident</span>
+                    </div>
+                    <div class="analysis-content">
+                        <p>${getThemeAnalysis(themeName)}</p>
+                    </div>
+                </div>
+                
+                <div class="stock-actions">
+                    <button class="action-btn primary" onclick="exploreTheme('${themeName}')">
+                        <i class="fas fa-search"></i>
+                        Explore Theme
+                    </button>
+                    <button class="action-btn secondary" onclick="addThemeToWatchlist('${themeName}')">
+                        <i class="fas fa-bookmark"></i>
+                        Add to Watchlist
+                    </button>
+                </div>
+            `;
+            
+            const resultsContainer = document.getElementById('search-results');
+            resultsContainer.innerHTML = '';
+            resultsContainer.appendChild(themeCard);
+            resultsContainer.scrollIntoView({ behavior: 'smooth' });
+        }, 1500);
+    }
+
+    function getThemePerformance(theme) {
+        const performances = {
+            'AI': '127', 'EV': '89', 'Crypto': '156', 'Biotech': '67',
+            'Fintech': '45', 'Cloud': '78', 'Space': '112', 'CleanEnergy': '92',
+            'Gaming': '34', 'ESG': '56', 'Defensive': '23', 'Emerging': '43'
+        };
+        return performances[theme] || '75';
+    }
+
+    function getThemeStocks(theme) {
+        const stocks = {
+            'AI': ['NVDA', 'GOOGL', 'MSFT', 'META'],
+            'EV': ['TSLA', 'NIO', 'RIVN', 'LCID'],
+            'Crypto': ['COIN', 'MSTR', 'RIOT', 'MARA'],
+            'Biotech': ['MRNA', 'GILD', 'BIIB', 'VRTX'],
+            'Fintech': ['SQ', 'PYPL', 'SOFI', 'AFRM'],
+            'Cloud': ['CRM', 'SNOW', 'PLTR', 'NET']
+        };
+        return stocks[theme] || ['AAPL', 'MSFT', 'GOOGL', 'AMZN'];
+    }
+
+    function getThemeDescription(theme) {
+        const descriptions = {
+            'AI': 'Machine learning and automation technologies',
+            'EV': 'Electric vehicles and charging infrastructure',
+            'Crypto': 'Digital assets and blockchain technology',
+            'Biotech': 'Drug development and medical innovation',
+            'Fintech': 'Digital payments and financial services',
+            'Cloud': 'Cloud computing and enterprise software'
+        };
+        return descriptions[theme] || 'Diversified growth opportunities';
+    }
+
+    function getThemeRisk(theme) {
+        const risks = {
+            'AI': 'Medium-High', 'EV': 'High', 'Crypto': 'Very High',
+            'Biotech': 'High', 'Fintech': 'Medium-High', 'Cloud': 'Medium'
+        };
+        return risks[theme] || 'Medium';
+    }
+
+    function getThemeAnalysis(theme) {
+        const analyses = {
+            'AI': 'The artificial intelligence sector continues to show exceptional growth potential. Major tech companies are investing billions in AI infrastructure.',
+            'EV': 'Electric vehicle adoption is accelerating globally, driven by environmental regulations and improving battery technology.',
+            'Crypto': 'Cryptocurrency markets remain volatile but institutional adoption continues growing steadily.',
+            'Biotech': 'Biotechnology companies are at the forefront of medical innovation with breakthrough therapies.'
+        };
+        return analyses[theme] || 'This investment theme offers diversified exposure to emerging growth trends with strong long-term potential.';
+    }
+
+    function exploreTheme(theme) {
+        alert(`Exploring ${theme} theme in detail - feature coming soon!`);
+    }
+
+    function addThemeToWatchlist(theme) {
+        alert(`${theme} theme added to your watchlist!`);
     }
     </script>
 
