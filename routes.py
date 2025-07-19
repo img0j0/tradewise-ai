@@ -3481,3 +3481,80 @@ def premium_features():
             }
         }
     })
+
+# Institutional Features API Endpoints
+@app.route('/api/institutional/smart-order-routing/<symbol>')
+@login_required
+def institutional_smart_order_routing(symbol):
+    """Smart Order Routing analysis for institutional users"""
+    try:
+        # Check premium status (simulated for demo)
+        quantity = request.args.get('quantity', 100, type=int)
+        
+        # Get Smart Order Routing analysis
+        analysis = smart_order_router.analyze_execution(symbol, quantity)
+        
+        return jsonify(analysis)
+        
+    except Exception as e:
+        logger.error(f"Error in smart order routing for {symbol}: {e}")
+        return jsonify({'error': 'Smart order routing analysis failed'}), 500
+
+@app.route('/api/institutional/level2-data/<symbol>')
+@login_required  
+def institutional_level2_data(symbol):
+    """Level 2 market data for institutional users"""
+    try:
+        # Get Level 2 data
+        level2_data_result = level2_data.get_order_book(symbol)
+        
+        return jsonify(level2_data_result)
+        
+    except Exception as e:
+        logger.error(f"Error getting Level 2 data for {symbol}: {e}")
+        return jsonify({'error': 'Level 2 data retrieval failed'}), 500
+
+@app.route('/api/institutional/options-flow/<symbol>')
+@login_required
+def institutional_options_flow(symbol):
+    """Options flow analysis for institutional users"""
+    try:
+        # Get options flow analysis
+        options_analysis = options_flow.analyze_unusual_activity(symbol)
+        
+        return jsonify(options_analysis)
+        
+    except Exception as e:
+        logger.error(f"Error in options flow analysis for {symbol}: {e}")
+        return jsonify({'error': 'Options flow analysis failed'}), 500
+
+@app.route('/api/institutional/dark-pools/<symbol>')
+@login_required
+def institutional_dark_pools(symbol):
+    """Dark pool intelligence for institutional users"""
+    try:
+        # Get dark pool analysis
+        dark_pool_analysis = dark_pool_analyzer.analyze_activity(symbol)
+        
+        return jsonify(dark_pool_analysis)
+        
+    except Exception as e:
+        logger.error(f"Error in dark pool analysis for {symbol}: {e}")
+        return jsonify({'error': 'Dark pool analysis failed'}), 500
+
+@app.route('/api/institutional/algorithm-builder', methods=['POST'])
+@login_required
+def institutional_algorithm_builder():
+    """Algorithm builder for institutional users"""
+    try:
+        data = request.get_json()
+        strategy_config = data.get('strategy', {})
+        
+        # Create and backtest algorithm
+        algorithm_result = algorithmic_engine.create_and_backtest(strategy_config)
+        
+        return jsonify(algorithm_result)
+        
+    except Exception as e:
+        logger.error(f"Error in algorithm builder: {e}")
+        return jsonify({'error': 'Algorithm creation failed'}), 500
