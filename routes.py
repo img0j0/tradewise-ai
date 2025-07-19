@@ -74,6 +74,9 @@ risk_management = institutional_features['risk_management']
 # Dark pool intelligence services
 dark_pool_analyzer = dark_pool_intelligence['dark_pool_analyzer']
 
+# Import account settings manager
+from account_settings import account_settings_manager
+
 # Initialize watchlist manager
 from watchlist_manager import WatchlistManager
 watchlist_manager = WatchlistManager()
@@ -185,7 +188,7 @@ def settings():
     """User account settings page"""
     if not current_user.is_authenticated:
         return redirect(url_for('login'))
-    return render_template('user_settings.html')
+    return render_template('account_settings.html')
 
 # Content-only endpoints for iframe embedding
 @app.route('/dashboard_content')
@@ -4481,3 +4484,135 @@ def ai_team_members_list():
     except Exception as e:
         logger.error(f"Error getting AI team members: {e}")
         return jsonify({'error': str(e)}), 500
+
+# ============================================================================
+# ACCOUNT SETTINGS API ENDPOINTS
+# ============================================================================
+
+@app.route('/api/account/profile', methods=['GET'])
+@login_required
+def get_user_profile():
+    """Get user profile information"""
+    try:
+        profile_data = account_settings_manager.get_user_profile(current_user.id)
+        return jsonify(profile_data)
+    except Exception as e:
+        logger.error(f"Error getting user profile: {e}")
+        return jsonify({'error': 'Failed to load profile'}), 500
+
+@app.route('/api/account/profile', methods=['PUT'])
+@login_required
+def update_user_profile():
+    """Update user profile information"""
+    try:
+        data = request.get_json()
+        result = account_settings_manager.update_profile(current_user.id, data)
+        return jsonify(result)
+    except Exception as e:
+        logger.error(f"Error updating user profile: {e}")
+        return jsonify({'success': False, 'error': 'Failed to update profile'}), 500
+
+@app.route('/api/account/payment-methods', methods=['GET'])
+@login_required
+def get_payment_methods():
+    """Get user's payment methods"""
+    try:
+        payment_data = account_settings_manager.get_payment_methods(current_user.id)
+        return jsonify(payment_data)
+    except Exception as e:
+        logger.error(f"Error getting payment methods: {e}")
+        return jsonify({'success': False, 'error': 'Failed to load payment methods'}), 500
+
+@app.route('/api/account/payment-methods', methods=['POST'])
+@login_required
+def add_payment_method():
+    """Add new payment method"""
+    try:
+        data = request.get_json()
+        result = account_settings_manager.add_payment_method(current_user.id, data)
+        return jsonify(result)
+    except Exception as e:
+        logger.error(f"Error adding payment method: {e}")
+        return jsonify({'success': False, 'error': 'Failed to add payment method'}), 500
+
+@app.route('/api/account/payment-methods/<payment_method_id>', methods=['DELETE'])
+@login_required
+def remove_payment_method(payment_method_id):
+    """Remove payment method"""
+    try:
+        result = account_settings_manager.remove_payment_method(current_user.id, payment_method_id)
+        return jsonify(result)
+    except Exception as e:
+        logger.error(f"Error removing payment method: {e}")
+        return jsonify({'success': False, 'error': 'Failed to remove payment method'}), 500
+
+@app.route('/api/account/security', methods=['PUT'])
+@login_required
+def update_security_settings():
+    """Update security settings"""
+    try:
+        data = request.get_json()
+        result = account_settings_manager.update_security_settings(current_user.id, data)
+        return jsonify(result)
+    except Exception as e:
+        logger.error(f"Error updating security settings: {e}")
+        return jsonify({'success': False, 'error': 'Failed to update security settings'}), 500
+
+@app.route('/api/account/subscription', methods=['GET'])
+@login_required
+def get_subscription_details():
+    """Get subscription details"""
+    try:
+        subscription_data = account_settings_manager.get_subscription_details(current_user.id)
+        return jsonify(subscription_data)
+    except Exception as e:
+        logger.error(f"Error getting subscription details: {e}")
+        return jsonify({'success': False, 'error': 'Failed to load subscription details'}), 500
+
+@app.route('/api/account/subscription', methods=['PUT'])
+@login_required
+def change_subscription():
+    """Change subscription plan"""
+    try:
+        data = request.get_json()
+        new_plan = data.get('plan')
+        result = account_settings_manager.change_subscription(current_user.id, new_plan)
+        return jsonify(result)
+    except Exception as e:
+        logger.error(f"Error changing subscription: {e}")
+        return jsonify({'success': False, 'error': 'Failed to change subscription'}), 500
+
+@app.route('/api/account/notifications', methods=['GET'])
+@login_required
+def get_notification_preferences():
+    """Get notification preferences"""
+    try:
+        preferences_data = account_settings_manager.get_notification_preferences(current_user.id)
+        return jsonify(preferences_data)
+    except Exception as e:
+        logger.error(f"Error getting notification preferences: {e}")
+        return jsonify({'success': False, 'error': 'Failed to load preferences'}), 500
+
+@app.route('/api/account/notifications', methods=['PUT'])
+@login_required
+def update_notification_preferences():
+    """Update notification preferences"""
+    try:
+        data = request.get_json()
+        result = account_settings_manager.update_notification_preferences(current_user.id, data)
+        return jsonify(result)
+    except Exception as e:
+        logger.error(f"Error updating notification preferences: {e}")
+        return jsonify({'success': False, 'error': 'Failed to update preferences'}), 500
+
+@app.route('/api/account/delete', methods=['POST'])
+@login_required
+def delete_account():
+    """Delete user account"""
+    try:
+        data = request.get_json()
+        result = account_settings_manager.delete_account(current_user.id, data)
+        return jsonify(result)
+    except Exception as e:
+        logger.error(f"Error deleting account: {e}")
+        return jsonify({'success': False, 'error': 'Failed to delete account'}), 500
