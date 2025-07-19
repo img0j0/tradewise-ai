@@ -28,6 +28,8 @@
             background: linear-gradient(135deg, var(--bg-secondary), #2A2B35);
             padding: 2rem 0;
             border-bottom: 1px solid var(--border-color);
+            position: relative;
+            padding-top: 4rem;
         }
 
         .feature-card {
@@ -141,18 +143,19 @@
         }
 
         .back-button {
-            position: fixed;
-            top: 1rem;
+            position: absolute;
+            top: 1.5rem;
             left: 1rem;
             background: rgba(255, 255, 255, 0.1);
             border: 1px solid var(--border-color);
             border-radius: 12px;
-            padding: 0.75rem;
+            padding: 0.6rem 1rem;
             color: var(--text-primary);
             text-decoration: none;
             backdrop-filter: blur(20px);
             z-index: 1000;
             transition: all 0.3s ease;
+            font-size: 0.9rem;
         }
 
         .back-button:hover {
@@ -176,6 +179,14 @@
         @media (max-width: 768px) {
             .institutional-header {
                 padding: 1rem 0;
+                padding-top: 3.5rem;
+            }
+            
+            .back-button {
+                top: 1rem;
+                left: 0.5rem;
+                padding: 0.5rem 0.75rem;
+                font-size: 0.85rem;
             }
             
             .feature-card {
