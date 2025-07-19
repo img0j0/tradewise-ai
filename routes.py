@@ -740,8 +740,9 @@ def calculate_portfolio_performance():
             'avg_confidence': 0
         }
 
-# Import comprehensive advisor
+# Import comprehensive advisor and market predictor
 from comprehensive_ai_advisor import comprehensive_advisor
+from ai_market_predictor import ai_market_predictor
 
 # AI Assistant Routes
 @app.route('/api/stock-analysis/<symbol>')
@@ -3584,3 +3585,32 @@ def institutional_algorithm_builder():
 def institutional_features_page():
     """Institutional features page for professional trading tools"""
     return render_template('institutional_features_new.html')
+
+@app.route('/api/market-predictions')
+def get_market_predictions():
+    """Get AI-powered market predictions for top stocks"""
+    try:
+        # Get predictions for popular stocks
+        symbols = request.args.get('symbols', 'AAPL,MSFT,GOOGL,TSLA,NVDA,AMZN').split(',')
+        predictions = ai_market_predictor.get_market_predictions(symbols)
+        return jsonify(predictions)
+    except Exception as e:
+        logger.error(f"Error getting market predictions: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/stock-forecast/<symbol>')
+def get_stock_forecast(symbol):
+    """Get detailed AI forecast for a specific stock"""
+    try:
+        predictions = ai_market_predictor.get_market_predictions([symbol.upper()])
+        if predictions['success'] and symbol.upper() in predictions['predictions']:
+            return jsonify({
+                'success': True,
+                'forecast': predictions['predictions'][symbol.upper()],
+                'generated_at': predictions['generated_at']
+            })
+        else:
+            return jsonify({'success': False, 'error': 'Unable to generate forecast'}), 404
+    except Exception as e:
+        logger.error(f"Error getting stock forecast for {symbol}: {str(e)}")
+        return jsonify({'error': str(e)}), 500
