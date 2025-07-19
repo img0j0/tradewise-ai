@@ -4166,23 +4166,12 @@
     let portfolioVisible = false;
     
     function togglePortfolio() {
-        const portfolioSection = document.getElementById('portfolio-section');
-        const searchContent = document.getElementById('search-content');
-        
         // Close tools dropdown when portfolio is toggled
         document.getElementById('tools-dropdown-menu').classList.remove('show');
         toolsDropdownVisible = false;
         
-        portfolioVisible = !portfolioVisible;
-        
-        if (portfolioVisible) {
-            portfolioSection.style.display = 'block';
-            searchContent.style.display = 'none';
-            loadPortfolioData();
-        } else {
-            portfolioSection.style.display = 'none';
-            searchContent.style.display = 'block';
-        }
+        // Navigate directly to the enhanced portfolio page
+        window.location.href = '/portfolio';
     }
     
     // Tools Dropdown functionality
