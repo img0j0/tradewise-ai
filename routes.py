@@ -4250,6 +4250,30 @@ def training_dashboard():
     """AI Team Training Dashboard"""
     return render_template('ai_training_dashboard.html')
 
+@app.route('/api/ai-team/ui-analysis')
+@login_required
+def get_ui_analysis():
+    """Get comprehensive UI performance analysis and improvement recommendations"""
+    try:
+        from ai_team_ui_improvements import ui_optimizer
+        
+        analysis = ui_optimizer.analyze_ui_performance()
+        improvements = ui_optimizer.generate_ui_improvements()
+        member_improvements = ui_optimizer.get_member_performance_improvements()
+        enhancement_plan = ui_optimizer.generate_ui_enhancement_plan()
+        
+        return jsonify({
+            'success': True,
+            'ui_analysis': analysis,
+            'improvements': improvements,
+            'member_improvements': member_improvements,
+            'enhancement_plan': enhancement_plan
+        })
+        
+    except Exception as e:
+        logger.error(f"Error getting UI analysis: {e}")
+        return jsonify({'error': str(e)}), 500
+
 @app.route('/api/ai-team/members')
 def ai_team_members_list():
     """Get list of available AI team members (public endpoint)"""

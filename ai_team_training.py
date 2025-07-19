@@ -183,7 +183,7 @@ class AITeamTrainer:
                 member=member,
                 user_satisfaction=user_feedback,
                 response_time=1.2,  # Simulated response time
-                confidence=self.member_performance[member]['confidence'],
+                confidence=self.member_performance.get(member, self.member_performance['sarah'])['confidence'],
                 topics=topics,
                 sentiment=sentiment,
                 effectiveness_score=effectiveness_score,
@@ -226,6 +226,11 @@ class AITeamTrainer:
         """Calculate effectiveness score for a response"""
         try:
             score = 0.0
+            
+            # Validate member exists in performance tracking
+            if member not in self.member_performance:
+                logger.warning(f"Unknown member '{member}' - using default performance")
+                member = 'sarah'  # Default fallback
             
             # Base score from member performance
             score += self.member_performance[member]['accuracy'] * 0.4
