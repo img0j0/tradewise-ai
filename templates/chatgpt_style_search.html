@@ -5338,13 +5338,46 @@
             messages.removeChild(typingIndicator);
             
             if (result.success) {
-                // Add AI response
+                // Add AI response with enhanced formatting
                 const aiMessage = document.createElement('div');
                 aiMessage.style.cssText = 'margin-bottom: 1rem;';
+                
+                const response = result.response;
+                let messageContent = response.message;
+                
+                // Add suggested actions if available
+                if (response.suggested_actions && response.suggested_actions.length > 0) {
+                    messageContent += '\n\n🎯 Suggested Actions:\n';
+                    response.suggested_actions.forEach((action, index) => {
+                        messageContent += `${index + 1}. ${action}\n`;
+                    });
+                }
+                
+                // Add troubleshooting steps if available (for Alex)
+                if (response.troubleshooting_steps && response.troubleshooting_steps.length > 0) {
+                    messageContent += '\n\n🔧 Try these steps:\n';
+                    response.troubleshooting_steps.forEach(step => {
+                        messageContent += `• ${step}\n`;
+                    });
+                }
+                
+                // Add quick guides if available (for Maria)
+                if (response.quick_guides && response.quick_guides.length > 0) {
+                    messageContent += '\n\n📚 Quick Guides:\n';
+                    response.quick_guides.forEach(guide => {
+                        messageContent += `• ${guide}\n`;
+                    });
+                }
+                
+                // Add AI confidence if available (for Sarah)
+                if (response.ai_confidence) {
+                    messageContent += `\n\n🤖 AI Analysis Accuracy: ${response.ai_confidence}`;
+                }
+                
                 aiMessage.innerHTML = `
                     <div style="padding: 0.75rem; background: rgba(96,165,250,0.1); border-radius: 8px; border-left: 3px solid #667eea;">
-                        <div style="font-weight: 600; color: #667eea; margin-bottom: 0.25rem;">${result.response.member_name}</div>
-                        <div style="color: rgba(255,255,255,0.9); line-height: 1.4;">${result.response.message}</div>
+                        <div style="font-weight: 600; color: #667eea; margin-bottom: 0.25rem;">${response.member || response.member_name}</div>
+                        <div style="color: rgba(255,255,255,0.9); line-height: 1.4; white-space: pre-line;">${messageContent}</div>
                         <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.5rem;">Just now</div>
                     </div>
                 `;
