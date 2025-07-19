@@ -65,7 +65,7 @@
         
         <!-- Main Content Area -->
         <div class="main-content">
-            <!-- Portfolio Section -->
+            <!-- Enhanced Portfolio Section -->
             <div id="portfolio-section" class="portfolio-section" style="display: none;">
                 <div class="portfolio-header">
                     <h3><i class="fas fa-chart-line" style="font-size: 1.1rem;"></i> Your Portfolio</h3>
@@ -74,25 +74,90 @@
                     </button>
                 </div>
                 
-                <div class="portfolio-summary">
-                    <div class="portfolio-stats">
-                        <div class="stat-item">
-                            <div class="stat-label">Total Value</div>
-                            <div class="stat-value" id="total-portfolio-value">$0.00</div>
+                <!-- Enhanced Portfolio Overview Cards -->
+                <div class="enhanced-portfolio-overview" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px;">
+                    <div class="enhanced-portfolio-card" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 15px; backdrop-filter: blur(10px); position: relative; overflow: hidden;">
+                        <div style="position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, #3b82f6, #8b5cf6);"></div>
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <div style="width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #3b82f6, #1d4ed8);">
+                                <i class="fas fa-dollar-sign" style="color: white; font-size: 0.9rem;"></i>
+                            </div>
+                            <div>
+                                <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.6);">Total Value</div>
+                                <div style="font-size: 1.2rem; font-weight: 700;" id="enhanced-total-value">$0.00</div>
+                            </div>
                         </div>
-                        <div class="stat-item">
-                            <div class="stat-label">Total Invested</div>
-                            <div class="stat-value" id="total-invested">$0.00</div>
+                    </div>
+
+                    <div class="enhanced-portfolio-card" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 15px; backdrop-filter: blur(10px); position: relative; overflow: hidden;">
+                        <div style="position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, #8b5cf6, #7c3aed);"></div>
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <div style="width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #8b5cf6, #7c3aed);">
+                                <i class="fas fa-coins" style="color: white; font-size: 0.9rem;"></i>
+                            </div>
+                            <div>
+                                <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.6);">Total Invested</div>
+                                <div style="font-size: 1.2rem; font-weight: 700;" id="enhanced-total-invested">$0.00</div>
+                            </div>
                         </div>
-                        <div class="stat-item">
-                            <div class="stat-label">Profit/Loss</div>
-                            <div class="stat-value profit-loss" id="profit-loss">$0.00</div>
+                    </div>
+
+                    <div class="enhanced-portfolio-card" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 15px; backdrop-filter: blur(10px); position: relative; overflow: hidden;">
+                        <div style="position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, #10b981, #059669);"></div>
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <div style="width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #10b981, #059669);">
+                                <i class="fas fa-trending-up" style="color: white; font-size: 0.9rem;"></i>
+                            </div>
+                            <div>
+                                <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.6);">Total Return</div>
+                                <div style="font-size: 1.2rem; font-weight: 700;" id="enhanced-total-return">$0.00</div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                
-                <div class="portfolio-holdings" id="portfolio-holdings">
-                    <div class="loading-portfolio">Loading your holdings...</div>
+
+                <!-- Enhanced Holdings Section -->
+                <div class="enhanced-holdings-section" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 15px; backdrop-filter: blur(10px); margin-bottom: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+                        <h4 style="font-size: 1.1rem; font-weight: 600; display: flex; align-items: center; gap: 8px; margin: 0;">
+                            <i class="fas fa-briefcase"></i>
+                            Your Holdings
+                        </h4>
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                            <button style="background: linear-gradient(135deg, #3b82f6, #1d4ed8); border: none; color: white; padding: 6px 12px; border-radius: 8px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 0.8rem;" onclick="showDepositModal()">
+                                <i class="fas fa-plus"></i>
+                                Add Funds
+                            </button>
+                            <button style="background: linear-gradient(135deg, #8b5cf6, #7c3aed); border: none; color: white; padding: 6px 12px; border-radius: 8px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 0.8rem;" onclick="showBuyModal()">
+                                <i class="fas fa-shopping-cart"></i>
+                                Buy Stock
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="enhanced-holdings-container">
+                        <!-- Loading state -->
+                        <div style="text-align: center; padding: 20px;" id="enhanced-portfolio-loading">
+                            <div style="width: 24px; height: 24px; border: 2px solid rgba(255, 255, 255, 0.1); border-top: 2px solid #3b82f6; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 10px;"></div>
+                            <p style="color: rgba(255, 255, 255, 0.7); font-size: 0.9rem;">Loading your portfolio...</p>
+                        </div>
+
+                        <!-- Empty state -->
+                        <div style="text-align: center; padding: 30px 15px; color: rgba(255, 255, 255, 0.7); display: none;" id="enhanced-portfolio-empty">
+                            <i class="fas fa-chart-pie" style="font-size: 2.5rem; margin-bottom: 12px; color: rgba(255, 255, 255, 0.3);"></i>
+                            <h5 style="margin-bottom: 8px; color: rgba(255, 255, 255, 0.8);">Start Building Your Portfolio</h5>
+                            <p style="margin-bottom: 15px; font-size: 0.9rem;">Search for stocks above to begin building your personalized portfolio with AI guidance.</p>
+                            <button style="background: linear-gradient(135deg, #3b82f6, #1d4ed8); border: none; color: white; padding: 6px 12px; border-radius: 8px; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-size: 0.8rem;" onclick="togglePortfolio()">
+                                <i class="fas fa-search"></i>
+                                Search Stocks
+                            </button>
+                        </div>
+
+                        <!-- Holdings will be populated here -->
+                        <div id="enhanced-holdings-grid" style="display: grid; gap: 10px; display: none;">
+                            <!-- Holdings items will be dynamically inserted -->
+                        </div>
+                    </div>
                 </div>
                 
                 <!-- AI Portfolio Builder Section -->
@@ -4166,12 +4231,23 @@
     let portfolioVisible = false;
     
     function togglePortfolio() {
+        const portfolioSection = document.getElementById('portfolio-section');
+        const searchContent = document.getElementById('search-content');
+        
         // Close tools dropdown when portfolio is toggled
         document.getElementById('tools-dropdown-menu').classList.remove('show');
         toolsDropdownVisible = false;
         
-        // Navigate directly to the enhanced portfolio page
-        window.location.href = '/portfolio';
+        portfolioVisible = !portfolioVisible;
+        
+        if (portfolioVisible) {
+            portfolioSection.style.display = 'block';
+            searchContent.style.display = 'none';
+            loadEnhancedPortfolioData();
+        } else {
+            portfolioSection.style.display = 'none';
+            searchContent.style.display = 'block';
+        }
     }
     
     // Tools Dropdown functionality
@@ -4196,6 +4272,66 @@
             toolsDropdownVisible = false;
         }
     });
+
+    // Enhanced Portfolio data loading function
+    async function loadEnhancedPortfolioData() {
+        try {
+            document.getElementById('enhanced-portfolio-loading').style.display = 'block';
+            document.getElementById('enhanced-portfolio-empty').style.display = 'none';
+            document.getElementById('enhanced-holdings-grid').style.display = 'none';
+            
+            const response = await fetch('/api/portfolio');
+            const data = await response.json();
+            
+            // Update enhanced portfolio values
+            document.getElementById('enhanced-total-value').textContent = '$' + (data.total_value || 0).toLocaleString('en-US', {minimumFractionDigits: 2});
+            document.getElementById('enhanced-total-invested').textContent = '$' + (data.total_invested || 0).toLocaleString('en-US', {minimumFractionDigits: 2});
+            
+            const totalReturn = (data.total_value || 0) - (data.total_invested || 0);
+            const returnElement = document.getElementById('enhanced-total-return');
+            returnElement.textContent = '$' + totalReturn.toLocaleString('en-US', {minimumFractionDigits: 2});
+            returnElement.style.color = totalReturn >= 0 ? '#10b981' : '#ef4444';
+            
+            document.getElementById('enhanced-portfolio-loading').style.display = 'none';
+            
+            // Update enhanced holdings
+            const holdingsContainer = document.getElementById('enhanced-holdings-grid');
+            if (data.holdings && data.holdings.length > 0) {
+                holdingsContainer.innerHTML = data.holdings.map(holding => `
+                    <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 10px; padding: 12px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <div style="background: linear-gradient(135deg, #3b82f6, #8b5cf6); color: white; padding: 4px 8px; border-radius: 6px; font-weight: 600; font-size: 0.8rem;">${holding.symbol}</div>
+                                <div style="font-size: 0.85rem; color: rgba(255, 255, 255, 0.7);">${holding.quantity} shares</div>
+                            </div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap: 8px; font-size: 0.75rem;">
+                            <div style="text-align: center;">
+                                <div style="color: rgba(255, 255, 255, 0.5);">Avg Price</div>
+                                <div style="font-weight: 600;">$${(holding.avg_price || 0).toFixed(2)}</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="color: rgba(255, 255, 255, 0.5);">Current</div>
+                                <div style="font-weight: 600;">$${(holding.current_price || holding.avg_price || 0).toFixed(2)}</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="color: rgba(255, 255, 255, 0.5);">Value</div>
+                                <div style="font-weight: 600;">$${((holding.current_price || holding.avg_price || 0) * holding.quantity).toFixed(2)}</div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+                holdingsContainer.style.display = 'grid';
+            } else {
+                document.getElementById('enhanced-portfolio-empty').style.display = 'block';
+            }
+        } catch (error) {
+            console.error('Error loading portfolio:', error);
+            document.getElementById('enhanced-portfolio-loading').style.display = 'none';
+            document.getElementById('enhanced-holdings-grid').innerHTML = '<div style="text-align: center; padding: 20px; color: rgba(255, 255, 255, 0.7);">Error loading portfolio data. Please try again.</div>';
+            document.getElementById('enhanced-holdings-grid').style.display = 'block';
+        }
+    }
 
     // Settings/Account functionality
     function openSettings() {
