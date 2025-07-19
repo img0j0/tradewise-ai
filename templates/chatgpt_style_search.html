@@ -2544,8 +2544,8 @@
                         '<div class="metric-item">' +
                             '<span class="metric-label">Volume</span>' +
                             '<span class="metric-value">' + data.volume + '</span>' +
-                        '</div>' : '')
-                        ' + (data.week_52_high ? 
+                        '</div>' : '') +
+                        (data.week_52_high ? 
                         '<div class="metric-item">' +
                             '<span class="metric-label">52W High</span>' +
                             '<span class="metric-value">$' + formatPrice(data.week_52_high) + '</span>' +
@@ -2559,27 +2559,28 @@
                         '<div class="metric-item">' +
                             '<span class="metric-label">Dividend Yield</span>' +
                             '<span class="metric-value">' + formatMetric(data.dividend_yield, '%') + '</span>' +
-                        '</div>' : '') + '
-                    </div>
-                </div>` : ''}
+                        '</div>' : '') +
+                    '</div>' +
+                '</div>' : '') +
                 
-                ${data.investment_thesis && data.investment_thesis.length > 20 ? `
-                <div class="investment-section">
-                    <h4 style="margin: 1rem 0 0.5rem 0; color: rgba(255,255,255,0.9); font-size: 0.95rem;">Investment Thesis</h4>
-                    <p style="color: rgba(255,255,255,0.8); line-height: 1.4; margin: 0; font-size: 0.9rem;">
-                        ${data.investment_thesis}
-                    </p>
-                </div>` : ''}
+                (data.investment_thesis && data.investment_thesis.length > 20 ? 
+                '<div class="investment-section">' +
+                    '<h4 style="margin: 1rem 0 0.5rem 0; color: rgba(255,255,255,0.9); font-size: 0.95rem;">Investment Thesis</h4>' +
+                    '<p style="color: rgba(255,255,255,0.8); line-height: 1.4; margin: 0; font-size: 0.9rem;">' +
+                        data.investment_thesis +
+                    '</p>' +
+                '</div>' : '') +
                 
-                ${data.business_summary && data.business_summary.length > 50 ? `
-                <div class="business-section">
-                    <h4 style="margin: 1rem 0 0.5rem 0; color: rgba(255,255,255,0.9); font-size: 0.95rem;">About ${data.name}</h4>
-                    <p style="color: rgba(255,255,255,0.7); line-height: 1.4; margin: 0; font-size: 0.85rem;">
-                        ${data.business_summary}
-                    </p>
-                </div>` : ''}
-            </div>
-        `;
+                (data.business_summary && data.business_summary.length > 50 ? 
+                '<div class="business-section">' +
+                    '<h4 style="margin: 1rem 0 0.5rem 0; color: rgba(255,255,255,0.9); font-size: 0.95rem;">About ' + data.name + '</h4>' +
+                    '<p style="color: rgba(255,255,255,0.7); line-height: 1.4; margin: 0; font-size: 0.85rem;">' +
+                        data.business_summary +
+                    '</p>' +
+                '</div>' : '') +
+            '</div>';
+        
+        document.getElementById('search-results').innerHTML = stockResultHTML;
     }
 
     function showError(message) {
