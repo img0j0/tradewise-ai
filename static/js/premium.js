@@ -439,51 +439,37 @@ function showInlineSuccessBanner(result) {
         document.head.appendChild(style);
     }
 
-}
-
 // Global function for loading copilot signals
 async function loadCopilotSignals() {
-        console.log('LoadCopilotSignals called, user status:', this.userStatus);
-        
-        if (!this.userStatus.is_premium) {
-            console.log('User not premium, showing upgrade prompt');
-            this.displayUpgradePrompt();
-            return;
-        }
-
-        console.log('User is premium, loading copilot signals...');
+        console.log('LoadCopilotSignals called');
         
         try {
             const response = await fetch('/api/premium/copilot/signals?limit=5');
             if (response.ok) {
                 const data = await response.json();
-                this.copilotSignals = data.signals || [];
-                console.log('Copilot signals loaded:', this.copilotSignals);
-                this.displayCopilotSignals();
-            } else if (response.status === 403) {
-                console.log('403 error, showing upgrade prompt');
-                this.displayUpgradePrompt();
+                console.log('Copilot signals loaded:', data.signals);
+                displayCopilotSignals(data.signals || []);
             } else {
                 console.log('API error, showing demo signals');
-                this.showDemoSignals();
+                showDemoSignals();
             }
         } catch (error) {
             console.error('Error loading copilot signals:', error);
-            this.showDemoSignals();
+            showDemoSignals();
         }
     }
 
-    displayCopilotSignals() {
+function displayCopilotSignals(signals) {
         const container = document.getElementById('copilot-signals');
         if (!container) return;
 
-        if (this.copilotSignals.length === 0) {
+        if (signals.length === 0) {
             // Show demo signals for premium users instead of empty state
-            this.showDemoSignals();
+            showDemoSignals();
             return;
         }
 
-        const signalsHTML = this.copilotSignals.map(signal => `
+        const signalsHTML = signals.map(signal => `
             <div class="signal-card p-3 mb-2 rounded">
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <div class="fw-bold">${signal.symbol}</div>
@@ -496,11 +482,6 @@ async function loadCopilotSignals() {
                     <small class="text-muted">${new Date(signal.timestamp).toLocaleTimeString()}</small>
                     <div class="text-end">
                         <div class="small">Confidence: ${(signal.confidence * 100).toFixed(0)}%</div>
-                        ${this.userStatus.plan === 'elite' ? `
-                            <button class="btn btn-sm btn-outline-primary mt-1" onclick="executeAITrade('${signal.symbol}', '${signal.signal_type}')">
-                                <i class="fas fa-bolt me-1"></i>1-Click Trade
-                            </button>
-                        ` : ''}
                     </div>
                 </div>
             </div>
@@ -509,7 +490,7 @@ async function loadCopilotSignals() {
         container.innerHTML = signalsHTML;
     }
 
-    displayUpgradePrompt() {
+function displayUpgradePrompt() {
         const container = document.getElementById('copilot-signals');
         if (!container) return;
 
@@ -525,7 +506,7 @@ async function loadCopilotSignals() {
         `;
     }
     
-    showDemoSignals() {
+function showDemoSignals() {
         const container = document.getElementById('copilot-signals');
         if (!container) return;
         
@@ -554,8 +535,7 @@ async function loadCopilotSignals() {
             }
         ];
         
-        this.copilotSignals = demoSignals;
-        this.displayCopilotSignals();
+        displayCopilotSignals(demoSignals);
     }
 
     startCopilotUpdates() {
