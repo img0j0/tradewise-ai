@@ -166,15 +166,76 @@ class PremiumManager {
     }
 
     showSuccessModal(result) {
-        const successModal = document.getElementById('premiumSuccessModal');
-        const planName = document.getElementById('success-plan-name');
-        
-        if (planName) {
-            planName.textContent = `AI Copilot ${result.plan.charAt(0).toUpperCase() + result.plan.slice(1)}`;
+        // Instead of showing a redirect modal, show an inline success notification
+        if (window.showNotification) {
+            showNotification(`🎉 Welcome to AI Copilot ${result.plan.charAt(0).toUpperCase() + result.plan.slice(1)}! Your AI assistant is now active.`, 'success');
         }
-
-        const modal = new bootstrap.Modal(successModal);
-        modal.show();
+        
+        // Update the interface to show premium features immediately
+        setTimeout(() => {
+            this.updateUI();
+            this.loadCopilotSignals();
+            this.showAICopilotWidget();
+            
+            // Show a brief success banner instead of modal
+            this.showInlineSuccessBanner(result);
+        }, 500);
+    }
+    
+    showInlineSuccessBanner(result) {
+        // Create a beautiful success overlay instead of modal
+        const overlay = document.createElement('div');
+        overlay.className = 'position-fixed w-100 h-100 d-flex align-items-center justify-content-center';
+        overlay.style.cssText = 'top: 0; left: 0; z-index: 9999; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px);';
+        
+        overlay.innerHTML = `
+            <div class="card text-center" style="max-width: 400px; margin: 1rem; background: linear-gradient(135deg, #1a1a1a, #2d2d2d); border: 2px solid #00ff88; border-radius: 16px; box-shadow: 0 20px 40px rgba(0, 255, 136, 0.3);">
+                <div class="card-body p-4">
+                    <div class="mb-3">
+                        <i class="fas fa-robot text-success" style="font-size: 3rem; animation: bounce 2s infinite;"></i>
+                    </div>
+                    <h4 class="text-light mb-2">Welcome to AI Copilot ${result.plan.charAt(0).toUpperCase() + result.plan.slice(1)}!</h4>
+                    <p class="text-muted mb-3">Your AI assistant is now monitoring markets 24/7</p>
+                    <div class="row text-center mb-3">
+                        <div class="col-4">
+                            <div class="h6 mb-0 text-success">71.4%</div>
+                            <small class="text-muted">Win Rate</small>
+                        </div>
+                        <div class="col-4">
+                            <div class="h6 mb-0 text-success">24/7</div>
+                            <small class="text-muted">Monitoring</small>
+                        </div>
+                        <div class="col-4">
+                            <div class="h6 mb-0 text-success">9</div>
+                            <small class="text-muted">Stocks</small>
+                        </div>
+                    </div>
+                    <button class="btn btn-success w-100" onclick="this.closest('.position-fixed').remove()">
+                        <i class="fas fa-check me-2"></i>Start Trading
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(overlay);
+        
+        // Auto-dismiss after 8 seconds
+        setTimeout(() => {
+            if (overlay.parentNode) {
+                overlay.remove();
+            }
+        }, 8000);
+        
+        // Add bounce animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes bounce {
+                0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+                40% { transform: translateY(-10px); }
+                60% { transform: translateY(-5px); }
+            }
+        `;
+        document.head.appendChild(style);
     }
 
     async loadCopilotSignals() {
@@ -303,6 +364,46 @@ class PremiumManager {
             }
         }, 1000);
     }
+    
+    showAICopilotWidget() {
+        const widget = document.getElementById('ai-copilot-widget');
+        if (widget && this.userStatus.isPremium) {
+            widget.style.display = 'block';
+        }
+    }
+    
+    hideAICopilotWidget() {
+        const widget = document.getElementById('ai-copilot-widget');
+        if (widget) {
+            widget.style.display = 'none';
+        }
+    }
+}
+
+// Global notification function
+function showNotification(message, type = 'info', duration = 5000) {
+    const notificationArea = document.getElementById('notification-area');
+    if (!notificationArea) return;
+    
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.innerHTML = `
+        <div style="display: flex; justify-content: between; align-items: center;">
+            <div style="flex: 1;">${message}</div>
+            <button style="background: none; border: none; color: inherit; margin-left: 8px; cursor: pointer;" onclick="this.parentElement.parentElement.remove()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    `;
+    
+    notificationArea.appendChild(notification);
+    
+    // Auto-remove after duration
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.remove();
+        }
+    }, duration);
 }
 
 // Global functions
