@@ -100,9 +100,6 @@ function performIntelligentSearchWithSymbol(symbol) {
             console.error('TradeWise AI: Search error:', error);
             showErrorMessage(`Error searching for ${symbol}: ${error.message}`);
         });
-    
-}
-    // Loading will be replaced by results
 }
 
 // Handle search keypress

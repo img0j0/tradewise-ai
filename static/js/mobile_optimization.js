@@ -251,12 +251,12 @@ if (!window.MobileOptimization) {
 
 // Initialize mobile optimization
 document.addEventListener('DOMContentLoaded', () => {
-    if (!window.mobileOptimization) {
+    if (typeof window !== 'undefined' && !window.mobileOptimization) {
         window.mobileOptimization = new MobileOptimization();
     }
 });
 
 // Export for use in other modules
-if (!window.MobileOptimization) {
+if (typeof window !== 'undefined' && !window.MobileOptimization) {
     window.MobileOptimization = MobileOptimization;
 }
