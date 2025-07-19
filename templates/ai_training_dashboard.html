@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Team Training Dashboard - TradeWise AI</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .training-dashboard {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            min-height: 100vh;
+            color: white;
+            padding: 20px;
+        }
+        
+        .training-card {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        
+        .training-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 123, 255, 0.3);
+        }
+        
+        .member-performance-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .performance-metric {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #fff;
+        }
+        
+        .metric-label {
+            font-size: 0.9em;
+            opacity: 0.8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .training-button {
+            background: linear-gradient(45deg, #ff6b6b, #feca57);
+            border: none;
+            border-radius: 25px;
+            padding: 12px 30px;
+            color: white;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .training-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        }
+        
+        .pattern-badge {
+            background: rgba(0, 123, 255, 0.2);
+            border: 1px solid #007bff;
+            border-radius: 20px;
+            padding: 5px 15px;
+            margin: 5px;
+            display: inline-block;
+            font-size: 0.85em;
+        }
+        
+        .improvement-suggestion {
+            background: rgba(40, 167, 69, 0.2);
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        
+        .training-progress {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(45deg, #007bff, #28a745);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+        
+        .header-title {
+            text-align: center;
+            margin-bottom: 30px;
+            background: linear-gradient(45deg, #007bff, #28a745);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 2.5em;
+            font-weight: bold;
+        }
+        
+        .training-status {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(40, 167, 69, 0.9);
+            border-radius: 25px;
+            padding: 10px 20px;
+            z-index: 1000;
+        }
+        
+        .conversation-sample {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+            border-left: 4px solid #007bff;
+        }
+        
+        .effectiveness-score {
+            float: right;
+            background: linear-gradient(45deg, #feca57, #ff9ff3);
+            border-radius: 15px;
+            padding: 5px 12px;
+            font-weight: bold;
+            font-size: 0.85em;
+        }
+    </style>
+</head>
+<body>
+    <div class="training-dashboard">
+        <div class="container">
+            <h1 class="header-title">
+                <i class="fas fa-brain"></i> AI Team Training Dashboard
+            </h1>
+            
+            <div class="training-status" id="trainingStatus" style="display: none;">
+                <i class="fas fa-cog fa-spin"></i> Training in progress...
+            </div>
+            
+            <!-- Performance Overview -->
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="member-performance-card">
+                        <div class="performance-metric" id="sarahAccuracy">75%</div>
+                        <div class="metric-label">Sarah Chen - Market Analysis Accuracy</div>
+                        <div class="training-progress">
+                            <div class="progress-fill" style="width: 75%"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="member-performance-card">
+                        <div class="performance-metric" id="alexAccuracy">87%</div>
+                        <div class="metric-label">Alex Rodriguez - Technical Support Success</div>
+                        <div class="training-progress">
+                            <div class="progress-fill" style="width: 87%"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="member-performance-card">
+                        <div class="performance-metric" id="mariaAccuracy">92%</div>
+                        <div class="metric-label">Maria Santos - User Satisfaction</div>
+                        <div class="training-progress">
+                            <div class="progress-fill" style="width: 92%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Training Controls -->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="training-card">
+                        <h3><i class="fas fa-graduation-cap"></i> Training Controls</h3>
+                        <p>Train AI team members to improve their performance based on conversation analysis and learning patterns.</p>
+                        
+                        <div class="row">
+                            <div class="col-6">
+                                <button class="btn training-button w-100" onclick="trainAllMembers()">
+                                    <i class="fas fa-rocket"></i> Train All Members
+                                </button>
+                            </div>
+                            <div class="col-6">
+                                <button class="btn training-button w-100" onclick="generateTrainingReport()">
+                                    <i class="fas fa-chart-line"></i> Generate Report
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-3">
+                            <small class="text-muted">Individual Training:</small><br>
+                            <button class="btn btn-sm btn-outline-light m-1" onclick="trainMember('sarah')">Train Sarah</button>
+                            <button class="btn btn-sm btn-outline-light m-1" onclick="trainMember('alex')">Train Alex</button>
+                            <button class="btn btn-sm btn-outline-light m-1" onclick="trainMember('maria')">Train Maria</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="training-card">
+                        <h3><i class="fas fa-chart-bar"></i> Training Statistics</h3>
+                        <div id="trainingStats">
+                            <div class="row text-center">
+                                <div class="col-4">
+                                    <div class="performance-metric" style="font-size: 1.5em;" id="totalConversations">0</div>
+                                    <small class="metric-label">Total Conversations</small>
+                                </div>
+                                <div class="col-4">
+                                    <div class="performance-metric" style="font-size: 1.5em;" id="learningPatterns">0</div>
+                                    <small class="metric-label">Learning Patterns</small>
+                                </div>
+                                <div class="col-4">
+                                    <div class="performance-metric" style="font-size: 1.5em;" id="avgEffectiveness">0%</div>
+                                    <small class="metric-label">Avg Effectiveness</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Training Results -->
+            <div class="training-card">
+                <h3><i class="fas fa-trophy"></i> Latest Training Results</h3>
+                <div id="trainingResults">
+                    <p class="text-muted text-center">Run training to see detailed results here...</p>
+                </div>
+            </div>
+            
+            <!-- Learning Patterns -->
+            <div class="training-card">
+                <h3><i class="fas fa-lightbulb"></i> Identified Learning Patterns</h3>
+                <div id="learningPatterns">
+                    <p class="text-muted text-center">Learning patterns will appear here after analyzing conversations...</p>
+                </div>
+            </div>
+            
+            <!-- Recent Conversations -->
+            <div class="training-card">
+                <h3><i class="fas fa-comments"></i> Recent Training Conversations</h3>
+                <div id="recentConversations">
+                    <div class="conversation-sample">
+                        <div class="effectiveness-score">90% Effective</div>
+                        <strong>Sarah Chen</strong> - Stock Analysis<br>
+                        <small class="text-muted">Query: "Should I buy Apple stock right now?"</small><br>
+                        <small>Response analyzed for market data integration and confidence scoring...</small>
+                    </div>
+                    
+                    <div class="conversation-sample">
+                        <div class="effectiveness-score">85% Effective</div>
+                        <strong>Alex Rodriguez</strong> - Technical Support<br>
+                        <small class="text-muted">Query: "My search function isn't working properly"</small><br>
+                        <small>Response analyzed for diagnostic accuracy and solution effectiveness...</small>
+                    </div>
+                    
+                    <div class="conversation-sample">
+                        <div class="effectiveness-score">95% Effective</div>
+                        <strong>Maria Santos</strong> - User Guidance<br>
+                        <small class="text-muted">Query: "How do I start investing as a beginner?"</small><br>
+                        <small>Response analyzed for beginner-friendliness and learning path quality...</small>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+    
+    <script>
+        // Training Dashboard JavaScript
+        
+        function showTrainingStatus() {
+            document.getElementById('trainingStatus').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('trainingStatus').style.display = 'none';
+            }, 3000);
+        }
+        
+        async function trainAllMembers() {
+            showTrainingStatus();
+            
+            try {
+                const response = await fetch('/api/ai-team/training/train', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayTrainingResults(data.training_results);
+                    showNotification('Training completed successfully!', 'success');
+                    updatePerformanceMetrics(data.training_results);
+                } else {
+                    showNotification('Training failed: ' + data.error, 'error');
+                }
+            } catch (error) {
+                console.error('Training error:', error);
+                showNotification('Training system error', 'error');
+            }
+        }
+        
+        async function trainMember(member) {
+            showTrainingStatus();
+            
+            try {
+                const response = await fetch('/api/ai-team/training/train', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ member: member })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayTrainingResults(data.training_results);
+                    showNotification(`${member.charAt(0).toUpperCase() + member.slice(1)} training completed!`, 'success');
+                } else {
+                    showNotification('Training failed: ' + data.error, 'error');
+                }
+            } catch (error) {
+                console.error('Training error:', error);
+                showNotification('Training system error', 'error');
+            }
+        }
+        
+        function displayTrainingResults(results) {
+            const container = document.getElementById('trainingResults');
+            let html = '';
+            
+            for (const [member, result] of Object.entries(results)) {
+                const accuracyImprovement = ((result.new_accuracy - result.previous_accuracy) * 100).toFixed(1);
+                const confidenceImprovement = ((result.new_confidence - result.previous_confidence) * 100).toFixed(1);
+                
+                html += `
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <h5>${member.charAt(0).toUpperCase() + member.slice(1)}</h5>
+                            <div class="training-progress">
+                                <div class="progress-fill" style="width: ${result.new_accuracy * 100}%"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <small>Accuracy: ${(result.previous_accuracy * 100).toFixed(1)}% → ${(result.new_accuracy * 100).toFixed(1)}%</small><br>
+                            <small>Confidence: ${(result.previous_confidence * 100).toFixed(1)}% → ${(result.new_confidence * 100).toFixed(1)}%</small>
+                        </div>
+                        <div class="col-md-4">
+                            <span class="pattern-badge">+${accuracyImprovement}% accuracy</span><br>
+                            <span class="pattern-badge">+${confidenceImprovement}% confidence</span>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            container.innerHTML = html;
+        }
+        
+        function updatePerformanceMetrics(results) {
+            for (const [member, result] of Object.entries(results)) {
+                const elementId = member + 'Accuracy';
+                const element = document.getElementById(elementId);
+                if (element) {
+                    element.textContent = (result.new_accuracy * 100).toFixed(0) + '%';
+                    // Update progress bar
+                    const progressBar = element.parentElement.querySelector('.progress-fill');
+                    if (progressBar) {
+                        progressBar.style.width = (result.new_accuracy * 100) + '%';
+                    }
+                }
+            }
+        }
+        
+        async function generateTrainingReport() {
+            try {
+                const response = await fetch('/api/ai-team/training/report');
+                const data = await response.json();
+                
+                if (data.success) {
+                    const report = data.training_report;
+                    document.getElementById('totalConversations').textContent = report.total_conversations;
+                    
+                    // Update performance metrics
+                    for (const [member, performance] of Object.entries(report.member_performance)) {
+                        const elementId = member + 'Accuracy';
+                        const element = document.getElementById(elementId);
+                        if (element) {
+                            element.textContent = (performance.accuracy * 100).toFixed(0) + '%';
+                        }
+                    }
+                    
+                    showNotification('Training report generated successfully!', 'success');
+                } else {
+                    showNotification('Report generation failed: ' + data.error, 'error');
+                }
+            } catch (error) {
+                console.error('Report error:', error);
+                showNotification('Report system error', 'error');
+            }
+        }
+        
+        function showNotification(message, type) {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `alert alert-${type === 'success' ? 'success' : 'danger'} position-fixed`;
+            notification.style.cssText = 'top: 80px; right: 20px; z-index: 1001; max-width: 300px;';
+            notification.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-triangle'}"></i>
+                ${message}
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                document.body.removeChild(notification);
+            }, 3000);
+        }
+        
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load initial data
+            generateTrainingReport();
+            
+            // Simulate some initial learning patterns
+            setTimeout(() => {
+                const patternsContainer = document.getElementById('learningPatterns');
+                patternsContainer.innerHTML = `
+                    <div class="improvement-suggestion">
+                        <strong>Sarah Chen Pattern:</strong> Users respond well to specific confidence percentages and market data references.
+                        <div class="mt-2">
+                            <span class="pattern-badge">Market data integration</span>
+                            <span class="pattern-badge">Confidence scoring</span>
+                        </div>
+                    </div>
+                    <div class="improvement-suggestion">
+                        <strong>Alex Rodriguez Pattern:</strong> Step-by-step troubleshooting with emoji indicators increases resolution success.
+                        <div class="mt-2">
+                            <span class="pattern-badge">Diagnostic accuracy</span>
+                            <span class="pattern-badge">Visual indicators</span>
+                        </div>
+                    </div>
+                    <div class="improvement-suggestion">
+                        <strong>Maria Santos Pattern:</strong> Beginner detection and personalized learning paths improve user satisfaction.
+                        <div class="mt-2">
+                            <span class="pattern-badge">Experience detection</span>
+                            <span class="pattern-badge">Learning pathways</span>
+                        </div>
+                    </div>
+                `;
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

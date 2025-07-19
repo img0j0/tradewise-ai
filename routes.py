@@ -4064,6 +4064,14 @@ except ImportError as e:
     logger.warning(f"Super Intelligent Team Manager unavailable: {e}")
     super_intelligent_team = None
 
+# Initialize AI Team Training System
+try:
+    from ai_team_training import ai_team_trainer
+    logger.info("AI Team Training System initialized successfully")
+except ImportError as e:
+    logger.warning(f"AI Team Training System unavailable: {e}")
+    ai_team_trainer = None
+
 @app.route('/api/ai-team/query', methods=['POST'])
 def ai_team_query():
     """Route user query to appropriate AI team member with advanced intelligence"""
@@ -4091,6 +4099,17 @@ def ai_team_query():
             # Fallback to standard system
             response = ai_team_manager.route_query(query, context)
         
+        # Train AI team with this conversation
+        if ai_team_trainer:
+            try:
+                ai_team_trainer.analyze_conversation(
+                    query=query,
+                    response=response['message'],
+                    member=response['member'].lower().replace(' ', '_').split('_')[0]  # Extract first name
+                )
+            except Exception as e:
+                logger.warning(f"Training analysis failed: {e}")
+        
         return jsonify({
             'success': True,
             'response': response,
@@ -4115,6 +4134,121 @@ def ai_team_status():
     except Exception as e:
         logger.error(f"Error getting AI team status: {e}")
         return jsonify({'error': str(e)}), 500
+
+@app.route('/api/ai-team/training/report')
+@login_required
+def get_training_report():
+    """Get comprehensive AI team training report"""
+    try:
+        if not ai_team_trainer:
+            return jsonify({'error': 'Training system not available'}), 503
+        
+        report = ai_team_trainer.get_training_report()
+        return jsonify({
+            'success': True,
+            'training_report': report
+        })
+        
+    except Exception as e:
+        logger.error(f"Error getting training report: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/ai-team/training/train', methods=['POST'])
+@login_required
+def train_ai_team():
+    """Train AI team members to improve performance"""
+    try:
+        if not ai_team_trainer:
+            return jsonify({'error': 'Training system not available'}), 503
+        
+        data = request.json or {}
+        member = data.get('member')  # Optional: train specific member
+        
+        # Identify learning patterns and train
+        training_results = ai_team_trainer.train_member_performance(member)
+        
+        return jsonify({
+            'success': True,
+            'training_results': training_results,
+            'message': f"Training completed for {len(training_results)} team members"
+        })
+        
+    except Exception as e:
+        logger.error(f"Error training AI team: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/ai-team/training/patterns')
+@login_required
+def get_learning_patterns():
+    """Get identified learning patterns for AI team improvement"""
+    try:
+        if not ai_team_trainer:
+            return jsonify({'error': 'Training system not available'}), 503
+        
+        patterns = ai_team_trainer.identify_learning_patterns()
+        
+        # Convert patterns to serializable format
+        patterns_data = []
+        for pattern in patterns:
+            patterns_data.append({
+                'pattern_id': pattern.pattern_id,
+                'member': pattern.member,
+                'topic_cluster': pattern.topic_cluster,
+                'successful_phrases': pattern.successful_phrases,
+                'common_issues': pattern.common_issues,
+                'improvement_suggestions': pattern.improvement_suggestions,
+                'confidence_boost': pattern.confidence_boost
+            })
+        
+        return jsonify({
+            'success': True,
+            'learning_patterns': patterns_data
+        })
+        
+    except Exception as e:
+        logger.error(f"Error getting learning patterns: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/ai-team/training/feedback', methods=['POST'])
+@login_required
+def provide_training_feedback():
+    """Provide feedback on AI team response for training purposes"""
+    try:
+        if not ai_team_trainer:
+            return jsonify({'error': 'Training system not available'}), 503
+        
+        data = request.json
+        query = data.get('query')
+        response = data.get('response')
+        member = data.get('member')
+        satisfaction_score = data.get('satisfaction_score', 0.5)  # 0-1 scale
+        
+        if not all([query, response, member]):
+            return jsonify({'error': 'Missing required fields'}), 400
+        
+        # Analyze conversation with user feedback
+        analysis = ai_team_trainer.analyze_conversation(
+            query=query,
+            response=response,
+            member=member,
+            user_feedback=satisfaction_score
+        )
+        
+        return jsonify({
+            'success': True,
+            'message': 'Feedback received and used for training',
+            'analysis_id': analysis.timestamp.isoformat() if analysis else None
+        })
+        
+    except Exception as e:
+        logger.error(f"Error processing training feedback: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/training')
+@login_required
+def training_dashboard():
+    """AI Team Training Dashboard"""
+    return render_template('ai_training_dashboard.html')
 
 @app.route('/api/ai-team/members')
 def ai_team_members_list():
