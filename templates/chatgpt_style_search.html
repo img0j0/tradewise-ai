@@ -15,6 +15,9 @@
         <div class="header">
             <div class="header-title">TradeWise AI</div>
             <div class="header-actions">
+                <button class="upgrade-button" onclick="premiumManager?.showPremiumModal()" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: white; border: none; padding: 8px 16px; border-radius: 20px; margin-right: 12px; font-weight: 600; font-size: 14px;">
+                    <i class="fas fa-crown me-1"></i>Upgrade to AI Copilot
+                </button>
                 <button class="portfolio-toggle" onclick="togglePortfolio()">
                     <i class="fas fa-wallet"></i>
                     <span class="portfolio-text">Portfolio</span>
@@ -1890,6 +1893,12 @@
     document.addEventListener('DOMContentLoaded', function() {
         loadAccountBalance();
         loadPortfolioSummary();
+        
+        // Initialize premium manager if available
+        if (typeof PremiumManager !== 'undefined') {
+            window.premiumManager = new PremiumManager();
+            console.log('Premium Manager initialized on search page');
+        }
     });
 
     // Close modals when clicking outside
@@ -1905,5 +1914,11 @@
         }
     };
     </script>
+    
+    <!-- Include Premium Modal -->
+    {% include 'premium_modal.html' %}
+    
+    <!-- Premium JavaScript -->
+    <script src="{{ url_for('static', filename='js/premium.js') }}"></script>
 </body>
 </html>
