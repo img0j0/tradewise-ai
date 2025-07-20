@@ -92,17 +92,7 @@
     box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.2);
 }
 
-.search-icon-wrapper {
-    margin-right: 0.75rem;
-    display: flex;
-    align-items: center;
-    flex-shrink: 0;
-}
-
-.search-icon {
-    color: rgba(255, 255, 255, 0.6);
-    font-size: 18px;
-}
+/* Search icon removed - clean interface */
 
 .chatgpt-search-input {
     flex: 1;
