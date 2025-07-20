@@ -159,8 +159,8 @@ def get_or_create_user_account():
 
 @app.route('/')
 def index():
-    """Main clean trading interface"""
-    response = make_response(render_template('clean_trading_interface.html'))
+    """Main ChatGPT-style advanced interface with fixed display"""
+    response = make_response(render_template('chatgpt_style_search.html'))
     response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
     response.headers['Pragma'] = 'no-cache'
     response.headers['Expires'] = '0'
