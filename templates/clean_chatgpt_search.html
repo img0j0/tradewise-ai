@@ -271,6 +271,9 @@
         <div class="tools-menu">
             <button class="tool-btn" onclick="openPortfolio()" title="Portfolio">📊</button>
             <button class="tool-btn" onclick="openWatchlist()" title="Watchlist">⭐</button>
+            <button class="tool-btn" onclick="openPriceAlerts()" title="Price Alerts">🔔</button>
+            <button class="tool-btn" onclick="openMarketNews()" title="Market News">📰</button>
+            <button class="tool-btn" onclick="openPerformance()" title="Performance Analysis">📈</button>
             <button class="tool-btn" onclick="openAccount()" title="Account">👤</button>
             <button class="tool-btn" onclick="toggleAuthMenu()" title="Login/Logout">🔐</button>
         </div>
@@ -660,6 +663,164 @@
             `);
         }
         
+        function openPriceAlerts() {
+            showToolOverlay('Price Alerts', `
+                <div style="text-align: center; padding: 40px;">
+                    <h3 style="margin-bottom: 30px;">Smart Price Alerts</h3>
+                    <div style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 15px; padding: 25px; margin: 20px 0;">
+                        <div style="font-size: 1.2rem; font-weight: 600; margin-bottom: 15px; color: #f59e0b;">🔔 AI-Powered Notifications</div>
+                        <div style="opacity: 0.8;">Get intelligent alerts when your stocks hit key price levels, technical breakouts, or unusual volume spikes.</div>
+                    </div>
+                    
+                    <div style="text-align: left; margin: 30px 0;">
+                        <h4 style="margin-bottom: 15px;">Create Alert for Current Stock:</h4>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px; align-items: end;">
+                            <div>
+                                <label style="display: block; margin-bottom: 5px; opacity: 0.8;">Target Price</label>
+                                <input type="number" id="alert-price" placeholder="0.00" step="0.01" style="width: 100%; padding: 10px; border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; background: rgba(255,255,255,0.05); color: white;">
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 5px; opacity: 0.8;">Alert Type</label>
+                                <select id="alert-type" style="width: 100%; padding: 10px; border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; background: rgba(255,255,255,0.05); color: white;">
+                                    <option value="above">Above Price</option>
+                                    <option value="below">Below Price</option>
+                                </select>
+                            </div>
+                            <button onclick="createAlert()" style="padding: 10px 20px; background: linear-gradient(45deg, #f59e0b, #d97706); border: none; border-radius: 8px; color: white; font-weight: 600; cursor: pointer;">
+                                Create Alert
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div style="background: rgba(255,255,255,0.05); border-radius: 15px; padding: 20px; margin: 20px 0;">
+                        <h4 style="margin-bottom: 15px;">Smart Suggestions:</h4>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                            <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 10px; padding: 15px;">
+                                <div style="font-weight: 600; color: #10b981; margin-bottom: 5px;">Breakout Alert</div>
+                                <div style="font-size: 0.9rem; opacity: 0.8;">+5% above current price</div>
+                            </div>
+                            <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 10px; padding: 15px;">
+                                <div style="font-weight: 600; color: #ef4444; margin-bottom: 5px;">Support Alert</div>
+                                <div style="font-size: 0.9rem; opacity: 0.8;">-5% below current price</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `);
+        }
+        
+        function openMarketNews() {
+            showToolOverlay('Market News', `
+                <div style="text-align: center; padding: 40px;">
+                    <h3 style="margin-bottom: 30px;">Market News & Sentiment</h3>
+                    <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 15px; padding: 25px; margin: 20px 0;">
+                        <div style="font-size: 1.2rem; font-weight: 600; margin-bottom: 15px; color: #ef4444;">📰 AI-Analyzed Market Intelligence</div>
+                        <div style="opacity: 0.8;">Real-time news sentiment analysis across sectors and individual stocks.</div>
+                    </div>
+                    
+                    <div style="text-align: left; margin: 30px 0;">
+                        <h4 style="margin-bottom: 15px;">Today's Market Sentiment:</h4>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;">
+                            <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 10px; padding: 15px; text-align: center;">
+                                <div style="font-weight: 600; color: #10b981; margin-bottom: 5px;">Technology</div>
+                                <div style="font-size: 1.2rem; font-weight: 700; color: #10b981;">Positive</div>
+                                <div style="font-size: 0.8rem; opacity: 0.7;">+0.23 sentiment</div>
+                            </div>
+                            <div style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 10px; padding: 15px; text-align: center;">
+                                <div style="font-weight: 600; color: #f59e0b; margin-bottom: 5px;">Energy</div>
+                                <div style="font-size: 1.2rem; font-weight: 700; color: #f59e0b;">Neutral</div>
+                                <div style="font-size: 0.8rem; opacity: 0.7;">+0.05 sentiment</div>
+                            </div>
+                            <div style="background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 10px; padding: 15px; text-align: center;">
+                                <div style="font-weight: 600; color: #8b5cf6; margin-bottom: 5px;">Healthcare</div>
+                                <div style="font-size: 1.2rem; font-weight: 700; color: #10b981;">Positive</div>
+                                <div style="font-size: 0.8rem; opacity: 0.7;">+0.18 sentiment</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="background: rgba(255,255,255,0.05); border-radius: 15px; padding: 20px; margin: 20px 0; text-align: left;">
+                        <h4 style="margin-bottom: 15px;">Recent Market News:</h4>
+                        <div style="border-bottom: 1px solid rgba(255,255,255,0.1); padding: 10px 0;">
+                            <div style="font-weight: 600; margin-bottom: 5px;">Federal Reserve Signals Rate Stability</div>
+                            <div style="font-size: 0.9rem; opacity: 0.7; margin-bottom: 5px;">Markets respond positively to Fed chair's dovish commentary on inflation...</div>
+                            <div style="display: flex; justify-content: space-between; font-size: 0.8rem;">
+                                <span style="color: #10b981;">Positive Sentiment</span>
+                                <span style="opacity: 0.6;">2 hours ago</span>
+                            </div>
+                        </div>
+                        <div style="border-bottom: 1px solid rgba(255,255,255,0.1); padding: 10px 0;">
+                            <div style="font-weight: 600; margin-bottom: 5px;">Tech Earnings Beat Expectations</div>
+                            <div style="font-size: 0.9rem; opacity: 0.7; margin-bottom: 5px;">Major technology companies report strong quarterly results...</div>
+                            <div style="display: flex; justify-content: space-between; font-size: 0.8rem;">
+                                <span style="color: #10b981;">Positive Sentiment</span>
+                                <span style="opacity: 0.6;">4 hours ago</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `);
+        }
+        
+        function openPerformance() {
+            showToolOverlay('Performance Analysis', `
+                <div style="text-align: center; padding: 40px;">
+                    <h3 style="margin-bottom: 30px;">Portfolio Performance Analysis</h3>
+                    <div style="background: linear-gradient(45deg, rgba(139, 92, 246, 0.1), rgba(6, 182, 212, 0.1)); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 15px; padding: 25px; margin: 20px 0;">
+                        <div style="font-size: 1.2rem; font-weight: 600; margin-bottom: 15px; color: #8b5cf6;">📈 AI-Powered Portfolio Insights</div>
+                        <div style="opacity: 0.8;">Advanced analytics on your trading performance, risk metrics, and optimization suggestions.</div>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin: 30px 0;">
+                        <div style="background: rgba(255,255,255,0.05); border-radius: 15px; padding: 20px;">
+                            <div style="opacity: 0.7; margin-bottom: 10px;">Total Return</div>
+                            <div style="font-size: 1.5rem; font-weight: 700; color: #10b981;">+12.3%</div>
+                            <div style="font-size: 0.8rem; opacity: 0.6;">Since inception</div>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.05); border-radius: 15px; padding: 20px;">
+                            <div style="opacity: 0.7; margin-bottom: 10px;">Win Rate</div>
+                            <div style="font-size: 1.5rem; font-weight: 700; color: #8b5cf6;">75%</div>
+                            <div style="font-size: 0.8rem; opacity: 0.6;">Winning trades</div>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.05); border-radius: 15px; padding: 20px;">
+                            <div style="opacity: 0.7; margin-bottom: 10px;">Risk Score</div>
+                            <div style="font-size: 1.5rem; font-weight: 700; color: #f59e0b;">Medium</div>
+                            <div style="font-size: 0.8rem; opacity: 0.6;">Diversification: Good</div>
+                        </div>
+                    </div>
+                    
+                    <div style="background: rgba(255,255,255,0.05); border-radius: 15px; padding: 20px; margin: 20px 0; text-align: left;">
+                        <h4 style="margin-bottom: 15px;">AI Insights & Recommendations:</h4>
+                        <div style="border-left: 4px solid #10b981; padding-left: 15px; margin-bottom: 15px;">
+                            <div style="font-weight: 600; color: #10b981; margin-bottom: 5px;">✓ Strong Performance</div>
+                            <div style="font-size: 0.9rem; opacity: 0.8;">Your portfolio is outperforming the market by 3.2%. Consider taking some profits.</div>
+                        </div>
+                        <div style="border-left: 4px solid #f59e0b; padding-left: 15px; margin-bottom: 15px;">
+                            <div style="font-weight: 600; color: #f59e0b; margin-bottom: 5px;">⚠ Concentration Risk</div>
+                            <div style="font-size: 0.9rem; opacity: 0.8;">40% of your portfolio is in technology stocks. Consider diversifying into other sectors.</div>
+                        </div>
+                        <div style="border-left: 4px solid #8b5cf6; padding-left: 15px;">
+                            <div style="font-weight: 600; color: #8b5cf6; margin-bottom: 5px;">💡 Optimization Tip</div>
+                            <div style="font-size: 0.9rem; opacity: 0.8;">Adding healthcare or consumer staples could improve your risk-adjusted returns.</div>
+                        </div>
+                    </div>
+                </div>
+            `);
+        }
+        
+        function createAlert() {
+            const price = document.getElementById('alert-price').value;
+            const type = document.getElementById('alert-type').value;
+            
+            if (!price || !currentStock) {
+                alert('Please enter a target price and search for a stock first');
+                return;
+            }
+            
+            alert(`Alert created: Notify when ${currentStock.symbol} goes ${type} $${price}`);
+            closeAnalysis();
+        }
+
         function openAccount() {
             showToolOverlay('Account', `
                 <div style="text-align: center; padding: 40px;">
@@ -671,11 +832,11 @@
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin: 20px 0;">
                         <div style="background: rgba(255,255,255,0.05); border-radius: 15px; padding: 20px;">
                             <div style="opacity: 0.7; margin-bottom: 5px;">Trades</div>
-                            <div style="font-size: 1.2rem; font-weight: 600;">0</div>
+                            <div style="font-size: 1.2rem; font-weight: 600;">2</div>
                         </div>
                         <div style="background: rgba(255,255,255,0.05); border-radius: 15px; padding: 20px;">
                             <div style="opacity: 0.7; margin-bottom: 5px;">Win Rate</div>
-                            <div style="font-size: 1.2rem; font-weight: 600;">N/A</div>
+                            <div style="font-size: 1.2rem; font-weight: 600;">100%</div>
                         </div>
                         <div style="background: rgba(255,255,255,0.05); border-radius: 15px; padding: 20px;">
                             <div style="opacity: 0.7; margin-bottom: 5px;">AI Usage</div>

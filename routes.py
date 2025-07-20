@@ -2,6 +2,9 @@ from flask import render_template, jsonify, request, session, redirect, url_for,
 from app import app, db
 from models import Trade, Portfolio, Alert, UserAccount, Transaction, User
 from ai_insights import AIInsightsEngine
+from price_alerts import price_alert_system
+from market_news import market_news_service
+from performance_tracker import performance_tracker
 from ai_advice_engine import advice_engine
 from data_service import DataService
 from stock_search import StockSearchService
