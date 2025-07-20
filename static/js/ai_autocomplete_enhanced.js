@@ -384,15 +384,15 @@ class AIAutocompleteEngine {
         const themesContainer = document.getElementById('trending-themes');
         if (!themesContainer) return;
         
-        themesContainer.innerHTML = themes.map(theme => `
-            <button class="theme-btn" onclick="searchTheme('${theme.name}')" data-theme="${theme.name}">
-                <i class="fas ${theme.icon}"></i>
-                <span>${theme.name}</span>
-                <small class="theme-return ${theme.return >= 0 ? 'text-success' : 'text-danger'}">
-                    ${theme.return >= 0 ? '+' : ''}${theme.return.toFixed(1)}%
-                </small>
-            </button>
-        `).join('');
+        themesContainer.innerHTML = themes.map(function(theme) {
+            return '<button class="theme-btn" onclick="searchTheme(\'' + theme.name + '\')" data-theme="' + theme.name + '">' +
+                '<i class="fas ' + theme.icon + '"></i>' +
+                '<span>' + theme.name + '</span>' +
+                '<small class="theme-return ' + (theme.return >= 0 ? 'text-success' : 'text-danger') + '">' +
+                    (theme.return >= 0 ? '+' : '') + theme.return.toFixed(1) + '%' +
+                '</small>' +
+            '</button>';
+        }).join('');
     }
     
     getDefaultThemes() {
@@ -413,12 +413,12 @@ class AIAutocompleteEngine {
         this.showLoadingState();
         
         try {
-            const response = await fetch(`/api/search-autocomplete?q=${encodeURIComponent(query)}&limit=8`, {
+            const response = await fetch('/api/search-autocomplete?q=' + encodeURIComponent(query) + '&limit=8', {
                 credentials: 'include'
             });
             
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+                throw new Error('HTTP error! status: ' + response.status);
             }
             
             const data = await response.json();
@@ -452,7 +452,7 @@ class AIAutocompleteEngine {
             });
             
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+                throw new Error('HTTP error! status: ' + response.status);
             }
             
             const data = await response.json();
@@ -476,12 +476,11 @@ class AIAutocompleteEngine {
         
         if (!suggestionsContainer || !suggestionsList) return;
         
-        suggestionsList.innerHTML = `
-            <div class="suggestion-loading">
-                <div class="loading-spinner"></div>
-                <span>Getting AI suggestions...</span>
-            </div>
-        `;
+        suggestionsList.innerHTML = 
+            '<div class="suggestion-loading">' +
+                '<div class="loading-spinner"></div>' +
+                '<span>Getting AI suggestions...</span>' +
+            '</div>';
         
         suggestionsContainer.style.display = 'block';
     }
