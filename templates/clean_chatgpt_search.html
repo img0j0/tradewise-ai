@@ -563,6 +563,17 @@
             `);
         }
         
+        function showPortfolioError() {
+            showToolOverlay('Portfolio', `
+                <div style="text-align: center; padding: 40px;">
+                    <div style="color: #ef4444; margin-bottom: 20px;">Unable to load portfolio</div>
+                    <button onclick="loadPortfolioData()" style="padding: 10px 20px; background: linear-gradient(45deg, #8b5cf6, #06b6d4); color: white; border: none; border-radius: 10px; cursor: pointer;">
+                        Retry
+                    </button>
+                </div>
+            `);
+        }
+        
         function openWatchlist() {
             loadWatchlistData();
         }

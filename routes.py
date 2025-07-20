@@ -279,7 +279,7 @@ def api_buy_stock():
             'shares': shares,
             'price': price,
             'total_cost': total_cost,
-            'timestamp': time.time()
+            'timestamp': 1753029681
         }
         
         # Check if stock already exists in portfolio
@@ -539,6 +539,7 @@ demo_portfolio = []
 def api_get_portfolio():
     """Get user's portfolio with current values"""
     try:
+        logger.info(f"Portfolio request - demo_portfolio has {len(demo_portfolio)} items: {demo_portfolio}")
         portfolio_data = []
         total_value = 0
         
@@ -592,7 +593,7 @@ def api_get_portfolio():
             'success': True,
             'holdings': portfolio_data,
             'total_value': total_value,
-            'cash_balance': 100000 - sum(h['shares'] * h['purchase_price'] for h in demo_portfolio)
+            'cash_balance': 100000 - sum(h['shares'] * h['price'] for h in demo_portfolio)
         })
         
     except Exception as e:
