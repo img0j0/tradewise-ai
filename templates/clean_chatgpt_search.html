@@ -774,6 +774,204 @@
             }
         }
         
+        // Smart Alert Creation Function
+        async function showCreateAlert() {
+            if (!currentStock) {
+                alert('Please search for a stock first');
+                return;
+            }
+            
+            try {
+                // Show loading state
+                showToolOverlay('Smart Alerts', `
+                    <div style="text-align: center; padding: 40px;">
+                        <div class="spinner" style="margin: 0 auto 20px;"></div>
+                        <div>Loading AI alert suggestions for ${currentStock.symbol}...</div>
+                    </div>
+                `);
+                
+                // Fetch alert suggestions
+                const response = await fetch(`/api/alerts/suggestions/${currentStock.symbol}`);
+                const data = await response.json();
+                
+                if (data.success && data.suggestions) {
+                    displayAlertCreator(data.suggestions);
+                } else {
+                    showAlertError('Unable to load alert suggestions');
+                }
+            } catch (error) {
+                console.error('Error getting alert suggestions:', error);
+                showAlertError('Error loading alert suggestions');
+            }
+        }
+        
+        function displayAlertCreator(suggestions) {
+            let alertHTML = `
+                <div style="padding: 20px; max-height: 80vh; overflow-y: auto;">
+                    <h3 style="margin-bottom: 25px; text-align: center;">Smart Alerts for ${currentStock.symbol}</h3>
+                    
+                    <div style="background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 15px; padding: 20px; margin-bottom: 25px; text-align: center;">
+                        <div style="font-size: 1.1rem; font-weight: 600; margin-bottom: 10px; color: #8b5cf6;">🤖 AI-Powered Alert Suggestions</div>
+                        <div style="opacity: 0.8;">Current Price: $${currentStock.price.toFixed(2)} • Company: ${currentStock.name}</div>
+                    </div>
+                    
+                    <h4 style="margin-bottom: 20px;">Recommended Alerts:</h4>
+                    <div style="display: grid; gap: 15px; margin-bottom: 30px;">
+            `;
+            
+            suggestions.forEach((suggestion, index) => {
+                const confidenceColor = suggestion.confidence === 'High' ? '#10b981' : 
+                                       suggestion.confidence === 'Medium' ? '#f59e0b' : '#6b7280';
+                
+                alertHTML += `
+                    <div style="background: rgba(255,255,255,0.05); border-radius: 10px; padding: 20px; border-left: 4px solid ${confidenceColor};">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
+                            <div>
+                                <div style="font-weight: 600; font-size: 1.1rem; margin-bottom: 5px;">
+                                    ${suggestion.icon} ${suggestion.title}
+                                </div>
+                                <div style="opacity: 0.8; margin-bottom: 8px;">${suggestion.description}</div>
+                                <div style="font-size: 0.9rem; opacity: 0.7;">${suggestion.reasoning}</div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="color: ${confidenceColor}; font-weight: 600; font-size: 0.9rem; margin-bottom: 10px;">
+                                    ${suggestion.confidence} Confidence
+                                </div>
+                                <button onclick="createQuickAlert('${suggestion.condition}', ${suggestion.value}, '${suggestion.title}')" 
+                                        style="padding: 8px 16px; background: linear-gradient(45deg, #8b5cf6, #7c3aed); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 0.9rem;">
+                                    Create Alert
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            alertHTML += `
+                    </div>
+                    
+                    <div style="background: rgba(255,255,255,0.05); border-radius: 15px; padding: 20px; margin-bottom: 20px;">
+                        <h4 style="margin-bottom: 15px;">Custom Alert Builder:</h4>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 15px; align-items: end;">
+                            <div>
+                                <label style="display: block; margin-bottom: 8px; opacity: 0.8;">Alert Type</label>
+                                <select id="custom-alert-type" style="width: 100%; padding: 12px; border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; background: rgba(255,255,255,0.05); color: white;">
+                                    <option value="price_above">Price Above</option>
+                                    <option value="price_below">Price Below</option>
+                                    <option value="volume_above">Volume Above</option>
+                                    <option value="daily_change_above">Daily Gain Above %</option>
+                                    <option value="daily_change_below">Daily Loss Below %</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 8px; opacity: 0.8;">Target Value</label>
+                                <input type="number" id="custom-alert-value" placeholder="Enter value" step="0.01" 
+                                       style="width: 100%; padding: 12px; border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; background: rgba(255,255,255,0.05); color: white;">
+                            </div>
+                            <button onclick="createCustomAlert()" 
+                                    style="padding: 12px 20px; background: linear-gradient(45deg, #f59e0b, #d97706); border: none; border-radius: 8px; color: white; font-weight: 600; cursor: pointer;">
+                                Create Custom
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div style="text-align: center;">
+                        <button onclick="closeAnalysis()" 
+                                style="padding: 12px 30px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 10px; cursor: pointer; font-weight: 600;">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            showToolOverlay('Smart Alerts', alertHTML);
+        }
+        
+        async function createQuickAlert(condition, value, title) {
+            try {
+                const alertConfig = [{
+                    condition: condition,
+                    value: value,
+                    title: title
+                }];
+                
+                const response = await fetch('/api/alerts/create-smart', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        symbol: currentStock.symbol,
+                        alert_configs: alertConfig
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert(`Alert created successfully for ${currentStock.symbol}!`);
+                    closeAnalysis();
+                } else {
+                    alert('Error creating alert: ' + (result.error || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Error creating quick alert:', error);
+                alert('Error creating alert');
+            }
+        }
+        
+        async function createCustomAlert() {
+            const alertType = document.getElementById('custom-alert-type').value;
+            const alertValue = document.getElementById('custom-alert-value').value;
+            
+            if (!alertValue) {
+                alert('Please enter a target value');
+                return;
+            }
+            
+            try {
+                const alertConfig = [{
+                    condition: alertType,
+                    value: parseFloat(alertValue),
+                    title: `Custom ${alertType.replace('_', ' ')} alert`
+                }];
+                
+                const response = await fetch('/api/alerts/create-smart', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        symbol: currentStock.symbol,
+                        alert_configs: alertConfig
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert(`Custom alert created successfully for ${currentStock.symbol}!`);
+                    closeAnalysis();
+                } else {
+                    alert('Error creating custom alert: ' + (result.error || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Error creating custom alert:', error);
+                alert('Error creating custom alert');
+            }
+        }
+        
+        function showAlertError(message) {
+            showToolOverlay('Smart Alerts', `
+                <div style="text-align: center; padding: 40px;">
+                    <div style="color: #ef4444; margin-bottom: 20px; font-size: 1.1rem;">${message}</div>
+                    <button onclick="closeAnalysis()" style="padding: 10px 20px; background: linear-gradient(45deg, #8b5cf6, #06b6d4); color: white; border: none; border-radius: 10px; cursor: pointer;">
+                        Close
+                    </button>
+                </div>
+            `);
+        }
+        
         // Store current stock data for buy modal
         let selectedAmount = 0;
         
