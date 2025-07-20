@@ -382,8 +382,7 @@
 🧠
                             <span>Market Intelligence</span>
                             <div class="live-indicator" style="margin-left: auto; display: flex; align-items: center;">
-                                <div class="pulse-dot" style="width: 6px; height: 6px; background: #00ff88; border-radius: 50%; margin-right: 5px; animation: pulse 2s infinite;"></div>
-                                <span style="color: #00ff88; font-size: 10px; font-weight: 500;">LIVE</span>
+                                <span style="font-size: 10px; font-weight: 500;">LIVE</span>
                             </div>
                         </div>
                         
@@ -417,7 +416,7 @@
                             <span>Watchlist</span>
                         </div>
                         <hr style="margin: 10px 0; border-color: rgba(255,255,255,0.1);">
-                        <div class="dropdown-item" onclick="window.location.href='/logout'" style="color: #ff6b6b;">
+                        <div class="dropdown-item" onclick="window.location.href='/logout'">
 🚪
                             <span>Logout</span>
                         </div>
@@ -449,7 +448,7 @@
 💲
                             </div>
                             <div>
-                                <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.6);">Total Value</div>
+                                <div style="font-size: 0.75rem;">Total Value</div>
                                 <div style="font-size: 1.2rem; font-weight: 700;" id="enhanced-total-value">$0.00</div>
                             </div>
                         </div>
@@ -462,7 +461,7 @@
 🪙
                             </div>
                             <div>
-                                <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.6);">Total Invested</div>
+                                <div style="font-size: 0.75rem;">Total Invested</div>
                                 <div style="font-size: 1.2rem; font-weight: 700;" id="enhanced-total-invested">$0.00</div>
                             </div>
                         </div>
@@ -475,7 +474,7 @@
 📈
                             </div>
                             <div>
-                                <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.6);">Total Return</div>
+                                <div style="font-size: 0.75rem;">Total Return</div>
                                 <div style="font-size: 1.2rem; font-weight: 700;" id="enhanced-total-return">$0.00</div>
                             </div>
                         </div>
@@ -505,13 +504,13 @@
                         <!-- Loading state -->
                         <div style="text-align: center; padding: 20px;" id="enhanced-portfolio-loading">
                             <div style="width: 24px; height: 24px; border: 2px solid rgba(255, 255, 255, 0.1); border-top: 2px solid #3b82f6; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 10px;"></div>
-                            <p style="color: rgba(255, 255, 255, 0.7); font-size: 0.9rem;">Loading your portfolio...</p>
+                            <p style="font-size: 0.9rem;">Loading your portfolio...</p>
                         </div>
 
                         <!-- Empty state -->
-                        <div style="text-align: center; padding: 30px 15px; color: rgba(255, 255, 255, 0.7); display: none;" id="enhanced-portfolio-empty">
-                            <div style="font-size: 2.5rem; margin-bottom: 12px; color: rgba(255, 255, 255, 0.3);">📊</div>
-                            <h5 style="margin-bottom: 8px; color: rgba(255, 255, 255, 0.8);">Start Building Your Portfolio</h5>
+                        <div style="text-align: center; padding: 30px 15px; display: none;" id="enhanced-portfolio-empty">
+                            <div style="font-size: 2.5rem; margin-bottom: 12px;">📊</div>
+                            <h5 style="margin-bottom: 8px;">Start Building Your Portfolio</h5>
                             <p style="margin-bottom: 15px; font-size: 0.9rem;">Search for stocks above to begin building your personalized portfolio with AI guidance.</p>
                             <button style="background: linear-gradient(135deg, #3b82f6, #1d4ed8); border: none; color: white; padding: 6px 12px; border-radius: 8px; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-size: 0.8rem;" onclick="togglePortfolio()">
                                 Search Stocks
@@ -535,10 +534,10 @@
                         <div style="display: inline-flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 12px; background: linear-gradient(135deg, #60a5fa, #8b5cf6); margin-bottom: 12px;">
                             <div style="color: white; font-size: 1.5rem;">🤖</div>
                         </div>
-                        <h4 style="font-size: 1.2rem; font-weight: 600; margin-bottom: 8px; background: linear-gradient(135deg, #60a5fa, #8b5cf6); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                        <h4 style="font-size: 1.2rem; font-weight: 600; margin-bottom: 8px;">
                             AI Portfolio Builder
                         </h4>
-                        <p style="color: rgba(255, 255, 255, 0.7); font-size: 0.9rem; margin: 0; max-width: 300px; margin-left: auto; margin-right: auto;">
+                        <p style="font-size: 0.9rem; margin: 0; max-width: 300px; margin-left: auto; margin-right: auto;">
                             Let our AI create a personalized portfolio based on your goals and risk tolerance
                         </p>
                     </div>
@@ -549,14 +548,14 @@
                                 onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 12px rgba(96, 165, 250, 0.3)'"
                                 onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'"
                                 onclick="startPortfolioQuestionnaire()">
-                            <i class="fas fa-magic"></i>
+🪄
                             Build Portfolio
                         </button>
                         <button style="background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: white; padding: 12px 16px; border-radius: 10px; font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.9rem; transition: all 0.2s ease;" 
                                 onmouseover="this.style.background='rgba(255, 255, 255, 0.15)'; this.style.transform='translateY(-1px)'"
                                 onmouseout="this.style.background='rgba(255, 255, 255, 0.1)'; this.style.transform='translateY(0)'"
                                 onclick="showPortfolioStrategies()">
-                            <i class="fas fa-list"></i>
+📋
                             View Strategies
                         </button>
                     </div>
@@ -565,16 +564,16 @@
                     <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(255, 255, 255, 0.1);">
                         <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; font-size: 0.8rem;">
                             <div style="text-align: center;">
-                                <div style="color: rgba(255, 255, 255, 0.5);">AI Accuracy</div>
-                                <div style="font-weight: 600; color: #10b981;">87.3%</div>
+                                <div>AI Accuracy</div>
+                                <div style="font-weight: 600;">87.3%</div>
                             </div>
                             <div style="text-align: center;">
-                                <div style="color: rgba(255, 255, 255, 0.5);">Strategies</div>
-                                <div style="font-weight: 600; color: #60a5fa;">5 Types</div>
+                                <div>Strategies</div>
+                                <div style="font-weight: 600;">5 Types</div>
                             </div>
                             <div style="text-align: center;">
-                                <div style="color: rgba(255, 255, 255, 0.5);">Risk Levels</div>
-                                <div style="font-weight: 600; color: #8b5cf6;">All Covered</div>
+                                <div>Risk Levels</div>
+                                <div style="font-weight: 600;">All Covered</div>
                             </div>
                         </div>
                     </div>
@@ -599,8 +598,8 @@
                 <div id="copilot-expanded-content" class="copilot-expanded-content" style="display: none;">
                     <div id="copilot-signals" class="copilot-signals">
                         <div class="text-center text-muted p-3">
-                            <i class="fas fa-spinner fa-spin mb-2" style="color: #60a5fa; font-size: 1rem;"></i>
-                            <p class="mb-0" style="color: #888; font-size: 0.9rem;">AI scanning markets...</p>
+⏳
+                            <p class="mb-0" style="font-size: 0.9rem;">AI scanning markets...</p>
                         </div>
                     </div>
                 </div>
@@ -621,7 +620,7 @@
                 <div class="popular-stocks-condensed dropdown-container">
                     <div class="popular-indicator" onclick="togglePopularExpanded()">
                         <div class="popular-left">
-                            <i class="fas fa-star" style="color: #60a5fa; font-size: 0.9rem;"></i>
+⭐
                             <span class="popular-label">Popular Stocks</span>
                             <div class="popular-pills">
                                 <span class="popular-pill trending">Trending</span>
@@ -675,7 +674,7 @@
                 <div class="investment-themes-condensed dropdown-container">
                     <div class="themes-indicator" onclick="toggleThemesExpanded()">
                         <div class="themes-left">
-                            <i class="fas fa-chart-pie" style="color: #60a5fa; font-size: 0.9rem;"></i>
+📊
                             <span class="themes-label">Investment Themes</span>
                             <div class="theme-pills">
                                 <span class="theme-pill" onclick="event.stopPropagation(); searchStock('NVDA')">AI</span>
@@ -742,7 +741,7 @@
                                 </div>
                             </div>
                             <div class="suggestion-card space-theme" onclick="searchTheme('Space')">
-                                <div class="card-icon"><i class="fas fa-rocket"></i></div>
+                                <div class="card-icon">🚀</div>
                                 <div class="card-content">
                                     <div class="card-title">Space Technology</div>
                                     <div class="card-subtitle">Commercial space exploration</div>
@@ -750,7 +749,7 @@
                                 </div>
                             </div>
                             <div class="suggestion-card energy-theme" onclick="searchTheme('CleanEnergy')">
-                                <div class="card-icon"><i class="fas fa-solar-panel"></i></div>
+                                <div class="card-icon">☀️</div>
                                 <div class="card-content">
                                     <div class="card-title">Clean Energy</div>
                                     <div class="card-subtitle">Renewable power infrastructure</div>
@@ -758,7 +757,7 @@
                                 </div>
                             </div>
                             <div class="suggestion-card gaming-theme" onclick="searchTheme('Gaming')">
-                                <div class="card-icon"><i class="fas fa-gamepad"></i></div>
+                                <div class="card-icon">🎮</div>
                                 <div class="card-content">
                                     <div class="card-title">Gaming & Esports</div>
                                     <div class="card-subtitle">Interactive entertainment growth</div>
@@ -766,7 +765,7 @@
                                 </div>
                             </div>
                             <div class="suggestion-card esg-theme" onclick="searchTheme('ESG')">
-                                <div class="card-icon"><i class="fas fa-leaf"></i></div>
+                                <div class="card-icon">🍃</div>
                                 <div class="card-content">
                                     <div class="card-title">ESG Investing</div>
                                     <div class="card-subtitle">Sustainable & responsible companies</div>
@@ -774,7 +773,7 @@
                                 </div>
                             </div>
                             <div class="suggestion-card defensive-theme" onclick="searchTheme('Defensive')">
-                                <div class="card-icon"><i class="fas fa-shield-alt"></i></div>
+                                <div class="card-icon">🛡️</div>
                                 <div class="card-content">
                                     <div class="card-title">Defensive Stocks</div>
                                     <div class="card-subtitle">Stable dividend-paying companies</div>
@@ -782,7 +781,7 @@
                                 </div>
                             </div>
                             <div class="suggestion-card emerging-theme" onclick="searchTheme('Emerging')">
-                                <div class="card-icon"><i class="fas fa-globe-asia"></i></div>
+                                <div class="card-icon">🌍</div>
                                 <div class="card-content">
                                     <div class="card-title">Emerging Markets</div>
                                     <div class="card-subtitle">High-growth developing economies</div>
@@ -797,7 +796,7 @@
                 <div class="market-insights-condensed dropdown-container">
                     <div class="insights-indicator" onclick="toggleInsightsExpanded()">
                         <div class="insights-left">
-                            <i class="fas fa-chart-line" style="color: #60a5fa; font-size: 0.9rem;"></i>
+📈
                             <span class="insights-label">Market Insights</span>
                             <div class="insight-pills">
                                 <span class="insight-pill live">Live</span>
@@ -806,7 +805,7 @@
                             </div>
                         </div>
                         <div class="insights-right">
-                            <i class="fas fa-chevron-down expand-icon" id="insights-expand-icon"></i>
+                            <span class="expand-icon" id="insights-expand-icon">⌄</span>
                         </div>
                     </div>
                     
@@ -815,7 +814,7 @@
                         <div class="insight-cards">
                             <div class="insight-card market-card">
                                 <div class="insight-header">
-                                    <i class="fas fa-chart-area"></i>
+📊
                                     <span>Market Overview</span>
                                     <span class="live-indicator">LIVE</span>
                                 </div>
@@ -839,7 +838,7 @@
                             
                             <div class="insight-card trending-card">
                                 <div class="insight-header">
-                                    <i class="fas fa-fire"></i>
+🔥
                                     <span>Trending Now</span>
                                     <span class="trend-indicator">HOT</span>
                                 </div>
@@ -863,7 +862,7 @@
                             
                             <div class="insight-card ai-card">
                                 <div class="insight-header">
-                                    <i class="fas fa-brain"></i>
+🧠
                                     <span>AI Predictions</span>
                                     <span class="confidence-indicator">89% confident</span>
                                 </div>
@@ -876,7 +875,7 @@
                             
                             <div class="insight-card risk-card">
                                 <div class="insight-header">
-                                    <i class="fas fa-exclamation-triangle"></i>
+⚠️
                                     <span>Risk Alerts</span>
                                     <span class="risk-indicator">2 active</span>
                                 </div>
@@ -987,7 +986,7 @@
         background: rgba(245, 158, 11, 0.1);
         border: 1px solid rgba(245, 158, 11, 0.3);
         border-radius: 25px;
-        color: #f59e0b;
+        color: #000;
         cursor: pointer;
         font-size: 0.9rem;
         font-weight: 500;
@@ -1002,7 +1001,7 @@
     }
     
     .upgrade-button-seamless i {
-        color: #f59e0b;
+        color: #000;
     }
 
     .portfolio-toggle {
@@ -1114,7 +1113,7 @@
 
     .dropdown-item:hover {
         background: rgba(255, 255, 255, 0.1);
-        color: #60a5fa;
+        color: #000;
     }
 
     .dropdown-item i {
@@ -1125,12 +1124,12 @@
 
     .dropdown-item:hover i {
         opacity: 1;
-        color: #60a5fa;
+        color: #000;
     }
 
     .portfolio-value {
         font-weight: 600;
-        color: #00D4AA;
+        color: #000;
     }
 
     /* Condensed AI Copilot Styling */
@@ -3832,11 +3831,11 @@
                     '</p>' +
                     '<div class="purchase-actions">' +
                         '<button class="purchase-btn primary" onclick="showPurchaseModal(\'' + data.symbol + '\', \'' + data.name + '\', ' + data.price + ', \'' + data.ai_recommendation + '\', ' + data.ai_confidence + ')">' +
-                            '<i class="fas fa-shopping-cart"></i>' +
+                            '🛒' +
                             'Buy ' + data.symbol +
                         '</button>' +
                         '<button class="purchase-btn secondary" onclick="addStockToWatchlist(\'' + data.symbol + '\')">' +
-                            '<i class="fas fa-star"></i>' +
+                            '⭐' +
                             'Add to Watchlist' +
                         '</button>' +
                     '</div>' +
@@ -3900,7 +3899,7 @@
                         '</p>' +
                         '<button class="expand-business-btn" onclick="toggleBusinessSummary(\'' + data.symbol + '\')" style="background: none; border: none; color: #60a5fa; cursor: pointer; font-size: 0.8rem; padding: 0.25rem 0; margin-top: 0.25rem; display: flex; align-items: center; gap: 0.25rem;">' +
                             '<span class="expand-text">Show more</span>' +
-                            '<i class="fas fa-chevron-down expand-icon" style="font-size: 0.7rem; transition: transform 0.3s ease;"></i>' +
+                            '<span class="expand-icon" style="font-size: 0.7rem; transition: transform 0.3s ease;">⌄</span>' +
                         '</button>' +
                     '</div>' +
                 '</div>' : '') +
@@ -4045,7 +4044,7 @@
                     '</div>' +
                     '<div class="theme-controls">' +
                         '<button id="minimize-theme-btn-' + themeName + '" onclick="toggleThemeMinimize(\'' + themeName + '\')" class="minimize-btn" title="Minimize Theme">' +
-                            '<i class="fas fa-minus"></i>' +
+                            '➖' +
                         '</button>' +
                     '</div>' +
                 '</div>'
@@ -4067,7 +4066,7 @@
                     '</div>' +
                     '<div class="ai-analysis">' +
                         '<div class="analysis-header">' +
-                            '<i class="fas fa-brain"></i>' +
+                            '🧠' +
                             '<span>AI Theme Analysis</span>' +
                             '<span class="confidence-badge">90% confident</span>' +
                         '</div>' +
@@ -4080,7 +4079,7 @@
                             'Explore Theme' +
                         '</button>' +
                         '<button class="action-btn secondary" onclick="addStockToWatchlist(\'' + getThemeStocks(themeName)[0] + '\')">' +
-                            '<i class="fas fa-bookmark"></i>' +
+                            '🔖' +
                             'Add to Watchlist' +
                         '</button>' +
                     '</div>' +
@@ -4186,7 +4185,7 @@
         <div class="modal-content">
             <span class="modal-close" onclick="closePurchaseModal()">&times;</span>
             <div class="modal-header">
-                <h2><i class="fas fa-shopping-cart"></i> Purchase Stock</h2>
+                <h2>🛒 Purchase Stock</h2>
             </div>
             <div class="modal-body">
                 <div class="stock-info">
@@ -4229,7 +4228,7 @@
                 <div class="modal-actions">
                     <button class="modal-btn cancel" onclick="closePurchaseModal()">Cancel</button>
                     <button class="modal-btn purchase" id="confirmPurchaseBtn" onclick="executePurchase()">
-                        <i class="fas fa-credit-card"></i>
+💳
                         Purchase Shares
                     </button>
                 </div>
@@ -4242,7 +4241,7 @@
         <div class="modal-content">
             <span class="modal-close" onclick="closeFundingModal()">&times;</span>
             <div class="modal-header">
-                <h2><i class="fas fa-wallet"></i> Add Funds</h2>
+                <h2>💰 Add Funds</h2>
             </div>
             <div class="modal-body">
                 <p>Add funds to your account to purchase stocks. Your money is securely processed by Stripe.</p>
@@ -4262,7 +4261,7 @@
                 <div class="modal-actions">
                     <button class="modal-btn cancel" onclick="closeFundingModal()">Cancel</button>
                     <button class="modal-btn purchase" onclick="processFunding()">
-                        <i class="fas fa-credit-card"></i>
+💳
                         Add Funds
                     </button>
                 </div>
@@ -4662,14 +4661,14 @@
         const purchaseBtn = document.getElementById('confirmPurchaseBtn');
         if (totalCost > userBalance) {
             purchaseBtn.disabled = true;
-            purchaseBtn.innerHTML = '<i class="fas fa-wallet"></i> Insufficient Funds - Add Money';
+            purchaseBtn.innerHTML = '💰 Insufficient Funds - Add Money';
             purchaseBtn.onclick = () => {
                 closePurchaseModal();
                 showFundingModal();
             };
         } else {
             purchaseBtn.disabled = false;
-            purchaseBtn.innerHTML = '<i class="fas fa-credit-card"></i> Purchase Shares';
+            purchaseBtn.innerHTML = '💳 Purchase Shares';
             purchaseBtn.onclick = executePurchase;
         }
     }
@@ -5014,11 +5013,11 @@
             html += '<div class="watchlist-group">';
             html += '<div class="watchlist-header" onclick="toggleWatchlistGroup(\'' + name + '\')">';
             html += '<div class="watchlist-name">';
-            html += '<i class="fas fa-folder-open"></i>';
+            html += '📁';
             html += '<span>' + name + '</span>';
             html += '<span class="watchlist-count">(' + stocks.length + ')</span>';
             html += '</div>';
-            html += '<i class="fas fa-chevron-down watchlist-chevron" id="chevron-' + name.replace(/\s+/g, '') + '"></i>';
+            html += '<span class="watchlist-chevron" id="chevron-' + name.replace(/\s+/g, '') + '">⌄</span>';
             html += '</div>';
             
             html += '<div class="watchlist-content" id="content-' + name.replace(/\s+/g, '') + '">';
@@ -5041,7 +5040,7 @@
                 html += '<div class="stock-right">';
                 html += '<div class="stock-rating-compact rating-' + ratingClass + '">' + rating + '</div>';
                 html += '<button class="remove-btn-compact" onclick="event.stopPropagation(); removeFromWatchlist(\'' + name + '\', \'' + stock.symbol + '\')" title="Remove from watchlist">';
-                html += '<i class="fas fa-times"></i>';
+                html += '✖️';
                 html += '</button>';
                 html += '</div>';
                 html += '</div>';
@@ -5053,10 +5052,10 @@
         
         html += '<div class="watchlist-actions">';
         html += '<button class="watchlist-btn primary" onclick="showAddToWatchlistModal()">';
-        html += '<i class="fas fa-plus"></i> Add Stock to Watchlist';
+        html += '➕ Add Stock to Watchlist';
         html += '</button>';
         html += '<button class="watchlist-btn secondary" onclick="createNewWatchlist()">';
-        html += '<i class="fas fa-folder-plus"></i> New Watchlist';
+        html += '📁 New Watchlist';
         html += '</button>';
         html += '</div>';
         
@@ -5422,15 +5421,15 @@
         const modalHTML = '<div id="portfolio-modal" class="portfolio-modal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); display: none; justify-content: center; align-items: center; z-index: 10000; backdrop-filter: blur(4px);">' +
             '<div class="portfolio-modal-content" style="background: #1a1a1a; border-radius: 16px; width: min(700px, 95vw); max-height: 85vh; overflow-y: auto; border: 1px solid rgba(96, 165, 250, 0.2); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);">' +
                 '<div class="portfolio-modal-header" style="padding: 1.5rem; border-bottom: 1px solid rgba(96, 165, 250, 0.1); display: flex; justify-content: space-between; align-items: center;">' +
-                    '<h3 style="color: white; margin: 0; font-size: 1.2rem; font-weight: 600;"><i class="fas fa-robot"></i> AI Portfolio Builder</h3>' +
+                    '<h3 style="margin: 0; font-size: 1.2rem; font-weight: 600;">🤖 AI Portfolio Builder</h3>' +
                     '<button class="portfolio-close-btn" onclick="closePortfolioModal()" style="background: none; border: none; color: rgba(255, 255, 255, 0.6); font-size: 1.5rem; cursor: pointer; padding: 0.5rem; border-radius: 8px;">' +
-                        '<i class="fas fa-times"></i>' +
+                        '✖️' +
                     '</button>' +
                 '</div>' +
                 '<div class="portfolio-modal-body" id="portfolio-modal-body" style="padding: 1.5rem;">' +
                     '<div class="text-center">' +
-                        '<i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: #60a5fa;"></i>' +
-                        '<p style="color: white;">Loading...</p>' +
+                        '<div style="font-size: 2rem;">⏳</div>' +
+                        '<p>Loading...</p>' +
                     '</div>' +
                 '</div>' +
             '</div>' +
@@ -5496,7 +5495,7 @@
         });
         
         formHTML += '<button type="submit" style="background: linear-gradient(135deg, #60a5fa, #3b82f6); border: none; color: white; padding: 1rem 2rem; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; margin-top: 1rem;">' +
-            '<i class="fas fa-magic"></i> Create My Portfolio' +
+            '✨ Create My Portfolio' +
             '</button>' +
             '</form></div>';
         
@@ -5594,7 +5593,7 @@
         // Show loading
         document.getElementById('portfolio-modal-body').innerHTML = 
             '<div style="text-center; padding: 2rem; color: white;">' +
-                '<i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: #60a5fa; margin-bottom: 1rem;"></i>' +
+                '<div style="font-size: 2rem; margin-bottom: 1rem;">⏳</div>' +
                 '<p>Building your personalized portfolio...</p>' +
             '</div>';
         
@@ -5624,7 +5623,7 @@
     
     function displayPortfolio(portfolio) {
         let html = '<div style="color: white;">' +
-            '<h4><i class="fas fa-check-circle" style="color: #22c55e;"></i> Your AI-Built Portfolio</h4>' +
+            '<h4>✅ Your AI-Built Portfolio</h4>' +
             '<div style="background: rgba(96, 165, 250, 0.05); border: 1px solid rgba(96, 165, 250, 0.2); border-radius: 12px; padding: 1.5rem; margin: 1rem 0;">' +
                 '<h5 style="color: white; margin: 0 0 0.5rem 0;">' + portfolio.strategy.name + '</h5>' +
                 '<p style="color: rgba(255, 255, 255, 0.7);">' + portfolio.strategy.description + '</p>' +
@@ -5653,10 +5652,10 @@
         html += '</div>' +
             '<div style="margin-top: 2rem; text-align: center;">' +
                 '<button onclick="implementPortfolio()" style="background: linear-gradient(135deg, #60a5fa, #3b82f6); border: none; color: white; padding: 1rem 2rem; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; margin-right: 1rem;">' +
-                    '<i class="fas fa-rocket"></i> Implement Portfolio' +
+                    '🚀 Implement Portfolio' +
                 '</button>' +
                 '<button onclick="startPortfolioQuestionnaire()" style="background: transparent; border: 1px solid rgba(96, 165, 250, 0.3); color: white; padding: 1rem 2rem; border-radius: 8px; cursor: pointer;">' +
-                    '<i class="fas fa-redo"></i> Try Different Strategy' +
+                    '🔄 Try Different Strategy' +
                 '</button>' +
             '</div>' +
         '</div>';
@@ -5708,7 +5707,7 @@
         html += '</div>' +
             '<div style="margin-top: 2rem; text-align: center;">' +
                 '<button onclick="startPortfolioQuestionnaire()" style="background: rgba(96, 165, 250, 0.2); border: 1px solid rgba(96, 165, 250, 0.5); color: white; padding: 1rem 2rem; border-radius: 8px; cursor: pointer;">' +
-                    '<i class="fas fa-magic"></i> Get Personalized Recommendation' +
+                    '✨ Get Personalized Recommendation' +
                 '</button>' +
             '</div>' +
         '</div>';
@@ -5803,7 +5802,7 @@
                         <p style="margin: 0.5rem 0 0 0; opacity: 0.9; font-size: 0.9rem;">Choose a specialist or let us auto-route your question</p>
                     </div>
                     <button onclick="closeAITeamModal()" style="background: rgba(255,255,255,0.2); border: none; color: white; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s;">
-                        <i class="fas fa-times"></i>
+✖️
                     </button>
                 </div>
             </div>
@@ -5814,7 +5813,7 @@
                     <!-- Auto-Route Option -->
                     <div class="team-member-card" onclick="selectTeamMember('auto')" style="display: flex; align-items: center; padding: 1rem; background: rgba(96,165,250,0.1); border: 1px solid rgba(96,165,250,0.2); border-radius: 12px; margin-bottom: 1rem; cursor: pointer; transition: all 0.3s;">
                         <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 1rem;">
-                            <i class="fas fa-robot" style="font-size: 1.2rem; color: white;"></i>
+🤖
                         </div>
                         <div style="flex: 1;">
                             <div style="font-weight: 600; font-size: 1rem; margin-bottom: 0.25rem;">Smart Auto-Route</div>
@@ -5826,7 +5825,7 @@
                     <!-- Sarah Chen -->
                     <div class="team-member-card" onclick="selectTeamMember('sarah')" style="display: flex; align-items: center; padding: 1rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; margin-bottom: 1rem; cursor: pointer; transition: all 0.3s;">
                         <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #00D4AA, #007AFF); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 1rem;">
-                            <i class="fas fa-chart-line" style="font-size: 1.2rem; color: white;"></i>
+📈
                         </div>
                         <div style="flex: 1;">
                             <div style="font-weight: 600; font-size: 1rem; margin-bottom: 0.25rem;">Sarah Chen</div>
@@ -5838,7 +5837,7 @@
                     <!-- Alex Rodriguez -->
                     <div class="team-member-card" onclick="selectTeamMember('alex')" style="display: flex; align-items: center; padding: 1rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; margin-bottom: 1rem; cursor: pointer; transition: all 0.3s;">
                         <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #FF6B35, #F7931E); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 1rem;">
-                            <i class="fas fa-tools" style="font-size: 1.2rem; color: white;"></i>
+🛠️
                         </div>
                         <div style="flex: 1;">
                             <div style="font-weight: 600; font-size: 1rem; margin-bottom: 0.25rem;">Alex Rodriguez</div>
@@ -5850,7 +5849,7 @@
                     <!-- Maria Santos -->
                     <div class="team-member-card" onclick="selectTeamMember('maria')" style="display: flex; align-items: center; padding: 1rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; margin-bottom: 1rem; cursor: pointer; transition: all 0.3s;">
                         <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #8B5CF6, #A855F7); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 1rem;">
-                            <i class="fas fa-graduation-cap" style="font-size: 1.2rem; color: white;"></i>
+🎓
                         </div>
                         <div style="flex: 1;">
                             <div style="font-weight: 600; font-size: 1rem; margin-bottom: 0.25rem;">Maria Santos</div>
@@ -5870,14 +5869,14 @@
                         <div id="selected-role" style="color: rgba(255,255,255,0.7); font-size: 0.8rem;"></div>
                     </div>
                     <button onclick="backToTeamSelection()" style="margin-left: auto; background: rgba(255,255,255,0.1); border: none; color: white; padding: 0.5rem; border-radius: 6px; cursor: pointer;">
-                        <i class="fas fa-arrow-left"></i>
+⬅️
                     </button>
                 </div>
                 
                 <div style="display: flex; gap: 0.75rem; margin-bottom: 1rem;">
                     <input type="text" id="team-chat-input" placeholder="Ask your question..." style="flex: 1; padding: 0.75rem; border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; background: rgba(255,255,255,0.05); color: white; outline: none;" onkeypress="if(event.key==='Enter') sendTeamMessage()">
                     <button onclick="sendTeamMessage()" style="background: #667eea; border: none; color: white; padding: 0.75rem 1rem; border-radius: 8px; cursor: pointer; font-weight: 600;">
-                        <i class="fas fa-paper-plane"></i>
+✈️
                     </button>
                 </div>
                 
@@ -5975,7 +5974,7 @@
                 memberData = {
                     name: 'Smart Auto-Route',
                     role: 'AI will choose the best specialist',
-                    avatar: '<i class="fas fa-robot" style="color: white;"></i>',
+                    avatar: '🤖',
                     background: 'linear-gradient(135deg, #667eea, #764ba2)',
                     greeting: 'Hi! I\'ll analyze your question and connect you with the right specialist. What can I help you with?'
                 };
@@ -5984,7 +5983,7 @@
                 memberData = {
                     name: 'Sarah Chen',
                     role: 'AI Market Analyst',
-                    avatar: '<i class="fas fa-chart-line" style="color: white;"></i>',
+                    avatar: '📈',
                     background: 'linear-gradient(135deg, #00D4AA, #007AFF)',
                     greeting: 'Hello! I\'m Sarah, your AI Market Analyst. I can help with trading strategies, market insights, and stock analysis. What would you like to explore?'
                 };
@@ -5993,7 +5992,7 @@
                 memberData = {
                     name: 'Alex Rodriguez',
                     role: 'Technical Support Specialist',
-                    avatar: '<i class="fas fa-tools" style="color: white;"></i>',
+                    avatar: '🛠️',
                     background: 'linear-gradient(135deg, #FF6B35, #F7931E)',
                     greeting: 'Hey there! I\'m Alex, your Technical Support specialist. I can help with platform issues, account problems, and feature guidance. How can I assist you today?'
                 };
@@ -6002,7 +6001,7 @@
                 memberData = {
                     name: 'Maria Santos',
                     role: 'Customer Success Manager',
-                    avatar: '<i class="fas fa-graduation-cap" style="color: white;"></i>',
+                    avatar: '🎓',
                     background: 'linear-gradient(135deg, #8B5CF6, #A855F7)',
                     greeting: 'Hi! I\'m Maria, your Customer Success Manager. I\'m here to help you get started, learn new features, and share best practices. What can I help you with?'
                 };
@@ -6058,9 +6057,9 @@
         typingIndicator.style.cssText = 'margin-bottom: 1rem; padding: 0.75rem; background: rgba(255,255,255,0.05); border-radius: 8px;';
         typingIndicator.innerHTML = 
             '<div style="color: rgba(255,255,255,0.7); font-style: italic;">' +
-                '<i class="fas fa-circle" style="font-size: 0.5rem; opacity: 0.5; animation: pulse 1.5s infinite;"></i>' +
-                '<i class="fas fa-circle" style="font-size: 0.5rem; opacity: 0.5; animation: pulse 1.5s infinite 0.3s;"></i>' +
-                '<i class="fas fa-circle" style="font-size: 0.5rem; opacity: 0.5; animation: pulse 1.5s infinite 0.6s;"></i>' +
+                '<span style="font-size: 0.5rem; opacity: 0.5; animation: pulse 1.5s infinite;">●</span>' +
+                '<span style="font-size: 0.5rem; opacity: 0.5; animation: pulse 1.5s infinite 0.3s;">●</span>' +
+                '<span style="font-size: 0.5rem; opacity: 0.5; animation: pulse 1.5s infinite 0.6s;">●</span>' +
                 'AI is thinking...' +
             '</div>';
         messages.appendChild(typingIndicator);
