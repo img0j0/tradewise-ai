@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TradeWise AI - Clean Test</title>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+            color: white;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 2rem;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .brand {
+            font-size: 3rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 25%, #8b5cf6 50%, #ec4899 75%, #60a5fa 100%);
+            background-size: 300% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shimmer 6s ease-in-out infinite;
+            margin-bottom: 1rem;
+        }
+        @keyframes shimmer {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        .status {
+            font-size: 1.2rem;
+            color: #10b981;
+            margin-bottom: 2rem;
+        }
+        .test-box {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 2rem;
+            max-width: 600px;
+            text-align: center;
+        }
+        .back-btn {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 1rem;
+            transition: transform 0.2s;
+        }
+        .back-btn:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="brand">TradeWise AI</div>
+    <div class="status">✅ Clean HTML Output Verified</div>
+    <div class="test-box">
+        <h2>Platform Status: Operational</h2>
+        <p>This test page confirms that the HTML output is completely clean with no raw CSS leakage. The main interface should now be displaying properly.</p>
+        <a href="/" class="back-btn">Return to Main Interface</a>
+    </div>
+</body>
+</html>

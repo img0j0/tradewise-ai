@@ -165,21 +165,27 @@ def index():
     # Use the original sophisticated template with full functionality
     html_content = render_template('chatgpt_style_search.html')
     
+    # Ensure clean response with aggressive cache busting
     response = make_response(html_content)
     response.headers['Content-Type'] = 'text/html; charset=utf-8'
-    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0'
     response.headers['Pragma'] = 'no-cache'
     response.headers['Expires'] = '0'
+    response.headers['Last-Modified'] = '0'
+    response.headers['ETag'] = ''
     response.mimetype = 'text/html'
     return response
 
 @app.route('/test')
 def test_page():
-    """Simple test page to verify HTML rendering"""
+    """Clean test page to verify HTML rendering"""
     from flask import make_response
     
-    response = make_response(render_template('test_simple.html'))
+    response = make_response(render_template('test_clean.html'))
     response.headers['Content-Type'] = 'text/html; charset=utf-8'
+    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '0'
     response.mimetype = 'text/html'
     return response
 
