@@ -458,6 +458,17 @@ class TierIntegrationManager {
 // Global tier integration manager
 window.tierIntegration = new TierIntegrationManager();
 
+// Global functions for upgrade system
+window.showUpgradeModal = (targetTier) => {
+    window.tierIntegration.openSubscriptionUpgrade(targetTier);
+};
+
+window.initializeSubscription = (targetTier) => {
+    // Placeholder for subscription initialization
+    alert(`Initializing ${targetTier} subscription. This would redirect to payment processing.`);
+    // In production, this would integrate with Stripe or payment processor
+};
+
 // Enhanced global functions
 window.openSubscriptionUpgrade = (targetTier) => {
     window.tierIntegration.openSubscriptionUpgrade(targetTier);

@@ -17,12 +17,15 @@
     <div class="chatgpt-container">
         <!-- Header -->
         <div class="header">
-            <div class="header-title">TradeWise AI</div>
+            <div class="header-title">
+                <span class="brand-name">TradeWise AI</span>
+                <span class="brand-subtitle">AI-Powered Trading Intelligence</span>
+            </div>
             <div class="header-actions">
                 <div id="premium-crown-badge" class="premium-crown-badge" style="display: none;">
                     <i class="fas fa-crown"></i>
                 </div>
-                <button class="upgrade-button-seamless" id="upgrade-button" onclick="openSubscriptionUpgrade('Pro')">
+                <button class="upgrade-button-seamless" id="upgrade-button" onclick="showUpgradeModal('Pro')">
                     <i class="fas fa-crown" style="font-size: 0.85rem;"></i>
                     <span>Upgrade to Pro</span>
                 </button>
@@ -5792,6 +5795,17 @@
             closeAITeamModal();
         }
     });
+
+    // Initialize subscription system - ADDED to fix JavaScript error
+    function initializeSubscription(targetTier) {
+        console.log(`Initializing ${targetTier} subscription...`);
+        // This would integrate with Stripe in production
+        alert(`${targetTier} subscription coming soon! This will unlock advanced features.`);
+    }
+
+    // Make functions globally available
+    window.initializeSubscription = initializeSubscription;
+    window.showUpgradeModal = showUpgradeModal;
     </script>
     
 
