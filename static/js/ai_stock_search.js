@@ -26,10 +26,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function initializeGoogleSearch() {
     const searchInput = document.getElementById('stock-search-input');
-    const searchBtn = document.getElementById('search-btn');
+    const searchBtn = document.querySelector('.submit-btn');
     const suggestionsContainer = document.getElementById('search-suggestions');
     
-    if (!searchInput || !searchBtn) return;
+    if (!searchInput) {
+        console.log('Search input not found, search functionality disabled');
+        return;
+    }
     
     // Add event listeners
     searchInput.addEventListener('input', handleSearchInput);
@@ -37,11 +40,13 @@ function initializeGoogleSearch() {
     searchInput.addEventListener('focus', handleSearchFocus);
     searchInput.addEventListener('blur', handleSearchBlur);
     
-    searchBtn.addEventListener('click', function(e) {
-        e.preventDefault();
-        console.log('Search button clicked');
-        searchStockAI();
-    });
+    if (searchBtn) {
+        searchBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('Search button clicked');
+            searchStockAI();
+        });
+    }
     
     // Click outside to close suggestions
     document.addEventListener('click', function(e) {
@@ -71,6 +76,7 @@ function handleSearchInput(e) {
 
 function handleSearchKeydown(e) {
     const suggestionsContainer = document.getElementById('search-suggestions');
+    if (!suggestionsContainer) return;
     const suggestionItems = suggestionsContainer.querySelectorAll('.suggestion-item');
     
     switch(e.key) {
@@ -119,7 +125,10 @@ function handleSearchBlur() {
 
 async function showSuggestions(query) {
     const suggestionsContainer = document.getElementById('search-suggestions');
-    const suggestionsList = document.getElementById('suggestions-list');
+    if (!suggestionsContainer) {
+        console.log('Search suggestions container not found');
+        return;
+    }
     
     // Show loading state
     showLoadingState();
@@ -144,7 +153,7 @@ async function showSuggestions(query) {
     }
     
     // Create suggestion items
-    suggestionsList.innerHTML = suggestions.map((suggestion, index) => `
+    suggestionsContainer.innerHTML = suggestions.map((suggestion, index) => `
         <button class="suggestion-item" onclick="selectSuggestion(${JSON.stringify(suggestion).replace(/"/g, '&quot;')})" type="button">
             <div class="suggestion-icon">
                 <i class="fas fa-chart-line"></i>
@@ -162,7 +171,9 @@ async function showSuggestions(query) {
 
 function hideSuggestions() {
     const suggestionsContainer = document.getElementById('search-suggestions');
-    suggestionsContainer.style.display = 'none';
+    if (suggestionsContainer) {
+        suggestionsContainer.style.display = 'none';
+    }
     selectedSuggestionIndex = -1;
 }
 

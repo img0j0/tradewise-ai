@@ -1039,10 +1039,8 @@
                        id="stock-search-input"
                        placeholder="Ask anything about stocks... (try 'google', 'apple', or 'NVDA')"
                        class="search-input"
-                       onkeypress="handleEnterPress(event)"
-                       oninput="showSearchSuggestions(this.value)"
                        style="background-image: none !important; -webkit-appearance: none; -moz-appearance: none; appearance: none;">
-                <button class="submit-btn" onclick="performSearch()">
+                <button class="submit-btn" onclick="searchStockAI()">
                     
                 </button>
             </div>
@@ -1074,8 +1072,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/static/js/ai_stock_search.js"></script>
-    <script src="/static/js/institutional_dropdown_system.js"></script>
-    <script src="/static/js/tier_integration.js"></script>
     <script>
         // Simple purchase functions
         function closePurchaseModal() {
