@@ -140,12 +140,23 @@ class SubscriptionTierManager:
 
     def get_user_tier(self, user_id: Optional[int] = None) -> str:
         """Get current user's subscription tier"""
-        if user_id is None and current_user.is_authenticated:
-            user_id = current_user.id
-        
-        # For demo purposes, return 'Free' - in production this would check the database
-        # TODO: Query user's actual subscription from database
-        return 'Free'
+        try:
+            if current_user.is_authenticated:
+                # Check if user is demo user (institutional account)
+                if current_user.username == 'demo':
+                    logger.info(f"Demo user detected - returning Institutional tier")
+                    return 'Institutional'
+                
+                # Check for subscription_tier attribute
+                tier = getattr(current_user, 'subscription_tier', 'Free')
+                logger.info(f"User tier check - User: {current_user.username}, Tier: {tier}")
+                return tier
+            
+            logger.info("User not authenticated - returning Free tier")
+            return 'Free'
+        except Exception as e:
+            logger.error(f"Error getting user tier: {e}")
+            return 'Free'
 
     def get_tier_config(self, tier: str) -> Dict[str, Any]:
         """Get configuration for a specific tier"""

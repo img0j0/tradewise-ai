@@ -12,6 +12,7 @@ class TierIntegrationManager {
     }
 
     async init() {
+        console.log('TierIntegrationManager: Starting initialization...');
         await this.loadTierConfiguration();
         this.applyTierTransformations();
         this.setupUpgradePrompts();
@@ -21,19 +22,24 @@ class TierIntegrationManager {
 
     async loadTierConfiguration() {
         try {
+            console.log('TierIntegrationManager: Loading tier configuration...');
             const response = await fetch('/api/user-tier-config');
             const data = await response.json();
+            
+            console.log('TierIntegrationManager: API Response:', data);
             
             if (data.success) {
                 this.tierConfig = data.tier_config;
                 this.currentTier = this.tierConfig.tier;
                 this.upgradePrompts = this.tierConfig.upgrade_recommendations;
                 
+                console.log(`TierIntegrationManager: Loaded tier: ${this.currentTier}`);
+                
                 // Apply theme configuration
                 this.applyTierTheme();
             }
         } catch (error) {
-            console.error('Error loading tier configuration:', error);
+            console.error('TierIntegrationManager: Error loading tier configuration:', error);
             // Fallback to Free tier
             this.currentTier = 'Free';
         }
