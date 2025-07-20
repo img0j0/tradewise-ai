@@ -734,6 +734,15 @@
         // Auto-focus search input
         document.getElementById('search-input').focus();
         
+        // Test function to verify onclick handlers work
+        window.testAlert = function() {
+            console.log('Test alert function called!');
+            alert('Test function works!');
+        };
+        
+        // Make showCreateAlert available globally
+        window.showCreateAlert = showCreateAlert;
+        
         // Add to Watchlist function
         async function addToWatchlist() {
             if (!currentStock) {
@@ -776,7 +785,11 @@
         
         // Smart Alert Creation Function
         async function showCreateAlert() {
+            console.log('showCreateAlert function called!');
+            console.log('currentStock:', currentStock);
+            
             if (!currentStock) {
+                console.error('No current stock data available');
                 alert('Please search for a stock first');
                 return;
             }
