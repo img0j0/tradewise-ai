@@ -160,7 +160,7 @@ def get_or_create_user_account():
 @app.route('/')
 def index():
     """Clean ChatGPT-style interface without institutional complexity"""
-    response = make_response(render_template('chatgpt_style_clean.html'))
+    response = make_response(render_template('clean_chatgpt_search.html'))
     response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
     response.headers['Pragma'] = 'no-cache'
     response.headers['Expires'] = '0'
