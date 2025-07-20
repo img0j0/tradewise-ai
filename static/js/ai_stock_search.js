@@ -219,12 +219,12 @@ async function searchStockAI() {
     console.log('Search symbol:', symbol);
     
     if (!symbol) {
-        showSearchError('Please enter a stock symbol or company name');
+        alert('Please enter a stock symbol or company name');
         return;
     }
 
-    // Show loading state
-    showSearchLoading();
+    // Show loading state (but don't use conflicting container)
+    console.log('Search loading started...');
     hideSuggestions();
     
     try {
@@ -244,10 +244,16 @@ async function searchStockAI() {
         // Completely hide and disable old results
         hideOldResults();
         
-        // Disable any other display functions
+        // Disable any other display functions and conflicting containers
         const oldSearchResults = document.getElementById('search-results');
         if (oldSearchResults) {
             oldSearchResults.remove(); // Completely remove old container
+        }
+        
+        // Clear any existing content in ai-analysis-results from loading/error functions
+        const existingContainer = document.getElementById('ai-analysis-results');
+        if (existingContainer) {
+            existingContainer.innerHTML = ''; // Clear any basic card content
         }
         
         // ONLY call the enhanced display function
@@ -257,7 +263,7 @@ async function searchStockAI() {
         
     } catch (error) {
         console.error('Error searching stock:', error);
-        showSearchError(error.message || 'Stock not found. Please try a different symbol.');
+        alert('Error: ' + (error.message || 'Stock not found. Please try a different symbol.'));
     }
 }
 
@@ -997,8 +1003,10 @@ function generateDetailedInsights(stockData, aiAnalysis) {
     return insights.join('<br><br>');
 }
 
-// Show loading state
-function showSearchLoading() {
+// Show loading state - DISABLED to prevent conflict with ChatGPT overlay
+function showSearchLoading_DISABLED() {
+    console.log('Loading state - using ChatGPT overlay system instead');
+    return;
     const resultsContainer = document.getElementById('ai-analysis-results');
     const searchBtn = document.getElementById('search-btn');
     const searchBox = document.querySelector('.google-search-box');
