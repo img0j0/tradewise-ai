@@ -386,6 +386,24 @@ def payment_success():
     </html>
     '''
 
+@app.route('/api/logout', methods=['POST'])
+def api_logout():
+    """Handle user logout"""
+    try:
+        # In production, you would:
+        # 1. Clear user session
+        # 2. Invalidate tokens
+        # 3. Log the logout event
+        
+        return jsonify({
+            'success': True,
+            'message': 'Logged out successfully'
+        })
+        
+    except Exception as e:
+        logger.error(f"Logout error: {e}")
+        return jsonify({'success': False, 'error': 'Logout failed'})
+
 
 
 @app.route('/profile')

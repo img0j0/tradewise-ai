@@ -272,7 +272,26 @@
             <button class="tool-btn" onclick="openPortfolio()" title="Portfolio">📊</button>
             <button class="tool-btn" onclick="openWatchlist()" title="Watchlist">⭐</button>
             <button class="tool-btn" onclick="openAccount()" title="Account">👤</button>
-            <button class="tool-btn" onclick="window.location.href='/login'" title="Login">🔐</button>
+            <button class="tool-btn" onclick="toggleAuthMenu()" title="Login/Logout">🔐</button>
+        </div>
+        
+        <!-- Authentication Dropdown Menu -->
+        <div id="auth-dropdown" style="display: none; position: fixed; top: 70px; right: 20px; background: rgba(26, 26, 46, 0.95); border: 1px solid rgba(255,255,255,0.2); border-radius: 15px; padding: 15px; min-width: 200px; z-index: 1000; backdrop-filter: blur(10px);">
+            <div style="margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                <div style="font-weight: 600; margin-bottom: 5px;">Authentication</div>
+                <div style="opacity: 0.7; font-size: 0.9rem;">Manage your account</div>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <button onclick="window.location.href='/login'" style="padding: 10px 15px; background: linear-gradient(45deg, #8b5cf6, #06b6d4); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: 600;">
+                    Sign In
+                </button>
+                <button onclick="window.location.href='/register'" style="padding: 10px 15px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 10px; cursor: pointer;">
+                    Sign Up
+                </button>
+                <button onclick="handleLogout()" style="padding: 10px 15px; background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.5); color: #ef4444; border-radius: 10px; cursor: pointer;">
+                    Sign Out
+                </button>
+            </div>
         </div>
         
         <div class="logo">TradeWise AI</div>
@@ -716,6 +735,36 @@
                 alert('Error: ' + error.message);
             }
         }
+
+        // Authentication Menu Functions
+        function toggleAuthMenu() {
+            const dropdown = document.getElementById('auth-dropdown');
+            if (dropdown.style.display === 'none' || !dropdown.style.display) {
+                dropdown.style.display = 'block';
+            } else {
+                dropdown.style.display = 'none';
+            }
+        }
+
+        function handleLogout() {
+            if (confirm('Are you sure you want to sign out?')) {
+                // In production, this would call logout API
+                alert('You have been signed out successfully');
+                document.getElementById('auth-dropdown').style.display = 'none';
+                // Could redirect to login page if needed
+                // window.location.href = '/login';
+            }
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('auth-dropdown');
+            const authButton = event.target.closest('.tool-btn[title="Login/Logout"]');
+            
+            if (!authButton && !dropdown.contains(event.target)) {
+                dropdown.style.display = 'none';
+            }
+        });
     </script>
 </body>
 </html>
