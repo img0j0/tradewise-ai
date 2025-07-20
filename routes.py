@@ -2012,12 +2012,12 @@ def register():
     return render_template('register.html')
 
 @app.route('/logout')
-@login_required
 def logout():
     """User logout"""
+    from flask_login import logout_user
     logout_user()
-    flash('You have been logged out.', 'info')
-    return redirect(url_for('login'))
+    flash('You have been logged out successfully.', 'info')
+    return render_template('simple_login.html')
 
 @app.route('/api/analytics', methods=['POST'])
 @login_required
