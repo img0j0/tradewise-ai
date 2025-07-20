@@ -709,16 +709,21 @@
                     </div>
                 </div>
                 
-                <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); text-align: center;">
-                    <button onclick="closeAnalysis()" style="padding: 12px 30px; background: linear-gradient(45deg, #8b5cf6, #06b6d4); color: white; border: none; border-radius: 25px; cursor: pointer; font-weight: 600; margin-right: 10px;">
-                        Close Analysis
-                    </button>
-                    <button onclick="addToWatchlist()" style="padding: 12px 30px; background: linear-gradient(45deg, #f59e0b, #d97706); color: white; border: none; border-radius: 25px; cursor: pointer; font-weight: 600; margin-right: 10px;">
-                        ⭐ Add to Watchlist
-                    </button>
-                    <button onclick="showBuyModal()" style="padding: 12px 30px; background: linear-gradient(45deg, #10b981, #059669); color: white; border: none; border-radius: 25px; cursor: pointer; font-weight: 600;">
-                        Buy Stock
-                    </button>
+                <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);">
+                    <!-- Mobile-optimized button layout -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+                        <button onclick="addToWatchlist()" style="padding: 12px 20px; background: linear-gradient(45deg, #f59e0b, #d97706); color: white; border: none; border-radius: 15px; cursor: pointer; font-weight: 600; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 5px;">
+                            ⭐ Watchlist
+                        </button>
+                        <button onclick="showBuyModal()" style="padding: 12px 20px; background: linear-gradient(45deg, #10b981, #059669); color: white; border: none; border-radius: 15px; cursor: pointer; font-weight: 600; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 5px;">
+                            💰 Buy Stock
+                        </button>
+                    </div>
+                    <div style="text-align: center;">
+                        <button onclick="closeAnalysis()" style="padding: 10px 25px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 15px; cursor: pointer; font-weight: 600; font-size: 14px;">
+                            Close Analysis
+                        </button>
+                    </div>
                 </div>
             `;
         }
