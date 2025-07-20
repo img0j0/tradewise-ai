@@ -9,8 +9,8 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/premium_features.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/tier_styles.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/enhanced_front_page.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/layout_fix.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/institutional_ui_optimization.css') }}">
+
     <style>
         /* Enhanced Brand Animation Styles */
         .animated-brand {
@@ -339,6 +339,7 @@
     </style>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{{ url_for('static', filename='js/tier_integration.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/institutional_dropdown_system.js') }}"></script>
     <script src="{{ url_for('static', filename='js/institutional_tier_fix.js') }}"></script>
     <script src="{{ url_for('static', filename='js/institutional_premium_features.js') }}"></script>
     <script src="{{ url_for('static', filename='js/advanced_institutional_tools.js') }}"></script>
@@ -357,11 +358,15 @@
     <!-- ChatGPT-Style Interface -->
     <div class="chatgpt-container" style="max-width: 100vw; overflow-x: hidden; margin: 0; padding: 0; box-sizing: border-box; width: 100%;">
         <!-- Header -->
-        <div class="header" style="max-width: 100vw; width: 100%; box-sizing: border-box; margin: 0; padding: 1.2rem 1.5rem;">
+        <div class="header institutional-header" style="max-width: 100vw; width: 100%; box-sizing: border-box; margin: 0; padding: 1.2rem 1.5rem;">
             <div class="header-left">
                 <div class="brand-container">
                     <span class="brand-name animated-brand">TradeWise AI</span>
                 </div>
+            </div>
+            <!-- Professional Navigation -->
+            <div class="institutional-nav">
+                <!-- Dropdown menus will be inserted here by JavaScript -->
             </div>
             <div class="header-right">
                 <div class="subscription-status-header" id="subscription-status">
