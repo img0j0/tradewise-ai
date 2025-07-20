@@ -162,8 +162,8 @@ def index():
     """Main ChatGPT-style advanced interface"""
     from flask import make_response
     
-    # Use the cleaned, fixed template
-    html_content = render_template('chatgpt_style_search_fixed.html')
+    # Use the original sophisticated template with full functionality
+    html_content = render_template('chatgpt_style_search.html')
     
     response = make_response(html_content)
     response.headers['Content-Type'] = 'text/html; charset=utf-8'
