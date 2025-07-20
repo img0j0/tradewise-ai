@@ -1634,7 +1634,8 @@ def quick_login(username):
     # Map test usernames to passwords
     test_accounts = {
         'trader1': 'TradingPro2025',
-        'testuser': 'password123'
+        'testuser': 'password123',
+        'demo': 'demo123'
     }
     
     if username in test_accounts:
