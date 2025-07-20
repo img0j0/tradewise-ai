@@ -17,8 +17,8 @@ function activateInstitutionalFeatures() {
     // Add advanced AI insights panel
     addAdvancedAIInsights();
     
-    // Add dark pool intelligence
-    addDarkPoolIntelligence();
+    // Add Bloomberg-style dark pool intelligence
+    addBloombergStyleDarkPool();
     
     // Trading tools are now handled by advanced_institutional_tools.js
     
@@ -38,10 +38,11 @@ function addInstitutionalHeader() {
         const premiumHeader = document.createElement('div');
         premiumHeader.className = 'institutional-premium-header';
         premiumHeader.innerHTML = `
-            <div style="background: linear-gradient(135deg, #8b5cf6, #6366f1); padding: 8px 15px; border-radius: 8px; color: white; font-weight: 600; font-size: 0.85rem; margin-right: 15px; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);">
-                <i class="fas fa-crown" style="color: #fbbf24;"></i>
-                INSTITUTIONAL ACCESS
-                <span style="background: rgba(255,255,255,0.2); padding: 2px 6px; border-radius: 4px; font-size: 0.7rem;">$199/mo</span>
+            <div style="background: linear-gradient(135deg, #1e40af, #7c3aed); padding: 6px 12px; border-radius: 6px; color: white; font-weight: 600; font-size: 0.75rem; margin-right: 10px; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 15px rgba(30, 64, 175, 0.4); position: relative;">
+                <i class="fas fa-chart-line" style="color: #fbbf24;"></i>
+                BLOOMBERG KILLER
+                <span style="background: rgba(255,255,255,0.2); padding: 1px 4px; border-radius: 3px; font-size: 0.6rem;">98% SAVINGS</span>
+                <div style="position: absolute; top: -5px; right: -5px; background: #dc2626; color: white; border-radius: 50%; width: 12px; height: 12px; font-size: 0.5rem; display: flex; align-items: center; justify-content: center; animation: pulse 2s infinite;">!</div>
             </div>
         `;
         header.appendChild(premiumHeader);
@@ -163,7 +164,80 @@ function addAdvancedAIInsights() {
 
 
 
-// This function is now replaced by the organized toolbar in advanced_institutional_tools.js
+function addBloombergStyleDarkPool() {
+    const container = document.querySelector('.main-content, .search-section');
+    if (container && !container.querySelector('.bloomberg-dark-pool')) {
+        const darkPool = document.createElement('div');
+        darkPool.className = 'bloomberg-dark-pool';
+        darkPool.innerHTML = `
+            <div style="background: linear-gradient(135deg, rgba(220,38,38,0.1), rgba(153,27,27,0.1)); border: 1px solid rgba(220,38,38,0.3); border-radius: 15px; padding: 15px; margin-bottom: 15px; backdrop-filter: blur(10px); position: relative;">
+                <div style="position: absolute; top: 10px; right: 10px; background: rgba(220,38,38,0.8); color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.6rem; font-weight: 600;">
+                    BLOOMBERG KILLER
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <h4 style="color: #dc2626; font-weight: 700; margin: 0; display: flex; align-items: center; gap: 8px; font-size: 1rem;">
+                        <i class="fas fa-user-secret"></i>
+                        Dark Pool Intelligence
+                        <span style="background: #dc2626; color: white; font-size: 0.6rem; padding: 2px 6px; border-radius: 4px;">ELITE</span>
+                    </h4>
+                    <button onclick="toggleDarkPoolDetails()" style="background: none; border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.7); padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 0.7rem;">
+                        <i class="fas fa-chevron-down" id="darkpool-chevron"></i> Live Feed
+                    </button>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;">
+                    <div style="background: rgba(0,0,0,0.3); border: 1px solid rgba(220,38,38,0.2); border-radius: 8px; padding: 10px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                            <div style="color: #dc2626; font-weight: 600; font-size: 0.8rem;">Block Trade</div>
+                            <span style="background: #dc2626; color: white; font-size: 0.6rem; padding: 1px 4px; border-radius: 3px;">LIVE</span>
+                        </div>
+                        <div style="color: white; font-size: 0.8rem; margin-bottom: 3px;">AAPL: 2.3M @ $211.15</div>
+                        <div style="color: rgba(255,255,255,0.7); font-size: 0.7rem;">Goldman Sachs</div>
+                    </div>
+                    <div style="background: rgba(0,0,0,0.3); border: 1px solid rgba(220,38,38,0.2); border-radius: 8px; padding: 10px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                            <div style="color: #f59e0b; font-weight: 600; font-size: 0.8rem;">Volume Alert</div>
+                            <span style="background: #f59e0b; color: white; font-size: 0.6rem; padding: 1px 4px; border-radius: 3px;">847%</span>
+                        </div>
+                        <div style="color: white; font-size: 0.8rem; margin-bottom: 3px;">NVDA: Unusual Activity</div>
+                        <div style="color: rgba(255,255,255,0.7); font-size: 0.7rem;">Multi-institutional</div>
+                    </div>
+                </div>
+                <div id="darkpool-details" style="display: none; margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1);">
+                    <div style="background: rgba(0,0,0,0.2); border-radius: 8px; padding: 12px; margin-bottom: 10px;">
+                        <div style="color: #dc2626; font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
+                            <i class="fas fa-broadcast-tower"></i> Live Dark Pool Feed - Last 5 Minutes
+                        </div>
+                        <div style="font-family: monospace; font-size: 0.7rem; line-height: 1.4;">
+                            <div style="color: #10b981; margin-bottom: 3px;">14:35:42 | MSFT | BUY | 1.8M shares @ $421.33 | Morgan Stanley</div>
+                            <div style="color: #ef4444; margin-bottom: 3px;">14:34:21 | TSLA | SELL | 950K shares @ $248.77 | JP Morgan</div>
+                            <div style="color: #10b981; margin-bottom: 3px;">14:33:15 | GOOGL | BUY | 2.1M shares @ $173.82 | BlackRock</div>
+                            <div style="color: #f59e0b; margin-bottom: 3px;">14:32:33 | NVDA | ALERT | 847% volume spike detected</div>
+                            <div style="color: #8b5cf6;">14:31:44 | AAPL | BLOCK | 2.3M shares @ $211.15 | Goldman Sachs</div>
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
+                        <div style="background: rgba(255,255,255,0.02); border-radius: 6px; padding: 8px; text-align: center;">
+                            <div style="color: #dc2626; font-size: 0.7rem;">Dark Pool %</div>
+                            <div style="color: white; font-size: 1.1rem; font-weight: 700;">42.7%</div>
+                            <div style="color: rgba(255,255,255,0.6); font-size: 0.6rem;">Above Normal</div>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.02); border-radius: 6px; padding: 8px; text-align: center;">
+                            <div style="color: #f59e0b; font-size: 0.7rem;">Block Size</div>
+                            <div style="color: white; font-size: 1.1rem; font-weight: 700;">$847M</div>
+                            <div style="color: rgba(255,255,255,0.6); font-size: 0.6rem;">Avg Today</div>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.02); border-radius: 6px; padding: 8px; text-align: center;">
+                            <div style="color: #8b5cf6; font-size: 0.7rem;">Institutions</div>
+                            <div style="color: white; font-size: 1.1rem; font-weight: 700;">247</div>
+                            <div style="color: rgba(255,255,255,0.6); font-size: 0.6rem;">Active</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        container.appendChild(darkPool);
+    }
+}
 
 function addAdvancedCharting() {
     // Add advanced charting capabilities indicator
