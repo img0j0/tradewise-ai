@@ -1089,66 +1089,7 @@
         transition: all 0.3s ease;
     }
 
-    /* Floating minimized theme button */
-    .floating-theme-btn {
-        position: fixed;
-        bottom: 120px;
-        right: 20px;
-        background: linear-gradient(135deg, #1a1a2e, #16213e);
-        border-radius: 12px;
-        padding: 0.75rem;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-        border: 1px solid rgba(96, 165, 250, 0.3);
-        z-index: 1000;
-        opacity: 0;
-        transform: translateY(20px);
-        transition: all 0.3s ease;
-        cursor: pointer;
-        max-width: 200px;
-    }
 
-    .floating-theme-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
-        border-color: rgba(96, 165, 250, 0.5);
-    }
-
-    .floating-theme-content {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 0.25rem;
-        color: white;
-        position: relative;
-    }
-
-    .floating-theme-name {
-        font-size: 0.85rem;
-        font-weight: 600;
-        color: #60a5fa;
-        text-align: center;
-    }
-
-    .floating-theme-performance {
-        font-size: 0.75rem;
-        color: #00D4AA;
-        font-weight: 600;
-    }
-
-    .floating-expand-icon {
-        position: absolute;
-        top: -0.5rem;
-        right: -0.5rem;
-        background: rgba(96, 165, 250, 0.2);
-        border-radius: 50%;
-        width: 20px;
-        height: 20px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 0.7rem;
-        color: #60a5fa;
-    }
 
     .theme-pill-more {
         background: rgba(255, 255, 255, 0.1);
@@ -3145,12 +3086,12 @@
         }
         
         // Strategy 6: Advanced fuzzy matching for multi-word queries
-        const queryWords = normalizedQuery.split(' ').filter(word => word.length > 2);
+        const queryWords = normalizedQuery.split(' ').filter(function(word) { return word.length > 2; });
         for (const [company, symbol] of Object.entries(companyMap)) {
             const companyWords = company.split(' ');
-            const matchCount = queryWords.filter(qWord => 
-                companyWords.some(cWord => cWord.includes(qWord) || qWord.includes(cWord))
-            ).length;
+            const matchCount = queryWords.filter(function(qWord) {
+                return companyWords.some(function(cWord) { return cWord.includes(qWord) || qWord.includes(cWord); });
+            }).length;
             
             // If majority of words match, return the symbol
             if (matchCount > 0 && matchCount >= Math.min(queryWords.length, companyWords.length) * 0.5) {
@@ -3747,40 +3688,30 @@
         alert(theme + ' theme added to your watchlist!');
     }
 
-    // Theme minimize/maximize functionality
+    // Theme minimize functionality - completely hide theme
     function toggleThemeMinimize(themeName) {
-        const themeCard = document.getElementById('theme-card-' + themeName);
-        const existingFloatingBtn = document.getElementById('floating-theme-' + themeName);
+        console.log('Minimizing theme:', themeName);
         
-        if (existingFloatingBtn) {
-            // Restore theme from minimized state
-            existingFloatingBtn.remove();
-            themeCard.style.display = 'block';
-            themeCard.scrollIntoView({ behavior: 'smooth' });
-        } else {
-            // Minimize theme completely and create floating restore button
+        // Find and hide the theme card completely
+        const themeCard = document.getElementById('theme-card-' + themeName);
+        if (themeCard) {
             themeCard.style.display = 'none';
-            
-            // Create floating restore button
-            const floatingBtn = document.createElement('div');
-            floatingBtn.id = 'floating-theme-' + themeName;
-            floatingBtn.className = 'floating-theme-btn';
-            floatingBtn.innerHTML = 
-                '<div class="floating-theme-content" onclick="toggleThemeMinimize(\'' + themeName + '\')">' +
-                    '<div class="floating-theme-name">' + themeName + ' Theme</div>' +
-                    '<div class="floating-theme-performance">+' + getThemePerformance(themeName) + '% YTD</div>' +
-                    '<i class="fas fa-expand-alt floating-expand-icon"></i>' +
-                '</div>';
-            
-            // Add to body instead of search results container
-            document.body.appendChild(floatingBtn);
-            
-            // Smooth animation
-            setTimeout(() => {
-                floatingBtn.style.opacity = '1';
-                floatingBtn.style.transform = 'translateY(0)';
-            }, 100);
+            console.log('Theme card hidden:', themeName);
         }
+        
+        // Clear the search results container to show clean interface
+        const resultsContainer = document.getElementById('search-results');
+        if (resultsContainer) {
+            resultsContainer.innerHTML = '<div style="text-align: center; padding: 2rem; color: rgba(255,255,255,0.5); font-style: italic;">Theme minimized. Use the search bar above to explore another stock or investment theme.</div>';
+            console.log('Search results cleared');
+        }
+        
+        // Remove any floating buttons that might exist (cleanup)
+        const floatingButtons = document.querySelectorAll('[id^="floating-theme-"]');
+        for (let i = 0; i < floatingButtons.length; i++) {
+            floatingButtons[i].remove();
+        }
+        console.log('Cleanup completed');
     }
 
     // Note: Toggle functions are defined at the beginning of the script
