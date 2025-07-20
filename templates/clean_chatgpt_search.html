@@ -2483,13 +2483,13 @@
                     <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 18px; padding: 25px; margin-bottom: 20px;">
                         <h4 style="margin: 0 0 20px 0; font-size: 1.1rem; font-weight: 600; text-align: center; opacity: 0.9;">Quick Actions</h4>
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px;">
-                            <button style="padding: 15px 20px; background: linear-gradient(45deg, #8b5cf6, #7c3aed); color: white; border: none; border-radius: 12px; cursor: pointer; font-weight: 600; font-size: 0.9rem; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(139, 92, 246, 0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(139, 92, 246, 0.3)'">
+                            <button onclick="openAccountSettings()" style="padding: 15px 20px; background: linear-gradient(45deg, #8b5cf6, #7c3aed); color: white; border: none; border-radius: 12px; cursor: pointer; font-weight: 600; font-size: 0.9rem; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(139, 92, 246, 0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(139, 92, 246, 0.3)'">
                                 ⚙️ Settings
                             </button>
-                            <button style="padding: 15px 20px; background: linear-gradient(45deg, #10b981, #059669); color: white; border: none; border-radius: 12px; cursor: pointer; font-weight: 600; font-size: 0.9rem; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(16, 185, 129, 0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(16, 185, 129, 0.3)'">
+                            <button onclick="openUpgradeModal()" style="padding: 15px 20px; background: linear-gradient(45deg, #10b981, #059669); color: white; border: none; border-radius: 12px; cursor: pointer; font-weight: 600; font-size: 0.9rem; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(16, 185, 129, 0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(16, 185, 129, 0.3)'">
                                 👑 Upgrade
                             </button>
-                            <button style="padding: 15px 20px; background: linear-gradient(45deg, #f59e0b, #d97706); color: white; border: none; border-radius: 12px; cursor: pointer; font-weight: 600; font-size: 0.9rem; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(245, 158, 11, 0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(245, 158, 11, 0.3)'">
+                            <button onclick="openAccountReports()" style="padding: 15px 20px; background: linear-gradient(45deg, #f59e0b, #d97706); color: white; border: none; border-radius: 12px; cursor: pointer; font-weight: 600; font-size: 0.9rem; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(245, 158, 11, 0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(245, 158, 11, 0.3)'">
                                 📊 Reports
                             </button>
                         </div>
@@ -2503,6 +2503,288 @@
                     </style>
                 </div>
             `);
+        }
+
+        // Quick Actions Functions
+        function openAccountSettings() {
+            closeAnalysis(); // Close current modal first
+            showToolOverlay('Account Settings', `
+                <div style="padding: 30px; max-height: 80vh; overflow-y: auto;">
+                    <div style="text-align: center; margin-bottom: 30px;">
+                        <div style="font-size: 2.5rem; margin-bottom: 15px;">⚙️</div>
+                        <h2 style="margin: 0; font-size: 1.8rem; font-weight: 700; color: white;">Account Settings</h2>
+                        <div style="opacity: 0.6; margin-top: 8px;">Manage your preferences and account details</div>
+                    </div>
+
+                    <div style="display: grid; gap: 20px;">
+                        <!-- Profile Settings -->
+                        <div style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(124, 58, 237, 0.05) 100%); border: 1px solid rgba(139, 92, 246, 0.2); border-radius: 15px; padding: 25px;">
+                            <h3 style="margin: 0 0 20px 0; color: #8b5cf6; font-size: 1.2rem; display: flex; align-items: center; gap: 10px;">
+                                👤 Profile Settings
+                            </h3>
+                            <div style="display: grid; gap: 15px;">
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                                    <div>
+                                        <label style="display: block; margin-bottom: 5px; opacity: 0.8; font-size: 0.9rem;">Display Name</label>
+                                        <input type="text" value="Demo User" style="width: 100%; padding: 12px; border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; background: rgba(255,255,255,0.05); color: white; font-size: 0.9rem;">
+                                    </div>
+                                    <div>
+                                        <label style="display: block; margin-bottom: 5px; opacity: 0.8; font-size: 0.9rem;">Email</label>
+                                        <input type="email" value="demo@tradewise.ai" style="width: 100%; padding: 12px; border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; background: rgba(255,255,255,0.05); color: white; font-size: 0.9rem;">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Trading Preferences -->
+                        <div style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.05) 100%); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 15px; padding: 25px;">
+                            <h3 style="margin: 0 0 20px 0; color: #10b981; font-size: 1.2rem; display: flex; align-items: center; gap: 10px;">
+                                📈 Trading Preferences
+                            </h3>
+                            <div style="display: grid; gap: 15px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <span style="opacity: 0.9;">Risk Tolerance</span>
+                                    <select style="padding: 8px 12px; border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; background: rgba(255,255,255,0.05); color: white;">
+                                        <option>Moderate</option>
+                                        <option>Conservative</option>
+                                        <option>Aggressive</option>
+                                    </select>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <span style="opacity: 0.9;">AI Recommendations</span>
+                                    <div style="position: relative; width: 50px; height: 25px; background: #10b981; border-radius: 15px; cursor: pointer;">
+                                        <div style="position: absolute; top: 2px; right: 2px; width: 21px; height: 21px; background: white; border-radius: 50%; transition: all 0.3s;"></div>
+                                    </div>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <span style="opacity: 0.9;">Auto-Execute Trades</span>
+                                    <div style="position: relative; width: 50px; height: 25px; background: rgba(255,255,255,0.2); border-radius: 15px; cursor: pointer;">
+                                        <div style="position: absolute; top: 2px; left: 2px; width: 21px; height: 21px; background: white; border-radius: 50%; transition: all 0.3s;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Notifications -->
+                        <div style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(217, 119, 6, 0.05) 100%); border: 1px solid rgba(245, 158, 11, 0.2); border-radius: 15px; padding: 25px;">
+                            <h3 style="margin: 0 0 20px 0; color: #f59e0b; font-size: 1.2rem; display: flex; align-items: center; gap: 10px;">
+                                🔔 Notifications
+                            </h3>
+                            <div style="display: grid; gap: 15px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <span style="opacity: 0.9;">Price Alerts</span>
+                                    <div style="position: relative; width: 50px; height: 25px; background: #f59e0b; border-radius: 15px; cursor: pointer;">
+                                        <div style="position: absolute; top: 2px; right: 2px; width: 21px; height: 21px; background: white; border-radius: 50%; transition: all 0.3s;"></div>
+                                    </div>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <span style="opacity: 0.9;">Market News</span>
+                                    <div style="position: relative; width: 50px; height: 25px; background: #f59e0b; border-radius: 15px; cursor: pointer;">
+                                        <div style="position: absolute; top: 2px; right: 2px; width: 21px; height: 21px; background: white; border-radius: 50%; transition: all 0.3s;"></div>
+                                    </div>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <span style="opacity: 0.9;">Weekly Reports</span>
+                                    <div style="position: relative; width: 50px; height: 25px; background: #f59e0b; border-radius: 15px; cursor: pointer;">
+                                        <div style="position: absolute; top: 2px; right: 2px; width: 21px; height: 21px; background: white; border-radius: 50%; transition: all 0.3s;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Save Button -->
+                        <div style="text-align: center; margin-top: 20px;">
+                            <button onclick="saveAccountSettings()" style="padding: 15px 40px; background: linear-gradient(45deg, #8b5cf6, #06b6d4); color: white; border: none; border-radius: 12px; cursor: pointer; font-weight: 600; font-size: 1rem; box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);">
+                                💾 Save Settings
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `);
+        }
+
+        function openUpgradeModal() {
+            closeAnalysis(); // Close current modal first
+            showToolOverlay('Upgrade Account', `
+                <div style="padding: 30px; max-height: 80vh; overflow-y: auto;">
+                    <div style="text-align: center; margin-bottom: 30px;">
+                        <div style="font-size: 2.5rem; margin-bottom: 15px;">👑</div>
+                        <h2 style="margin: 0; font-size: 1.8rem; font-weight: 700; background: linear-gradient(45deg, #f59e0b, #10b981); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Upgrade Your Account</h2>
+                        <div style="opacity: 0.6; margin-top: 8px;">Unlock advanced features and premium AI insights</div>
+                    </div>
+
+                    <div style="display: grid; gap: 20px; margin-bottom: 25px;">
+                        <!-- Current Plan -->
+                        <div style="background: rgba(255,255,255,0.05); border: 2px solid rgba(16, 185, 129, 0.3); border-radius: 15px; padding: 20px; text-align: center;">
+                            <div style="color: #10b981; font-weight: 600; margin-bottom: 10px;">CURRENT PLAN</div>
+                            <div style="font-size: 1.5rem; font-weight: 700; margin-bottom: 5px;">Free Account</div>
+                            <div style="font-size: 2rem; font-weight: 700; color: #10b981; margin-bottom: 10px;">$0/month</div>
+                            <div style="opacity: 0.7; font-size: 0.9rem;">Basic AI insights • Limited features</div>
+                        </div>
+
+                        <!-- Premium Plans -->
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                            <!-- Pro Plan -->
+                            <div style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(124, 58, 237, 0.05) 100%); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 15px; padding: 25px; text-align: center; position: relative;">
+                                <div style="position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: linear-gradient(45deg, #8b5cf6, #7c3aed); color: white; padding: 5px 15px; border-radius: 15px; font-size: 0.8rem; font-weight: 600;">POPULAR</div>
+                                <div style="font-size: 1.3rem; font-weight: 700; margin-bottom: 10px; color: #8b5cf6;">Pro Plan</div>
+                                <div style="font-size: 2.5rem; font-weight: 700; color: white; margin-bottom: 5px;">$19.99</div>
+                                <div style="opacity: 0.7; font-size: 0.9rem; margin-bottom: 20px;">per month</div>
+                                <div style="text-align: left; margin-bottom: 20px;">
+                                    <div style="margin-bottom: 8px; font-size: 0.9rem;"><span style="color: #10b981;">✓</span> Advanced AI insights</div>
+                                    <div style="margin-bottom: 8px; font-size: 0.9rem;"><span style="color: #10b981;">✓</span> Real-time alerts</div>
+                                    <div style="margin-bottom: 8px; font-size: 0.9rem;"><span style="color: #10b981;">✓</span> Portfolio analytics</div>
+                                    <div style="margin-bottom: 8px; font-size: 0.9rem;"><span style="color: #10b981;">✓</span> Priority support</div>
+                                </div>
+                                <button onclick="selectPlan('pro')" style="width: 100%; padding: 12px; background: linear-gradient(45deg, #8b5cf6, #7c3aed); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: 600;">
+                                    Select Pro
+                                </button>
+                            </div>
+
+                            <!-- Elite Plan -->
+                            <div style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(217, 119, 6, 0.05) 100%); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 15px; padding: 25px; text-align: center;">
+                                <div style="font-size: 1.3rem; font-weight: 700; margin-bottom: 10px; color: #f59e0b;">Elite Plan</div>
+                                <div style="font-size: 2.5rem; font-weight: 700; color: white; margin-bottom: 5px;">$49.99</div>
+                                <div style="opacity: 0.7; font-size: 0.9rem; margin-bottom: 20px;">per month</div>
+                                <div style="text-align: left; margin-bottom: 20px;">
+                                    <div style="margin-bottom: 8px; font-size: 0.9rem;"><span style="color: #10b981;">✓</span> Everything in Pro</div>
+                                    <div style="margin-bottom: 8px; font-size: 0.9rem;"><span style="color: #10b981;">✓</span> AI trading automation</div>
+                                    <div style="margin-bottom: 8px; font-size: 0.9rem;"><span style="color: #10b981;">✓</span> Advanced strategies</div>
+                                    <div style="margin-bottom: 8px; font-size: 0.9rem;"><span style="color: #10b981;">✓</span> Dedicated support</div>
+                                </div>
+                                <button onclick="selectPlan('elite')" style="width: 100%; padding: 12px; background: linear-gradient(45deg, #f59e0b, #d97706); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: 600;">
+                                    Select Elite
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `);
+        }
+
+        function openAccountReports() {
+            closeAnalysis(); // Close current modal first
+            showToolOverlay('Account Reports', `
+                <div style="padding: 30px; max-height: 80vh; overflow-y: auto;">
+                    <div style="text-align: center; margin-bottom: 30px;">
+                        <div style="font-size: 2.5rem; margin-bottom: 15px;">📊</div>
+                        <h2 style="margin: 0; font-size: 1.8rem; font-weight: 700; color: white;">Performance Reports</h2>
+                        <div style="opacity: 0.6; margin-top: 8px;">Track your trading performance and insights</div>
+                    </div>
+
+                    <div style="display: grid; gap: 20px;">
+                        <!-- Performance Summary -->
+                        <div style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.05) 100%); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 15px; padding: 25px;">
+                            <h3 style="margin: 0 0 20px 0; color: #10b981; font-size: 1.2rem;">📈 Performance Summary</h3>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 15px;">
+                                <div style="text-align: center;">
+                                    <div style="font-size: 1.5rem; font-weight: 700; color: #10b981;">+$1,247</div>
+                                    <div style="opacity: 0.8; font-size: 0.9rem;">Total Profit</div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="font-size: 1.5rem; font-weight: 700; color: #10b981;">100%</div>
+                                    <div style="opacity: 0.8; font-size: 0.9rem;">Win Rate</div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="font-size: 1.5rem; font-weight: 700; color: white;">2</div>
+                                    <div style="opacity: 0.8; font-size: 0.9rem;">Total Trades</div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="font-size: 1.5rem; font-weight: 700; color: #f59e0b;">12.4%</div>
+                                    <div style="opacity: 0.8; font-size: 0.9rem;">Return</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Recent Activity -->
+                        <div style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(124, 58, 237, 0.05) 100%); border: 1px solid rgba(139, 92, 246, 0.2); border-radius: 15px; padding: 25px;">
+                            <h3 style="margin: 0 0 20px 0; color: #8b5cf6; font-size: 1.2rem;">📋 Recent Activity</h3>
+                            <div style="display: grid; gap: 12px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 8px;">
+                                    <div>
+                                        <div style="font-weight: 600;">AAPL Buy</div>
+                                        <div style="opacity: 0.7; font-size: 0.9rem;">January 15, 2025</div>
+                                    </div>
+                                    <div style="text-align: right;">
+                                        <div style="color: #10b981; font-weight: 600;">+$623</div>
+                                        <div style="opacity: 0.7; font-size: 0.9rem;">+3.2%</div>
+                                    </div>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 8px;">
+                                    <div>
+                                        <div style="font-weight: 600;">TSLA Buy</div>
+                                        <div style="opacity: 0.7; font-size: 0.9rem;">January 12, 2025</div>
+                                    </div>
+                                    <div style="text-align: right;">
+                                        <div style="color: #10b981; font-weight: 600;">+$624</div>
+                                        <div style="opacity: 0.7; font-size: 0.9rem;">+8.7%</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- AI Insights -->
+                        <div style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(217, 119, 6, 0.05) 100%); border: 1px solid rgba(245, 158, 11, 0.2); border-radius: 15px; padding: 25px;">
+                            <h3 style="margin: 0 0 20px 0; color: #f59e0b; font-size: 1.2rem;">🤖 AI Insights</h3>
+                            <div style="background: rgba(255,255,255,0.05); border-radius: 10px; padding: 15px; margin-bottom: 15px;">
+                                <div style="font-weight: 600; margin-bottom: 8px;">Performance Analysis</div>
+                                <div style="opacity: 0.8; font-size: 0.95rem; line-height: 1.4;">
+                                    Your trading performance shows strong momentum with a perfect win rate. The AI recommends maintaining your current strategy while gradually increasing position sizes.
+                                </div>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.05); border-radius: 10px; padding: 15px;">
+                                <div style="font-weight: 600; margin-bottom: 8px;">Risk Assessment</div>
+                                <div style="opacity: 0.8; font-size: 0.95rem; line-height: 1.4;">
+                                    Current risk level: <span style="color: #10b981; font-weight: 600;">Low</span>. Your portfolio shows good diversification potential for further growth.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Export Options -->
+                        <div style="text-align: center; margin-top: 20px;">
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px;">
+                                <button onclick="exportReport('pdf')" style="padding: 12px 20px; background: linear-gradient(45deg, #8b5cf6, #7c3aed); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: 600;">
+                                    📄 Export PDF
+                                </button>
+                                <button onclick="exportReport('csv')" style="padding: 12px 20px; background: linear-gradient(45deg, #10b981, #059669); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: 600;">
+                                    📊 Export CSV
+                                </button>
+                                <button onclick="emailReport()" style="padding: 12px 20px; background: linear-gradient(45deg, #f59e0b, #d97706); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: 600;">
+                                    📧 Email Report
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `);
+        }
+
+        // Support functions for Quick Actions
+        function saveAccountSettings() {
+            // Show success message
+            alert('Account settings saved successfully!');
+            closeAnalysis();
+        }
+
+        function selectPlan(planType) {
+            const planNames = {
+                'pro': 'Pro Plan ($19.99/month)',
+                'elite': 'Elite Plan ($49.99/month)'
+            };
+            alert(`You selected: ${planNames[planType]}. Redirecting to payment...`);
+            closeAnalysis();
+        }
+
+        function exportReport(format) {
+            const formatNames = {
+                'pdf': 'PDF',
+                'csv': 'CSV'
+            };
+            alert(`Exporting report as ${formatNames[format]}...`);
+        }
+
+        function emailReport() {
+            alert('Performance report will be sent to your email address.');
         }
         
         function showToolOverlay(title, content) {
