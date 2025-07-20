@@ -18,10 +18,7 @@
     padding: 0 1rem;
 }
 
-.search-icon {
-    color: rgba(255, 255, 255, 0.6);
-    font-size: 1.1rem;
-}
+/* Search icon removed per user request */
 
 /* Controls Label */
 .controls-label {

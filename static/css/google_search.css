@@ -34,12 +34,7 @@
     min-height: 56px;
 }
 
-.search-icon {
-    color: #9aa0a6;
-    font-size: 18px;
-    margin-right: 12px;
-    flex-shrink: 0;
-}
+/* Search icon removed per user request */
 
 .google-search-input {
     flex: 1;

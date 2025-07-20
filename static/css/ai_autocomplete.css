@@ -322,28 +322,10 @@
     opacity: 1;
 }
 
-/* Search input with icon */
+/* Search input icon removed per user request */
 .search-input-container {
     position: relative;
     width: 100%;
-}
-
-.search-input-container::before {
-    content: '';
-    position: absolute;
-    left: 16px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 20px;
-    height: 20px;
-    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%235f6368' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E") center/contain no-repeat;
-    opacity: 0.7;
-    pointer-events: none;
-    z-index: 1;
-}
-
-.google-search-input {
-    padding-left: 48px;
 }
 
 /* Highlight matching text */
