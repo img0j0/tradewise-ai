@@ -86,10 +86,8 @@ class TierIntegrationManager {
             if (this.currentTier === 'Institutional') {
                 upgradeButton.style.display = 'none';
             } else {
-                upgradeButton.innerHTML = `
-                    <i class="fas fa-crown" style="font-size: 0.85rem;"></i>
-                    <span>Upgrade to ${this.getNextTier()}</span>
-                `;
+                // Keep only the crown icon, no text
+                upgradeButton.innerHTML = `<i class="fas fa-crown"></i>`;
             }
         }
     }
