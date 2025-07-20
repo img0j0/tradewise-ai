@@ -133,42 +133,16 @@ class TierIntegrationManager {
             searchInput.setAttribute('data-suggestion-limit', searchConfig.suggestions_count);
         }
 
-        // Add tier indicator to search
-        if (!searchContainer.querySelector('.search-tier-indicator')) {
-            const tierIndicator = this.createSearchTierIndicator();
-            searchContainer.appendChild(tierIndicator);
-        }
+        // Tier indicator disabled to avoid duplication with header status
+        // if (!searchContainer.querySelector('.search-tier-indicator')) {
+        //     const tierIndicator = this.createSearchTierIndicator();
+        //     searchContainer.appendChild(tierIndicator);
+        // }
     }
 
     createSearchTierIndicator() {
-        const indicator = document.createElement('div');
-        indicator.className = 'search-tier-indicator';
-        
-        const features = [];
-        const searchConfig = this.tierConfig?.search_enhancements;
-        
-        if (searchConfig?.real_time_prices) features.push('Real-time Prices');
-        if (searchConfig?.confidence_scores) features.push('AI Confidence');
-        if (searchConfig?.level_2_data) features.push('Level 2 Data');
-        if (searchConfig?.dark_pool_insights) features.push('Dark Pool Intel');
-
-        indicator.innerHTML = `
-            <div class="tier-features-badge">
-                <i class="fas fa-shield-check"></i>
-                <span>${this.currentTier} Features: ${features.join(', ') || 'Basic'}</span>
-            </div>
-        `;
-
-        indicator.style.cssText = `
-            position: absolute;
-            top: -25px;
-            right: 0;
-            font-size: 0.7rem;
-            color: rgba(255,255,255,0.7);
-            z-index: 1000;
-        `;
-
-        return indicator;
+        // Disable tier indicator creation to avoid duplication with header status
+        return null;
     }
 
     transformAIAssistant() {
