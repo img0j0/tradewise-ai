@@ -3,10 +3,15 @@
     <div class="modal-dialog modal-lg modal-dialog-scrollable" style="margin: 0.5rem; max-width: calc(100vw - 1rem);">
         <div class="modal-content text-light" style="background: #000000 !important; max-height: calc(100vh - 1rem); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.1) !important;">
             <div class="modal-header" style="border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;">
-                <h5 class="modal-title" id="premiumModalLabel">
-                    <i class="fas fa-rocket me-2" style="color: #60a5fa !important;"></i>
-                    Upgrade to AI Trading Copilot
-                </h5>
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <button type="button" onclick="window.location.href='/'" style="background: rgba(255,255,255,0.1); border: none; color: white; padding: 0.5rem; border-radius: 6px; cursor: pointer;" title="Back to Main Page">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <h5 class="modal-title" id="premiumModalLabel" style="margin: 0;">
+                        <i class="fas fa-rocket me-2" style="color: #60a5fa !important;"></i>
+                        Upgrade to AI Trading Copilot
+                    </h5>
+                </div>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" style="max-height: calc(100vh - 120px); overflow-y: auto; padding: 1rem;">

@@ -5543,9 +5543,10 @@
     document.addEventListener('DOMContentLoaded', function() {
         const launcher = document.getElementById('ai-team-launcher');
         const modal = document.getElementById('ai-team-modal');
-        const tooltip = launcher.querySelector('.launcher-tooltip');
         
-        if (launcher) {
+        if (launcher && modal) {
+            const tooltip = launcher.querySelector('.launcher-tooltip');
+            
             launcher.addEventListener('click', function() {
                 modal.style.display = 'flex';
                 showTeamSelection();
@@ -5561,6 +5562,8 @@
             });
             
             console.log('AI Team launcher initialized successfully');
+        } else {
+            console.log('AI Team launcher not found - feature disabled');
         }
         
         // Add hover effects to team member cards
@@ -5882,9 +5885,9 @@
 
     // Initialize subscription system - ADDED to fix JavaScript error
     function initializeSubscription(targetTier) {
-        console.log(`Initializing ${targetTier} subscription...`);
+        console.log("Initializing " + targetTier + " subscription...");
         // This would integrate with Stripe in production
-        alert(`${targetTier} subscription coming soon! This will unlock advanced features.`);
+        alert(targetTier + " subscription coming soon! This will unlock advanced features.");
     }
 
     // Make functions globally available
@@ -5896,7 +5899,7 @@
             window.tierIntegration.openSubscriptionUpgrade(targetTier);
         } else {
             // Fallback
-            alert(`${targetTier} subscription upgrade coming soon!`);
+            alert(targetTier + " subscription upgrade coming soon!");
         }
     };
     </script>
