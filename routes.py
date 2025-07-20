@@ -1,4 +1,4 @@
-from flask import render_template, jsonify, request, session, redirect, url_for, flash
+from flask import render_template, jsonify, request, session, redirect, url_for, flash, make_response
 from app import app, db
 from models import Trade, Portfolio, Alert, UserAccount, Transaction, User
 from ai_insights import AIInsightsEngine
@@ -159,8 +159,22 @@ def get_or_create_user_account():
 
 @app.route('/')
 def index():
+    """Cache busting test to verify new interface loads"""
+    from datetime import datetime
+    response = make_response(render_template('cache_busting_test.html', current_time=datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
+    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '0'
+    return response
+
+@app.route('/trading')
+def trading_interface():
     """Main clean trading interface"""
-    return render_template('clean_trading_interface.html')
+    response = make_response(render_template('clean_trading_interface.html'))
+    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '0'
+    return response
 
 @app.route('/original')
 def original_interface():
