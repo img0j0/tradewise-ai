@@ -1664,13 +1664,20 @@ def login_bypass():
                 demo_user = User(
                     username='demo', 
                     email='demo@example.com',
-                    password_hash=generate_password_hash('demo123')
+                    password_hash=generate_password_hash('demo123'),
+                    subscription_tier='Institutional'
                 )
                 db.session.add(demo_user)
                 db.session.commit()
             
+            # Ensure demo user has institutional tier
+            if demo_user.subscription_tier != 'Institutional':
+                demo_user.subscription_tier = 'Institutional'
+                demo_user.subscription_status = 'active'
+                db.session.commit()
+            
             login_user(demo_user)
-            return redirect('/settings')
+            return redirect('/')
         else:
             flash('Invalid credentials')
     
@@ -2517,6 +2524,8 @@ def get_chart_colors(count):
     except Exception as e:
         logger.error(f"Error getting chart colors: {e}")
         return jsonify({'error': str(e)}), 500
+
+
 
 @app.route('/api/color-palette/semantic/<color_type>')
 def get_semantic_color(color_type):

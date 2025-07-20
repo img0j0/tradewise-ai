@@ -71,14 +71,25 @@ class TierIntegrationManager {
     }
 
     transformHeader() {
-        const headerTitle = document.querySelector('.header-title');
+        const subscriptionStatus = document.getElementById('subscription-status');
         const upgradeButton = document.getElementById('upgrade-button');
         
-        if (headerTitle) {
-            // Add tier badge to header
-            const tierBadge = this.createTierBadge();
-            if (tierBadge && !headerTitle.querySelector('.tier-badge')) {
-                headerTitle.appendChild(tierBadge);
+        if (subscriptionStatus) {
+            // Update subscription status text based on tier
+            if (this.currentTier === 'Institutional') {
+                subscriptionStatus.textContent = 'Institutional Features: All Access';
+                subscriptionStatus.style.background = 'linear-gradient(135deg, #1f2937, #dc2626)';
+                subscriptionStatus.style.color = 'white';
+            } else if (this.currentTier === 'Elite') {
+                subscriptionStatus.textContent = 'Elite Features: Advanced';
+                subscriptionStatus.style.background = 'linear-gradient(135deg, #ef4444, #f97316)';
+                subscriptionStatus.style.color = 'white';
+            } else if (this.currentTier === 'Pro') {
+                subscriptionStatus.textContent = 'Pro Features: Enhanced';
+                subscriptionStatus.style.background = 'linear-gradient(135deg, #8b5cf6, #f59e0b)';
+                subscriptionStatus.style.color = 'white';
+            } else {
+                subscriptionStatus.textContent = 'Free Features: Basic';
             }
         }
 
