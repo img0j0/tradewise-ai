@@ -282,6 +282,9 @@ def api_buy_stock():
             'timestamp': 1753029681
         }
         
+        # Get current portfolio from session
+        demo_portfolio = get_demo_portfolio()
+        
         # Check if stock already exists in portfolio
         found = False
         for holding in demo_portfolio:
@@ -296,6 +299,9 @@ def api_buy_stock():
         
         if not found:
             demo_portfolio.append(purchase)
+        
+        # Save back to session
+        save_demo_portfolio(demo_portfolio)
         
         logger.info(f"Demo purchase added to portfolio: {shares} shares of {symbol} at ${price} each")
         
@@ -532,13 +538,24 @@ def api_remove_from_watchlist():
 
 
 
-# Simple in-memory storage for demo purchases
-demo_portfolio = []
+# Portfolio storage using session
+def get_demo_portfolio():
+    """Get portfolio from session storage"""
+    if 'demo_portfolio' not in session:
+        session['demo_portfolio'] = []
+    return session['demo_portfolio']
+
+def save_demo_portfolio(portfolio):
+    """Save portfolio to session storage"""
+    session['demo_portfolio'] = portfolio
+    session.modified = True
 
 @app.route('/api/portfolio', methods=['GET'])
 def api_get_portfolio():
     """Get user's portfolio with current values"""
     try:
+        # Get portfolio from session
+        demo_portfolio = get_demo_portfolio()
         logger.info(f"Portfolio request - demo_portfolio has {len(demo_portfolio)} items: {demo_portfolio}")
         portfolio_data = []
         total_value = 0
@@ -593,7 +610,7 @@ def api_get_portfolio():
             'success': True,
             'holdings': portfolio_data,
             'total_value': total_value,
-            'cash_balance': 100000 - sum(h['shares'] * h['price'] for h in demo_portfolio)
+            'cash_balance': 100000 - sum(h['shares'] * h['price'] for h in get_demo_portfolio())
         })
         
     except Exception as e:
