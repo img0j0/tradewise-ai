@@ -237,8 +237,14 @@ async function searchStockAI() {
             throw new Error('Stock not found');
         }
 
-        // The stock data from our new API already includes comprehensive AI analysis
-        console.log('Displaying comprehensive analysis results...');
+        // Force display of comprehensive ChatGPT-style analysis
+        console.log('Displaying comprehensive ChatGPT-style analysis...');
+        console.log('Stock data structure:', stockData);
+        
+        // Ensure old results are hidden
+        hideOldResults();
+        
+        // Force call to enhanced display function
         displayComprehensiveStockAnalysis(stockData);
         
     } catch (error) {
@@ -1063,12 +1069,23 @@ function quickSearch(symbol) {
 // Alternative function name for compatibility
 window.quickSearch = quickSearch;
 
-// Hide old search results
+// Hide old search results and any competing displays
 function hideOldResults() {
     const oldResults = document.getElementById('search-results');
     if (oldResults) {
         oldResults.style.display = 'none';
+        oldResults.innerHTML = '';
     }
+    
+    // Also hide any other result containers that might interfere
+    const containers = ['stock-analysis-results', 'analysis-results', 'search-output'];
+    containers.forEach(containerId => {
+        const container = document.getElementById(containerId);
+        if (container) {
+            container.style.display = 'none';
+            container.innerHTML = '';
+        }
+    });
 }
 
 // Close search results function
