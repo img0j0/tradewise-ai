@@ -102,12 +102,7 @@
     100% { opacity: 0.6; }
 }
 
-/* Accessibility improvements */
-.search-icon {
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 18px;
-    min-width: 18px;
-}
+/* Search icon removed - clean interface */
 
 .search-shortcut {
     background: rgba(255, 255, 255, 0.1);

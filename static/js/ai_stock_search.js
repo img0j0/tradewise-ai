@@ -424,7 +424,7 @@ function buildAnalysisHTML(stockData, aiAnalysis) {
                                         <i class="fas fa-eye me-2"></i>Add to Watchlist
                                     </button>
                                     <button class="btn btn-outline-secondary w-100" onclick="showNewSearch()">
-                                        <i class="fas fa-search me-2"></i>Search Another
+                                        Search Another
                                     </button>
                                 </div>
                             </div>
@@ -614,7 +614,7 @@ function displayThemeAnalysis(themeData) {
                                             </div>
                                             <div class="mt-2">
                                                 <button class="btn btn-sm btn-outline-primary me-2" onclick="searchStockSymbol('${stock.symbol}')">
-                                                    <i class="fas fa-search"></i> Analyze
+                                                    Analyze
                                                 </button>
                                                 <button class="btn btn-sm btn-success" onclick="showBuyModal('${stock.symbol}', ${stock.current_price || 0})">
                                                     <i class="fas fa-shopping-cart"></i> Buy
@@ -628,7 +628,7 @@ function displayThemeAnalysis(themeData) {
                         
                         <div class="theme-actions mt-4">
                             <button class="btn btn-outline-secondary" onclick="showNewSearch()">
-                                <i class="fas fa-search me-2"></i>Search Another Theme
+                                Search Another Theme
                             </button>
                         </div>
                     </div>
@@ -779,7 +779,7 @@ function showSearchError(message) {
                     <h4 class="text-white mb-2">Search Error</h4>
                     <p class="text-white mb-3">${message}</p>
                     <button class="btn btn-light" onclick="hideSuggestions(); document.getElementById('stock-search-input').focus();">
-                        <i class="fas fa-search me-2"></i>Try Again
+                        Try Again
                     </button>
                 </div>
             </div>

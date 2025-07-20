@@ -498,9 +498,7 @@
         border-radius: 16px;
     }
     
-    .search-icon-wrapper {
-        padding: 0 0.75rem;
-    }
+    /* Search icon wrapper removed - clean interface */
     
     .search-controls {
         margin-top: 1.5rem;

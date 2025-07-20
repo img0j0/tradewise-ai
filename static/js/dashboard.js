@@ -1478,7 +1478,7 @@ async function searchStock() {
     } finally {
         const searchBtn = symbolInput.nextElementSibling;
         searchBtn.disabled = false;
-        searchBtn.innerHTML = '<i class="fas fa-search"></i> Search';
+        searchBtn.innerHTML = 'Search';
     }
 }
 
