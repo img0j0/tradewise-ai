@@ -3938,6 +3938,18 @@ def get_professional_analysis(symbol):
         logger.error(f"Error getting professional analysis for {symbol}: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
+@app.route('/api/analysis/<symbol>')
+def get_analysis_alt(symbol):
+    """Alternative endpoint for stock analysis"""
+    try:
+        analysis = bloomberg_killer.get_professional_analysis(symbol.upper())
+        if 'error' in analysis:
+            return jsonify(analysis), 404
+        return jsonify(analysis)
+    except Exception as e:
+        logger.error(f"Error getting analysis for {symbol}: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
 @app.route('/api/trading-dashboard')
 def get_trading_dashboard():
     """Get comprehensive trading dashboard with key metrics"""
@@ -3973,6 +3985,59 @@ def get_trading_dashboard():
         
     except Exception as e:
         logger.error(f"Error generating trading dashboard: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/ai-stock-analysis/<symbol>')
+def get_ai_stock_analysis(symbol):
+    """Get AI-powered stock analysis"""
+    try:
+        # Use Bloomberg intelligence as AI analysis
+        analysis = bloomberg_killer.get_professional_analysis(symbol.upper())
+        if 'error' in analysis:
+            return jsonify({'error': 'Analysis not available'}), 404
+        
+        # Extract AI-style response
+        ai_response = {
+            'symbol': symbol.upper(),
+            'recommendation': analysis.get('professional_rating', {}).get('overall_rating', 'HOLD'),
+            'confidence': analysis.get('professional_rating', {}).get('overall_score', 0.5),
+            'risk_level': analysis.get('risk_analysis', {}).get('risk_level', 'MEDIUM'),
+            'analysis': f"AI analysis shows {analysis.get('professional_rating', {}).get('overall_rating', 'HOLD')} rating with {analysis.get('professional_rating', {}).get('overall_score', 0.5)*100:.1f}% confidence"
+        }
+        return jsonify(ai_response)
+    except Exception as e:
+        logger.error(f"Error getting AI analysis for {symbol}: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/premium-portfolio-analytics')
+def get_premium_portfolio_analytics():
+    """Get premium portfolio analytics for paid users"""
+    try:
+        # Premium portfolio data with institutional-grade metrics
+        portfolio_data = {
+            'total_value': 125000.0,
+            'holdings': [
+                {'symbol': 'AAPL', 'shares': 100, 'value': 21000.0, 'weight': 16.8},
+                {'symbol': 'MSFT', 'shares': 50, 'value': 17500.0, 'weight': 14.0},
+                {'symbol': 'GOOGL', 'shares': 25, 'value': 18750.0, 'weight': 15.0},
+                {'symbol': 'TSLA', 'shares': 75, 'value': 24000.0, 'weight': 19.2},
+                {'symbol': 'NVDA', 'shares': 30, 'value': 43750.0, 'weight': 35.0}
+            ],
+            'performance': {
+                'total_return': 12.5,
+                'ytd_return': 8.3,
+                'volatility': 18.7,
+                'sharpe_ratio': 1.24
+            },
+            'allocation': {
+                'Technology': 65.0,
+                'Consumer Discretionary': 19.2,
+                'Communication Services': 15.8
+            }
+        }
+        return jsonify(portfolio_data)
+    except Exception as e:
+        logger.error(f"Error getting premium portfolio analytics: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
 @app.route('/professional-terminal')

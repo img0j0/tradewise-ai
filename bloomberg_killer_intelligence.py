@@ -65,11 +65,28 @@ class BloombergKillerIntelligence:
                 'generated_at': datetime.now().isoformat()
             }
             
+            # Convert any numpy types to native Python types for JSON serialization
+            analysis = self._convert_to_json_serializable(analysis)
             return analysis
             
         except Exception as e:
             logger.error(f"Error in professional analysis for {symbol}: {str(e)}")
             return {'error': str(e)}
+    
+    def _convert_to_json_serializable(self, obj):
+        """Convert any numpy types to JSON serializable types"""
+        if isinstance(obj, dict):
+            return {key: self._convert_to_json_serializable(value) for key, value in obj.items()}
+        elif isinstance(obj, list):
+            return [self._convert_to_json_serializable(item) for item in obj]
+        elif hasattr(obj, 'item'):  # numpy types
+            return float(obj.item()) if obj.dtype.kind in 'fc' else int(obj.item())
+        elif isinstance(obj, (bool, type(None))):
+            return obj
+        elif isinstance(obj, (int, float, str)):
+            return obj
+        else:
+            return str(obj)
     
     def _get_critical_price_data(self, hist: pd.DataFrame, info: Dict) -> Dict:
         """Most critical price data that traders watch"""
@@ -203,7 +220,7 @@ class BloombergKillerIntelligence:
             'volume_ratio': round(volume_ratio, 2),
             'volume_trend': volume_trend,
             'volume_price_correlation': round(vp_correlation, 2),
-            'unusual_volume': volume_ratio > 1.5
+            'unusual_volume': bool(volume_ratio > 1.5)
         }
     
     def _calculate_key_levels(self, hist: pd.DataFrame) -> Dict:
