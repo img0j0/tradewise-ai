@@ -57,7 +57,7 @@ html, body {
     width: 100% !important;
     overflow-x: hidden !important;
     margin: 0 auto !important;
-    padding: 3rem 1.5rem 0 !important;
+    padding: 1rem 1.5rem 0 !important;
     box-sizing: border-box !important;
 }
 
@@ -67,6 +67,23 @@ html, body {
     margin: 0 auto !important;
     padding: 0 1rem !important;
     box-sizing: border-box !important;
+}
+
+/* Search hero compact fixes */
+.search-hero-compact {
+    margin-bottom: 1rem !important;
+    padding: 0.5rem 0 !important;
+}
+
+/* Dropdown positioning */
+.dropdown-container {
+    margin-bottom: 0.8rem !important;
+}
+
+.popular-stocks-condensed,
+.investment-themes-condensed,
+.market-insights-condensed {
+    margin-bottom: 0.8rem !important;
 }
 
 /* Dropdown fixes */
@@ -95,7 +112,7 @@ html, body {
     }
     
     .main-content {
-        padding: 2rem 1rem 0 !important;
+        padding: 0.5rem 1rem 0 !important;
     }
     
     .search-section {
