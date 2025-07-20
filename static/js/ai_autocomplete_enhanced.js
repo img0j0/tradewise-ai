@@ -132,7 +132,7 @@ class AIAutocompleteEngine {
         
         try {
             // Get AI-powered suggestions with enhanced matching
-            const response = await fetch(`/api/search-autocomplete?q=${encodeURIComponent(query)}&limit=8&enhanced=true`, {
+            const response = await fetch('/api/search-autocomplete?q=' + encodeURIComponent(query) + '&limit=8&enhanced=true', {
                 credentials: 'include'
             });
             
@@ -247,7 +247,7 @@ class AIAutocompleteEngine {
     highlightMatch(text, query) {
         if (!query || !text) return text;
         
-        const regex = new RegExp(`(${query})`, 'gi');
+        const regex = new RegExp('(' + query + ')', 'gi');
         return text.replace(regex, '<mark>$1</mark>');
     }
     
@@ -594,7 +594,7 @@ class AIAutocompleteEngine {
         try {
             this.showSearchLoading();
             
-            const response = await fetch(`/api/search-stock/${symbol}`, {
+            const response = await fetch('/api/search-stock/' + symbol, {
                 credentials: 'include'
             });
             
