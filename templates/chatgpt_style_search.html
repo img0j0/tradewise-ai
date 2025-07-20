@@ -17,23 +17,20 @@
     <div class="chatgpt-container">
         <!-- Header -->
         <div class="header">
-            <div class="header-title">
+            <div class="header-left">
                 <span class="brand-name">TradeWise AI</span>
-                <span class="brand-subtitle">AI-Powered Trading Intelligence</span>
+                <span class="brand-tagline">AI Trading</span>
             </div>
-            <div class="header-actions">
-                <div id="premium-crown-badge" class="premium-crown-badge" style="display: none;">
+            <div class="header-right">
+                <button class="upgrade-button-compact" id="upgrade-button" onclick="showUpgradeModal('Pro')">
                     <i class="fas fa-crown"></i>
-                </div>
-                <button class="upgrade-button-seamless" id="upgrade-button" onclick="showUpgradeModal('Pro')">
-                    <i class="fas fa-crown" style="font-size: 0.85rem;"></i>
-                    <span>Upgrade to Pro</span>
+                    <span class="upgrade-text">Upgrade</span>
                 </button>
                 <div class="tools-dropdown">
-                    <button class="tools-toggle" onclick="toggleToolsDropdown()">
-                        <i class="fas fa-tools" style="font-size: 0.85rem;"></i>
+                    <button class="tools-toggle-compact" onclick="toggleToolsDropdown()">
+                        <i class="fas fa-tools"></i>
                         <span class="tools-text">Tools</span>
-                        <i class="fas fa-chevron-down" style="font-size: 0.7rem; margin-left: 0.25rem;"></i>
+                        <i class="fas fa-chevron-down tools-chevron"></i>
                     </button>
                     <div class="tools-dropdown-menu" id="tools-dropdown-menu">
                         <!-- Market Intelligence -->
@@ -5805,7 +5802,16 @@
 
     // Make functions globally available
     window.initializeSubscription = initializeSubscription;
-    window.showUpgradeModal = showUpgradeModal;
+    
+    // Add missing showUpgradeModal function
+    window.showUpgradeModal = function(targetTier) {
+        if (window.tierIntegration && window.tierIntegration.openSubscriptionUpgrade) {
+            window.tierIntegration.openSubscriptionUpgrade(targetTier);
+        } else {
+            // Fallback
+            alert(`${targetTier} subscription upgrade coming soon!`);
+        }
+    };
     </script>
     
 

@@ -1,38 +1,106 @@
 /* Premium Features CSS - Notifications and AI Copilot */
 
-/* Header Title Layout Fix */
-.header-title {
+/* Streamlined Header Layout */
+.header-left {
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
+    gap: 0.5rem;
 }
 
 .brand-name {
-    font-size: 1.8rem;
+    font-size: 1.5rem;
     font-weight: 700;
     background: linear-gradient(135deg, #10b981, #3b82f6);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
     letter-spacing: -0.5px;
-    line-height: 1.1;
+    line-height: 1;
 }
 
-.brand-subtitle {
-    font-size: 0.85rem;
-    color: rgba(255, 255, 255, 0.6);
-    font-weight: 400;
-    margin-top: 0.2rem;
-    letter-spacing: 0.3px;
+.brand-tagline {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.5);
+    font-weight: 500;
+    padding: 0.2rem 0.5rem;
+    background: rgba(16, 185, 129, 0.1);
+    border-radius: 12px;
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.upgrade-button-compact {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.8rem;
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    border: none;
+    border-radius: 20px;
+    color: white;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+}
+
+.upgrade-button-compact:hover {
+    background: linear-gradient(135deg, #d97706, #92400e);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
+}
+
+.tools-toggle-compact {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.8rem;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 20px;
+    color: white;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.tools-toggle-compact:hover {
+    background: rgba(255, 255, 255, 0.12);
+    transform: translateY(-1px);
+}
+
+.tools-chevron {
+    font-size: 0.6rem;
+    transition: transform 0.3s ease;
 }
 
 @media (max-width: 768px) {
     .brand-name {
-        font-size: 1.4rem;
+        font-size: 1.3rem;
     }
     
-    .brand-subtitle {
-        font-size: 0.75rem;
+    .brand-tagline {
+        font-size: 0.65rem;
+        padding: 0.15rem 0.4rem;
+    }
+    
+    .upgrade-text,
+    .tools-text {
+        display: none;
+    }
+    
+    .upgrade-button-compact,
+    .tools-toggle-compact {
+        padding: 0.4rem;
+        min-width: 36px;
+        justify-content: center;
     }
 }
 
