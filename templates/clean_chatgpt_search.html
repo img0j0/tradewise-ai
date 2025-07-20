@@ -1286,7 +1286,14 @@
                     </div>
                 `);
 
-                const response = await fetch('/api/market-news');
+                // Add cache busting parameter
+                const timestamp = Date.now();
+                const response = await fetch(`/api/market-news?_=${timestamp}`, {
+                    headers: {
+                        'Cache-Control': 'no-cache',
+                        'Pragma': 'no-cache'
+                    }
+                });
                 const data = await response.json();
                 
                 if (data.success) {

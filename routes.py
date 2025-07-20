@@ -927,13 +927,20 @@ def get_market_news():
         # Get sector sentiment
         sector_sentiment = market_news_service.get_sector_sentiment()
         
-        return jsonify({
+        response = jsonify({
             'success': True,
             'market_overview': market_overview,
             'trending_news': trending_news,
             'sector_sentiment': sector_sentiment,
             'timestamp': datetime.now().isoformat()
         })
+        
+        # Add cache-busting headers
+        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+        response.headers['Pragma'] = 'no-cache'
+        response.headers['Expires'] = '0'
+        
+        return response
         
     except Exception as e:
         logger.error(f"Error getting market news: {e}")
