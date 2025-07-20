@@ -334,18 +334,53 @@ function displayComprehensiveStockAnalysis(stockData) {
     // Build comprehensive analysis results using our enhanced API data
     const resultsContainer = document.getElementById('ai-analysis-results');
     if (!resultsContainer) {
-        console.error('Results container not found');
-        return;
+        console.error('ai-analysis-results container not found! Creating it...');
+        // Create the overlay container if it doesn't exist
+        const overlay = document.createElement('div');
+        overlay.id = 'ai-analysis-results';
+        overlay.className = 'ai-results-overlay';
+        overlay.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 10000;
+            display: none;
+            justify-content: center;
+            align-items: flex-start;
+            overflow-y: auto;
+            padding: 20px;
+        `;
+        document.body.appendChild(overlay);
+        console.log('Created ai-analysis-results overlay container');
     }
     
     const comprehensiveHTML = buildComprehensiveAnalysisHTML(stockData);
     
-    resultsContainer.innerHTML = comprehensiveHTML;
-    resultsContainer.style.display = 'flex';
+    // Get the container again in case it was just created
+    const finalContainer = document.getElementById('ai-analysis-results');
+    finalContainer.innerHTML = comprehensiveHTML;
+    finalContainer.style.display = 'flex';
+    
+    console.log('ChatGPT-style overlay should now be visible');
+    console.log('Container display style:', finalContainer.style.display);
+    console.log('Container innerHTML length:', finalContainer.innerHTML.length);
+    
+    // Force the overlay to be visible
+    finalContainer.style.display = 'flex !important';
+    finalContainer.style.position = 'fixed';
+    finalContainer.style.top = '0';
+    finalContainer.style.left = '0';
+    finalContainer.style.width = '100%';
+    finalContainer.style.height = '100%';
+    finalContainer.style.zIndex = '10000';
+    finalContainer.style.background = 'rgba(0, 0, 0, 0.95)';
     
     // Show the results with smooth animation
     setTimeout(() => {
-        const content = resultsContainer.querySelector('.search-results-content');
+        const content = finalContainer.querySelector('.search-results-content');
         if (content) {
             content.style.transform = 'scale(1)';
             content.style.opacity = '1';
@@ -353,6 +388,7 @@ function displayComprehensiveStockAnalysis(stockData) {
     }, 50);
     
     console.log('ChatGPT-style search results displayed successfully');
+    console.log('Final container styles applied');
     
     // Scroll to top to ensure overlay is visible
     window.scrollTo(0, 0);
