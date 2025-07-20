@@ -545,7 +545,23 @@ def api_remove_from_watchlist():
 def get_demo_portfolio():
     """Get portfolio from session storage"""
     if 'demo_portfolio' not in session:
-        session['demo_portfolio'] = []
+        # Initialize with sample holdings if empty
+        session['demo_portfolio'] = [
+            {
+                'symbol': 'TSLA',
+                'shares': 5,
+                'price': 240.50,
+                'total_cost': 1202.50,
+                'timestamp': 1753020000
+            },
+            {
+                'symbol': 'AAPL', 
+                'shares': 1,
+                'price': 225.50,
+                'total_cost': 225.50,
+                'timestamp': 1753025000
+            }
+        ]
     return session['demo_portfolio']
 
 def save_demo_portfolio(portfolio):
