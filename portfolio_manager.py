@@ -127,9 +127,9 @@ class PortfolioManager:
             trades = Trade.query.filter(
                 and_(
                     Trade.user_id == user_id,
-                    Trade.trade_date >= start_date
+                    Trade.timestamp >= start_date
                 )
-            ).order_by(Trade.trade_date).all()
+            ).order_by(Trade.timestamp).all()
             
             # Generate performance data points
             performance_data = []
@@ -160,7 +160,7 @@ class PortfolioManager:
             trades = Trade.query.filter(
                 and_(
                     Trade.user_id == user_id,
-                    Trade.trade_date <= target_date
+                    Trade.timestamp <= target_date
                 )
             ).all()
             
@@ -170,7 +170,7 @@ class PortfolioManager:
                 if trade.symbol not in holdings:
                     holdings[trade.symbol] = 0
                 
-                if trade.trade_type == 'buy':
+                if trade.action == 'buy':
                     holdings[trade.symbol] += trade.quantity
                 else:  # sell
                     holdings[trade.symbol] -= trade.quantity
