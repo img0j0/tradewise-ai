@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TradeWise AI - Watchlist</title>
+    <style>
+        :root {
+            --primary-color: #8b5cf6;
+            --background-dark: #0a0a0a;
+            --card-background: rgba(255, 255, 255, 0.05);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --text-primary: #ffffff;
+            --text-secondary: #a1a1aa;
+        }
+
+        body {
+            background: var(--background-dark);
+            color: var(--text-primary);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .title {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #8b5cf6, #d946ef);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+
+        .back-btn {
+            background: var(--primary-color);
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-bottom: 2rem;
+        }
+
+        .watchlist-section {
+            background: var(--card-background);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        .watchlist-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .stock-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .stock-card:hover {
+            background: rgba(139, 92, 246, 0.1);
+            border-color: var(--primary-color);
+            transform: translateY(-1px);
+        }
+
+        .stock-symbol {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--primary-color);
+            margin-bottom: 0.25rem;
+        }
+
+        .stock-name {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stock-price {
+            font-weight: 600;
+            font-size: 1rem;
+            color: #10b981;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-secondary);
+        }
+
+        .add-stock-btn {
+            background: var(--primary-color);
+            border: none;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="back-btn" onclick="window.location.href='/'">← Back to Home</button>
+        
+        <div class="header">
+            <h1 class="title">My Watchlist</h1>
+        </div>
+
+        <div class="watchlist-section">
+            <h2 class="section-title">Watched Stocks</h2>
+            
+            <div class="empty-state">
+                <h3>Your watchlist is empty</h3>
+                <p>Add stocks to your watchlist to keep track of their performance and get alerts.</p>
+                <button class="add-stock-btn" onclick="window.location.href='/'">Search Stocks</button>
+            </div>
+
+            <!-- Sample watchlist items - would be populated dynamically -->
+            <div class="watchlist-grid" style="display: none;">
+                <div class="stock-card">
+                    <div class="stock-symbol">AAPL</div>
+                    <div class="stock-name">Apple Inc.</div>
+                    <div class="stock-price">$195.18 (+1.2%)</div>
+                </div>
+                <div class="stock-card">
+                    <div class="stock-symbol">TSLA</div>
+                    <div class="stock-name">Tesla Inc.</div>
+                    <div class="stock-price">$248.50 (-0.8%)</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
