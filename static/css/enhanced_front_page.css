@@ -1,0 +1,414 @@
+/* Enhanced Front Page for TradeWise AI */
+
+/* Search Hero Section */
+.search-hero {
+    text-align: center;
+    padding: 3rem 1rem 2rem;
+    background: linear-gradient(135deg, rgba(96, 165, 250, 0.1) 0%, rgba(139, 92, 246, 0.1) 50%, rgba(236, 72, 153, 0.1) 100%);
+    border-radius: 20px;
+    margin: 2rem auto 3rem;
+    max-width: 900px;
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.search-hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(96, 165, 250, 0.05) 0%, transparent 70%);
+    animation: rotate 20s linear infinite;
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.search-hero-title {
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+    line-height: 1.1;
+    position: relative;
+    z-index: 1;
+}
+
+.hero-gradient {
+    background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 25%, #8b5cf6 50%, #ec4899 75%, #f59e0b 100%);
+    background-size: 300% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: heroShimmer 8s ease-in-out infinite;
+}
+
+@keyframes heroShimmer {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+.search-hero-subtitle {
+    font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+    color: rgba(255, 255, 255, 0.85);
+    font-weight: 400;
+    max-width: 700px;
+    margin: 0 auto;
+    line-height: 1.6;
+    position: relative;
+    z-index: 1;
+}
+
+/* Enhanced Main Search Interface */
+.chatgpt-search-box {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border: 2px solid rgba(255, 255, 255, 0.15) !important;
+    border-radius: 20px !important;
+    padding: 1.5rem 2rem !important;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    backdrop-filter: blur(30px) !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
+    max-width: 800px !important;
+    margin: 2rem auto !important;
+    position: relative !important;
+    overflow: hidden !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 1rem !important;
+}
+
+.chatgpt-search-box::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(96, 165, 250, 0.1), transparent);
+    transition: left 0.8s;
+}
+
+.chatgpt-search-box:focus-within {
+    border-color: rgba(96, 165, 250, 0.6) !important;
+    box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.1), 0 16px 40px rgba(0, 0, 0, 0.2) !important;
+    background: rgba(255, 255, 255, 0.12) !important;
+    transform: translateY(-2px) !important;
+}
+
+.chatgpt-search-box:focus-within::before {
+    left: 100%;
+}
+
+.chatgpt-search-input {
+    font-size: 1.2rem !important;
+    font-weight: 500 !important;
+    color: white !important;
+    background: transparent !important;
+    border: none !important;
+    outline: none !important;
+    flex: 1 !important;
+    padding: 0.75rem 0 !important;
+    min-height: 24px !important;
+}
+
+.chatgpt-search-input::placeholder {
+    color: rgba(255, 255, 255, 0.65) !important;
+    font-weight: 400 !important;
+}
+
+.search-icon {
+    color: rgba(96, 165, 250, 0.8) !important;
+    font-size: 1.3rem !important;
+    margin-right: 0.5rem !important;
+}
+
+.chatgpt-search-btn {
+    background: linear-gradient(135deg, #60a5fa, #8b5cf6) !important;
+    border: none !important;
+    border-radius: 12px !important;
+    color: white !important;
+    padding: 0.875rem 1.25rem !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 4px 16px rgba(96, 165, 250, 0.3) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-width: 48px !important;
+    font-size: 1rem !important;
+}
+
+.chatgpt-search-btn:hover {
+    transform: translateY(-2px) scale(1.05) !important;
+    box-shadow: 0 6px 20px rgba(96, 165, 250, 0.4) !important;
+    background: linear-gradient(135deg, #3b82f6, #7c3aed) !important;
+}
+
+.chatgpt-search-btn:active {
+    transform: translateY(0) scale(0.98) !important;
+}
+
+/* Enhanced Popular Stocks Cards */
+.popular-stock-card {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 16px !important;
+    padding: 1.25rem !important;
+    transition: all 0.3s ease !important;
+    backdrop-filter: blur(10px) !important;
+    cursor: pointer !important;
+    position: relative !important;
+    overflow: hidden !important;
+}
+
+.popular-stock-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #60a5fa, #8b5cf6, #ec4899);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.popular-stock-card:hover {
+    background: rgba(255, 255, 255, 0.12) !important;
+    border-color: rgba(96, 165, 250, 0.3) !important;
+    transform: translateY(-4px) !important;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+}
+
+.popular-stock-card:hover::before {
+    opacity: 1;
+}
+
+.stock-symbol {
+    font-size: 1.1rem !important;
+    font-weight: 700 !important;
+    color: #60a5fa !important;
+    margin-bottom: 0.5rem !important;
+}
+
+.stock-name {
+    font-size: 0.9rem !important;
+    color: rgba(255, 255, 255, 0.8) !important;
+    margin-bottom: 0.5rem !important;
+    font-weight: 500 !important;
+}
+
+.stock-price {
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+    color: #10b981 !important;
+}
+
+/* Enhanced Investment Theme Cards */
+.suggestion-card {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 16px !important;
+    padding: 1.5rem !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    backdrop-filter: blur(10px) !important;
+    cursor: pointer !important;
+    position: relative !important;
+    overflow: hidden !important;
+}
+
+.suggestion-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #60a5fa, #8b5cf6, #ec4899);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.suggestion-card:hover {
+    background: rgba(255, 255, 255, 0.12) !important;
+    border-color: rgba(96, 165, 250, 0.3) !important;
+    transform: translateY(-6px) !important;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2) !important;
+}
+
+.suggestion-card:hover::before {
+    opacity: 1;
+}
+
+.card-icon {
+    font-size: 2rem !important;
+    margin-bottom: 1rem !important;
+    color: #60a5fa !important;
+}
+
+.card-title {
+    font-size: 1.1rem !important;
+    font-weight: 600 !important;
+    color: white !important;
+    margin-bottom: 0.5rem !important;
+}
+
+.card-subtitle {
+    font-size: 0.85rem !important;
+    color: rgba(255, 255, 255, 0.7) !important;
+    margin-bottom: 0.75rem !important;
+    line-height: 1.4 !important;
+}
+
+.card-performance {
+    font-size: 1rem !important;
+    font-weight: 700 !important;
+    color: #10b981 !important;
+}
+
+/* Enhanced Dropdown Indicators */
+.popular-indicator,
+.insights-indicator {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 12px !important;
+    padding: 0.875rem 1.25rem !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    backdrop-filter: blur(10px) !important;
+    margin-bottom: 1rem !important;
+}
+
+.popular-indicator:hover,
+.insights-indicator:hover {
+    background: rgba(255, 255, 255, 0.12) !important;
+    border-color: rgba(96, 165, 250, 0.3) !important;
+    transform: translateY(-1px) !important;
+}
+
+.popular-label,
+.insights-label {
+    font-weight: 600 !important;
+    color: white !important;
+    margin-left: 0.5rem !important;
+}
+
+/* Enhanced Pills */
+.popular-pill,
+.insight-pill {
+    background: rgba(96, 165, 250, 0.2) !important;
+    color: #60a5fa !important;
+    padding: 0.25rem 0.5rem !important;
+    border-radius: 6px !important;
+    font-size: 0.7rem !important;
+    font-weight: 600 !important;
+    margin-left: 0.5rem !important;
+}
+
+.insight-pill.live {
+    background: rgba(16, 185, 129, 0.2) !important;
+    color: #10b981 !important;
+}
+
+.insight-pill.trend {
+    background: rgba(245, 158, 11, 0.2) !important;
+    color: #f59e0b !important;
+}
+
+.insight-pill.risk {
+    background: rgba(239, 68, 68, 0.2) !important;
+    color: #ef4444 !important;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .search-hero {
+        padding: 2rem 1rem 1.5rem;
+        margin: 1rem auto 2rem;
+    }
+    
+    .search-hero-title {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    .search-hero-subtitle {
+        font-size: 1.1rem;
+    }
+    
+    .chatgpt-search-box {
+        padding: 1rem 1.5rem !important;
+        margin: 1.5rem auto !important;
+        border-radius: 16px !important;
+    }
+    
+    .chatgpt-search-input {
+        font-size: 1rem !important;
+    }
+    
+    .chatgpt-search-btn {
+        padding: 0.75rem 1rem !important;
+        font-size: 0.9rem !important;
+    }
+    
+    .suggestion-card {
+        padding: 1.25rem !important;
+    }
+    
+    .popular-stock-card {
+        padding: 1rem !important;
+    }
+}
+
+/* Performance Optimizations */
+.search-hero,
+.chatgpt-search-box,
+.suggestion-card,
+.popular-stock-card {
+    will-change: transform;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .search-hero {
+        border-color: rgba(255, 255, 255, 0.3);
+        background: rgba(0, 0, 0, 0.8);
+    }
+    
+    .chatgpt-search-box {
+        border-color: rgba(255, 255, 255, 0.4) !important;
+        background: rgba(0, 0, 0, 0.8) !important;
+    }
+    
+    .search-hero-subtitle {
+        color: rgba(255, 255, 255, 0.9);
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.1s !important;
+    }
+    
+    .search-hero::before {
+        animation: none;
+    }
+    
+    .hero-gradient {
+        animation: none;
+        background-position: 0% 50%;
+    }
+}
