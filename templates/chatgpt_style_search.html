@@ -9,6 +9,95 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/premium_features.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/tier_styles.css') }}">
+    <style>
+        /* Enhanced Brand Animation Styles */
+        .animated-brand {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #667eea 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shimmer 4s ease-in-out infinite;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            text-shadow: 0 0 30px rgba(102, 126, 234, 0.2);
+            position: relative;
+        }
+
+        @keyframes shimmer {
+            0%, 100% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+
+        .brand-container {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            animation: brandFadeIn 1.2s ease-out;
+        }
+
+        @keyframes brandFadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .brand-tagline {
+            opacity: 0;
+            animation: taglineFadeIn 1s ease-out 0.6s forwards;
+            font-size: 0.8rem;
+            color: #6b7280;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            margin-top: 2px;
+        }
+
+        @keyframes taglineFadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Subtle glow effect on hover */
+        .brand-container:hover .animated-brand {
+            animation: shimmerHover 2s ease-in-out infinite;
+            text-shadow: 0 0 40px rgba(102, 126, 234, 0.4);
+        }
+
+        @keyframes shimmerHover {
+            0%, 100% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+
+        /* Mobile responsive adjustments */
+        @media (max-width: 768px) {
+            .animated-brand {
+                font-size: 1.4rem;
+            }
+            .brand-tagline {
+                font-size: 0.7rem;
+            }
+        }
+    </style>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{{ url_for('static', filename='js/tier_integration.js') }}"></script>
 </head>
@@ -19,8 +108,8 @@
         <div class="header">
             <div class="header-left">
                 <div class="brand-container">
-                    <span class="brand-name">TradeWise AI</span>
-                    <span class="brand-tagline">AI Trading</span>
+                    <span class="brand-name animated-brand">TradeWise AI</span>
+                    <span class="brand-tagline">Bloomberg Terminal for Everyone</span>
                 </div>
             </div>
             <div class="header-right">
@@ -5349,11 +5438,7 @@
         console.log('Institutional contact functions loaded');
     </script>
     
-    <!-- AI Team Chat Widget (Full Implementation) -->
-    <div class="ai-team-launcher" id="ai-team-launcher" style="position: fixed; bottom: 120px; right: 30px; width: 48px; height: 48px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 6px 20px rgba(102, 126, 234, 0.25); z-index: 999; transition: all 0.3s ease; color: white; font-size: 18px;">
-        <i class="fas fa-users"></i>
-        <div class="launcher-tooltip" style="position: absolute; right: 70px; top: 50%; transform: translateY(-50%); background: rgba(0, 0, 0, 0.9); color: white; padding: 0.5rem 0.75rem; border-radius: 8px; font-size: 0.8rem; white-space: nowrap; opacity: 0; transition: opacity 0.3s; pointer-events: none;">AI Support Team</div>
-    </div>
+
     
     <!-- AI Team Interactive Modal -->
     <div id="ai-team-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; align-items: center; justify-content: center;">
