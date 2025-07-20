@@ -2736,3 +2736,8 @@ function startSmartRefresh() {
 }
 
 startSmartRefresh();
+
+// Open institutional contact page
+function openInstitutionalContact() {
+    window.location.href = '/institutional-contact';
+}

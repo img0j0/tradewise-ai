@@ -4040,6 +4040,56 @@ def get_premium_portfolio_analytics():
         logger.error(f"Error getting premium portfolio analytics: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
+@app.route('/api/institutional-inquiry', methods=['POST'])
+def handle_institutional_inquiry():
+    """Handle institutional sales inquiries - routes directly to you"""
+    try:
+        data = request.get_json()
+        
+        # Log the inquiry for your review
+        inquiry_data = {
+            'timestamp': datetime.now().isoformat(),
+            'contact_info': {
+                'name': data.get('full_name'),
+                'title': data.get('job_title'),
+                'company': data.get('company'),
+                'email': data.get('email'),
+                'phone': data.get('phone')
+            },
+            'requirements': {
+                'user_count': data.get('user_count'),
+                'current_platform': data.get('current_platform'),
+                'specific_requirements': data.get('requirements'),
+                'contact_method': data.get('contact_method'),
+                'timeline': data.get('timeline')
+            }
+        }
+        
+        # Save to file for your review (you can check this regularly)
+        import json
+        with open('institutional_inquiries.log', 'a') as f:
+            f.write(json.dumps(inquiry_data) + '\n')
+        
+        # Here you could also send an email notification to yourself
+        # or integrate with your preferred notification system
+        
+        logger.info(f"New institutional inquiry from {data.get('company')} - {data.get('full_name')}")
+        
+        return jsonify({
+            'success': True,
+            'message': 'Inquiry received. You will be contacted within 24 hours.',
+            'inquiry_id': f"INQ-{int(time.time())}"
+        })
+        
+    except Exception as e:
+        logger.error(f"Error handling institutional inquiry: {str(e)}")
+        return jsonify({'error': 'Failed to submit inquiry'}), 500
+
+@app.route('/institutional-contact')
+def institutional_contact():
+    """Institutional contact page"""
+    return render_template('institutional_contact.html')
+
 @app.route('/professional-terminal')
 def professional_terminal():
     """Professional trading terminal page"""
