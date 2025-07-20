@@ -159,22 +159,17 @@ def get_or_create_user_account():
 
 @app.route('/')
 def index():
-    """Main ChatGPT-style AI interface"""
+    """Main simplified interface - reliable HTML rendering"""
     from flask import make_response
     
-    # Force browser to render as HTML by setting explicit content type
-    html_content = render_template('chatgpt_style_search.html')
-    
-    # Ensure the HTML content starts with proper DOCTYPE
-    if not html_content.strip().startswith('<!DOCTYPE'):
-        html_content = '<!DOCTYPE html>\n' + html_content
+    # Use simplified template for better compatibility
+    html_content = render_template('simple_main.html')
     
     response = make_response(html_content)
     response.headers['Content-Type'] = 'text/html; charset=utf-8'
     response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
     response.headers['Pragma'] = 'no-cache'
     response.headers['Expires'] = '0'
-    response.headers['X-Content-Type-Options'] = 'nosniff'
     response.mimetype = 'text/html'
     return response
 
@@ -190,7 +185,7 @@ def test_page():
 
 @app.route('/dashboard')
 def dashboard():
-    """Clean dashboard page"""
+    """Full ChatGPT-style interface"""
     from flask import make_response
     
     response = make_response(render_template('chatgpt_style_search.html'))
