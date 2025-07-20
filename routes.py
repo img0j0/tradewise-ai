@@ -5719,3 +5719,55 @@ def subscription_upgrade_modal(target_tier):
     except Exception as e:
         logger.error(f"Error generating upgrade modal for {target_tier}: {e}")
         return jsonify({'error': 'Failed to load upgrade information'}), 500
+
+
+@app.route('/api/stock-search', methods=['POST'])
+def stock_search_api():
+    """Enhanced stock search API for ChatGPT-style interface"""
+    try:
+        data = request.get_json()
+        query = data.get('query', '').strip()
+        
+        if not query:
+            return jsonify({'error': 'Query parameter required'}), 400
+        
+        # Use existing stock search service
+        stock_service = StockSearchService()
+        
+        # Get stock data
+        stock_data = stock_service.search_stock(query)
+        
+        if not stock_data:
+            return jsonify({
+                'error': 'Stock not found',
+                'message': f'No data found for "{query}"'
+            }), 404
+        
+        # Get AI insights
+        ai_engine = AIInsightsEngine()
+        insights = ai_engine.get_insights(query.upper())
+        
+        # Combine data
+        response = {
+            'success': True,
+            'symbol': stock_data.get('symbol', query.upper()),
+            'name': stock_data.get('name', 'Unknown Company'),
+            'price': stock_data.get('price', 0.0),
+            'change': stock_data.get('change', 0.0),
+            'change_percent': stock_data.get('change_percent', 0.0),
+            'analysis': insights.get('recommendation', 'Analysis unavailable'),
+            'confidence': insights.get('confidence', 50),
+            'key_points': insights.get('key_points', []),
+            'risk_level': insights.get('risk_level', 'Medium')
+        }
+        
+        return jsonify(response)
+        
+    except Exception as e:
+        print(f'Error in stock_search_api: {e}')
+        return jsonify({
+            'error': 'Search failed',
+            'message': str(e),
+            'analysis': f'Unable to analyze {query} - please try again'
+        }), 500
+

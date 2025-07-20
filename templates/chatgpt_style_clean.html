@@ -3,129 +3,294 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TradeWise AI - Stock Search</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>TradeWise AI - AI-Powered Trading</title>
     
     <style>
-        /* Clean ChatGPT-style interface without complex institutional features */
+        /* Exact ChatGPT-style interface matching your screenshot */
         :root {
-            --primary-color: #60a5fa;
-            --secondary-color: #8b5cf6;
+            --primary-color: #8b5cf6;
+            --secondary-color: #60a5fa;
             --background-dark: #0a0a0a;
-            --card-background: #1a1a1a;
-            --border-color: #333;
-            --text-primary: #f4f4f5;
+            --card-background: rgba(255, 255, 255, 0.05);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --text-primary: #ffffff;
             --text-secondary: #a1a1aa;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         body {
             background: var(--background-dark);
             color: var(--text-primary);
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            margin: 0;
-            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             min-height: 100vh;
+            overflow-x: hidden;
         }
 
-        .chatgpt-container {
-            max-width: 100vw;
+        .container {
             min-height: 100vh;
             display: flex;
             flex-direction: column;
         }
 
-        /* Header */
+        /* Header matching your screenshot */
         .header {
-            background: linear-gradient(135deg, rgba(26, 26, 26, 0.95), rgba(42, 42, 42, 0.95));
-            backdrop-filter: blur(10px);
             padding: 1.2rem 1.5rem;
             border-bottom: 1px solid var(--border-color);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            background: var(--background-dark);
         }
 
         .brand-name {
             font-size: 1.8rem;
             font-weight: 900;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            background: linear-gradient(135deg, #d946ef, #8b5cf6);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
 
-        .subscription-status {
-            background: rgba(96, 165, 250, 0.1);
-            border: 1px solid rgba(96, 165, 250, 0.3);
-            color: var(--primary-color);
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            font-size: 0.9rem;
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
         }
 
-        /* Main Content */
+        .crown-btn {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .crown-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .tools-btn {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: white;
+        }
+
+        .tools-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Main content centered like ChatGPT */
         .main-content {
             flex: 1;
-            padding: 2rem;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            text-align: center;
-            gap: 2rem;
-        }
-
-        .hero-section {
+            padding: 2rem 1rem;
             max-width: 800px;
             margin: 0 auto;
+            width: 100%;
+        }
+
+        /* Hero section matching your screenshot */
+        .hero-section {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .hero-subtitle {
+            color: var(--secondary-color);
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
         }
 
         .hero-title {
-            font-size: 2.5rem;
+            font-size: 2rem;
             font-weight: 700;
-            margin-bottom: 1rem;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            margin-bottom: 0.5rem;
+        }
+
+        .hero-title .discover {
+            background: linear-gradient(135deg, #8b5cf6, #d946ef);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
 
-        .hero-subtitle {
-            font-size: 1.1rem;
+        .hero-description {
             color: var(--text-secondary);
+            font-size: 0.9rem;
             margin-bottom: 2rem;
         }
 
-        /* Search Section */
-        .search-section {
+        /* Dropdown sections exactly like your screenshot */
+        .dropdown-section {
             background: var(--card-background);
             border: 1px solid var(--border-color);
             border-radius: 12px;
-            padding: 2rem;
             width: 100%;
-            max-width: 600px;
+            max-width: 500px;
+            margin-bottom: 0.75rem;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .dropdown-section:hover {
+            border-color: rgba(139, 92, 246, 0.5);
+        }
+
+        .dropdown-header {
+            padding: 1rem 1.25rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .dropdown-left {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .dropdown-icon {
+            font-size: 1.1rem;
+        }
+
+        .dropdown-text {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .dropdown-count {
+            color: var(--text-secondary);
+            font-weight: normal;
+        }
+
+        .dropdown-chevron {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            transition: transform 0.3s ease;
+        }
+
+        .dropdown-section.expanded .dropdown-chevron {
+            transform: rotate(180deg);
+        }
+
+        .dropdown-content {
+            padding: 1.25rem;
+            display: none;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .dropdown-content.expanded {
+            display: block;
+        }
+
+        /* Stock grid */
+        .stocks-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 0.75rem;
+        }
+
+        .stock-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.75rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .stock-card:hover {
+            background: rgba(139, 92, 246, 0.1);
+            border-color: var(--primary-color);
+            transform: translateY(-1px);
+        }
+
+        .stock-symbol {
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--primary-color);
+            margin-bottom: 0.25rem;
+        }
+
+        .stock-name {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stock-price {
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: #10b981;
+        }
+
+        /* Bottom section with status and search */
+        .bottom-section {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--background-dark);
+            border-top: 1px solid var(--border-color);
+            padding: 1rem;
+        }
+
+        .status-text {
+            text-align: right;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            margin-bottom: 1rem;
         }
 
         .search-container {
+            max-width: 500px;
+            margin: 0 auto;
             position: relative;
-            margin-bottom: 2rem;
         }
 
         .search-input {
             width: 100%;
-            padding: 1rem 4rem 1rem 1.5rem;
             background: rgba(255, 255, 255, 0.05);
-            border: 2px solid var(--border-color);
-            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 25px;
+            padding: 0.9rem 3rem 0.9rem 1.25rem;
             color: white;
-            font-size: 1.1rem;
+            font-size: 0.9rem;
+            outline: none;
             transition: all 0.3s ease;
         }
 
         .search-input:focus {
-            outline: none;
             border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
         }
 
         .search-input::placeholder {
@@ -139,118 +304,33 @@
             transform: translateY(-50%);
             background: var(--primary-color);
             border: none;
-            border-radius: 8px;
-            color: white;
-            padding: 0.7rem 1.2rem;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
             transition: all 0.3s ease;
+            color: white;
         }
 
         .search-btn:hover {
-            background: var(--secondary-color);
+            background: #7c3aed;
         }
 
-        /* Dropdown Sections */
-        .dropdown-section {
-            background: var(--card-background);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            margin-bottom: 1rem;
-            overflow: hidden;
-            width: 100%;
-            max-width: 600px;
-        }
-
-        .dropdown-header {
-            padding: 1rem 1.5rem;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(255, 255, 255, 0.02);
-            transition: all 0.3s ease;
-        }
-
-        .dropdown-header:hover {
-            background: rgba(96, 165, 250, 0.1);
-        }
-
-        .dropdown-title {
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .dropdown-content {
-            padding: 1.5rem;
-            display: none;
-        }
-
-        .dropdown-content.expanded {
-            display: block;
-        }
-
-        /* Stock Cards */
-        .stocks-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 1rem;
-        }
-
-        .stock-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 1rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-align: center;
-        }
-
-        .stock-card:hover {
-            background: rgba(96, 165, 250, 0.1);
-            border-color: var(--primary-color);
-            transform: translateY(-2px);
-        }
-
-        .stock-symbol {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--primary-color);
-            margin-bottom: 0.25rem;
-        }
-
-        .stock-name {
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-            margin-bottom: 0.5rem;
-        }
-
-        .stock-price {
-            font-size: 1rem;
-            font-weight: 600;
-            color: #10b981;
-        }
-
-        /* Responsive Design */
+        /* Mobile responsive */
         @media (max-width: 768px) {
             .header {
                 padding: 1rem;
-                flex-direction: column;
-                gap: 1rem;
             }
 
             .main-content {
-                padding: 1rem;
+                padding: 1.5rem 1rem 6rem;
             }
 
             .hero-title {
-                font-size: 2rem;
-            }
-
-            .search-section, .dropdown-section {
-                padding: 1.5rem;
+                font-size: 1.7rem;
             }
 
             .stocks-grid {
@@ -260,72 +340,64 @@
     </style>
 </head>
 <body>
-    <div class="chatgpt-container">
+    <div class="container">
         <!-- Header -->
         <header class="header">
             <div class="brand-name">TradeWise AI</div>
-            <div class="subscription-status">Free Features: Basic</div>
+            <div class="header-right">
+                <button class="crown-btn" onclick="showUpgrade()">👑</button>
+                <button class="tools-btn" onclick="showTools()">✕</button>
+            </div>
         </header>
 
         <!-- Main Content -->
         <main class="main-content">
+            <!-- Hero Section -->
             <div class="hero-section">
-                <h1 class="hero-title">AI-Powered Trading</h1>
-                <p class="hero-subtitle">Discover Your Next Investment</p>
-                <p style="color: var(--text-secondary); margin-bottom: 2rem;">
-                    AI-powered insights for any stock, crypto, or ETF
-                </p>
-            </div>
-
-            <!-- Search Section -->
-            <div class="search-section">
-                <div class="search-container">
-                    <input 
-                        type="text" 
-                        id="stock-search-input"
-                        class="search-input" 
-                        placeholder="Ask anything about stocks... (try 'google', 'apple', or 'NVDA')"
-                    >
-                    <button class="search-btn" onclick="searchStockAI()">Search</button>
-                </div>
+                <div class="hero-subtitle">AI-POWERED TRADING</div>
+                <h1 class="hero-title">
+                    <span class="discover">Discover</span> Your Next Investment
+                </h1>
+                <p class="hero-description">AI-powered insights for any stock, crypto, or ETF</p>
             </div>
 
             <!-- Popular Stocks Dropdown -->
-            <div class="dropdown-section">
-                <div class="dropdown-header" onclick="togglePopularStocks()">
-                    <div class="dropdown-title">
-                        ⭐ Popular Stocks (6 stocks)
+            <div class="dropdown-section" onclick="toggleDropdown('popular')">
+                <div class="dropdown-header">
+                    <div class="dropdown-left">
+                        <span class="dropdown-icon">⭐</span>
+                        <span class="dropdown-text">Popular Stocks <span class="dropdown-count">(6 stocks)</span></span>
                     </div>
-                    <span id="popular-chevron">▼</span>
+                    <span class="dropdown-chevron">▼</span>
                 </div>
-                <div class="dropdown-content" id="popular-stocks-content">
+                <div class="dropdown-content" id="popular-content">
                     <div class="stocks-grid">
-                        <div class="stock-card" onclick="searchStock('AAPL')">
+                        <div class="stock-card" onclick="event.stopPropagation(); searchStock('AAPL')">
                             <div class="stock-symbol">AAPL</div>
                             <div class="stock-name">Apple Inc.</div>
                             <div class="stock-price">$195.18</div>
                         </div>
-                        <div class="stock-card" onclick="searchStock('TSLA')">
+                        <div class="stock-card" onclick="event.stopPropagation(); searchStock('TSLA')">
                             <div class="stock-symbol">TSLA</div>
                             <div class="stock-name">Tesla Inc.</div>
                             <div class="stock-price">$248.50</div>
                         </div>
-                        <div class="stock-card" onclick="searchStock('NVDA')">
+                        <div class="stock-card" onclick="event.stopPropagation(); searchStock('NVDA')">
                             <div class="stock-symbol">NVDA</div>
                             <div class="stock-name">NVIDIA Corp.</div>
                             <div class="stock-price">$875.30</div>
                         </div>
-                        <div class="stock-card" onclick="searchStock('MSFT')">
+                        <div class="stock-card" onclick="event.stopPropagation(); searchStock('MSFT')">
                             <div class="stock-symbol">MSFT</div>
                             <div class="stock-name">Microsoft Corp.</div>
                             <div class="stock-price">$428.90</div>
                         </div>
-                        <div class="stock-card" onclick="searchStock('GOOGL')">
+                        <div class="stock-card" onclick="event.stopPropagation(); searchStock('GOOGL')">
                             <div class="stock-symbol">GOOGL</div>
                             <div class="stock-name">Alphabet Inc.</div>
                             <div class="stock-price">$175.25</div>
                         </div>
-                        <div class="stock-card" onclick="searchStock('AMZN')">
+                        <div class="stock-card" onclick="event.stopPropagation(); searchStock('AMZN')">
                             <div class="stock-symbol">AMZN</div>
                             <div class="stock-name">Amazon.com Inc.</div>
                             <div class="stock-price">$186.75</div>
@@ -335,31 +407,32 @@
             </div>
 
             <!-- Investment Themes Dropdown -->
-            <div class="dropdown-section">
-                <div class="dropdown-header" onclick="toggleInvestmentThemes()">
-                    <div class="dropdown-title">
-                        📊 Investment Themes (12 themes)
+            <div class="dropdown-section" onclick="toggleDropdown('themes')">
+                <div class="dropdown-header">
+                    <div class="dropdown-left">
+                        <span class="dropdown-icon">📊</span>
+                        <span class="dropdown-text">Investment Themes <span class="dropdown-count">(12 themes)</span></span>
                     </div>
-                    <span id="themes-chevron">▼</span>
+                    <span class="dropdown-chevron">▼</span>
                 </div>
-                <div class="dropdown-content" id="investment-themes-content">
+                <div class="dropdown-content" id="themes-content">
                     <div class="stocks-grid">
-                        <div class="stock-card" onclick="searchTheme('AI')">
+                        <div class="stock-card" onclick="event.stopPropagation(); searchTheme('AI')">
                             <div class="stock-symbol">AI & Tech</div>
                             <div class="stock-name">Artificial Intelligence</div>
                             <div class="stock-price">+28% YTD</div>
                         </div>
-                        <div class="stock-card" onclick="searchTheme('EV')">
+                        <div class="stock-card" onclick="event.stopPropagation(); searchTheme('EV')">
                             <div class="stock-symbol">Electric Vehicles</div>
                             <div class="stock-name">Clean Transportation</div>
                             <div class="stock-price">+15% YTD</div>
                         </div>
-                        <div class="stock-card" onclick="searchTheme('Cloud')">
+                        <div class="stock-card" onclick="event.stopPropagation(); searchTheme('Cloud')">
                             <div class="stock-symbol">Cloud Computing</div>
                             <div class="stock-name">Digital Infrastructure</div>
                             <div class="stock-price">+22% YTD</div>
                         </div>
-                        <div class="stock-card" onclick="searchTheme('Healthcare')">
+                        <div class="stock-card" onclick="event.stopPropagation(); searchTheme('Healthcare')">
                             <div class="stock-symbol">Healthcare</div>
                             <div class="stock-name">Medical Innovation</div>
                             <div class="stock-price">+12% YTD</div>
@@ -369,44 +442,93 @@
             </div>
 
             <!-- Market Insights Dropdown -->
-            <div class="dropdown-section">
-                <div class="dropdown-header" onclick="toggleMarketInsights()">
-                    <div class="dropdown-title">
-                        📈 Market Insights (Live data)
+            <div class="dropdown-section" onclick="toggleDropdown('insights')">
+                <div class="dropdown-header">
+                    <div class="dropdown-left">
+                        <span class="dropdown-icon">📈</span>
+                        <span class="dropdown-text">Market Insights <span class="dropdown-count">(Live data)</span></span>
                     </div>
-                    <span id="insights-chevron">▼</span>
+                    <span class="dropdown-chevron">▼</span>
                 </div>
-                <div class="dropdown-content" id="market-insights-content">
-                    <div style="display: grid; gap: 1rem;">
-                        <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid #10b981; border-radius: 8px; padding: 1rem;">
-                            <div style="color: #10b981; font-weight: 600; margin-bottom: 0.5rem;">Market Trend: Bullish</div>
-                            <div style="font-size: 0.9rem; color: var(--text-secondary);">Strong upward momentum across major indices</div>
+                <div class="dropdown-content" id="insights-content">
+                    <div style="display: grid; gap: 0.75rem;">
+                        <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid #10b981; border-radius: 8px; padding: 0.75rem;">
+                            <div style="color: #10b981; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.25rem;">Market Trend: Bullish</div>
+                            <div style="font-size: 0.75rem; color: var(--text-secondary);">Strong upward momentum across major indices</div>
                         </div>
-                        <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; border-radius: 8px; padding: 1rem;">
-                            <div style="color: #ef4444; font-weight: 600; margin-bottom: 0.5rem;">Risk Alert: Medium</div>
-                            <div style="font-size: 0.9rem; color: var(--text-secondary);">Increased volatility expected this week</div>
+                        <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; border-radius: 8px; padding: 0.75rem;">
+                            <div style="color: #ef4444; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.25rem;">Risk Alert: Medium</div>
+                            <div style="font-size: 0.75rem; color: var(--text-secondary);">Increased volatility expected this week</div>
                         </div>
                     </div>
                 </div>
             </div>
         </main>
+
+        <!-- Bottom Search Section -->
+        <div class="bottom-section">
+            <div class="status-text">Free Features: Basic</div>
+            <div class="search-container">
+                <input 
+                    type="text" 
+                    id="stock-search-input"
+                    class="search-input" 
+                    placeholder="Ask anything about stocks... (try 'google', 'apple', or 'NVDA')"
+                    onkeypress="handleSearchKeyPress(event)"
+                >
+                <button class="search-btn" onclick="searchStockAI()">↑</button>
+            </div>
+        </div>
     </div>
 
-    <!-- JavaScript -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Simple functionality without complex institutional features
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('TradeWise AI clean interface loaded');
+            console.log('TradeWise AI ChatGPT-style interface loaded');
         });
+
+        function toggleDropdown(type) {
+            const section = document.querySelector(`#${type}-content`).parentElement;
+            const content = document.querySelector(`#${type}-content`);
+            const chevron = section.querySelector('.dropdown-chevron');
+            
+            // Close other dropdowns
+            document.querySelectorAll('.dropdown-section').forEach(dropdown => {
+                if (dropdown !== section) {
+                    dropdown.classList.remove('expanded');
+                    dropdown.querySelector('.dropdown-content').classList.remove('expanded');
+                }
+            });
+            
+            // Toggle current dropdown
+            section.classList.toggle('expanded');
+            content.classList.toggle('expanded');
+        }
 
         function searchStockAI() {
             const query = document.getElementById('stock-search-input').value.trim();
             if (!query) {
-                alert('Please enter a stock symbol or company name');
+                document.getElementById('stock-search-input').placeholder = 'Please enter a stock symbol or company name';
                 return;
             }
-            alert(`Searching for: ${query}`);
+            
+            // Call the real search API
+            fetch('/api/stock-search', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ query: query })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Search results:', data);
+                // Handle search results here
+                alert(`AI Analysis for ${query}: ${data.analysis || 'Analysis completed'}`);
+            })
+            .catch(error => {
+                console.error('Search error:', error);
+                alert(`Searching for: ${query}`);
+            });
         }
 
         function searchStock(symbol) {
@@ -415,28 +537,22 @@
         }
 
         function searchTheme(theme) {
-            alert(`Searching for ${theme} theme investments`);
+            document.getElementById('stock-search-input').value = theme;
+            searchStockAI();
         }
 
-        function togglePopularStocks() {
-            const content = document.getElementById('popular-stocks-content');
-            const chevron = document.getElementById('popular-chevron');
-            content.classList.toggle('expanded');
-            chevron.textContent = content.classList.contains('expanded') ? '▲' : '▼';
+        function handleSearchKeyPress(event) {
+            if (event.key === 'Enter') {
+                searchStockAI();
+            }
         }
 
-        function toggleInvestmentThemes() {
-            const content = document.getElementById('investment-themes-content');
-            const chevron = document.getElementById('themes-chevron');
-            content.classList.toggle('expanded');
-            chevron.textContent = content.classList.contains('expanded') ? '▲' : '▼';
+        function showUpgrade() {
+            alert('Upgrade to premium features coming soon!');
         }
 
-        function toggleMarketInsights() {
-            const content = document.getElementById('market-insights-content');
-            const chevron = document.getElementById('insights-chevron');
-            content.classList.toggle('expanded');
-            chevron.textContent = content.classList.contains('expanded') ? '▲' : '▼';
+        function showTools() {
+            alert('Tools menu coming soon!');
         }
     </script>
 </body>
