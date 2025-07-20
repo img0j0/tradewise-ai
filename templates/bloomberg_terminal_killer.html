@@ -7,315 +7,793 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
         body {
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(120, 119, 198, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+                linear-gradient(135deg, #0c0e1a 0%, #1a1d2e 50%, #0f1419 100%);
             color: #ffffff;
-            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             min-height: 100vh;
+            overflow-x: hidden;
         }
         
-        .terminal-header {
-            background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
-            border-bottom: 2px solid #ff6b00;
-            padding: 1rem 0;
-            box-shadow: 0 4px 20px rgba(255, 107, 0, 0.3);
+        .institutional-header {
+            background: linear-gradient(135deg, 
+                rgba(0, 0, 0, 0.95) 0%, 
+                rgba(15, 23, 42, 0.95) 50%, 
+                rgba(0, 0, 0, 0.95) 100%);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2rem 0;
+            position: relative;
+            overflow: hidden;
         }
         
-        .bloomberg-badge {
+        .institutional-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(59, 130, 246, 0.1) 20%, 
+                rgba(16, 185, 129, 0.1) 50%, 
+                rgba(251, 191, 36, 0.1) 80%, 
+                transparent 100%);
+            animation: shimmer 3s ease-in-out infinite;
+        }
+        
+        @keyframes shimmer {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.8; }
+        }
+        
+        .brand-container {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .main-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ffffff 0%, #3b82f6 50%, #10b981 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+        }
+        
+        .subtitle {
+            font-size: 1.3rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 300;
+            letter-spacing: 0.5px;
+        }
+        
+        .bloomberg-killer-badge {
             background: linear-gradient(135deg, #ff6b00 0%, #ff8500 100%);
             color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 25px;
-            font-weight: bold;
-            font-size: 0.9rem;
-            display: inline-block;
-            margin-left: 1rem;
-        }
-        
-        .feature-terminal {
-            background: rgba(0, 0, 0, 0.8);
-            border: 1px solid #ff6b00;
-            border-radius: 8px;
-            margin: 1rem 0;
-            padding: 1.5rem;
-            backdrop-filter: blur(10px);
-            transition: all 0.3s ease;
-        }
-        
-        .feature-terminal:hover {
-            border-color: #10b981;
-            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.2);
-            transform: translateY(-2px);
-        }
-        
-        .terminal-title {
-            color: #ff6b00;
-            font-weight: bold;
-            font-size: 1.2rem;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-        }
-        
-        .terminal-title i {
-            margin-right: 0.5rem;
-            color: #10b981;
-        }
-        
-        .test-button {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            border: none;
-            color: white;
             padding: 0.75rem 1.5rem;
-            border-radius: 8px;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            margin: 0.25rem;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 1rem;
+            box-shadow: 0 8px 25px rgba(255, 107, 0, 0.3);
+            position: relative;
+            overflow: hidden;
         }
         
-        .test-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 15px rgba(16, 185, 129, 0.3);
-            color: white;
+        .bloomberg-killer-badge::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            animation: sweep 2s infinite;
         }
         
-        .premium-indicator {
-            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
-            color: #1f2937;
-            padding: 0.25rem 0.75rem;
-            border-radius: 15px;
-            font-size: 0.8rem;
-            font-weight: bold;
-            margin-left: 1rem;
+        @keyframes sweep {
+            0% { left: -100%; }
+            100% { left: 100%; }
         }
         
-        .performance-metric {
+        .premium-status {
             background: rgba(16, 185, 129, 0.1);
             border: 1px solid rgba(16, 185, 129, 0.3);
-            border-radius: 8px;
-            padding: 1rem;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            background: #10b981;
+            border-radius: 50%;
+            margin-right: 0.75rem;
+            animation: pulse-glow 2s infinite;
+        }
+        
+        @keyframes pulse-glow {
+            0%, 100% { 
+                box-shadow: 0 0 5px #10b981;
+                transform: scale(1);
+            }
+            50% { 
+                box-shadow: 0 0 20px #10b981, 0 0 30px rgba(16, 185, 129, 0.5);
+                transform: scale(1.1);
+            }
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 3rem 0;
+        }
+        
+        .metric-card {
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.05) 0%, 
+                rgba(255, 255, 255, 0.02) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 2rem;
             text-align: center;
-            margin: 0.5rem 0;
+            backdrop-filter: blur(20px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #3b82f6, #10b981, #fbbf24);
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+        
+        .metric-card:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(59, 130, 246, 0.4);
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.3),
+                0 0 0 1px rgba(59, 130, 246, 0.1);
         }
         
         .metric-value {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #10b981;
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
         }
         
         .metric-label {
-            color: #94a3b8;
-            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
         
-        .comparison-winner {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        .metric-comparison {
+            color: #10b981;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            font-weight: 600;
+        }
+        
+        .features-section {
+            margin: 4rem 0;
+        }
+        
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 3rem;
+            background: linear-gradient(135deg, #ffffff 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+        
+        .feature-card {
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.08) 0%, 
+                rgba(255, 255, 255, 0.03) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 2.5rem;
+            backdrop-filter: blur(20px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, 
+                rgba(59, 130, 246, 0.05) 0%, 
+                rgba(16, 185, 129, 0.05) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(59, 130, 246, 0.3);
+            box-shadow: 
+                0 25px 50px rgba(0, 0, 0, 0.4),
+                0 0 0 1px rgba(59, 130, 246, 0.1);
+        }
+        
+        .feature-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #3b82f6 0%, #10b981 100%);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            font-size: 1.5rem;
+            color: white;
+        }
+        
+        .feature-title {
+            flex: 1;
+        }
+        
+        .feature-name {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 0.5rem;
+        }
+        
+        .advantage-badge {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
             color: white;
             padding: 0.5rem 1rem;
             border-radius: 20px;
-            font-weight: bold;
-            display: inline-block;
-            margin: 0.5rem 0;
+            font-size: 0.85rem;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
         }
         
-        .results-display {
-            background: rgba(0, 0, 0, 0.6);
-            border: 1px solid #374151;
-            border-radius: 8px;
-            padding: 1.5rem;
-            margin: 1rem 0;
-            min-height: 150px;
-            font-family: 'Monaco', 'Menlo', monospace;
-            font-size: 0.9rem;
+        .feature-description {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.1rem;
             line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .premium-button {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            border: none;
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        
+        .premium-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .premium-button:hover::before {
+            left: 100%;
+        }
+        
+        .premium-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(59, 130, 246, 0.4);
+            color: white;
+        }
+        
+        .secondary-button {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .secondary-button:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            color: white;
+        }
+        
+        .cost-showcase {
+            background: linear-gradient(135deg, 
+                rgba(16, 185, 129, 0.1) 0%, 
+                rgba(5, 150, 105, 0.1) 100%);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 20px;
+            padding: 3rem;
+            margin: 4rem 0;
+            text-align: center;
+            backdrop-filter: blur(20px);
+        }
+        
+        .cost-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            color: #ffffff;
+        }
+        
+        .cost-comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+        
+        .cost-item {
+            padding: 2rem;
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .bloomberg-cost {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+        
+        .tradewise-cost {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+        
+        .cost-label {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .cost-value {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        
+        .bloomberg-cost .cost-value {
+            color: #ef4444;
+        }
+        
+        .tradewise-cost .cost-value {
+            color: #10b981;
+        }
+        
+        .cost-details {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1rem;
+        }
+        
+        .savings-highlight {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 1.5rem 3rem;
+            border-radius: 50px;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-top: 2rem;
+            display: inline-block;
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
+        }
+        
+        .results-terminal {
+            background: linear-gradient(135deg, 
+                rgba(0, 0, 0, 0.8) 0%, 
+                rgba(15, 23, 42, 0.8) 100%);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 2rem 0;
+            min-height: 300px;
+            font-family: 'JetBrains Mono', 'Monaco', monospace;
+            font-size: 0.95rem;
+            line-height: 1.7;
+            backdrop-filter: blur(20px);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .results-terminal::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #3b82f6, transparent);
+            animation: scan 2s linear infinite;
+        }
+        
+        @keyframes scan {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        .terminal-header-bar {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .terminal-dots {
+            display: flex;
+            gap: 0.5rem;
+            margin-right: 1rem;
+        }
+        
+        .terminal-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        
+        .dot-red { background: #ef4444; }
+        .dot-yellow { background: #fbbf24; }
+        .dot-green { background: #10b981; }
+        
+        .terminal-title-bar {
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 600;
+        }
+        
+        .loading-animation {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
         }
         
         .loading-spinner {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255, 255, 255, 0.3);
+            width: 24px;
+            height: 24px;
+            border: 2px solid rgba(59, 130, 246, 0.3);
             border-radius: 50%;
-            border-top-color: #10b981;
-            animation: spin 1s ease-in-out infinite;
-            margin-right: 0.5rem;
+            border-top-color: #3b82f6;
+            animation: spin 1s linear infinite;
         }
         
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
         
-        .superiority-badge {
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
+        .success-indicator {
+            color: #10b981;
             font-weight: bold;
-            margin: 0.5rem;
-            display: inline-block;
         }
         
-        .cost-comparison {
-            background: linear-gradient(135deg, #059669 0%, #047857 100%);
-            padding: 2rem;
-            border-radius: 12px;
-            text-align: center;
-            margin: 2rem 0;
+        .highlight-value {
+            color: #3b82f6;
+            font-weight: 600;
+        }
+        
+        .warning-value {
+            color: #ef4444;
+            font-weight: 600;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: 2.5rem;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .cost-comparison-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .metrics-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .premium-button,
+            .secondary-button {
+                width: 100%;
+                text-align: center;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="terminal-header">
+    <div class="institutional-header">
         <div class="container">
             <div class="row align-items-center">
-                <div class="col-md-8">
-                    <h1 class="mb-0">
-                        <i class="fas fa-terminal me-2"></i>
+                <div class="col-lg-8 brand-container">
+                    <h1 class="main-title">
+                        <i class="fas fa-chart-line me-3"></i>
                         TradeWise AI
-                        <span class="bloomberg-badge">Bloomberg Terminal Killer</span>
                     </h1>
+                    <p class="subtitle">
+                        <span class="bloomberg-killer-badge">Bloomberg Terminal Killer</span>
+                        Institutional-Grade Financial Intelligence Platform
+                    </p>
                 </div>
-                <div class="col-md-4 text-end">
-                    <span class="premium-indicator">Institutional Grade Testing</span>
+                <div class="col-lg-4">
+                    <div class="premium-status text-center">
+                        <span class="status-indicator"></span>
+                        <strong>Enterprise Testing Environment</strong>
+                        <div class="mt-2 small">
+                            <i class="fas fa-shield-alt me-2"></i>
+                            Institutional Grade Active
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="container mt-4">
-        <!-- Performance Comparison -->
-        <div class="row mb-4">
-            <div class="col-md-3">
-                <div class="performance-metric">
-                    <div class="metric-value">7.6ms</div>
-                    <div class="metric-label">Response Time</div>
-                    <small class="text-success">vs Bloomberg 100ms</small>
-                </div>
+    <div class="container">
+        <!-- Performance Metrics -->
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-value">7.6ms</div>
+                <div class="metric-label">Response Time</div>
+                <div class="metric-comparison">vs Bloomberg 100ms</div>
             </div>
-            <div class="col-md-3">
-                <div class="performance-metric">
-                    <div class="metric-value">98%</div>
-                    <div class="metric-label">Cost Savings</div>
-                    <small class="text-success">$480 vs $24,500</small>
-                </div>
+            <div class="metric-card">
+                <div class="metric-value">98%</div>
+                <div class="metric-label">Cost Savings</div>
+                <div class="metric-comparison">$480 vs $24,500</div>
             </div>
-            <div class="col-md-3">
-                <div class="performance-metric">
-                    <div class="metric-value">6/6</div>
-                    <div class="metric-label">Categories Won</div>
-                    <small class="text-success">vs Bloomberg Terminal</small>
-                </div>
+            <div class="metric-card">
+                <div class="metric-value">6/6</div>
+                <div class="metric-label">Categories Won</div>
+                <div class="metric-comparison">vs Bloomberg Terminal</div>
             </div>
-            <div class="col-md-3">
-                <div class="performance-metric">
-                    <div class="metric-value">A+</div>
-                    <div class="metric-label">Performance Grade</div>
-                    <small class="text-success">Institutional Level</small>
-                </div>
+            <div class="metric-card">
+                <div class="metric-value">A+</div>
+                <div class="metric-label">Performance Grade</div>
+                <div class="metric-comparison">Institutional Level</div>
             </div>
         </div>
 
-        <!-- Bloomberg Killer Features Testing -->
-        <div class="row">
-            <div class="col-md-6">
-                <div class="feature-terminal">
-                    <div class="terminal-title">
-                        <i class="fas fa-brain"></i>
-                        AI-Powered Stock Analysis
-                        <span class="superiority-badge">Beats Bloomberg</span>
-                    </div>
-                    <p>Advanced AI analysis with confidence scoring that Bloomberg Terminal lacks</p>
-                    <button class="btn test-button" onclick="testStockAnalysis()">
-                        <i class="fas fa-play me-2"></i>Test Live Analysis
-                    </button>
-                    <button class="btn test-button" onclick="compareWithBloomberg()">
-                        <i class="fas fa-vs me-2"></i>vs Bloomberg
-                    </button>
-                </div>
-            </div>
+        <!-- Bloomberg Killer Features -->
+        <div class="features-section">
+            <h2 class="section-title">
+                <i class="fas fa-trophy me-3"></i>
+                Enterprise Feature Testing Suite
+            </h2>
             
-            <div class="col-md-6">
-                <div class="feature-terminal">
-                    <div class="terminal-title">
-                        <i class="fas fa-chart-line"></i>
-                        Real-Time Market Intelligence
-                        <span class="superiority-badge">92% Faster</span>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-header">
+                        <div class="feature-icon">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <div class="feature-title">
+                            <div class="feature-name">AI-Powered Stock Analysis</div>
+                            <span class="advantage-badge">Beats Bloomberg</span>
+                        </div>
                     </div>
-                    <p>50ms data latency vs Bloomberg's 100ms with superior AI insights</p>
-                    <button class="btn test-button" onclick="testMarketIntelligence()">
-                        <i class="fas fa-tachometer-alt me-2"></i>Speed Test
-                    </button>
-                    <button class="btn test-button" onclick="showLatencyComparison()">
-                        <i class="fas fa-stopwatch me-2"></i>Latency Analysis
-                    </button>
+                    <p class="feature-description">
+                        Advanced AI analysis with confidence scoring that Bloomberg Terminal lacks. 
+                        Our proprietary AI delivers institutional-grade insights with real-time processing.
+                    </p>
+                    <div class="action-buttons">
+                        <button class="btn premium-button" onclick="testStockAnalysis()">
+                            <i class="fas fa-play me-2"></i>Test Live Analysis
+                        </button>
+                        <button class="btn secondary-button" onclick="compareWithBloomberg()">
+                            <i class="fas fa-vs me-2"></i>vs Bloomberg
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-header">
+                        <div class="feature-icon">
+                            <i class="fas fa-tachometer-alt"></i>
+                        </div>
+                        <div class="feature-title">
+                            <div class="feature-name">Real-Time Market Intelligence</div>
+                            <span class="advantage-badge">92% Faster</span>
+                        </div>
+                    </div>
+                    <p class="feature-description">
+                        Sub-50ms data latency vs Bloomberg's 100ms with superior AI insights. 
+                        Enterprise-grade infrastructure delivers unmatched performance.
+                    </p>
+                    <div class="action-buttons">
+                        <button class="btn premium-button" onclick="testMarketIntelligence()">
+                            <i class="fas fa-rocket me-2"></i>Speed Test
+                        </button>
+                        <button class="btn secondary-button" onclick="showLatencyComparison()">
+                            <i class="fas fa-stopwatch me-2"></i>Latency Analysis
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-header">
+                        <div class="feature-icon">
+                            <i class="fas fa-comments"></i>
+                        </div>
+                        <div class="feature-title">
+                            <div class="feature-name">ChatGPT-Style Interface</div>
+                            <span class="advantage-badge">Revolutionary UX</span>
+                        </div>
+                    </div>
+                    <p class="feature-description">
+                        Natural language processing vs Bloomberg's complex terminal commands. 
+                        Zero learning curve eliminates the barrier to institutional-grade tools.
+                    </p>
+                    <div class="action-buttons">
+                        <button class="btn premium-button" onclick="testNaturalLanguage()">
+                            <i class="fas fa-search me-2"></i>Test AI Search
+                        </button>
+                        <button class="btn secondary-button" onclick="compareUXComplexity()">
+                            <i class="fas fa-user-graduate me-2"></i>Learning Curve
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-header">
+                        <div class="feature-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <div class="feature-title">
+                            <div class="feature-name">Enterprise Security & Performance</div>
+                            <span class="advantage-badge">Institutional Grade</span>
+                        </div>
+                    </div>
+                    <p class="feature-description">
+                        7 institutional security headers, 50-connection pooling, Redis caching. 
+                        Bank-level security with unlimited scalability architecture.
+                    </p>
+                    <div class="action-buttons">
+                        <button class="btn premium-button" onclick="testSecurityFeatures()">
+                            <i class="fas fa-lock me-2"></i>Security Audit
+                        </button>
+                        <button class="btn secondary-button" onclick="testPerformanceOptimization()">
+                            <i class="fas fa-cogs me-2"></i>Performance Test
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="row">
-            <div class="col-md-6">
-                <div class="feature-terminal">
-                    <div class="terminal-title">
-                        <i class="fas fa-robot"></i>
-                        ChatGPT-Style Interface
-                        <span class="superiority-badge">Revolutionary UX</span>
+        <!-- Cost Disruption Analysis -->
+        <div class="cost-showcase">
+            <h2 class="cost-title">
+                <i class="fas fa-chart-bar me-3"></i>
+                Cost Disruption Analysis
+            </h2>
+            <div class="cost-comparison-grid">
+                <div class="cost-item bloomberg-cost">
+                    <div class="cost-label">Bloomberg Terminal</div>
+                    <div class="cost-value">$24,500</div>
+                    <div class="cost-details">
+                        Complex setup • Extensive training required • Limited AI capabilities
                     </div>
-                    <p>Natural language processing vs Bloomberg's complex terminal commands</p>
-                    <button class="btn test-button" onclick="testNaturalLanguage()">
-                        <i class="fas fa-comments me-2"></i>Test AI Search
-                    </button>
-                    <button class="btn test-button" onclick="compareUXComplexity()">
-                        <i class="fas fa-user-graduate me-2"></i>Learning Curve
-                    </button>
+                </div>
+                <div class="cost-item tradewise-cost">
+                    <div class="cost-label">TradeWise AI</div>
+                    <div class="cost-value">$480</div>
+                    <div class="cost-details">
+                        Instant deployment • Intuitive interface • Advanced AI-first architecture
+                    </div>
                 </div>
             </div>
-            
-            <div class="col-md-6">
-                <div class="feature-terminal">
-                    <div class="terminal-title">
-                        <i class="fas fa-shield-alt"></i>
-                        Enterprise Security & Performance
-                        <span class="superiority-badge">Institutional Grade</span>
-                    </div>
-                    <p>7 security headers, 50-connection pooling, Redis caching</p>
-                    <button class="btn test-button" onclick="testSecurityFeatures()">
-                        <i class="fas fa-lock me-2"></i>Security Audit
-                    </button>
-                    <button class="btn test-button" onclick="testPerformanceOptimization()">
-                        <i class="fas fa-rocket me-2"></i>Performance Test
-                    </button>
-                </div>
+            <div class="savings-highlight">
+                Annual Savings: $24,020 per user (98% reduction)
             </div>
         </div>
 
-        <!-- Cost Comparison Highlight -->
-        <div class="cost-comparison">
-            <h2 class="mb-4">Cost Disruption Analysis</h2>
-            <div class="row">
-                <div class="col-md-6">
-                    <h3 class="text-warning">Bloomberg Terminal</h3>
-                    <div class="display-4">$24,500/year</div>
-                    <p class="mt-2">Complex setup, extensive training required, limited AI</p>
+        <!-- Live Testing Terminal -->
+        <div class="results-terminal" id="test-results">
+            <div class="terminal-header-bar">
+                <div class="terminal-dots">
+                    <div class="terminal-dot dot-red"></div>
+                    <div class="terminal-dot dot-yellow"></div>
+                    <div class="terminal-dot dot-green"></div>
                 </div>
-                <div class="col-md-6">
-                    <h3 class="text-success">TradeWise AI</h3>
-                    <div class="display-4">$480/year</div>
-                    <p class="mt-2">Instant deployment, intuitive interface, advanced AI</p>
+                <div class="terminal-title-bar">Bloomberg Terminal Killer - Enterprise Testing Environment</div>
+            </div>
+            <div class="terminal-content">
+                <div class="text-center" style="color: rgba(255, 255, 255, 0.6);">
+                    <i class="fas fa-terminal me-2" style="color: #3b82f6;"></i>
+                    <strong>Institutional-Grade Features Ready for Testing</strong>
+                    <br><br>
+                    <div style="text-align: left; max-width: 600px; margin: 0 auto;">
+                        ✅ <span class="success-indicator">AI-Powered Analysis</span> (Superior to Bloomberg's basic analysis)<br>
+                        ✅ <span class="success-indicator">92% Faster Performance</span> (7.6ms vs 100ms response times)<br>
+                        ✅ <span class="success-indicator">ChatGPT-Style Interface</span> (vs Bloomberg's complex terminal)<br>
+                        ✅ <span class="success-indicator">98% Cost Savings</span> ($480 vs $24,500 annually)<br>
+                        ✅ <span class="success-indicator">Enterprise Security</span> (7 institutional security headers)<br>
+                        ✅ <span class="success-indicator">Unlimited Scalability</span> (vs Bloomberg's hardware limitations)<br>
+                    </div>
+                    <br>
+                    <span style="color: #10b981; font-weight: 600;">
+                        Ready to test: Click any feature button above to see our superiority in action!
+                    </span>
                 </div>
-            </div>
-            <div class="mt-4">
-                <h3 class="comparison-winner">Annual Savings: $24,020 per user (98% reduction)</h3>
-            </div>
-        </div>
-
-        <!-- Results Display -->
-        <div class="results-display" id="test-results">
-            <div class="text-center text-muted">
-                <i class="fas fa-terminal me-2"></i>
-                Ready to test institutional-grade Bloomberg Terminal killer features
-                <br><br>
-                Click any test button above to see our superior capabilities in action
             </div>
         </div>
     </div>
@@ -326,19 +804,36 @@
         
         function showLoading(message) {
             resultsDisplay.innerHTML = `
-                <div class="text-center">
-                    <span class="loading-spinner"></span>
-                    ${message}
+                <div class="terminal-header-bar">
+                    <div class="terminal-dots">
+                        <div class="terminal-dot dot-red"></div>
+                        <div class="terminal-dot dot-yellow"></div>
+                        <div class="terminal-dot dot-green"></div>
+                    </div>
+                    <div class="terminal-title-bar">Processing Bloomberg Terminal Killer Test...</div>
+                </div>
+                <div class="terminal-content text-center" style="padding-top: 2rem;">
+                    <div class="loading-animation">
+                        <span class="loading-spinner"></span>
+                        <span style="color: #3b82f6; font-weight: 600;">${message}</span>
+                    </div>
                 </div>
             `;
         }
         
         function displayResults(title, content) {
             resultsDisplay.innerHTML = `
-                <div style="color: #10b981; font-weight: bold; margin-bottom: 1rem;">
-                    <i class="fas fa-check-circle me-2"></i>${title}
+                <div class="terminal-header-bar">
+                    <div class="terminal-dots">
+                        <div class="terminal-dot dot-red"></div>
+                        <div class="terminal-dot dot-yellow"></div>
+                        <div class="terminal-dot dot-green"></div>
+                    </div>
+                    <div class="terminal-title-bar">${title}</div>
                 </div>
-                <div>${content}</div>
+                <div class="terminal-content" style="padding-top: 1rem;">
+                    ${content}
+                </div>
             `;
         }
         
