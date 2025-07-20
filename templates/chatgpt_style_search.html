@@ -1058,6 +1058,37 @@
         font-weight: 600;
     }
 
+    /* Theme minimize/maximize styling */
+    .theme-controls {
+        display: flex;
+        align-items: center;
+    }
+
+    .minimize-btn {
+        background: rgba(255, 255, 255, 0.1);
+        border: none;
+        border-radius: 50%;
+        width: 32px;
+        height: 32px;
+        color: rgba(255, 255, 255, 0.7);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        font-size: 0.9rem;
+    }
+
+    .minimize-btn:hover {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        transform: scale(1.1);
+    }
+
+    .theme-details {
+        transition: all 0.3s ease;
+    }
+
     .theme-pill-more {
         background: rgba(255, 255, 255, 0.1);
         color: rgba(255, 255, 255, 0.6);
@@ -3533,6 +3564,7 @@
             
             const themeCard = document.createElement('div');
             themeCard.className = 'stock-result theme-result';
+            themeCard.id = 'theme-card-' + themeName;
             themeCard.innerHTML = 
                 '<div class="stock-header">' +
                     '<div>' +
@@ -3544,41 +3576,48 @@
                             '<span class="performance-text">+' + getThemePerformance(themeName) + '% YTD</span>' +
                         '</div>' +
                     '</div>' +
+                    '<div class="theme-controls">' +
+                        '<button id="minimize-theme-btn-' + themeName + '" onclick="toggleThemeMinimize(\'' + themeName + '\')" class="minimize-btn" title="Minimize Theme">' +
+                            '<i class="fas fa-minus"></i>' +
+                        '</button>' +
+                    '</div>' +
                 '</div>'
                 +
-                '<div class="stock-metrics">' +
-                    '<div class="metric">' +
-                        '<div class="metric-label">Top Holdings</div>' +
-                        '<div class="metric-value">' + getThemeStocks(themeName).join(', ') + '</div>' +
+                '<div class="theme-details" id="theme-details-' + themeName + '">' +
+                    '<div class="stock-metrics">' +
+                        '<div class="metric">' +
+                            '<div class="metric-label">Top Holdings</div>' +
+                            '<div class="metric-value">' + getThemeStocks(themeName).join(', ') + '</div>' +
+                        '</div>' +
+                        '<div class="metric">' +
+                            '<div class="metric-label">Market Focus</div>' +
+                            '<div class="metric-value">' + getThemeDescription(themeName) + '</div>' +
+                        '</div>' +
+                        '<div class="metric">' +
+                            '<div class="metric-label">Risk Level</div>' +
+                            '<div class="metric-value">' + getThemeRisk(themeName) + '</div>' +
+                        '</div>' +
                     '</div>' +
-                    '<div class="metric">' +
-                        '<div class="metric-label">Market Focus</div>' +
-                        '<div class="metric-value">' + getThemeDescription(themeName) + '</div>' +
+                    '<div class="ai-analysis">' +
+                        '<div class="analysis-header">' +
+                            '<i class="fas fa-brain"></i>' +
+                            '<span>AI Theme Analysis</span>' +
+                            '<span class="confidence-badge">90% confident</span>' +
+                        '</div>' +
+                        '<div class="analysis-content">' +
+                            '<p>' + getThemeAnalysis(themeName) + '</p>' +
+                        '</div>' +
                     '</div>' +
-                    '<div class="metric">' +
-                        '<div class="metric-label">Risk Level</div>' +
-                        '<div class="metric-value">' + getThemeRisk(themeName) + '</div>' +
+                    '<div class="stock-actions">' +
+                        '<button class="action-btn primary" onclick="exploreTheme(\'' + themeName + '\')">' +
+                            '<i class="fas fa-search"></i>' +
+                            'Explore Theme' +
+                        '</button>' +
+                        '<button class="action-btn secondary" onclick="addStockToWatchlist(\'' + getThemeStocks(themeName)[0] + '\')">' +
+                            '<i class="fas fa-bookmark"></i>' +
+                            'Add to Watchlist' +
+                        '</button>' +
                     '</div>' +
-                '</div>' +
-                '<div class="ai-analysis">' +
-                    '<div class="analysis-header">' +
-                        '<i class="fas fa-brain"></i>' +
-                        '<span>AI Theme Analysis</span>' +
-                        '<span class="confidence-badge">90% confident</span>' +
-                    '</div>' +
-                    '<div class="analysis-content">' +
-                        '<p>' + getThemeAnalysis(themeName) + '</p>' +
-                    '</div>' +
-                '</div>' +
-                '<div class="stock-actions">' +
-                    '<button class="action-btn primary" onclick="exploreTheme(\'' + themeName + '\')">' +
-                        '<i class="fas fa-search"></i>' +
-                        'Explore Theme' +
-                    '</button>' +
-                    '<button class="action-btn secondary" onclick="addStockToWatchlist(\'' + getThemeStocks(themeName)[0] + '\')">' +
-                        '<i class="fas fa-bookmark"></i>' +
-                        'Add to Watchlist' +
-                    '</button>' +
                 '</div>';
             
             const resultsContainer = document.getElementById('search-results');
@@ -3645,6 +3684,25 @@
 
     function addThemeToWatchlist(theme) {
         alert(theme + ' theme added to your watchlist!');
+    }
+
+    // Theme minimize/maximize functionality
+    function toggleThemeMinimize(themeName) {
+        const themeDetails = document.getElementById('theme-details-' + themeName);
+        const minimizeBtn = document.getElementById('minimize-theme-btn-' + themeName);
+        const icon = minimizeBtn.querySelector('i');
+        
+        if (themeDetails.style.display === 'none') {
+            // Expand theme
+            themeDetails.style.display = 'block';
+            icon.className = 'fas fa-minus';
+            minimizeBtn.title = 'Minimize Theme';
+        } else {
+            // Minimize theme
+            themeDetails.style.display = 'none';
+            icon.className = 'fas fa-plus';
+            minimizeBtn.title = 'Expand Theme';
+        }
     }
 
     // Note: Toggle functions are defined at the beginning of the script
