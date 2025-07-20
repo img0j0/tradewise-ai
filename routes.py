@@ -159,11 +159,11 @@ def get_or_create_user_account():
 
 @app.route('/')
 def index():
-    """Main simplified interface - reliable HTML rendering"""
+    """Main ChatGPT-style advanced interface"""
     from flask import make_response
     
-    # Use simplified template for better compatibility
-    html_content = render_template('simple_main.html')
+    # Use the full advanced interface
+    html_content = render_template('chatgpt_style_search.html')
     
     response = make_response(html_content)
     response.headers['Content-Type'] = 'text/html; charset=utf-8'
