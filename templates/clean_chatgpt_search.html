@@ -713,6 +713,9 @@
                     <button onclick="closeAnalysis()" style="padding: 12px 30px; background: linear-gradient(45deg, #8b5cf6, #06b6d4); color: white; border: none; border-radius: 25px; cursor: pointer; font-weight: 600; margin-right: 10px;">
                         Close Analysis
                     </button>
+                    <button onclick="addToWatchlist()" style="padding: 12px 30px; background: linear-gradient(45deg, #f59e0b, #d97706); color: white; border: none; border-radius: 25px; cursor: pointer; font-weight: 600; margin-right: 10px;">
+                        ⭐ Add to Watchlist
+                    </button>
                     <button onclick="showBuyModal()" style="padding: 12px 30px; background: linear-gradient(45deg, #10b981, #059669); color: white; border: none; border-radius: 25px; cursor: pointer; font-weight: 600;">
                         Buy Stock
                     </button>
@@ -722,6 +725,46 @@
         
         // Auto-focus search input
         document.getElementById('search-input').focus();
+        
+        // Add to Watchlist function
+        async function addToWatchlist() {
+            if (!currentStock) {
+                alert('Please search for a stock first');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/watchlist/add', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'same-origin',
+                    body: JSON.stringify({
+                        symbol: currentStock.symbol,
+                        name: currentStock.name
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert(`${currentStock.symbol} added to your watchlist!`);
+                    // Update button to show it's been added
+                    const addButton = document.querySelector('button[onclick="addToWatchlist()"]');
+                    if (addButton) {
+                        addButton.style.background = 'linear-gradient(45deg, #10b981, #059669)';
+                        addButton.innerHTML = '✓ Added to Watchlist';
+                        addButton.onclick = null; // Disable further clicks
+                    }
+                } else {
+                    alert(data.error || 'Failed to add to watchlist');
+                }
+            } catch (error) {
+                console.error('Watchlist error:', error);
+                alert('Error adding to watchlist');
+            }
+        }
         
         // Store current stock data for buy modal
         let selectedAmount = 0;
