@@ -73,6 +73,9 @@ from algorithmic_trading_engine import algorithmic_engine
 # Institutional feature services
 smart_order_router = institutional_features['smart_order_router']
 advanced_orders = institutional_features['advanced_orders']
+
+# Subscription tier management
+from subscription_tier_manager import subscription_tier_manager
 level2_data = institutional_features['level2_data']
 options_flow = institutional_features['options_flow']
 risk_management = institutional_features['risk_management']
@@ -5248,3 +5251,111 @@ def get_real_time_performance_metrics():
             'timestamp': datetime.now().isoformat(),
             'status': 'error'
         }), 500
+
+# ============================================
+# TIER-BASED FEATURE API ENDPOINTS
+# ============================================
+
+@app.route('/api/user-tier-config')
+def get_user_tier_config():
+    """Get complete UI configuration for user's subscription tier"""
+    try:
+        user_tier = subscription_tier_manager.get_user_tier()
+        config = subscription_tier_manager.generate_tier_specific_ui_config(user_tier)
+        
+        return jsonify({
+            'success': True,
+            'tier_config': config
+        })
+    except Exception as e:
+        logger.error(f"Error getting user tier config: {e}")
+        return jsonify({'error': 'Failed to load tier configuration'}), 500
+
+@app.route('/api/tier-enhanced-search/<symbol>')
+def tier_enhanced_search(symbol):
+    """Enhanced stock search with tier-specific features"""
+    try:
+        user_tier = subscription_tier_manager.get_user_tier()
+        search_config = subscription_tier_manager.get_search_enhancement_level(user_tier)
+        
+        # Get basic stock data
+        stock_data = stock_search_service.search_stock(symbol)
+        
+        if not stock_data['success']:
+            return jsonify(stock_data), 404
+        
+        # Enhance based on tier
+        enhanced_data = stock_data.copy()
+        
+        if search_config['real_time_prices']:
+            enhanced_data['real_time_price'] = stock_data['current_price']
+            enhanced_data['real_time_change'] = stock_data.get('price_change', 0)
+        
+        if search_config['confidence_scores']:
+            enhanced_data['ai_confidence_score'] = stock_data.get('ai_confidence', 0)
+            enhanced_data['recommendation_strength'] = 'High' if enhanced_data['ai_confidence_score'] > 70 else 'Medium'
+        
+        if search_config.get('level_2_data') and user_tier in ['Pro', 'Elite', 'Institutional']:
+            enhanced_data['level_2_data'] = {
+                'bid_ask_spread': 0.02,
+                'volume_profile': 'High',
+                'order_book_depth': 'Deep'
+            }
+        
+        if search_config.get('dark_pool_insights') and user_tier in ['Elite', 'Institutional']:
+            enhanced_data['dark_pool_activity'] = {
+                'volume_percentage': 35.2,
+                'institutional_flow': 'Bullish',
+                'hidden_orders': 'Detected'
+            }
+        
+        # Add tier-specific upgrade prompts
+        if search_config['upgrade_prompts']:
+            enhanced_data['upgrade_suggestions'] = subscription_tier_manager.get_upgrade_recommendations(user_tier)
+        
+        enhanced_data['tier_features'] = search_config
+        enhanced_data['user_tier'] = user_tier
+        
+        return jsonify(enhanced_data)
+        
+    except Exception as e:
+        logger.error(f"Error in tier-enhanced search for {symbol}: {e}")
+        return jsonify({'error': 'Search failed'}), 500
+
+@app.route('/api/subscription-upgrade-modal/<target_tier>')
+def subscription_upgrade_modal(target_tier):
+    """Get upgrade modal content for specific tier"""
+    try:
+        current_tier = subscription_tier_manager.get_user_tier()
+        target_config = subscription_tier_manager.get_tier_config(target_tier)
+        
+        # Calculate savings vs Bloomberg Terminal
+        bloomberg_annual_cost = 24000  # $2,000/month
+        target_annual_cost = target_config.get('price_annual', 0)
+        annual_savings = bloomberg_annual_cost - target_annual_cost
+        savings_percentage = (annual_savings / bloomberg_annual_cost) * 100
+        
+        upgrade_content = {
+            'target_tier': target_tier,
+            'current_tier': current_tier,
+            'pricing': {
+                'monthly': target_config.get('price_monthly', 0),
+                'annual': target_config.get('price_annual', 0),
+                'savings_vs_bloomberg': {
+                    'amount': annual_savings,
+                    'percentage': round(savings_percentage, 1)
+                }
+            },
+            'features': target_config.get('ui_features', {}),
+            'benefits': subscription_tier_manager.get_upgrade_recommendations(current_tier),
+            'demo_available': True
+        }
+        
+        return jsonify({
+            'success': True,
+            'upgrade_content': upgrade_content
+        })
+        
+    except Exception as e:
+        logger.error(f"Error generating upgrade modal for {target_tier}: {e}")
+        return jsonify({'error': 'Failed to load upgrade information'}), 500

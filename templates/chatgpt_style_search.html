@@ -8,7 +8,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/premium_features.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/tier_styles.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/tier_integration.js') }}"></script>
 </head>
 <body>
     <!-- ChatGPT-Style Interface -->
@@ -20,9 +22,9 @@
                 <div id="premium-crown-badge" class="premium-crown-badge" style="display: none;">
                     <i class="fas fa-crown"></i>
                 </div>
-                <button class="upgrade-button-seamless" id="upgrade-button" onclick="openSubscriptionPlans()">
+                <button class="upgrade-button-seamless" id="upgrade-button" onclick="openSubscriptionUpgrade('Pro')">
                     <i class="fas fa-crown" style="font-size: 0.85rem;"></i>
-                    <span>Upgrade</span>
+                    <span>Upgrade to Pro</span>
                 </button>
                 <div class="tools-dropdown">
                     <button class="tools-toggle" onclick="toggleToolsDropdown()">
