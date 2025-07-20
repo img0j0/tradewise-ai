@@ -3,6 +3,7 @@ from app import app, db
 from models import Trade, Portfolio, Alert, UserAccount, Transaction, User
 from ai_insights import AIInsightsEngine
 from price_alerts import price_alert_system
+from smart_stock_alerts import smart_stock_alerts
 from market_news import market_news_service
 from performance_tracker import performance_tracker
 from ai_advice_engine import advice_engine
@@ -932,6 +933,63 @@ def get_alerts():
     except Exception as e:
         logger.error(f"Error getting alerts: {e}")
         return jsonify({'error': 'Failed to load alerts'}), 500
+
+@app.route('/api/alerts/suggestions/<symbol>')
+def get_alert_suggestions(symbol):
+    """Get smart alert suggestions for a stock symbol"""
+    try:
+        suggestions = smart_stock_alerts.get_alert_suggestions(symbol)
+        return jsonify({
+            'success': True,
+            'suggestions': suggestions
+        })
+    except Exception as e:
+        logger.error(f"Error getting alert suggestions for {symbol}: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/alerts/create-smart', methods=['POST'])
+def create_smart_alert():
+    """Create a smart stock alert with multiple conditions"""
+    try:
+        data = request.get_json()
+        symbol = data.get('symbol', '').upper()
+        alert_configs = data.get('alert_configs', [])
+        
+        if not symbol or not alert_configs:
+            return jsonify({'success': False, 'error': 'Symbol and alert configurations required'}), 400
+        
+        result = smart_stock_alerts.create_stock_alert(symbol, alert_configs)
+        return jsonify(result)
+        
+    except Exception as e:
+        logger.error(f"Error creating smart alert: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/alerts/active')
+def get_active_alerts():
+    """Get all active alerts with current status"""
+    try:
+        alerts = smart_stock_alerts.get_active_alerts()
+        return jsonify({
+            'success': True,
+            'alerts': alerts
+        })
+    except Exception as e:
+        logger.error(f"Error getting active alerts: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/alerts/check')
+def check_alerts():
+    """Check all alerts and return triggered ones"""
+    try:
+        triggered = smart_stock_alerts.check_alerts()
+        return jsonify({
+            'success': True,
+            'triggered_alerts': triggered
+        })
+    except Exception as e:
+        logger.error(f"Error checking alerts: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
 
 @app.route('/api/alerts/create', methods=['POST'])
 @login_required

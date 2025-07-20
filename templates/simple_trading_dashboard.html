@@ -207,6 +207,7 @@
             <button class="nav-tab active" onclick="showTab('overview')">Overview</button>
             <button class="nav-tab" onclick="showTab('portfolio')">Portfolio</button>
             <button class="nav-tab" onclick="showTab('watchlist')">Watchlist</button>
+            <button class="nav-tab" onclick="showTab('alerts')">Alerts</button>
             <button class="nav-tab" onclick="showTab('account')">Account</button>
         </nav>
         <div style="display: flex; gap: 10px; align-items: center;">
@@ -317,6 +318,43 @@
             </div>
         </div>
         
+        <!-- Alerts Tab -->
+        <div id="alerts" class="tab-content">
+            <div class="dashboard-grid">
+                <div class="card">
+                    <h3>Smart Stock Alerts</h3>
+                    <div style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(6, 182, 212, 0.1)); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 10px; padding: 20px; margin-bottom: 20px;">
+                        <div style="font-weight: 600; margin-bottom: 10px; color: #8b5cf6;">🔔 Create Stock-Focused Alerts</div>
+                        <div style="opacity: 0.8; margin-bottom: 15px; font-size: 0.9rem;">Get notified about price movements, volume spikes, breakouts, and more for your watched stocks</div>
+                        <button class="btn" onclick="window.location.href='/'">Search Stock to Create Alert</button>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                        <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 10px; padding: 15px; text-align: center;">
+                            <div style="font-size: 1.5rem; font-weight: 700; color: #10b981; margin-bottom: 5px;" id="active-alerts-count">0</div>
+                            <div style="opacity: 0.8; font-size: 0.85rem;">Active Alerts</div>
+                        </div>
+                        <div style="background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 10px; padding: 15px; text-align: center;">
+                            <div style="font-size: 1.5rem; font-weight: 700; color: #8b5cf6; margin-bottom: 5px;" id="triggered-alerts-count">0</div>
+                            <div style="opacity: 0.8; font-size: 0.85rem;">Triggered Today</div>
+                        </div>
+                    </div>
+                    
+                    <div id="recent-alerts-container">
+                        <div style="text-align: center; opacity: 0.6; padding: 25px;">
+                            <div style="font-size: 1.1rem; margin-bottom: 8px;">No alerts created yet</div>
+                            <div style="font-size: 0.9rem; opacity: 0.8;">Search for a stock and create smart alerts to get notified of important market movements</div>
+                        </div>
+                    </div>
+                    
+                    <div class="quick-actions">
+                        <button class="btn" onclick="checkAllAlerts()">🔄 Check Alerts</button>
+                        <button class="btn" onclick="viewActiveAlerts()">📋 View All</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
         <!-- Account Tab -->
         <div id="account" class="tab-content">
             <div class="dashboard-grid">
@@ -379,9 +417,208 @@
             }
         }
 
+        // Alert management functions
+        async function checkAllAlerts() {
+            try {
+                showAlertNotification('Checking all alerts...', 'info');
+                
+                const response = await fetch('/api/alerts/check', {
+                    credentials: 'same-origin'
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    if (data.triggered_alerts.length > 0) {
+                        showAlertNotification(`${data.triggered_alerts.length} alerts triggered!`, 'success');
+                        updateTriggeredAlertsCount(data.triggered_alerts.length);
+                    } else {
+                        showAlertNotification('No alerts triggered', 'info');
+                    }
+                    loadRecentAlerts(); // Refresh the display
+                } else {
+                    showAlertNotification('Error checking alerts', 'error');
+                }
+            } catch (error) {
+                console.error('Error checking alerts:', error);
+                showAlertNotification('Error checking alerts', 'error');
+            }
+        }
+
+        async function viewActiveAlerts() {
+            try {
+                const response = await fetch('/api/alerts/active', {
+                    credentials: 'same-origin'
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayActiveAlertsModal(data.alerts);
+                } else {
+                    showAlertNotification('Error loading alerts', 'error');
+                }
+            } catch (error) {
+                console.error('Error loading active alerts:', error);
+                showAlertNotification('Error loading alerts', 'error');
+            }
+        }
+
+        function displayActiveAlertsModal(alerts) {
+            const modal = document.createElement('div');
+            modal.id = 'active-alerts-modal';
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.8);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 1000;
+                backdrop-filter: blur(5px);
+                overflow-y: auto;
+            `;
+            
+            modal.innerHTML = `
+                <div style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 30px; border-radius: 15px; width: 95%; max-width: 700px; color: white; box-shadow: 0 20px 40px rgba(0,0,0,0.3); max-height: 90vh; overflow-y: auto;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                        <h3 style="margin: 0; font-size: 1.5rem;">Active Alerts (${alerts.length})</h3>
+                        <button onclick="closeActiveAlertsModal()" style="background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer;">&times;</button>
+                    </div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        ${alerts.length > 0 ? 
+                            alerts.map(alert => `
+                                <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 20px; margin-bottom: 15px;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                                        <div>
+                                            <div style="font-weight: 600; font-size: 1.1rem;">${alert.symbol}</div>
+                                            <div style="opacity: 0.7; font-size: 0.9rem;">Current: $${alert.current_price || 'N/A'}</div>
+                                        </div>
+                                        <div style="text-align: right;">
+                                            <div style="font-size: 0.8rem; opacity: 0.6;">Created: ${new Date(alert.created_at || Date.now()).toLocaleDateString()}</div>
+                                            <div style="background: ${alert.active ? '#10b981' : '#6b7280'}; color: white; padding: 4px 8px; border-radius: 12px; font-size: 0.8rem; margin-top: 5px;">
+                                                ${alert.active ? 'Active' : 'Paused'}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;">
+                                        <div style="font-size: 0.9rem; opacity: 0.8;">Smart Alert Conditions</div>
+                                    </div>
+                                </div>
+                            `).join('') 
+                            : '<div style="text-align: center; opacity: 0.6; padding: 40px;">No active alerts</div>'
+                        }
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+
+        function closeActiveAlertsModal() {
+            const modal = document.getElementById('active-alerts-modal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        async function loadRecentAlerts() {
+            try {
+                const response = await fetch('/api/alerts/active', {
+                    credentials: 'same-origin'
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    updateAlertStats(data.alerts);
+                    displayRecentAlerts(data.alerts.slice(0, 3)); // Show last 3 alerts
+                }
+            } catch (error) {
+                console.error('Error loading recent alerts:', error);
+            }
+        }
+
+        function updateAlertStats(alerts) {
+            const activeCount = alerts.filter(alert => alert.active).length;
+            const triggeredCount = alerts.filter(alert => alert.triggered_conditions && alert.triggered_conditions.length > 0).length;
+            
+            const activeCountEl = document.getElementById('active-alerts-count');
+            const triggeredCountEl = document.getElementById('triggered-alerts-count');
+            
+            if (activeCountEl) activeCountEl.textContent = activeCount;
+            if (triggeredCountEl) triggeredCountEl.textContent = triggeredCount;
+        }
+
+        function updateTriggeredAlertsCount(count) {
+            const triggeredCountEl = document.getElementById('triggered-alerts-count');
+            if (triggeredCountEl) {
+                const currentCount = parseInt(triggeredCountEl.textContent);
+                triggeredCountEl.textContent = currentCount + count;
+            }
+        }
+
+        function displayRecentAlerts(alerts) {
+            const container = document.getElementById('recent-alerts-container');
+            if (!container) return;
+            
+            if (alerts.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; opacity: 0.6; padding: 25px;">
+                        <div style="font-size: 1.1rem; margin-bottom: 8px;">No alerts created yet</div>
+                        <div style="font-size: 0.9rem; opacity: 0.8;">Search for a stock and create smart alerts to get notified of important market movements</div>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = alerts.map(alert => `
+                <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 15px; margin-bottom: 10px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div style="font-weight: 600; margin-bottom: 5px;">${alert.symbol}</div>
+                            <div style="font-size: 0.9rem; opacity: 0.7;">Smart Alert</div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="font-size: 0.9rem; color: #10b981;">Active</div>
+                            <div style="font-size: 0.8rem; opacity: 0.6;">${new Date(alert.created_at || Date.now()).toLocaleDateString()}</div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function showAlertNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#8b5cf6'};
+                color: white;
+                padding: 15px 20px;
+                border-radius: 10px;
+                z-index: 10000;
+                box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+                font-size: 0.9rem;
+                max-width: 300px;
+            `;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
         // Load dashboard data when page loads
         document.addEventListener('DOMContentLoaded', function() {
             loadDashboardWatchlist();
+            loadRecentAlerts();
         });
 
         async function loadDashboardWatchlist() {
