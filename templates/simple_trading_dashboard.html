@@ -378,6 +378,59 @@
                 window.location.href = '/';
             }
         }
+
+        // Load dashboard data when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDashboardWatchlist();
+        });
+
+        async function loadDashboardWatchlist() {
+            try {
+                const response = await fetch('/api/watchlist');
+                const data = await response.json();
+                
+                const watchlistDiv = document.getElementById('dashboard-watchlist');
+                
+                if (data.success && data.stocks.length > 0) {
+                    let html = '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">';
+                    
+                    data.stocks.slice(0, 3).forEach(stock => {
+                        const changeColor = stock.change_percent >= 0 ? '#10b981' : '#ef4444';
+                        const changeSymbol = stock.change_percent >= 0 ? '+' : '';
+                        
+                        html += `
+                            <div style="background: rgba(255,255,255,0.05); border-radius: 15px; padding: 15px; cursor: pointer;" onclick="window.location.href='/'">
+                                <div style="font-weight: 600; margin-bottom: 5px;">${stock.symbol}</div>
+                                <div style="font-size: 1.1rem; color: ${changeColor}; margin-bottom: 2px;">$${stock.price.toFixed(2)}</div>
+                                <div style="font-size: 0.9rem; color: ${changeColor};">${changeSymbol}${stock.change_percent.toFixed(2)}%</div>
+                            </div>
+                        `;
+                    });
+                    
+                    html += '</div>';
+                    
+                    if (data.stocks.length > 3) {
+                        html += `<div style="text-align: center; margin-top: 15px; opacity: 0.7;">and ${data.stocks.length - 3} more stocks...</div>`;
+                    }
+                    
+                    watchlistDiv.innerHTML = html;
+                } else {
+                    watchlistDiv.innerHTML = `
+                        <div style="text-align: center; padding: 20px; opacity: 0.7;">
+                            <div>Your watchlist is empty</div>
+                            <div style="font-size: 0.9rem; margin-top: 5px;">Add stocks from the main search page</div>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                const watchlistDiv = document.getElementById('dashboard-watchlist');
+                watchlistDiv.innerHTML = `
+                    <div style="text-align: center; padding: 20px; opacity: 0.7;">
+                        <div>Unable to load watchlist</div>
+                    </div>
+                `;
+            }
+        }
     </script>
 </body>
 </html>

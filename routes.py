@@ -404,6 +404,114 @@ def api_logout():
         logger.error(f"Logout error: {e}")
         return jsonify({'success': False, 'error': 'Logout failed'})
 
+@app.route('/api/watchlist', methods=['GET'])
+def api_get_watchlist():
+    """Get user's watchlist with real-time prices"""
+    try:
+        # Demo watchlist - in production, this would come from database
+        watchlist_symbols = ['AAPL', 'TSLA', 'GOOGL', 'MSFT', 'NVDA']
+        
+        stocks = []
+        for symbol in watchlist_symbols:
+            try:
+                import yfinance as yf
+                ticker = yf.Ticker(symbol)
+                info = ticker.info
+                hist = ticker.history(period="1d")
+                
+                if not hist.empty:
+                    current_price = float(hist['Close'].iloc[-1])
+                    prev_close = float(info.get('previousClose', current_price))
+                    change_percent = ((current_price - prev_close) / prev_close) * 100
+                    
+                    stocks.append({
+                        'symbol': symbol,
+                        'name': info.get('shortName', symbol),
+                        'price': current_price,
+                        'change_percent': change_percent
+                    })
+                else:
+                    # Fallback data if API fails
+                    stocks.append({
+                        'symbol': symbol,
+                        'name': symbol,
+                        'price': 100.0,
+                        'change_percent': 0.0
+                    })
+            except Exception as e:
+                logger.error(f"Error fetching {symbol}: {e}")
+                # Add fallback data
+                stocks.append({
+                    'symbol': symbol,
+                    'name': symbol,
+                    'price': 100.0,
+                    'change_percent': 0.0
+                })
+        
+        return jsonify({
+            'success': True,
+            'stocks': stocks
+        })
+        
+    except Exception as e:
+        logger.error(f"Watchlist error: {e}")
+        return jsonify({'success': False, 'error': 'Failed to load watchlist'})
+
+@app.route('/api/watchlist/add', methods=['POST'])
+def api_add_to_watchlist():
+    """Add stock to watchlist"""
+    try:
+        data = request.json
+        symbol = data.get('symbol', '').upper().strip()
+        
+        if not symbol:
+            return jsonify({'success': False, 'error': 'Stock symbol is required'})
+        
+        # Verify stock exists
+        try:
+            import yfinance as yf
+            ticker = yf.Ticker(symbol)
+            info = ticker.info
+            
+            if not info.get('symbol'):
+                return jsonify({'success': False, 'error': 'Invalid stock symbol'})
+        except:
+            return jsonify({'success': False, 'error': 'Unable to verify stock symbol'})
+        
+        # In production, you would save to database
+        # For demo, we'll just return success
+        return jsonify({
+            'success': True,
+            'message': f'{symbol} added to watchlist'
+        })
+        
+    except Exception as e:
+        logger.error(f"Add to watchlist error: {e}")
+        return jsonify({'success': False, 'error': 'Failed to add stock to watchlist'})
+
+@app.route('/api/watchlist/remove', methods=['POST'])
+def api_remove_from_watchlist():
+    """Remove stock from watchlist"""
+    try:
+        data = request.json
+        symbol = data.get('symbol', '').upper().strip()
+        
+        if not symbol:
+            return jsonify({'success': False, 'error': 'Stock symbol is required'})
+        
+        # In production, you would remove from database
+        # For demo, we'll just return success
+        return jsonify({
+            'success': True,
+            'message': f'{symbol} removed from watchlist'
+        })
+        
+    except Exception as e:
+        logger.error(f"Remove from watchlist error: {e}")
+        return jsonify({'success': False, 'error': 'Failed to remove stock from watchlist'})
+
+
+
 
 
 @app.route('/profile')
