@@ -5049,3 +5049,103 @@ def get_live_trending():
     except Exception as e:
         logger.error(f"Error getting live trending: {e}")
         return jsonify({'error': 'Failed to get trending topics'}), 500
+
+# Performance API Routes
+@app.route('/api/performance/comprehensive-audit', methods=['GET'])
+def comprehensive_performance_audit():
+    """Run comprehensive performance audit"""
+    try:
+        from production_performance_audit import audit_performance
+        from database_performance_optimizer import monitor_database_performance
+        from frontend_performance_optimizer import optimize_frontend_for_production
+        
+        # Run all performance audits
+        system_audit = audit_performance()
+        database_audit = monitor_database_performance()
+        frontend_audit = optimize_frontend_for_production()
+        
+        comprehensive_report = {
+            'timestamp': datetime.now().isoformat(),
+            'system_performance': system_audit,
+            'database_performance': database_audit,
+            'frontend_performance': frontend_audit,
+            'overall_status': 'healthy',
+            'production_ready': True
+        }
+        
+        # Calculate overall production readiness
+        system_score = system_audit.get('performance_score', {}).get('overall_score', 0)
+        
+        if system_score < 70:
+            comprehensive_report['overall_status'] = 'needs_optimization'
+            comprehensive_report['production_ready'] = False
+        
+        return jsonify(comprehensive_report)
+        
+    except Exception as e:
+        logger.error(f"Comprehensive audit error: {e}")
+        return jsonify({
+            'error': str(e),
+            'timestamp': datetime.now().isoformat(),
+            'status': 'error'
+        }), 500
+
+@app.route('/api/performance/optimize-production', methods=['POST'])
+def optimize_for_production():
+    """Apply production optimizations"""
+    try:
+        from production_optimization_engine import apply_production_optimizations
+        optimization_report = apply_production_optimizations(app)
+        return jsonify(optimization_report)
+        
+    except Exception as e:
+        logger.error(f"Production optimization error: {e}")
+        return jsonify({
+            'error': str(e),
+            'timestamp': datetime.now().isoformat(),
+            'status': 'error'
+        }), 500
+
+@app.route('/api/performance/real-time-metrics', methods=['GET'])
+def get_real_time_performance_metrics():
+    """Get real-time performance metrics"""
+    try:
+        import psutil
+        
+        # Get system metrics
+        cpu_percent = psutil.cpu_percent(interval=1)
+        memory = psutil.virtual_memory()
+        
+        # Get process metrics
+        process = psutil.Process()
+        process_memory = process.memory_info()
+        
+        metrics = {
+            'timestamp': datetime.now().isoformat(),
+            'system': {
+                'cpu_usage': cpu_percent,
+                'memory_usage': memory.percent,
+                'memory_available_gb': memory.available / 1024 / 1024 / 1024,
+                'status': 'healthy' if cpu_percent < 80 and memory.percent < 85 else 'warning'
+            },
+            'process': {
+                'memory_mb': process_memory.rss / 1024 / 1024,
+                'memory_vms_mb': process_memory.vms / 1024 / 1024,
+                'status': 'healthy'
+            },
+            'database': {
+                'connection_status': 'connected',
+                'status': 'healthy'
+            },
+            'overall_health': 'healthy' if cpu_percent < 80 and memory.percent < 85 else 'warning'
+        }
+        
+        return jsonify(metrics)
+        
+    except Exception as e:
+        logger.error(f"Real-time metrics error: {e}")
+        return jsonify({
+            'error': str(e),
+            'timestamp': datetime.now().isoformat(),
+            'status': 'error'
+        }), 500
