@@ -22,8 +22,7 @@ function activateInstitutionalFeatures() {
     
     // Trading tools are now handled by advanced_institutional_tools.js
     
-    // Add advanced charting
-    addAdvancedCharting();
+    // Advanced charting disabled to keep search bar clean
     
     // Add risk management dashboard
     addRiskManagementDashboard();
@@ -240,29 +239,8 @@ function addBloombergStyleDarkPool() {
 }
 
 function addAdvancedCharting() {
-    // Add advanced charting capabilities indicator
-    const searchBox = document.querySelector('.search-container, input[type="text"]');
-    if (searchBox && !searchBox.parentElement.querySelector('.advanced-features-indicator')) {
-        const indicator = document.createElement('div');
-        indicator.className = 'advanced-features-indicator';
-        indicator.innerHTML = `
-            <div style="display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap;">
-                <span style="background: rgba(139,92,246,0.2); color: #8b5cf6; padding: 4px 8px; border-radius: 6px; font-size: 0.7rem; border: 1px solid rgba(139,92,246,0.3);">
-                    <i class="fas fa-chart-line"></i> TradingView Pro
-                </span>
-                <span style="background: rgba(220,38,38,0.2); color: #dc2626; padding: 4px 8px; border-radius: 6px; font-size: 0.7rem; border: 1px solid rgba(220,38,38,0.3);">
-                    <i class="fas fa-eye"></i> Level II Data
-                </span>
-                <span style="background: rgba(16,185,129,0.2); color: #10b981; padding: 4px 8px; border-radius: 6px; font-size: 0.7rem; border: 1px solid rgba(16,185,129,0.3);">
-                    <i class="fas fa-brain"></i> AI Signals
-                </span>
-                <span style="background: rgba(59,130,246,0.2); color: #3b82f6; padding: 4px 8px; border-radius: 6px; font-size: 0.7rem; border: 1px solid rgba(59,130,246,0.3);">
-                    <i class="fas fa-bolt"></i> Real-time
-                </span>
-            </div>
-        `;
-        searchBox.parentElement.appendChild(indicator);
-    }
+    // Disabled - search bar should remain clean without extra indicators
+    return;
 }
 
 function addRiskManagementDashboard() {
