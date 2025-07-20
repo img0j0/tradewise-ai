@@ -1,0 +1,142 @@
+/* Layout Fix - Critical CSS for centering and preventing overflow */
+
+/* Global container constraints */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    max-width: 100vw;
+    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+/* Main container fixes */
+.chatgpt-container {
+    max-width: 100vw !important;
+    width: 100% !important;
+    overflow-x: hidden !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+    position: relative !important;
+}
+
+/* Header layout fixes */
+.header {
+    max-width: 100vw !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    margin: 0 !important;
+    padding: 1.2rem 1.5rem !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+}
+
+.header-left {
+    flex: 1 !important;
+    max-width: calc(100% - 200px) !important;
+    overflow: hidden !important;
+}
+
+.header-right {
+    display: flex !important;
+    align-items: center !important;
+    gap: 1rem !important;
+    flex-shrink: 0 !important;
+}
+
+/* Main content layout fixes */
+.main-content {
+    max-width: 100vw !important;
+    width: 100% !important;
+    overflow-x: hidden !important;
+    margin: 0 auto !important;
+    padding: 3rem 1.5rem 0 !important;
+    box-sizing: border-box !important;
+}
+
+/* Search section layout */
+.search-section {
+    max-width: 1200px !important;
+    margin: 0 auto !important;
+    padding: 0 1rem !important;
+    box-sizing: border-box !important;
+}
+
+/* Dropdown fixes */
+.dropdown-container {
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+    box-sizing: border-box !important;
+}
+
+.tools-dropdown-menu {
+    position: absolute !important;
+    right: 0 !important;
+    top: 100% !important;
+    width: auto !important;
+    min-width: 300px !important;
+    max-width: 90vw !important;
+    z-index: 1000 !important;
+    overflow-x: hidden !important;
+    box-sizing: border-box !important;
+}
+
+/* Responsive container constraints */
+@media (max-width: 768px) {
+    .header {
+        padding: 1rem 1rem !important;
+    }
+    
+    .main-content {
+        padding: 2rem 1rem 0 !important;
+    }
+    
+    .search-section {
+        padding: 0 0.5rem !important;
+    }
+    
+    .tools-dropdown-menu {
+        max-width: 95vw !important;
+        min-width: 280px !important;
+    }
+}
+
+/* Fix any elements that might be causing overflow */
+.ticker-tape,
+.bloomberg-dark-pool,
+.institutional-news,
+.economic-calendar,
+.sector-heatmap {
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+    box-sizing: border-box !important;
+}
+
+/* Ensure all Bloomberg features fit within container */
+.bloomberg-killer-header,
+.institutional-premium-header {
+    max-width: 100% !important;
+    overflow: hidden !important;
+    white-space: nowrap !important;
+    text-overflow: ellipsis !important;
+}
+
+/* Search input container fixes */
+.search-input-container {
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    margin: 0 auto !important;
+}
+
+.search-input-container.enhanced {
+    max-width: 700px !important;
+    width: 100% !important;
+    margin: 0 auto !important;
+}

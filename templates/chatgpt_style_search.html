@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/premium_features.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/tier_styles.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/enhanced_front_page.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/layout_fix.css') }}">
     <style>
         /* Enhanced Brand Animation Styles */
         .animated-brand {
@@ -207,6 +208,11 @@
         /* Enhanced search interface */
         .main-content {
             padding-top: 3rem;
+            max-width: 100vw;
+            overflow-x: hidden;
+            margin: 0 auto;
+            width: 100%;
+            box-sizing: border-box;
         }
         
         .search-container {
@@ -349,9 +355,9 @@
 </head>
 <body>
     <!-- ChatGPT-Style Interface -->
-    <div class="chatgpt-container">
+    <div class="chatgpt-container" style="max-width: 100vw; overflow-x: hidden; margin: 0; padding: 0; box-sizing: border-box; width: 100%;"
         <!-- Header -->
-        <div class="header">
+        <div class="header" style="max-width: 100vw; width: 100%; box-sizing: border-box; margin: 0; padding: 1.2rem 1.5rem;"
             <div class="header-left">
                 <div class="brand-container">
                     <span class="brand-name animated-brand">TradeWise AI</span>
