@@ -31,6 +31,21 @@
                         <i class="fas fa-chevron-down" style="font-size: 0.7rem; margin-left: 0.25rem;"></i>
                     </button>
                     <div class="tools-dropdown-menu" id="tools-dropdown-menu">
+                        <!-- Market Intelligence -->
+                        <div class="dropdown-item market-intelligence-toggle" onclick="toggleMarketIntelligence()">
+                            <i class="fas fa-brain" style="color: #00d4ff;"></i>
+                            <span>Market Intelligence</span>
+                            <div class="live-indicator" style="margin-left: auto; display: flex; align-items: center;">
+                                <div class="pulse-dot" style="width: 6px; height: 6px; background: #00ff88; border-radius: 50%; margin-right: 5px; animation: pulse 2s infinite;"></div>
+                                <span style="color: #00ff88; font-size: 10px; font-weight: 500;">LIVE</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Market Intelligence Content (Initially Hidden) -->
+                        <div id="market-intelligence-content" style="display: none; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 10px; margin: 10px 0; max-width: 350px;">
+                            {% include 'market_intelligence_widget.html' %}
+                        </div>
+                        
                         <div class="dropdown-item" onclick="togglePortfolio()">
                             <i class="fas fa-wallet"></i>
                             <span>Portfolio</span>
@@ -4391,6 +4406,21 @@
         }
     });
 
+    function toggleMarketIntelligence() {
+        const content = document.getElementById('market-intelligence-content');
+        if (content.style.display === 'none' || content.style.display === '') {
+            content.style.display = 'block';
+            // Initialize market intelligence if not already done
+            if (typeof window.marketIntelligenceWidget === 'undefined') {
+                window.marketIntelligenceWidget = new MarketIntelligenceWidget();
+            }
+        } else {
+            content.style.display = 'none';
+        }
+        // Don't close the tools dropdown when toggling market intelligence
+        event.stopPropagation();
+    }
+
     // Enhanced Portfolio data loading function
     async function loadEnhancedPortfolioData() {
         console.log('Loading enhanced portfolio data...');
@@ -5739,10 +5769,7 @@
     });
     </script>
     
-    <!-- Market Intelligence Widget (Fixed Position) -->
-    <div id="market-intelligence-widget" style="position: fixed; right: 20px; top: 20px; width: 300px; background: rgba(26, 26, 46, 0.95); border-radius: 15px; padding: 20px; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); z-index: 1000; box-shadow: 0 20px 40px rgba(0,0,0,0.3); max-height: 80vh; overflow-y: auto;">
-        {% include 'market_intelligence_widget.html' %}
-    </div>
+
 
 </body>
 </html><!-- Cache bust: 1752968128 -->

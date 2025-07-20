@@ -219,12 +219,12 @@ class MarketIntelligenceWidget {
             if (data.alerts.length === 0) {
                 containerElement.innerHTML = '<div style="text-align: center; color: #666; font-size: 12px; padding: 20px 0;">No alerts at this time</div>';
             } else {
-                const alertsHtml = data.alerts.slice(0, 5).map(alert => 
-                    '<div class="alert-item alert-' + alert.severity.toLowerCase() + '">' +
+                var alertsHtml = data.alerts.slice(0, 5).map(function(alert) {
+                    return '<div class="alert-item alert-' + alert.severity.toLowerCase() + '">' +
                     '<div style="font-weight: 600; color: white;">' + alert.symbol + '</div>' +
                     '<div style="color: #ccc; margin-top: 2px;">' + alert.message + '</div>' +
-                    '</div>'
-                ).join('');
+                    '</div>';
+                }).join('');
                 containerElement.innerHTML = alertsHtml;
             }
         }
@@ -239,8 +239,8 @@ class MarketIntelligenceWidget {
         if (data.length === 0) {
             containerElement.innerHTML = '<div style="text-align: center; color: #666; font-size: 12px; padding: 20px 0;">No trending topics found</div>';
         } else {
-            const trendingHtml = data.slice(0, 5).map(topic => {
-                let sentimentClass = 'sentiment-neutral';
+            const trendingHtml = data.slice(0, 5).map(function(topic) {
+                var sentimentClass = 'sentiment-neutral';
                 if (topic.sentiment > 0.1) sentimentClass = 'sentiment-positive';
                 else if (topic.sentiment < -0.1) sentimentClass = 'sentiment-negative';
 
