@@ -14,6 +14,17 @@ try:
 except Exception as e:
     print(f"⚠️ Production optimization error: {e}")
 
+# Apply institutional-grade optimizations
+try:
+    from institutional_optimization_engine import get_institutional_optimizer
+    institutional_optimizer = get_institutional_optimizer(app)
+    if institutional_optimizer:
+        optimization_results = institutional_optimizer.apply_institutional_optimizations()
+        print(f"🚀 Institutional optimizations applied: {len(optimization_results)} enterprise features")
+        print("📊 TradeWise AI: Bloomberg Terminal Competitor - Institutional Grade Ready")
+except Exception as e:
+    print(f"⚠️ Institutional optimization error: {e}")
+
 # Create tables
 with app.app_context():
     db.create_all()

@@ -31,6 +31,7 @@ from real_time_performance_monitor import performance_monitor
 from dynamic_search_autocomplete import autocomplete_engine
 from monetization_strategy import get_monetization_engine
 from real_time_market_intelligence import market_intelligence
+from bloomberg_terminal_comparison import get_bloomberg_comparison
 # Import will be done after setup
 realtime_service = None
 
@@ -52,6 +53,7 @@ logger = logging.getLogger(__name__)
 data_service = DataService()
 ai_engine = AIInsightsEngine()
 stock_search_service = StockSearchService()
+bloomberg_comparison = get_bloomberg_comparison()
 # Portfolio optimization now integrated into main AI engine
 social_trading_engine = SocialTradingEngine()
 gamification_engine = GamificationEngine()
@@ -1757,6 +1759,68 @@ def get_advanced_cache_stats():
     except Exception as e:
         logger.error(f"Error getting advanced cache stats: {e}")
         return jsonify({'success': False, 'error': str(e)})
+
+# === INSTITUTIONAL OPTIMIZATION ENDPOINTS ===
+
+@app.route('/api/institutional/optimization-status')
+def get_institutional_optimization_status():
+    """Get institutional optimization status"""
+    try:
+        from institutional_optimization_engine import get_institutional_optimizer
+        optimizer = get_institutional_optimizer()
+        if optimizer:
+            report = optimizer.get_optimization_report()
+            return jsonify({
+                'success': True,
+                'status': 'institutional_grade',
+                'report': report
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'status': 'basic',
+                'message': 'Institutional optimizations not applied'
+            })
+    except Exception as e:
+        logger.error(f"Error getting institutional optimization status: {e}")
+        return jsonify({'success': False, 'error': str(e)})
+
+@app.route('/api/institutional/bloomberg-comparison')
+def get_bloomberg_terminal_comparison():
+    """Get comprehensive Bloomberg Terminal comparison"""
+    try:
+        comparison_report = bloomberg_comparison.generate_institutional_report()
+        return jsonify({
+            'success': True,
+            'comparison': comparison_report,
+            'positioning': 'Bloomberg Terminal for Everyone',
+            'cost_savings': '98%'
+        })
+    except Exception as e:
+        logger.error(f"Error generating Bloomberg comparison: {e}")
+        return jsonify({'success': False, 'error': str(e)})
+
+@app.route('/api/institutional/competitive-analysis')
+def get_competitive_analysis():
+    """Get competitive analysis vs Bloomberg Terminal"""
+    try:
+        analysis = bloomberg_comparison.get_bloomberg_killer_analysis()
+        feature_comparison = bloomberg_comparison.generate_feature_comparison()
+        
+        return jsonify({
+            'success': True,
+            'analysis': analysis,
+            'feature_comparison': feature_comparison,
+            'value_proposition': 'Institutional-grade capabilities at 98% cost savings'
+        })
+    except Exception as e:
+        logger.error(f"Error generating competitive analysis: {e}")
+        return jsonify({'success': False, 'error': str(e)})
+
+@app.route('/institutional')
+def institutional_dashboard():
+    """Institutional dashboard page"""
+    return render_template('institutional_dashboard.html')
 
 @app.route('/api/features/enhancement-report')
 def get_enhancement_report():
