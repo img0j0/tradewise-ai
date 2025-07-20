@@ -1,5 +1,49 @@
 
 /* App Store Quality Search Interface */
+
+/* COMPREHENSIVE SEARCH ICON REMOVAL */
+input[type="search"],
+input[type="text"].search-input,
+.search-input,
+#stock-search-input {
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+    background-image: none !important;
+    background: transparent !important;
+}
+
+/* Remove all WebKit search decorations */
+input[type="search"]::-webkit-search-decoration,
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-results-button,
+input[type="search"]::-webkit-search-results-decoration,
+.search-input::-webkit-search-decoration,
+.search-input::-webkit-search-cancel-button,
+.search-input::-webkit-search-results-button,
+.search-input::-webkit-search-results-decoration {
+    -webkit-appearance: none !important;
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    width: 0 !important;
+    height: 0 !important;
+}
+
+/* Remove any potential pseudo-element icons */
+input::before,
+input::after,
+.search-input::before,
+.search-input::after {
+    display: none !important;
+}
+
+/* Override any background icons */
+input[type="text"]:not([style*="background-image"]) {
+    background-image: none !important;
+}
+
+/* END SEARCH ICON REMOVAL */
 .chatgpt-search-box {
     background: rgba(255, 255, 255, 0.08);
     border: 2px solid rgba(255, 255, 255, 0.1);

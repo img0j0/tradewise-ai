@@ -932,7 +932,8 @@
                        placeholder="Ask anything about stocks... (try 'google', 'apple', or 'NVDA')"
                        class="search-input"
                        onkeypress="handleEnterPress(event)"
-                       oninput="showSearchSuggestions(this.value)">
+                       oninput="showSearchSuggestions(this.value)"
+                       style="background-image: none !important; -webkit-appearance: none; -moz-appearance: none; appearance: none;">
                 <button class="submit-btn" onclick="performSearch()">
                     
                 </button>
@@ -3115,12 +3116,25 @@
 
     .search-input {
         flex: 1;
-        background: transparent;
+        background: transparent !important;
+        background-image: none !important;
         border: none;
         outline: none;
         color: white;
         font-size: 1rem;
         padding: 0.5rem 0;
+        -webkit-appearance: none !important;
+        -moz-appearance: none !important;
+        appearance: none !important;
+    }
+    
+    /* Remove any search icons from pseudo-elements */
+    .search-input::-webkit-search-decoration,
+    .search-input::-webkit-search-cancel-button,
+    .search-input::-webkit-search-results-button,
+    .search-input::-webkit-search-results-decoration {
+        -webkit-appearance: none !important;
+        display: none !important;
     }
 
     .search-input::placeholder {
