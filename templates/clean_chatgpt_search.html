@@ -712,7 +712,7 @@
                 <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);">
                     <!-- Mobile-optimized button layout -->
                     <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 15px;">
-                        <button onclick="addToWatchlist()" style="padding: 12px 15px; background: linear-gradient(45deg, #f59e0b, #d97706); color: white; border: none; border-radius: 15px; cursor: pointer; font-weight: 600; font-size: 13px; display: flex; align-items: center; justify-content: center; gap: 3px;">
+                        <button onclick="addToWatchlistFromAnalysis()" style="padding: 12px 15px; background: linear-gradient(45deg, #f59e0b, #d97706); color: white; border: none; border-radius: 15px; cursor: pointer; font-weight: 600; font-size: 13px; display: flex; align-items: center; justify-content: center; gap: 3px;">
                             ⭐ Watch
                         </button>
                         <button onclick="window.showCreateAlert()" style="padding: 12px 15px; background: linear-gradient(45deg, #8b5cf6, #7c3aed); color: white; border: none; border-radius: 15px; cursor: pointer; font-weight: 600; font-size: 13px; display: flex; align-items: center; justify-content: center; gap: 3px;">
@@ -767,8 +767,8 @@
             }
         });
         
-        // Add to Watchlist function
-        async function addToWatchlist() {
+        // Add to Watchlist function from analysis overlay
+        async function addToWatchlistFromAnalysis() {
             if (!currentStock) {
                 alert('Please search for a stock first');
                 return;
@@ -792,7 +792,7 @@
                 if (data.success) {
                     alert(`${currentStock.symbol} added to your watchlist!`);
                     // Update button to show it's been added
-                    const addButton = document.querySelector('button[onclick="addToWatchlist()"]');
+                    const addButton = document.querySelector('button[onclick="addToWatchlistFromAnalysis()"]');
                     if (addButton) {
                         addButton.style.background = 'linear-gradient(45deg, #10b981, #059669)';
                         addButton.innerHTML = '✓ Added to Watchlist';
@@ -876,8 +876,9 @@
                 `;
                 
                 watchlist.forEach((stock, index) => {
-                    const changeColor = stock.change >= 0 ? '#10b981' : '#ef4444';
-                    const changeIcon = stock.change >= 0 ? '📈' : '📉';
+                    const change = stock.change || (stock.change_percent > 0 ? stock.change_percent : stock.change_percent);
+                    const changeColor = change >= 0 ? '#10b981' : '#ef4444';
+                    const changeIcon = change >= 0 ? '📈' : '📉';
                     
                     watchlistHTML += `
                         <div style="background: rgba(255,255,255,0.05); border-radius: 15px; padding: 20px; border-left: 4px solid ${changeColor};">
@@ -886,7 +887,7 @@
                                     <div style="display: flex; align-items: center; margin-bottom: 10px;">
                                         <div style="font-weight: 700; font-size: 1.2rem; margin-right: 15px;">${stock.symbol}</div>
                                         <div style="background: ${changeColor}20; color: ${changeColor}; padding: 4px 8px; border-radius: 12px; font-size: 0.8rem; font-weight: 600;">
-                                            ${changeIcon} ${stock.change >= 0 ? '+' : ''}${stock.change.toFixed(2)} (${stock.change_percent.toFixed(2)}%)
+                                            ${changeIcon} ${stock.change_percent >= 0 ? '+' : ''}${stock.change_percent.toFixed(2)}%
                                         </div>
                                     </div>
                                     <div style="font-size: 0.9rem; opacity: 0.8; margin-bottom: 8px;">${stock.name || stock.symbol}</div>

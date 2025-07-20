@@ -70,6 +70,9 @@ deep_learning_engine = get_deep_learning_engine()
 performance_optimizer = get_performance_optimizer()
 monetization_engine = get_monetization_engine()
 
+# Simple demo watchlist storage (in production, this would be in database)
+demo_watchlist = set(['AAPL', 'TSLA', 'GOOGL', 'MSFT', 'NVDA'])
+
 # Initialize institutional features
 from institutional_features import institutional_features
 from dark_pool_intelligence import dark_pool_intelligence
@@ -437,8 +440,8 @@ def api_logout():
 def api_get_watchlist():
     """Get user's watchlist with real-time prices"""
     try:
-        # Demo watchlist - in production, this would come from database
-        watchlist_symbols = ['AAPL', 'TSLA', 'GOOGL', 'MSFT', 'NVDA']
+        # Get symbols from demo watchlist
+        watchlist_symbols = list(demo_watchlist)
         
         stocks = []
         for symbol in watchlist_symbols:
@@ -451,12 +454,14 @@ def api_get_watchlist():
                 if not hist.empty:
                     current_price = float(hist['Close'].iloc[-1])
                     prev_close = float(info.get('previousClose', current_price))
+                    change = current_price - prev_close
                     change_percent = ((current_price - prev_close) / prev_close) * 100
                     
                     stocks.append({
                         'symbol': symbol,
                         'name': info.get('shortName', symbol),
                         'price': current_price,
+                        'change': change,
                         'change_percent': change_percent
                     })
                 else:
@@ -465,6 +470,7 @@ def api_get_watchlist():
                         'symbol': symbol,
                         'name': symbol,
                         'price': 100.0,
+                        'change': 0.0,
                         'change_percent': 0.0
                     })
             except Exception as e:
@@ -474,12 +480,13 @@ def api_get_watchlist():
                     'symbol': symbol,
                     'name': symbol,
                     'price': 100.0,
+                    'change': 0.0,
                     'change_percent': 0.0
                 })
         
         return jsonify({
             'success': True,
-            'stocks': stocks
+            'watchlist': stocks
         })
         
     except Exception as e:
@@ -507,8 +514,9 @@ def api_add_to_watchlist():
         except:
             return jsonify({'success': False, 'error': 'Unable to verify stock symbol'})
         
-        # In production, you would save to database
-        # For demo, we'll just return success
+        # Add to demo watchlist
+        demo_watchlist.add(symbol)
+        
         return jsonify({
             'success': True,
             'message': f'{symbol} added to watchlist'
@@ -528,8 +536,9 @@ def api_remove_from_watchlist():
         if not symbol:
             return jsonify({'success': False, 'error': 'Stock symbol is required'})
         
-        # In production, you would remove from database
-        # For demo, we'll just return success
+        # Remove from demo watchlist
+        demo_watchlist.discard(symbol)
+        
         return jsonify({
             'success': True,
             'message': f'{symbol} removed from watchlist'
