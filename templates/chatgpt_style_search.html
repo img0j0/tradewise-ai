@@ -912,7 +912,15 @@
                 </button>
             </div>
             
-
+            <!-- Subscription Status Display -->
+            <div class="subscription-status">
+                <span class="status-text">Free Features: Basic</span>
+            </div>
+        </div>
+        
+        <!-- Fixed Subscription Status (Bottom Right) -->
+        <div class="subscription-status-fixed">
+            <span class="status-text">Free Features: Basic</span>
         </div>
     </div>
 
@@ -3261,6 +3269,55 @@
         .suggestion-card.compact {
             min-width: 140px;
             max-width: 180px;
+        }
+    }
+
+    /* Subscription Status Styling */
+    .subscription-status-fixed {
+        position: fixed;
+        bottom: 1rem;
+        right: 1rem;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 8px;
+        padding: 0.5rem 0.75rem;
+        z-index: 1000;
+        backdrop-filter: blur(10px);
+        font-size: 0.75rem;
+        color: rgba(255, 255, 255, 0.7);
+        font-weight: 500;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+        pointer-events: none;
+        user-select: none;
+    }
+
+    .subscription-status-fixed:hover {
+        background: rgba(255, 255, 255, 0.12);
+        border-color: rgba(255, 255, 255, 0.25);
+        color: rgba(255, 255, 255, 0.9);
+    }
+
+    .subscription-status {
+        display: none; /* Hide the inline version, keep only fixed */
+    }
+
+    /* Mobile optimization for subscription status */
+    @media (max-width: 768px) {
+        .subscription-status-fixed {
+            bottom: 0.75rem;
+            right: 0.75rem;
+            font-size: 0.7rem;
+            padding: 0.4rem 0.6rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .subscription-status-fixed {
+            bottom: 0.5rem;
+            right: 0.5rem;
+            font-size: 0.65rem;
+            padding: 0.35rem 0.5rem;
         }
     }
     </style>
