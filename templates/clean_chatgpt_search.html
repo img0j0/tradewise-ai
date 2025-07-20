@@ -312,16 +312,19 @@
     </div>
 
     <script>
+        // Global variable to store current stock data
+        let currentStock = null;
+        
         // Clean, minimal search implementation
         document.getElementById('search-input').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
-                searchStock();
+                performSearchAction();
             }
         });
         
-        document.getElementById('search-btn').addEventListener('click', searchStock);
+        document.getElementById('search-btn').addEventListener('click', performSearchAction);
         
-        async function searchStock() {
+        async function performSearchAction() {
             const input = document.getElementById('search-input');
             const query = input.value.trim();
             
@@ -926,9 +929,18 @@
         }
 
         function searchStock(symbol) {
-            closeAnalysis();
-            document.getElementById('search-input').value = symbol;
-            performSearch();
+            if (symbol) {
+                closeAnalysis();
+                document.getElementById('search-input').value = symbol;
+                performSearchAction();
+            } else {
+                performSearchAction();
+            }
+        }
+        
+        // Alias for compatibility - this is what the watchlist calls
+        function performSearch() {
+            performSearchAction();
         }
 
         function addCurrentStockToWatchlist() {
