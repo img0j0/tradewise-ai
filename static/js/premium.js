@@ -560,7 +560,7 @@ function displayUpgradePrompt() {
         `;
     }
     
-function showDemoSignals() {
+    showDemoSignals() {
         const container = document.getElementById('copilot-signals');
         if (!container) return;
         
