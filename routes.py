@@ -183,6 +183,11 @@ def simple_test():
 </body>
 </html>'''
 
+@app.route('/debug')
+def debug_test():
+    """Debug test page with proper styling"""
+    return render_template('debug_test.html')
+
 @app.route('/dashboard')
 def dashboard():
     """Full ChatGPT-style interface"""
