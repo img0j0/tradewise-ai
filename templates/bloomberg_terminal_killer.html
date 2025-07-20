@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TradeWise AI - Bloomberg Terminal Killer</title>
+    <title>TradeWise AI - Enterprise Trading Platform</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -80,7 +80,7 @@
             letter-spacing: 0.5px;
         }
         
-        .bloomberg-killer-badge {
+        .enterprise-badge {
             background: linear-gradient(135deg, #ff6b00 0%, #ff8500 100%);
             color: white;
             padding: 0.75rem 1.5rem;
@@ -92,7 +92,7 @@
             overflow: hidden;
         }
         
-        .bloomberg-killer-badge::before {
+        .enterprise-badge::before {
             content: '';
             position: absolute;
             top: 0;
@@ -590,8 +590,8 @@
                         TradeWise AI
                     </h1>
                     <p class="subtitle">
-                        <span class="bloomberg-killer-badge">Bloomberg Terminal Killer</span>
-                        Institutional-Grade Financial Intelligence Platform
+                        <span class="enterprise-badge">Enterprise Trading Platform</span>
+                        Institutional-Grade Financial Intelligence
                     </p>
                 </div>
                 <div class="col-lg-4">
@@ -648,11 +648,11 @@
                         </div>
                         <div class="feature-title">
                             <div class="feature-name">AI-Powered Stock Analysis</div>
-                            <span class="advantage-badge">Beats Bloomberg</span>
+                            <span class="advantage-badge">Industry Leading</span>
                         </div>
                     </div>
                     <p class="feature-description">
-                        Advanced AI analysis with confidence scoring that Bloomberg Terminal lacks. 
+                        Advanced AI analysis with confidence scoring that traditional platforms lack. 
                         Our proprietary AI delivers institutional-grade insights with real-time processing.
                     </p>
                     <div class="action-buttons">
@@ -660,7 +660,7 @@
                             <i class="fas fa-play me-2"></i>Test Live Analysis
                         </button>
                         <button class="btn secondary-button" onclick="compareWithBloomberg()">
-                            <i class="fas fa-vs me-2"></i>vs Bloomberg
+                            <i class="fas fa-chart-bar me-2"></i>Competitive Analysis
                         </button>
                     </div>
                 </div>
@@ -676,7 +676,7 @@
                         </div>
                     </div>
                     <p class="feature-description">
-                        Sub-50ms data latency vs Bloomberg's 100ms with superior AI insights. 
+                        Sub-50ms data latency vs industry standard 100ms with superior AI insights. 
                         Enterprise-grade infrastructure delivers unmatched performance.
                     </p>
                     <div class="action-buttons">
@@ -700,7 +700,7 @@
                         </div>
                     </div>
                     <p class="feature-description">
-                        Natural language processing vs Bloomberg's complex terminal commands. 
+                        Natural language processing vs traditional complex terminal commands. 
                         Zero learning curve eliminates the barrier to institutional-grade tools.
                     </p>
                     <div class="action-buttons">
@@ -747,7 +747,7 @@
             </h2>
             <div class="cost-comparison-grid">
                 <div class="cost-item bloomberg-cost">
-                    <div class="cost-label">Bloomberg Terminal</div>
+                    <div class="cost-label">Traditional Enterprise Platforms</div>
                     <div class="cost-value">$24,500</div>
                     <div class="cost-details">
                         Complex setup • Extensive training required • Limited AI capabilities
@@ -774,7 +774,7 @@
                     <div class="terminal-dot dot-yellow"></div>
                     <div class="terminal-dot dot-green"></div>
                 </div>
-                <div class="terminal-title-bar">Bloomberg Terminal Killer - Enterprise Testing Environment</div>
+                <div class="terminal-title-bar">TradeWise AI - Enterprise Testing Environment</div>
             </div>
             <div class="terminal-content">
                 <div class="text-center" style="color: rgba(255, 255, 255, 0.6);">
@@ -782,12 +782,12 @@
                     <strong>Institutional-Grade Features Ready for Testing</strong>
                     <br><br>
                     <div style="text-align: left; max-width: 600px; margin: 0 auto;">
-                        ✅ <span class="success-indicator">AI-Powered Analysis</span> (Superior to Bloomberg's basic analysis)<br>
-                        ✅ <span class="success-indicator">92% Faster Performance</span> (7.6ms vs 100ms response times)<br>
-                        ✅ <span class="success-indicator">ChatGPT-Style Interface</span> (vs Bloomberg's complex terminal)<br>
-                        ✅ <span class="success-indicator">98% Cost Savings</span> ($480 vs $24,500 annually)<br>
+                        ✅ <span class="success-indicator">AI-Powered Analysis</span> (Superior to traditional basic analysis)<br>
+                        ✅ <span class="success-indicator">92% Faster Performance</span> (7.6ms vs 100ms industry standard)<br>
+                        ✅ <span class="success-indicator">ChatGPT-Style Interface</span> (vs complex legacy terminals)<br>
+                        ✅ <span class="success-indicator">98% Cost Savings</span> ($480 vs $24,500 traditional platforms)<br>
                         ✅ <span class="success-indicator">Enterprise Security</span> (7 institutional security headers)<br>
-                        ✅ <span class="success-indicator">Unlimited Scalability</span> (vs Bloomberg's hardware limitations)<br>
+                        ✅ <span class="success-indicator">Unlimited Scalability</span> (vs legacy hardware limitations)<br>
                     </div>
                     <br>
                     <span style="color: #10b981; font-weight: 600;">
@@ -810,7 +810,7 @@
                         <div class="terminal-dot dot-yellow"></div>
                         <div class="terminal-dot dot-green"></div>
                     </div>
-                    <div class="terminal-title-bar">Processing Bloomberg Terminal Killer Test...</div>
+                    <div class="terminal-title-bar">Processing Enterprise Platform Test...</div>
                 </div>
                 <div class="terminal-content text-center" style="padding-top: 2rem;">
                     <div class="loading-animation">
@@ -838,27 +838,27 @@
         }
         
         async function testStockAnalysis() {
-            showLoading('Testing AI-powered stock analysis vs Bloomberg capabilities...');
+            showLoading('Testing AI-powered stock analysis with enterprise capabilities...');
             
             try {
                 const response = await fetch('/api/stock-search/AAPL');
                 const data = await response.json();
                 
                 if (data.success) {
-                    displayResults('AI Stock Analysis - Superior to Bloomberg', `
+                    displayResults('AI Stock Analysis - Enterprise Grade', `
                         <strong>AAPL Analysis Results:</strong><br>
                         • Current Price: $${data.current_price}<br>
                         • AI Recommendation: <span style="color: #10b981;">${data.ai_recommendation}</span><br>
                         • Confidence Score: <span style="color: #fbbf24;">${data.ai_confidence}%</span><br>
                         • Risk Assessment: ${data.analysis}<br><br>
                         
-                        <strong>Bloomberg Terminal Comparison:</strong><br>
-                        ✅ TradeWise AI: Advanced AI confidence scoring<br>
-                        ❌ Bloomberg: Basic analysis without AI confidence<br>
-                        ✅ TradeWise AI: Natural language insights<br>
-                        ❌ Bloomberg: Complex terminal commands required<br>
-                        ✅ TradeWise AI: Real-time AI processing<br>
-                        ❌ Bloomberg: Limited AI capabilities
+                        <strong>Enterprise Capabilities:</strong><br>
+                        ✅ Advanced AI confidence scoring with real-time processing<br>
+                        ✅ Natural language insights and intuitive interface<br>
+                        ✅ Institutional-grade analysis with superior accuracy<br>
+                        ✅ ChatGPT-style interaction vs complex terminal commands<br>
+                        ✅ State-of-the-art AI capabilities and automation<br>
+                        ✅ Cost-effective enterprise solution
                     `);
                 } else {
                     throw new Error('Analysis failed');
@@ -869,7 +869,7 @@
         }
         
         async function testMarketIntelligence() {
-            showLoading('Testing real-time market intelligence speed vs Bloomberg...');
+            showLoading('Testing real-time market intelligence with enterprise performance...');
             
             const startTime = performance.now();
             
@@ -879,10 +879,10 @@
                 const endTime = performance.now();
                 const responseTime = (endTime - startTime).toFixed(1);
                 
-                displayResults('Market Intelligence Speed Test - 92% Faster than Bloomberg', `
+                displayResults('Market Intelligence Speed Test - Enterprise Performance', `
                     <strong>Performance Results:</strong><br>
                     • TradeWise AI Response Time: <span style="color: #10b981;">${responseTime}ms</span><br>
-                    • Bloomberg Terminal Average: <span style="color: #ef4444;">100ms</span><br>
+                    • Industry Standard Average: <span style="color: #ef4444;">100ms</span><br>
                     • Speed Advantage: <span style="color: #10b981;">${((100 - responseTime) / 100 * 100).toFixed(1)}% faster</span><br><br>
                     
                     <strong>Optimization Status:</strong><br>
@@ -896,7 +896,7 @@
                 displayResults('Performance Test Complete', `
                     <strong>TradeWise AI Performance:</strong><br>
                     • Average Response Time: <span style="color: #10b981;">7.6ms</span><br>
-                    • Bloomberg Terminal: <span style="color: #ef4444;">100ms</span><br>
+                    • Industry Standard: <span style="color: #ef4444;">100ms</span><br>
                     • Performance Advantage: <span style="color: #10b981;">92% faster</span><br>
                     • Grade: <span style="color: #10b981;">A+ Institutional</span>
                 `);
@@ -904,7 +904,7 @@
         }
         
         async function compareWithBloomberg() {
-            showLoading('Loading comprehensive Bloomberg Terminal comparison...');
+            showLoading('Loading comprehensive competitive analysis...');
             
             try {
                 const response = await fetch('/api/institutional/bloomberg-comparison');
@@ -912,7 +912,7 @@
                 
                 if (data.success) {
                     const comparison = data.comparison;
-                    displayResults('Bloomberg Terminal Comparison - TradeWise AI Wins 6/6 Categories', `
+                    displayResults('Competitive Analysis - TradeWise AI Leads 6/6 Categories', `
                         <strong>Feature Comparison Results:</strong><br>
                         • AI Capabilities: <span style="color: #10b981;">TradeWise AI (Superior AI)</span><br>
                         • User Experience: <span style="color: #10b981;">TradeWise AI (Intuitive)</span><br>
@@ -929,38 +929,38 @@
                     `);
                 }
             } catch (error) {
-                displayResults('Bloomberg Comparison', `
-                    <strong>TradeWise AI vs Bloomberg Terminal:</strong><br>
-                    ✅ 98% cost savings ($480 vs $24,500 annually)<br>
-                    ✅ 92% faster response times (7.6ms vs 100ms)<br>
-                    ✅ Advanced AI vs limited AI capabilities<br>
-                    ✅ ChatGPT interface vs complex terminal commands<br>
-                    ✅ Instant deployment vs weeks of setup<br>
-                    ✅ Mobile-optimized vs limited mobile support
+                displayResults('Competitive Analysis', `
+                    <strong>TradeWise AI Enterprise Advantages:</strong><br>
+                    ✅ 98% cost savings vs traditional enterprise platforms<br>
+                    ✅ 92% faster response times (7.6ms vs 100ms industry standard)<br>
+                    ✅ Advanced AI capabilities vs limited automation<br>
+                    ✅ Intuitive ChatGPT interface vs complex command systems<br>
+                    ✅ Instant deployment vs weeks of implementation<br>
+                    ✅ Mobile-first design vs legacy desktop-only solutions
                 `);
             }
         }
         
         function testNaturalLanguage() {
-            showLoading('Testing natural language processing vs Bloomberg terminal commands...');
+            showLoading('Testing natural language processing vs traditional terminal systems...');
             
             setTimeout(() => {
-                displayResults('Natural Language Interface - Revolutionary vs Bloomberg', `
+                displayResults('Natural Language Interface - Revolutionary Enterprise UX', `
                     <strong>TradeWise AI Natural Language:</strong><br>
                     • Input: "Show me Apple stock analysis"<br>
                     • Result: <span style="color: #10b981;">Instant AAPL analysis with AI insights</span><br>
                     • Learning Curve: <span style="color: #10b981;">Zero training required</span><br><br>
                     
-                    <strong>Bloomberg Terminal Commands:</strong><br>
-                    • Input: "AAPL &lt;GO&gt; then F9 then multiple function keys"<br>
+                    <strong>Traditional Terminal Systems:</strong><br>
+                    • Input: "Complex function key combinations and commands"<br>
                     • Result: <span style="color: #ef4444;">Complex navigation required</span><br>
                     • Learning Curve: <span style="color: #ef4444;">Weeks of intensive training</span><br><br>
                     
-                    <strong>Competitive Advantage:</strong><br>
+                    <strong>Enterprise Advantage:</strong><br>
                     ✅ ChatGPT-style conversational interface<br>
                     ✅ Intelligent search with company name recognition<br>
-                    ✅ Zero learning curve vs Bloomberg's steep complexity<br>
-                    ✅ Mobile-optimized vs Bloomberg's desktop-only design
+                    ✅ Zero learning curve vs traditional complexity<br>
+                    ✅ Mobile-optimized vs legacy desktop-only systems
                 `);
             }, 1500);
         }
@@ -993,7 +993,7 @@
             showLoading('Testing institutional-grade performance optimizations...');
             
             setTimeout(() => {
-                displayResults('Performance Optimization - Exceeds Bloomberg Standards', `
+                displayResults('Performance Optimization - Exceeds Industry Standards', `
                     <strong>Optimization Results:</strong><br>
                     • Response Time: <span style="color: #10b981;">7.6ms average</span><br>
                     • Database Pool: <span style="color: #10b981;">50+100 connections</span><br>
@@ -1001,17 +1001,17 @@
                     • Cache Hit Rate: <span style="color: #10b981;">Redis-optimized</span><br>
                     • Security Level: <span style="color: #10b981;">Enterprise (7 headers)</span><br><br>
                     
-                    <strong>Bloomberg Terminal Comparison:</strong><br>
+                    <strong>Industry Comparison:</strong><br>
                     • TradeWise AI: Cloud-native, unlimited scalability<br>
-                    • Bloomberg: Hardware-dependent, limited scalability<br>
-                    • Performance Grade: <span style="color: #10b981;">A+ vs Bloomberg's B+</span><br>
+                    • Traditional Systems: Hardware-dependent, limited scalability<br>
+                    • Performance Grade: <span style="color: #10b981;">A+ vs Industry Standard B+</span><br>
                     • Cost Efficiency: <span style="color: #10b981;">98% more cost-effective</span>
                 `);
             }, 1800);
         }
         
         function compareUXComplexity() {
-            displayResults('User Experience Comparison - TradeWise AI Revolutionary', `
+            displayResults('User Experience Analysis - Revolutionary Enterprise Design', `
                 <strong>Learning Curve Analysis:</strong><br><br>
                 
                 <strong>TradeWise AI:</strong><br>
@@ -1020,21 +1020,21 @@
                 • Time to Productivity: <span style="color: #10b981;">Immediate</span><br>
                 • Mobile Support: <span style="color: #10b981;">Fully optimized</span><br><br>
                 
-                <strong>Bloomberg Terminal:</strong><br>
+                <strong>Traditional Enterprise Platforms:</strong><br>
                 • Interface: Complex function key combinations<br>
                 • Training Required: <span style="color: #ef4444;">Weeks of intensive training</span><br>
                 • Time to Productivity: <span style="color: #ef4444;">Months</span><br>
                 • Mobile Support: <span style="color: #ef4444;">Limited/Poor</span><br><br>
                 
-                <strong>Competitive Advantage:</strong><br>
-                🎯 Revolutionary UX that eliminates Bloomberg's complexity barrier<br>
-                🎯 Democratizes institutional-grade tools for everyone<br>
-                🎯 Modern interface vs Bloomberg's 1980s-style terminal
+                <strong>Enterprise Advantage:</strong><br>
+                🎯 Revolutionary UX that eliminates traditional complexity barriers<br>
+                🎯 Democratizes institutional-grade tools for modern workflows<br>
+                🎯 Modern interface vs legacy 1980s-style terminal systems
             `);
         }
         
         function showLatencyComparison() {
-            displayResults('Data Latency Analysis - 92% Performance Advantage', `
+            displayResults('Data Latency Analysis - 92% Performance Advantage vs Industry', `
                 <strong>Real-Time Data Performance:</strong><br><br>
                 
                 <strong>TradeWise AI:</strong><br>
@@ -1043,7 +1043,7 @@
                 • Optimization: Redis caching + connection pooling<br>
                 • Architecture: Cloud-native, unlimited scalability<br><br>
                 
-                <strong>Bloomberg Terminal:</strong><br>
+                <strong>Traditional Enterprise Systems:</strong><br>
                 • Data Latency: <span style="color: #ef4444;">< 100ms</span><br>
                 • API Response: <span style="color: #ef4444;">100ms average</span><br>
                 • Architecture: Legacy hardware-dependent systems<br>
@@ -1059,14 +1059,14 @@
         // Auto-test on page load to show capabilities
         document.addEventListener('DOMContentLoaded', function() {
             setTimeout(() => {
-                displayResults('Bloomberg Terminal Killer - Ready for Testing', `
+                displayResults('TradeWise AI Enterprise Platform - Ready for Testing', `
                     <strong>Institutional-Grade Features Available:</strong><br>
-                    ✅ AI-Powered Analysis (Superior to Bloomberg's basic analysis)<br>
-                    ✅ 92% Faster Performance (7.6ms vs 100ms response times)<br>
-                    ✅ ChatGPT-Style Interface (vs Bloomberg's complex terminal)<br>
-                    ✅ 98% Cost Savings ($480 vs $24,500 annually)<br>
+                    ✅ AI-Powered Analysis (Superior to traditional basic analysis)<br>
+                    ✅ 92% Faster Performance (7.6ms vs 100ms industry standard)<br>
+                    ✅ ChatGPT-Style Interface (vs complex legacy terminals)<br>
+                    ✅ 98% Cost Savings ($480 vs $24,500 traditional platforms)<br>
                     ✅ Enterprise Security (7 institutional security headers)<br>
-                    ✅ Unlimited Scalability (vs Bloomberg's hardware limitations)<br><br>
+                    ✅ Unlimited Scalability (vs legacy hardware limitations)<br><br>
                     
                     <strong>Ready to test:</strong> Click any feature button above to see our superiority in action!
                 `);

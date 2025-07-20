@@ -1823,8 +1823,9 @@ def institutional_dashboard():
     return render_template('institutional_dashboard.html')
 
 @app.route('/bloomberg-killer')
-def bloomberg_terminal_killer():
-    """Bloomberg Terminal Killer testing interface"""
+@app.route('/enterprise-platform')
+def enterprise_platform():
+    """Enterprise platform testing interface"""
     return render_template('bloomberg_terminal_killer.html')
 
 @app.route('/api/features/enhancement-report')
