@@ -587,7 +587,7 @@
             <!-- Stock Search Content (default view) -->
             <div id="search-content" class="search-content">
                 <!-- Popular Stocks Dropdown -->
-                <div class="popular-stocks-condensed">
+                <div class="popular-stocks-condensed dropdown-container">
                     <div class="popular-indicator" onclick="togglePopularExpanded()">
                         <div class="popular-left">
                             <i class="fas fa-star" style="color: #60a5fa; font-size: 0.9rem;"></i>
@@ -641,7 +641,7 @@
                 </div>
                 
                 <!-- Condensed Investment Themes -->
-                <div class="investment-themes-condensed">
+                <div class="investment-themes-condensed dropdown-container">
                     <div class="themes-indicator" onclick="toggleThemesExpanded()">
                         <div class="themes-left">
                             <i class="fas fa-chart-pie" style="color: #60a5fa; font-size: 0.9rem;"></i>
@@ -763,7 +763,7 @@
                 </div>
                 
                 <!-- Market Insights Dropdown -->
-                <div class="market-insights-condensed">
+                <div class="market-insights-condensed dropdown-container">
                     <div class="insights-indicator" onclick="toggleInsightsExpanded()">
                         <div class="insights-left">
                             <i class="fas fa-chart-line" style="color: #60a5fa; font-size: 0.9rem;"></i>
@@ -2196,7 +2196,52 @@
         }
     }
 
-    /* Popular Stocks Dropdown - Matching other sections */
+    /* Dropdown Container - Unified alignment for all dropdowns */
+    .dropdown-container {
+        width: 100%;
+        max-width: 100%;
+        margin-left: 0;
+        margin-right: 0;
+        position: relative;
+        box-sizing: border-box;
+    }
+
+    /* Ensure all dropdown containers have identical styling */
+    .popular-stocks-condensed,
+    .investment-themes-condensed,
+    .market-insights-condensed {
+        background: rgba(255, 255, 255, 0.02) !important;
+        border-radius: 12px !important;
+        border: 1px solid rgba(96, 165, 250, 0.15) !important;
+        margin-bottom: 1rem !important;
+        overflow: hidden !important;
+        transition: all 0.3s ease !important;
+        position: relative !important;
+        display: block !important;
+    }
+
+    /* Ensure all indicator bars have identical styling */
+    .popular-indicator,
+    .themes-indicator,
+    .insights-indicator {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        padding: 0.75rem 1rem !important;
+        cursor: pointer !important;
+        background: rgba(96, 165, 250, 0.03) !important;
+        transition: all 0.3s ease !important;
+        margin: 0 !important;
+        box-sizing: border-box !important;
+    }
+
+    .popular-indicator:hover,
+    .themes-indicator:hover,
+    .insights-indicator:hover {
+        background: rgba(96, 165, 250, 0.06) !important;
+    }
+
+    /* Popular Stocks Dropdown - Perfectly matching other sections */
     .popular-stocks-condensed {
         background: rgba(255, 255, 255, 0.02);
         border-radius: 12px;
