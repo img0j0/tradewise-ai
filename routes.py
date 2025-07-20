@@ -160,16 +160,27 @@ def get_or_create_user_account():
 @app.route('/')
 def index():
     """Main ChatGPT-style AI interface"""
-    if not current_user.is_authenticated:
-        return redirect(url_for('login'))
-    return render_template('chatgpt_style_search.html')
+    from flask import make_response
+    
+    # Allow access for demo purposes without authentication
+    response = make_response(render_template('chatgpt_style_search.html'))
+    response.headers['Content-Type'] = 'text/html; charset=utf-8'
+    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '0'
+    return response
 
 @app.route('/dashboard')
 def dashboard():
     """Clean dashboard page"""
-    if not current_user.is_authenticated:
-        return redirect(url_for('login'))
-    return render_template('chatgpt_style_search.html')
+    from flask import make_response
+    
+    response = make_response(render_template('chatgpt_style_search.html'))
+    response.headers['Content-Type'] = 'text/html; charset=utf-8'
+    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '0'
+    return response
 
 @app.route('/analytics')
 def analytics():
