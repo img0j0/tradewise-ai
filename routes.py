@@ -991,6 +991,19 @@ def check_alerts():
         logger.error(f"Error checking alerts: {e}")
         return jsonify({'success': False, 'error': str(e)}), 500
 
+@app.route('/api/alerts/delete/<alert_id>', methods=['DELETE'])
+def delete_alert(alert_id):
+    """Delete a specific alert"""
+    try:
+        success = smart_stock_alerts.delete_alert(alert_id)
+        if success:
+            return jsonify({'success': True, 'message': 'Alert deleted successfully'})
+        else:
+            return jsonify({'success': False, 'error': 'Alert not found'}), 404
+    except Exception as e:
+        logger.error(f"Error deleting alert {alert_id}: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
 @app.route('/api/alerts/create', methods=['POST'])
 @login_required
 def create_alert():
