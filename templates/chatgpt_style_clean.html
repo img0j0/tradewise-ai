@@ -99,6 +99,54 @@
             background: rgba(255, 255, 255, 0.2);
         }
 
+        /* Tools Dropdown */
+        .tools-dropdown {
+            position: relative;
+        }
+
+        .tools-dropdown-content {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: rgba(26, 26, 26, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            min-width: 200px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            display: none;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+
+        .tools-dropdown-content.show {
+            display: block;
+        }
+
+        .tools-dropdown-item {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.9rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .tools-dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .tools-dropdown-item:hover {
+            background: rgba(139, 92, 246, 0.1);
+        }
+
+        .tools-dropdown-item span {
+            font-weight: 500;
+        }
+
         /* Main content centered like ChatGPT */
         .main-content {
             flex: 1;
@@ -346,7 +394,33 @@
             <div class="brand-name">TradeWise AI</div>
             <div class="header-right">
                 <button class="crown-btn" onclick="showUpgrade()">👑</button>
-                <button class="tools-btn" onclick="showTools()">✕</button>
+                <div class="tools-dropdown">
+                    <button class="tools-btn" onclick="toggleToolsDropdown()">✕</button>
+                    <div class="tools-dropdown-content" id="tools-dropdown">
+                        <div class="tools-dropdown-item" onclick="showProfile()">
+                            👤 <span>Profile</span>
+                        </div>
+                        <div class="tools-dropdown-item" onclick="showPortfolio()">
+                            📊 <span>Portfolio</span>
+                        </div>
+                        <div class="tools-dropdown-item" onclick="showWatchlist()">
+                            👁️ <span>Watchlist</span>
+                        </div>
+                        <div class="tools-dropdown-item" onclick="showSettings()">
+                            ⚙️ <span>Settings</span>
+                        </div>
+                        <div class="tools-dropdown-item" onclick="showTradingHistory()">
+                            📈 <span>Trading History</span>
+                        </div>
+                        <hr style="margin: 10px 0; border-color: rgba(255,255,255,0.1);">
+                        <div class="tools-dropdown-item" onclick="showHelp()">
+                            ❓ <span>Help</span>
+                        </div>
+                        <div class="tools-dropdown-item" onclick="logout()">
+                            🚪 <span>Logout</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </header>
 
@@ -551,9 +625,50 @@
             alert('Upgrade to premium features coming soon!');
         }
 
-        function showTools() {
-            alert('Tools menu coming soon!');
+        function toggleToolsDropdown() {
+            const dropdown = document.getElementById('tools-dropdown');
+            dropdown.classList.toggle('show');
         }
+
+        function showProfile() {
+            window.location.href = '/profile';
+        }
+
+        function showPortfolio() {
+            window.location.href = '/portfolio';
+        }
+
+        function showWatchlist() {
+            window.location.href = '/watchlist';
+        }
+
+        function showSettings() {
+            window.location.href = '/settings';
+        }
+
+        function showTradingHistory() {
+            window.location.href = '/trading-history';
+        }
+
+        function showHelp() {
+            window.location.href = '/help';
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                window.location.href = '/logout';
+            }
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('tools-dropdown');
+            const toolsBtn = document.querySelector('.tools-btn');
+            
+            if (dropdown && !dropdown.contains(event.target) && !toolsBtn.contains(event.target)) {
+                dropdown.classList.remove('show');
+            }
+        });
     </script>
 </body>
 </html>

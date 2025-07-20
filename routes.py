@@ -190,6 +190,41 @@ def original_interface():
     """Original complex interface for reference"""
     return render_template('chatgpt_style_search.html')
 
+@app.route('/profile')
+def profile_page():
+    """User profile page"""
+    return render_template('profile.html')
+
+@app.route('/portfolio')
+def portfolio_page():
+    """Portfolio management page"""
+    return render_template('portfolio.html')
+
+@app.route('/watchlist')
+def watchlist_page():
+    """Watchlist page"""
+    return render_template('watchlist.html')
+
+@app.route('/settings')
+def settings_page():
+    """Account settings page"""
+    return render_template('settings.html')
+
+@app.route('/trading-history')
+def trading_history_page():
+    """Trading history page"""
+    return render_template('trading_history.html')
+
+@app.route('/help')
+def help_page():
+    """Help and support page"""
+    return render_template('help.html')
+
+@app.route('/logout')
+def user_logout():
+    """Logout user"""
+    return redirect('/')
+
 @app.route('/test')
 def test_page():
     """Clean test page to verify HTML rendering"""
@@ -5745,7 +5780,7 @@ def stock_search_api():
         
         # Get AI insights
         ai_engine = AIInsightsEngine()
-        insights = ai_engine.get_insights(query.upper())
+        insights = ai_engine.get_insights(query.upper(), stock_data)
         
         # Combine data
         response = {
