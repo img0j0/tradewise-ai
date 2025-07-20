@@ -6,6 +6,10 @@
     <title>TradeWise AI - AI-Powered Trading Platform</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/premium_features.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/tier_styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/institutional_ui_optimization.css') }}">
     <style>
         * {
             margin: 0;
@@ -74,6 +78,15 @@
             display: flex;
             align-items: center;
             gap: 1rem;
+        }
+
+        .subscription-status {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .crown-upgrade-button {
@@ -449,6 +462,7 @@
             <span class="tagline">AI-Powered Trading Platform</span>
         </div>
         <div class="header-actions">
+            <span class="subscription-status">Free Features: Basic</span>
             <a href="/subscription" class="crown-upgrade-button">
                 <i class="fas fa-crown"></i>
             </a>
@@ -476,70 +490,35 @@
             </div>
         </div>
 
-        <div class="dropdown-navigation">
-            <div class="dropdown-container">
-                <button class="dropdown-button" onclick="toggleDropdown('popular-stocks')">
-                    <i class="fas fa-star"></i>
-                    Popular Stocks
+        <!-- Professional Dropdown Navigation -->
+        <div class="institutional-nav">
+            <div class="institutional-dropdown">
+                <button class="institutional-dropdown-toggle" data-dropdown="popular-stocks">
+                    <span><i class="fas fa-star"></i> Popular Stocks</span>
                     <i class="fas fa-chevron-down"></i>
                 </button>
-                <div class="dropdown-content" id="popular-stocks-dropdown">
-                    <div class="stock-card" onclick="searchStock('AAPL')">
-                        <h4>Apple Inc. (AAPL)</h4>
-                        <p>$150.00 <span style="color: #10b981;">+2.5%</span></p>
-                    </div>
-                    <div class="stock-card" onclick="searchStock('TSLA')">
-                        <h4>Tesla Inc. (TSLA)</h4>
-                        <p>$250.00 <span style="color: #ef4444;">-1.2%</span></p>
-                    </div>
-                    <div class="stock-card" onclick="searchStock('NVDA')">
-                        <h4>NVIDIA Corp. (NVDA)</h4>
-                        <p>$400.00 <span style="color: #10b981;">+5.8%</span></p>
-                    </div>
+                <div class="dropdown-container" id="popular-stocks" style="display: none;">
+                    <!-- Content loaded dynamically -->
                 </div>
             </div>
 
-            <div class="dropdown-container">
-                <button class="dropdown-button" onclick="toggleDropdown('investment-themes')">
-                    <i class="fas fa-chart-line"></i>
-                    Investment Themes
+            <div class="institutional-dropdown">
+                <button class="institutional-dropdown-toggle" data-dropdown="investment-themes">
+                    <span><i class="fas fa-chart-line"></i> Investment Themes</span>
                     <i class="fas fa-chevron-down"></i>
                 </button>
-                <div class="dropdown-content" id="investment-themes-dropdown">
-                    <div class="theme-card">
-                        <h4>AI & Machine Learning</h4>
-                        <p>Growth: <span style="color: #10b981;">+15.2%</span></p>
-                    </div>
-                    <div class="theme-card">
-                        <h4>Clean Energy</h4>
-                        <p>Growth: <span style="color: #10b981;">+8.7%</span></p>
-                    </div>
-                    <div class="theme-card">
-                        <h4>Cybersecurity</h4>
-                        <p>Growth: <span style="color: #10b981;">+12.1%</span></p>
-                    </div>
+                <div class="dropdown-container" id="investment-themes" style="display: none;">
+                    <!-- Content loaded dynamically -->
                 </div>
             </div>
 
-            <div class="dropdown-container">
-                <button class="dropdown-button" onclick="toggleDropdown('market-insights')">
-                    <i class="fas fa-brain"></i>
-                    Market Insights
+            <div class="institutional-dropdown">
+                <button class="institutional-dropdown-toggle" data-dropdown="market-insights">
+                    <span><i class="fas fa-brain"></i> Market Insights</span>
                     <i class="fas fa-chevron-down"></i>
                 </button>
-                <div class="dropdown-content" id="market-insights-dropdown">
-                    <div class="insight-card">
-                        <h4>Market Sentiment</h4>
-                        <p>Current: <span style="color: #10b981;">Bullish</span></p>
-                    </div>
-                    <div class="insight-card">
-                        <h4>Volatility Index</h4>
-                        <p>Level: <span style="color: #f59e0b;">Moderate</span></p>
-                    </div>
-                    <div class="insight-card">
-                        <h4>AI Opportunities</h4>
-                        <p>Score: <span style="color: #10b981;">8.5/10</span></p>
-                    </div>
+                <div class="dropdown-container" id="market-insights" style="display: none;">
+                    <!-- Content loaded dynamically -->
                 </div>
             </div>
         </div>
@@ -570,6 +549,9 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/ai_stock_search.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/institutional_dropdown_system.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/tier_integration.js') }}"></script>
     <script>
         let currentDropdown = null;
 
@@ -642,12 +624,12 @@
             const resultDiv = document.getElementById('ai-result');
             
             if (!symbol) {
-                alert('Please enter a stock symbol');
+                showNotification('Please enter a stock symbol', 'warning');
                 return;
             }
 
             resultDiv.style.display = 'block';
-            resultDiv.innerHTML = '<div style="text-align: center; padding: 2rem;"><i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: #60a5fa;"></i><br><br>Analyzing ' + symbol + '...</div>';
+            resultDiv.innerHTML = '<div style="text-align: center; padding: 2rem;"><i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: #60a5fa;"></i><br><br>Analyzing ' + symbol + ' with AI...</div>';
 
             try {
                 const response = await fetch('/api/search-stock', {
@@ -664,13 +646,50 @@
 
                 if (data.success) {
                     displayStockResult(data.data);
+                    showNotification('AI analysis complete for ' + symbol, 'success');
                 } else {
                     resultDiv.innerHTML = '<div style="text-align: center; padding: 2rem; color: #ef4444;"><i class="fas fa-exclamation-triangle" style="font-size: 2rem;"></i><br><br>' + (data.message || 'Unable to find stock data') + '</div>';
+                    showNotification(data.message || 'Unable to find stock data', 'error');
                 }
             } catch (error) {
                 console.error('Search error:', error);
                 resultDiv.innerHTML = '<div style="text-align: center; padding: 2rem; color: #ef4444;"><i class="fas fa-exclamation-triangle" style="font-size: 2rem;"></i><br><br>Error searching for stock. Please try again.</div>';
+                showNotification('Error searching for stock. Please try again.', 'error');
             }
+        }
+
+        function showNotification(message, type = 'info') {
+            // Simple notification system
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 1rem 1.5rem;
+                border-radius: 10px;
+                color: white;
+                font-weight: 500;
+                z-index: 10000;
+                backdrop-filter: blur(10px);
+                animation: slideInRight 0.3s ease;
+            `;
+            
+            const colors = {
+                success: 'background: rgba(16, 185, 129, 0.9); border: 1px solid #10b981;',
+                error: 'background: rgba(239, 68, 68, 0.9); border: 1px solid #ef4444;',
+                warning: 'background: rgba(245, 158, 11, 0.9); border: 1px solid #f59e0b;',
+                info: 'background: rgba(59, 130, 246, 0.9); border: 1px solid #3b82f6;'
+            };
+            
+            notification.style.cssText += colors[type] || colors.info;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOutRight 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
         }
 
         function displayStockResult(data) {
@@ -713,15 +732,33 @@
         }
 
         function showBuyModal(symbol, name, price, recommendation, confidence) {
-            alert(`Buy modal for ${symbol} would open here. Price: $${price}, Recommendation: ${recommendation}`);
+            showNotification(`Opening buy modal for ${symbol} - ${recommendation} with ${confidence}% confidence`, 'info');
+            // Integration with existing purchase modal system
+            if (typeof showPurchaseModal !== 'undefined') {
+                showPurchaseModal(symbol, name, price, recommendation, confidence);
+            } else {
+                alert(`Buy modal for ${symbol} would open here. Price: $${price}, Recommendation: ${recommendation}`);
+            }
         }
 
         function addToWatchlist(symbol, name, price) {
-            alert(`${symbol} would be added to your watchlist`);
+            showNotification(`Adding ${symbol} to your watchlist`, 'info');
+            // Integration with existing watchlist system
+            if (typeof addToWatchlist !== 'undefined') {
+                addToWatchlist(symbol, name, price);
+            } else {
+                showNotification(`${symbol} added to watchlist`, 'success');
+            }
         }
 
         function getMoreAnalysis(symbol) {
-            alert(`Detailed analysis for ${symbol} would be displayed`);
+            showNotification(`Loading detailed analysis for ${symbol}`, 'info');
+            // Integration with advanced analytics
+            if (typeof showAdvancedAnalysis !== 'undefined') {
+                showAdvancedAnalysis(symbol);
+            } else {
+                alert(`Detailed analysis for ${symbol} would be displayed`);
+            }
         }
 
         // Close dropdowns when clicking outside
@@ -741,6 +778,24 @@
         // Initialize the interface
         document.addEventListener('DOMContentLoaded', function() {
             console.log('TradeWise AI interface loaded successfully');
+            
+            // Initialize institutional dropdown system if available
+            if (typeof InstitutionalDropdownSystem !== 'undefined') {
+                window.institutionalDropdowns = new InstitutionalDropdownSystem();
+                console.log('Institutional dropdown system initialized');
+            }
+            
+            // Initialize tier integration if available
+            if (typeof TierIntegrationManager !== 'undefined') {
+                window.tierIntegration = new TierIntegrationManager();
+                console.log('Tier integration initialized');
+            }
+            
+            // Initialize AI stock search if available
+            if (typeof initializeStockSearch !== 'undefined') {
+                initializeStockSearch();
+                console.log('AI stock search initialized');
+            }
         });
     </script>
 </body>
