@@ -190,6 +190,202 @@ def original_interface():
     """Original complex interface for reference"""
     return render_template('chatgpt_style_search.html')
 
+@app.route('/login')
+def login_page():
+    """User login page"""
+    response = make_response(render_template('login.html'))
+    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '0'
+    return response
+
+@app.route('/register')
+def register_page():
+    """User registration page"""
+    response = make_response(render_template('register.html'))
+    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '0'
+    return response
+
+@app.route('/api/login', methods=['POST'])
+def api_login():
+    """Handle user login"""
+    try:
+        data = request.json
+        username = data.get('username')
+        password = data.get('password')
+        
+        # Demo login (in production, use proper authentication)
+        if username == 'demo' and password == 'demo123':
+            return jsonify({
+                'success': True,
+                'user': {
+                    'id': 1,
+                    'username': 'demo',
+                    'email': 'demo@tradewise.ai'
+                }
+            })
+        else:
+            return jsonify({'success': False, 'error': 'Invalid credentials'})
+            
+    except Exception as e:
+        logger.error(f"Login error: {e}")
+        return jsonify({'success': False, 'error': 'Login failed'})
+
+@app.route('/api/register', methods=['POST'])
+def api_register():
+    """Handle user registration"""
+    try:
+        data = request.json
+        username = data.get('username')
+        email = data.get('email')
+        password = data.get('password')
+        
+        # In production, you would:
+        # 1. Validate input
+        # 2. Check if user exists
+        # 3. Hash password
+        # 4. Save to database
+        # 5. Create user account with starting balance
+        
+        # For demo, just return success
+        return jsonify({
+            'success': True,
+            'message': 'Account created successfully'
+        })
+        
+    except Exception as e:
+        logger.error(f"Registration error: {e}")
+        return jsonify({'success': False, 'error': 'Registration failed'})
+
+@app.route('/api/buy-stock', methods=['POST'])
+def api_buy_stock():
+    """Handle stock purchase"""
+    try:
+        data = request.json
+        symbol = data.get('symbol')
+        shares = int(data.get('shares', 0))
+        price = float(data.get('price', 0))
+        
+        total_cost = shares * price
+        
+        # In production, you would:
+        # 1. Verify user authentication
+        # 2. Check account balance
+        # 3. Execute trade
+        # 4. Update portfolio
+        # 5. Record transaction
+        
+        # For demo, simulate successful purchase
+        return jsonify({
+            'success': True,
+            'message': f'Successfully purchased {shares} shares of {symbol}',
+            'transaction': {
+                'symbol': symbol,
+                'shares': shares,
+                'price': price,
+                'total_cost': total_cost
+            }
+        })
+        
+    except Exception as e:
+        logger.error(f"Buy stock error: {e}")
+        return jsonify({'success': False, 'error': 'Purchase failed'})
+
+@app.route('/api/create-checkout-session', methods=['POST'])
+def create_checkout_session():
+    """Create Stripe checkout session for adding funds"""
+    try:
+        import stripe
+        import os
+        
+        stripe.api_key = os.environ.get('STRIPE_SECRET_KEY')
+        
+        data = request.json
+        amount = int(data.get('amount', 0))
+        
+        if amount < 100:
+            return jsonify({'error': 'Minimum amount is $100'})
+        
+        # Get domain for redirect URLs
+        domain = request.headers.get('Host')
+        protocol = 'https' if request.headers.get('X-Forwarded-Proto') == 'https' else 'http'
+        base_url = f"{protocol}://{domain}"
+        
+        checkout_session = stripe.checkout.Session.create(
+            payment_method_types=['card'],
+            line_items=[{
+                'price_data': {
+                    'currency': 'usd',
+                    'product_data': {
+                        'name': 'TradeWise AI - Add Funds',
+                        'description': f'Add ${amount} to your trading account',
+                    },
+                    'unit_amount': amount * 100,  # Stripe uses cents
+                },
+                'quantity': 1,
+            }],
+            mode='payment',
+            success_url=f'{base_url}/payment-success?amount={amount}',
+            cancel_url=f'{base_url}/',
+        )
+        
+        return jsonify({'url': checkout_session.url})
+        
+    except Exception as e:
+        logger.error(f"Stripe checkout error: {e}")
+        return jsonify({'error': 'Failed to create checkout session'})
+
+@app.route('/payment-success')
+def payment_success():
+    """Payment success page"""
+    amount = request.args.get('amount', '0')
+    return f'''
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Payment Successful - TradeWise AI</title>
+        <style>
+            body {{
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+                background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+                color: white;
+                height: 100vh;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                margin: 0;
+            }}
+            .success-container {{
+                text-align: center;
+                background: rgba(255,255,255,0.05);
+                border-radius: 20px;
+                padding: 60px 40px;
+                max-width: 500px;
+            }}
+            .checkmark {{
+                font-size: 4rem;
+                color: #10b981;
+                margin-bottom: 20px;
+            }}
+        </style>
+    </head>
+    <body>
+        <div class="success-container">
+            <div class="checkmark">✓</div>
+            <h1 style="color: #10b981; margin-bottom: 20px;">Payment Successful!</h1>
+            <p style="font-size: 1.2rem; margin-bottom: 30px;">
+                ${amount} has been added to your trading account.
+            </p>
+            <button onclick="window.location.href='/'" style="padding: 15px 30px; background: linear-gradient(45deg, #8b5cf6, #06b6d4); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 16px;">
+                Continue Trading
+            </button>
+        </div>
+    </body>
+    </html>
+    '''
+
 
 
 @app.route('/profile')

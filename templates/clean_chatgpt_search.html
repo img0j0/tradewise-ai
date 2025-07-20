@@ -272,6 +272,7 @@
             <button class="tool-btn" onclick="openPortfolio()" title="Portfolio">📊</button>
             <button class="tool-btn" onclick="openWatchlist()" title="Watchlist">⭐</button>
             <button class="tool-btn" onclick="openAccount()" title="Account">👤</button>
+            <button class="tool-btn" onclick="window.location.href='/login'" title="Login">🔐</button>
         </div>
         
         <div class="logo">TradeWise AI</div>
@@ -365,6 +366,9 @@
         }
         
         function displayResults(data) {
+            // Store current stock data for buy modal
+            currentStock = data;
+            
             const changeClass = data.change >= 0 ? '#10b981' : '#ef4444';
             const changeSymbol = data.change >= 0 ? '+' : '';
             
@@ -423,8 +427,11 @@
                 </div>
                 
                 <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); text-align: center;">
-                    <button onclick="closeAnalysis()" style="padding: 12px 30px; background: linear-gradient(45deg, #8b5cf6, #06b6d4); color: white; border: none; border-radius: 25px; cursor: pointer; font-weight: 600;">
+                    <button onclick="closeAnalysis()" style="padding: 12px 30px; background: linear-gradient(45deg, #8b5cf6, #06b6d4); color: white; border: none; border-radius: 25px; cursor: pointer; font-weight: 600; margin-right: 10px;">
                         Close Analysis
+                    </button>
+                    <button onclick="showBuyModal()" style="padding: 12px 30px; background: linear-gradient(45deg, #10b981, #059669); color: white; border: none; border-radius: 25px; cursor: pointer; font-weight: 600;">
+                        Buy Stock
                     </button>
                 </div>
             `;
@@ -432,6 +439,10 @@
         
         // Auto-focus search input
         document.getElementById('search-input').focus();
+        
+        // Store current stock data for buy modal
+        let currentStock = null;
+        let selectedAmount = 0;
         
         // Tool functions
         function openPortfolio() {
@@ -514,9 +525,196 @@
                         <button onclick="closeAnalysis()" style="padding: 12px 30px; background: linear-gradient(45deg, #8b5cf6, #06b6d4); color: white; border: none; border-radius: 25px; cursor: pointer; font-weight: 600;">
                             Close
                         </button>
+                        ${title === 'Portfolio' ? '<button onclick="showPaymentModal(); closeAnalysis();" style="padding: 12px 30px; background: linear-gradient(45deg, #10b981, #059669); color: white; border: none; border-radius: 25px; cursor: pointer; font-weight: 600; margin-left: 10px;">Add Funds</button>' : ''}
                     </div>
                 </div>
             `;
+        }
+
+        // Buy Stock Modal Functions
+        function showBuyModal() {
+            if (!currentStock) {
+                alert('Please search for a stock first');
+                return;
+            }
+            
+            closeAnalysis(); // Close analysis overlay first
+            
+            // Create and show buy modal
+            const modal = document.createElement('div');
+            modal.id = 'buy-modal';
+            modal.innerHTML = `
+                <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; display: flex; justify-content: center; align-items: center;">
+                    <div style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-radius: 20px; padding: 40px; width: 90%; max-width: 500px; color: white; box-shadow: 0 25px 50px rgba(0,0,0,0.5);">
+                        <h2 style="margin-bottom: 30px; text-align: center; color: #10b981;">Buy Stock</h2>
+                        
+                        <div style="background: rgba(255,255,255,0.05); border-radius: 10px; padding: 20px; margin-bottom: 30px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <div style="font-size: 1.2rem; font-weight: 600;">${currentStock.name}</div>
+                                    <div style="opacity: 0.7; margin-top: 5px;">${currentStock.symbol}</div>
+                                </div>
+                                <div style="text-align: right;">
+                                    <div style="font-size: 1.5rem; font-weight: 700; color: #10b981;">$${currentStock.price.toFixed(2)}</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <form onsubmit="handleBuyStock(event)">
+                            <div style="margin-bottom: 20px;">
+                                <label style="display: block; margin-bottom: 5px; opacity: 0.8;">Number of Shares</label>
+                                <input type="number" id="shares-input" min="1" value="1" required style="width: 100%; padding: 15px; border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; background: rgba(255,255,255,0.05); color: white; font-size: 16px; outline: none;">
+                            </div>
+                            
+                            <div style="background: rgba(255,255,255,0.05); border-radius: 10px; padding: 20px; margin-bottom: 30px;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                    <span>Total Cost:</span>
+                                    <span id="total-cost-display" style="font-weight: 700; color: #10b981;">$${currentStock.price.toFixed(2)}</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span>Account Balance:</span>
+                                    <span style="font-weight: 700;">$100,000.00</span>
+                                </div>
+                            </div>
+                            
+                            <div style="display: flex; gap: 15px;">
+                                <button type="button" onclick="closeBuyModal()" style="flex: 1; padding: 15px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; color: white; cursor: pointer;">
+                                    Cancel
+                                </button>
+                                <button type="submit" style="flex: 2; padding: 15px; background: linear-gradient(45deg, #10b981, #059669); border: none; border-radius: 10px; color: white; font-weight: 600; cursor: pointer;">
+                                    Buy Stock
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            
+            // Add input listener for total cost calculation
+            document.getElementById('shares-input').addEventListener('input', function() {
+                const shares = parseInt(this.value) || 0;
+                const total = shares * currentStock.price;
+                document.getElementById('total-cost-display').textContent = `$${total.toFixed(2)}`;
+            });
+        }
+
+        function closeBuyModal() {
+            const modal = document.getElementById('buy-modal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        async function handleBuyStock(event) {
+            event.preventDefault();
+            
+            const shares = parseInt(document.getElementById('shares-input').value);
+            const totalCost = shares * currentStock.price;
+            
+            if (totalCost > 100000) {
+                alert('Insufficient funds');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/buy-stock', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        symbol: currentStock.symbol,
+                        shares: shares,
+                        price: currentStock.price
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert(`Successfully purchased ${shares} shares of ${currentStock.symbol} for $${totalCost.toFixed(2)}`);
+                    closeBuyModal();
+                } else {
+                    alert(data.error || 'Purchase failed');
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        // Payment Modal Functions
+        function showPaymentModal() {
+            const modal = document.createElement('div');
+            modal.id = 'payment-modal';
+            modal.innerHTML = `
+                <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; display: flex; justify-content: center; align-items: center;">
+                    <div style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-radius: 20px; padding: 40px; width: 90%; max-width: 600px; color: white; box-shadow: 0 25px 50px rgba(0,0,0,0.5);">
+                        <h2 style="margin-bottom: 30px; text-align: center; color: #8b5cf6;">Add Funds</h2>
+                        
+                        <div style="background: rgba(255,255,255,0.05); border-radius: 10px; padding: 20px; margin-bottom: 30px; text-align: center;">
+                            <div style="opacity: 0.7; margin-bottom: 5px;">Current Balance</div>
+                            <div style="font-size: 2rem; font-weight: 700; color: #10b981;">$100,000.00</div>
+                            <div style="opacity: 0.7; margin-top: 5px;">Virtual Trading Balance</div>
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                            <button onclick="selectPaymentAmount(1000)" class="amount-btn" style="padding: 15px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; color: white; cursor: pointer;">$1,000</button>
+                            <button onclick="selectPaymentAmount(5000)" class="amount-btn" style="padding: 15px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; color: white; cursor: pointer;">$5,000</button>
+                            <button onclick="selectPaymentAmount(10000)" class="amount-btn" style="padding: 15px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; color: white; cursor: pointer;">$10,000</button>
+                        </div>
+                        
+                        <input type="number" id="custom-amount-input" placeholder="Enter custom amount" min="100" style="width: 100%; padding: 15px; border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; background: rgba(255,255,255,0.05); color: white; font-size: 16px; outline: none; margin-bottom: 20px;">
+                        
+                        <div style="display: flex; gap: 15px;">
+                            <button onclick="closePaymentModal()" style="flex: 1; padding: 15px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; color: white; cursor: pointer;">Cancel</button>
+                            <button onclick="processStripePayment()" style="flex: 2; padding: 15px; background: linear-gradient(45deg, #8b5cf6, #06b6d4); border: none; border-radius: 10px; color: white; font-weight: 600; cursor: pointer;">Add Funds with Stripe</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function closePaymentModal() {
+            const modal = document.getElementById('payment-modal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        function selectPaymentAmount(amount) {
+            selectedAmount = amount;
+            document.getElementById('custom-amount-input').value = amount;
+        }
+
+        async function processStripePayment() {
+            const amount = document.getElementById('custom-amount-input').value || selectedAmount;
+            
+            if (!amount || amount < 100) {
+                alert('Please enter an amount of at least $100');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/create-checkout-session', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ amount: amount })
+                });
+                
+                const data = await response.json();
+                
+                if (data.url) {
+                    window.location.href = data.url;
+                } else {
+                    alert('Error creating payment session');
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
         }
     </script>
 </body>

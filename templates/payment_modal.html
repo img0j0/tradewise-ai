@@ -1,0 +1,138 @@
+<!-- Payment Methods Modal -->
+<div id="payment-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; justify-content: center; align-items: center;">
+    <div style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-radius: 20px; padding: 40px; width: 90%; max-width: 600px; color: white; box-shadow: 0 25px 50px rgba(0,0,0,0.5);">
+        <h2 style="margin-bottom: 30px; text-align: center; color: #8b5cf6;">Payment Methods</h2>
+        
+        <!-- Current Balance -->
+        <div style="background: rgba(255,255,255,0.05); border-radius: 10px; padding: 20px; margin-bottom: 30px; text-align: center;">
+            <div style="opacity: 0.7; margin-bottom: 5px;">Current Balance</div>
+            <div style="font-size: 2rem; font-weight: 700; color: #10b981;">$100,000.00</div>
+            <div style="opacity: 0.7; margin-top: 5px;">Virtual Trading Balance</div>
+        </div>
+        
+        <!-- Add Funds Section -->
+        <div style="background: rgba(255,255,255,0.05); border-radius: 10px; padding: 30px; margin-bottom: 30px;">
+            <h3 style="margin-bottom: 20px; color: #06b6d4;">Add Funds</h3>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                <button onclick="selectAmount(1000)" class="amount-btn" data-amount="1000" style="padding: 15px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; color: white; cursor: pointer; transition: all 0.3s ease;">
+                    $1,000
+                </button>
+                <button onclick="selectAmount(5000)" class="amount-btn" data-amount="5000" style="padding: 15px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; color: white; cursor: pointer; transition: all 0.3s ease;">
+                    $5,000
+                </button>
+                <button onclick="selectAmount(10000)" class="amount-btn" data-amount="10000" style="padding: 15px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; color: white; cursor: pointer; transition: all 0.3s ease;">
+                    $10,000
+                </button>
+                <button onclick="selectAmount(25000)" class="amount-btn" data-amount="25000" style="padding: 15px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; color: white; cursor: pointer; transition: all 0.3s ease;">
+                    $25,000
+                </button>
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 5px; opacity: 0.8;">Custom Amount</label>
+                <input type="number" id="custom-amount" placeholder="Enter amount" min="100" style="width: 100%; padding: 15px; border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; background: rgba(255,255,255,0.05); color: white; font-size: 16px; outline: none;">
+            </div>
+            
+            <button onclick="processPayment()" style="width: 100%; padding: 15px; background: linear-gradient(45deg, #8b5cf6, #06b6d4); border: none; border-radius: 10px; color: white; font-weight: 600; cursor: pointer; font-size: 16px;">
+                Add Funds with Stripe
+            </button>
+        </div>
+        
+        <!-- Payment Methods -->
+        <div style="background: rgba(255,255,255,0.05); border-radius: 10px; padding: 30px; margin-bottom: 30px;">
+            <h3 style="margin-bottom: 20px; color: #06b6d4;">Saved Payment Methods</h3>
+            
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 10px; margin-bottom: 15px;">
+                <div style="display: flex; align-items: center;">
+                    <div style="width: 40px; height: 25px; background: linear-gradient(45deg, #1e40af, #3b82f6); border-radius: 5px; margin-right: 15px; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.8rem; font-weight: bold;">
+                        VISA
+                    </div>
+                    <div>
+                        <div style="font-weight: 600;">•••• •••• •••• 4242</div>
+                        <div style="opacity: 0.7; font-size: 0.9rem;">Expires 12/25</div>
+                    </div>
+                </div>
+                <button onclick="removeCard()" style="background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.5); color: #ef4444; padding: 8px 15px; border-radius: 5px; cursor: pointer;">
+                    Remove
+                </button>
+            </div>
+            
+            <button onclick="addPaymentMethod()" style="width: 100%; padding: 15px; background: rgba(255,255,255,0.1); border: 1px dashed rgba(255,255,255,0.3); border-radius: 10px; color: white; cursor: pointer;">
+                + Add New Payment Method
+            </button>
+        </div>
+        
+        <div style="display: flex; gap: 15px;">
+            <button onclick="closePaymentModal()" style="flex: 1; padding: 15px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; color: white; cursor: pointer;">
+                Close
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+let selectedAmount = 0;
+
+function selectAmount(amount) {
+    selectedAmount = amount;
+    document.getElementById('custom-amount').value = amount;
+    
+    // Update button styles
+    document.querySelectorAll('.amount-btn').forEach(btn => {
+        btn.style.background = 'rgba(255,255,255,0.1)';
+        btn.style.borderColor = 'rgba(255,255,255,0.2)';
+    });
+    
+    const selectedBtn = document.querySelector(`[data-amount="${amount}"]`);
+    selectedBtn.style.background = 'linear-gradient(45deg, #8b5cf6, #06b6d4)';
+    selectedBtn.style.borderColor = '#8b5cf6';
+}
+
+function showPaymentModal() {
+    document.getElementById('payment-modal').style.display = 'flex';
+}
+
+function closePaymentModal() {
+    document.getElementById('payment-modal').style.display = 'none';
+}
+
+async function processPayment() {
+    const amount = document.getElementById('custom-amount').value || selectedAmount;
+    
+    if (!amount || amount < 100) {
+        alert('Please enter an amount of at least $100');
+        return;
+    }
+    
+    try {
+        const response = await fetch('/api/create-checkout-session', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ amount: amount })
+        });
+        
+        const data = await response.json();
+        
+        if (data.url) {
+            window.location.href = data.url;
+        } else {
+            alert('Error creating payment session');
+        }
+    } catch (error) {
+        alert('Error: ' + error.message);
+    }
+}
+
+function addPaymentMethod() {
+    alert('Add Payment Method feature will be available soon!');
+}
+
+function removeCard() {
+    if (confirm('Are you sure you want to remove this payment method?')) {
+        alert('Payment method removed successfully!');
+    }
+}
+</script>
