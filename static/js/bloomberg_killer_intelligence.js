@@ -1,24 +1,24 @@
-// Bloomberg Terminal Killer - Advanced Intelligence System
+// Institutional Market Terminal - Advanced Intelligence System
 document.addEventListener('DOMContentLoaded', function() {
     // Check if interface is stabilized first
-    if (sessionStorage.getItem('bloombergKiller') === 'active') {
+    if (sessionStorage.getItem('institutionalTerminal') === 'active') {
         setTimeout(function() {
-            addBloombergKillerFeatures();
+            addInstitutionalTerminalFeatures();
             addRealTimeTerminalInterface();
             addInstitutionalGradeAnalytics();
         }, 2000);
     } else {
         // Wait for stabilizer
         setTimeout(function() {
-            addBloombergKillerFeatures();
+            addInstitutionalTerminalFeatures();
             addRealTimeTerminalInterface();
             addInstitutionalGradeAnalytics();
         }, 4000);
     }
 });
 
-function addBloombergKillerFeatures() {
-    console.log('Activating Bloomberg Terminal Killer features...');
+function addInstitutionalTerminalFeatures() {
+    console.log('Activating Institutional Market Terminal features...');
     
     // Add professional terminal header
     addTerminalHeader();
@@ -38,17 +38,17 @@ function addBloombergKillerFeatures() {
 
 function addTerminalHeader() {
     const header = document.querySelector('.header-content, .d-flex.justify-content-between');
-    if (header && !header.querySelector('.bloomberg-killer-header')) {
-        const killerHeader = document.createElement('div');
-        killerHeader.className = 'bloomberg-killer-header';
-        killerHeader.innerHTML = `
+    if (header && !header.querySelector('.institutional-terminal-header')) {
+        const terminalHeader = document.createElement('div');
+        terminalHeader.className = 'institutional-terminal-header';
+        terminalHeader.innerHTML = `
             <div style="background: linear-gradient(135deg, #1e40af, #7c3aed); padding: 6px 12px; border-radius: 6px; color: white; font-weight: 600; font-size: 0.75rem; margin-right: 10px; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 15px rgba(30, 64, 175, 0.4);">
                 <i class="fas fa-chart-line" style="color: #fbbf24;"></i>
-                BLOOMBERG KILLER
+                INSTITUTIONAL TERMINAL
                 <span style="background: rgba(255,255,255,0.2); padding: 1px 4px; border-radius: 3px; font-size: 0.6rem;">98% SAVINGS</span>
             </div>
         `;
-        header.appendChild(killerHeader);
+        header.appendChild(terminalHeader);
     }
 }
 

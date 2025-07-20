@@ -294,11 +294,11 @@ class TierIntegrationManager {
     optimizeInstitutionalLayout() {
         console.log('TierIntegrationManager: Optimizing layout for institutional users');
         
-        // Show Bloomberg Terminal section first
+        // Show Institutional Terminal section first
         const bloombergSection = document.getElementById('bloomberg-terminal-section');
         if (bloombergSection) {
             bloombergSection.style.display = 'block';
-            console.log('TierIntegrationManager: Bloomberg Terminal section enabled');
+            console.log('TierIntegrationManager: Institutional Terminal section enabled');
         }
         
         // Hide "Discover Your Next Investment" section for advanced investors
@@ -487,7 +487,7 @@ class TierIntegrationManager {
                 <div class="modal-body">
                     <div class="pricing-info">
                         <div class="price">$${content.pricing.monthly}/month</div>
-                        <div class="savings">Save ${content.pricing.savings_vs_bloomberg.percentage}% vs Bloomberg Terminal</div>
+                        <div class="savings">Save ${content.pricing.savings_vs_bloomberg.percentage}% vs Traditional Terminals</div>
                     </div>
                     <div class="benefits-list">
                         ${content.benefits[0]?.benefits?.map(benefit => `<div>✅ ${benefit}</div>`).join('') || ''}

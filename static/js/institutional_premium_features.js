@@ -39,7 +39,7 @@ function addInstitutionalHeader() {
         premiumHeader.innerHTML = `
             <div style="background: linear-gradient(135deg, #1e40af, #7c3aed); padding: 6px 12px; border-radius: 6px; color: white; font-weight: 600; font-size: 0.75rem; margin-right: 10px; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 15px rgba(30, 64, 175, 0.4); position: relative;">
                 <i class="fas fa-chart-line" style="color: #fbbf24;"></i>
-                BLOOMBERG KILLER
+                INSTITUTIONAL TERMINAL
                 <span style="background: rgba(255,255,255,0.2); padding: 1px 4px; border-radius: 3px; font-size: 0.6rem;">98% SAVINGS</span>
                 <div style="position: absolute; top: -5px; right: -5px; background: #dc2626; color: white; border-radius: 50%; width: 12px; height: 12px; font-size: 0.5rem; display: flex; align-items: center; justify-content: center; animation: pulse 2s infinite;">!</div>
             </div>
@@ -171,7 +171,7 @@ function addBloombergStyleDarkPool() {
         darkPool.innerHTML = `
             <div style="background: linear-gradient(135deg, rgba(220,38,38,0.1), rgba(153,27,27,0.1)); border: 1px solid rgba(220,38,38,0.3); border-radius: 15px; padding: 15px; margin-bottom: 15px; backdrop-filter: blur(10px); position: relative;">
                 <div style="position: absolute; top: 10px; right: 10px; background: rgba(220,38,38,0.8); color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.6rem; font-weight: 600;">
-                    BLOOMBERG KILLER
+                    INSTITUTIONAL TERMINAL
                 </div>
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                     <h4 style="color: #dc2626; font-weight: 700; margin: 0; display: flex; align-items: center; gap: 8px; font-size: 1rem;">
