@@ -63,17 +63,17 @@
         @media (max-width: 768px) {
             .tools-menu {
                 position: fixed;
-                top: 15px;
+                top: 20px;
                 left: 50%;
                 transform: translateX(-50%);
                 right: auto;
-                gap: 8px;
-                background: rgba(0, 0, 0, 0.3);
-                backdrop-filter: blur(15px);
-                padding: 10px 15px;
-                border-radius: 25px;
-                border: 1px solid rgba(255, 255, 255, 0.1);
-                max-width: calc(100vw - 20px);
+                gap: 12px;
+                background: none;
+                backdrop-filter: none;
+                padding: 0;
+                border-radius: 0;
+                border: none;
+                max-width: calc(100vw - 40px);
                 overflow-x: auto;
                 scrollbar-width: none;
                 -ms-overflow-style: none;
@@ -85,37 +85,42 @@
             }
             
             .tool-btn {
-                width: 40px;
-                height: 40px;
-                font-size: 1rem;
-                min-width: 40px;
+                width: 44px;
+                height: 44px;
+                font-size: 1.1rem;
+                min-width: 44px;
+                background: rgba(255, 255, 255, 0.08);
+                border: 1px solid rgba(255, 255, 255, 0.12);
+                backdrop-filter: blur(20px);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             }
             
-            .tool-btn:hover {
+            .tool-btn:hover, .tool-btn:active {
+                background: rgba(139, 92, 246, 0.15);
                 transform: scale(1.02);
+                border-color: rgba(139, 92, 246, 0.3);
             }
             
             .search-container {
-                padding-top: 80px;
+                padding-top: 90px;
             }
         }
         
         @media (max-width: 480px) {
             .tools-menu {
-                gap: 6px;
-                padding: 8px 12px;
-                top: 10px;
+                gap: 10px;
+                top: 15px;
             }
             
             .tool-btn {
-                width: 36px;
-                height: 36px;
-                font-size: 0.9rem;
-                min-width: 36px;
+                width: 42px;
+                height: 42px;
+                font-size: 1rem;
+                min-width: 42px;
             }
             
             .search-container {
-                padding-top: 70px;
+                padding-top: 80px;
             }
         }
         
