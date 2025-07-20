@@ -261,37 +261,55 @@ def api_register():
 
 @app.route('/api/buy-stock', methods=['POST'])
 def api_buy_stock():
-    """Handle stock purchase"""
+    """Execute stock purchase and add to portfolio"""
     try:
         data = request.json
-        symbol = data.get('symbol')
+        symbol = data.get('symbol', '').upper().strip()
         shares = int(data.get('shares', 0))
         price = float(data.get('price', 0))
         
+        if not symbol or shares < 1 or price <= 0:
+            return jsonify({'success': False, 'error': 'Invalid purchase parameters'})
+        
         total_cost = shares * price
         
-        # In production, you would:
-        # 1. Verify user authentication
-        # 2. Check account balance
-        # 3. Execute trade
-        # 4. Update portfolio
-        # 5. Record transaction
+        # Add to demo portfolio
+        purchase = {
+            'symbol': symbol,
+            'shares': shares,
+            'price': price,
+            'total_cost': total_cost,
+            'timestamp': time.time()
+        }
         
-        # For demo, simulate successful purchase
+        # Check if stock already exists in portfolio
+        found = False
+        for holding in demo_portfolio:
+            if holding['symbol'] == symbol:
+                # Update existing holding
+                total_shares = holding['shares'] + shares
+                total_cost_combined = (holding['shares'] * holding['price']) + total_cost
+                holding['shares'] = total_shares
+                holding['price'] = total_cost_combined / total_shares  # Average price
+                found = True
+                break
+        
+        if not found:
+            demo_portfolio.append(purchase)
+        
+        logger.info(f"Demo purchase added to portfolio: {shares} shares of {symbol} at ${price} each")
+        
         return jsonify({
             'success': True,
             'message': f'Successfully purchased {shares} shares of {symbol}',
-            'transaction': {
-                'symbol': symbol,
-                'shares': shares,
-                'price': price,
-                'total_cost': total_cost
-            }
+            'transaction_id': f'TXN_{symbol}_{shares}_{int(purchase["timestamp"])}'
         })
         
+    except ValueError:
+        return jsonify({'success': False, 'error': 'Invalid number format'})
     except Exception as e:
         logger.error(f"Buy stock error: {e}")
-        return jsonify({'success': False, 'error': 'Purchase failed'})
+        return jsonify({'success': False, 'error': 'Failed to execute purchase'})
 
 @app.route('/api/create-checkout-session', methods=['POST'])
 def create_checkout_session():
@@ -513,6 +531,73 @@ def api_remove_from_watchlist():
 
 
 
+
+# Simple in-memory storage for demo purchases
+demo_portfolio = []
+
+@app.route('/api/portfolio', methods=['GET'])
+def api_get_portfolio():
+    """Get user's portfolio with current values"""
+    try:
+        portfolio_data = []
+        total_value = 0
+        
+        for holding in demo_portfolio:
+            try:
+                # Get current price
+                import yfinance as yf
+                ticker = yf.Ticker(holding['symbol'])
+                info = ticker.info
+                hist = ticker.history(period="1d")
+                
+                if not hist.empty:
+                    current_price = float(hist['Close'].iloc[-1])
+                else:
+                    current_price = holding['price']  # Fallback to purchase price
+                
+                current_value = holding['shares'] * current_price
+                gain_loss = current_value - (holding['shares'] * holding['price'])
+                gain_loss_percent = (gain_loss / (holding['shares'] * holding['price'])) * 100
+                
+                portfolio_data.append({
+                    'symbol': holding['symbol'],
+                    'name': info.get('shortName', holding['symbol']),
+                    'shares': holding['shares'],
+                    'purchase_price': holding['price'],
+                    'current_price': current_price,
+                    'current_value': current_value,
+                    'gain_loss': gain_loss,
+                    'gain_loss_percent': gain_loss_percent
+                })
+                
+                total_value += current_value
+                
+            except Exception as e:
+                logger.error(f"Error getting current price for {holding['symbol']}: {e}")
+                # Add with purchase price as fallback
+                current_value = holding['shares'] * holding['price']
+                portfolio_data.append({
+                    'symbol': holding['symbol'],
+                    'name': holding['symbol'],
+                    'shares': holding['shares'],
+                    'purchase_price': holding['price'],
+                    'current_price': holding['price'],
+                    'current_value': current_value,
+                    'gain_loss': 0,
+                    'gain_loss_percent': 0
+                })
+                total_value += current_value
+        
+        return jsonify({
+            'success': True,
+            'holdings': portfolio_data,
+            'total_value': total_value,
+            'cash_balance': 100000 - sum(h['shares'] * h['purchase_price'] for h in demo_portfolio)
+        })
+        
+    except Exception as e:
+        logger.error(f"Portfolio error: {e}")
+        return jsonify({'success': False, 'error': 'Failed to load portfolio'})
 
 @app.route('/profile')
 def profile_page():

@@ -467,20 +467,98 @@
         
         // Tool functions
         function openPortfolio() {
-            showToolOverlay('Portfolio', `
-                <div style="text-align: center; padding: 40px;">
+            loadPortfolioData();
+        }
+        
+        async function loadPortfolioData() {
+            try {
+                // Show loading state
+                showToolOverlay('Portfolio', `
+                    <div style="text-align: center; padding: 40px;">
+                        <div class="spinner" style="margin: 0 auto 20px;"></div>
+                        <div>Loading your portfolio...</div>
+                    </div>
+                `);
+                
+                const response = await fetch('/api/portfolio');
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayPortfolio(data);
+                } else {
+                    showPortfolioError();
+                }
+            } catch (error) {
+                console.error('Portfolio error:', error);
+                showPortfolioError();
+            }
+        }
+        
+        function displayPortfolio(data) {
+            let portfolioHTML = `
+                <div style="text-align: center; padding: 20px;">
                     <h3 style="margin-bottom: 20px;">Your Portfolio</h3>
                     <div style="background: rgba(255,255,255,0.05); border-radius: 15px; padding: 25px; margin: 20px 0;">
-                        <div style="font-size: 2rem; font-weight: 700; color: #10b981; margin-bottom: 10px;">$100,000.00</div>
+                        <div style="font-size: 2rem; font-weight: 700; color: #10b981; margin-bottom: 10px;">$${data.total_value.toFixed(2)}</div>
                         <div style="opacity: 0.7;">Total Portfolio Value</div>
                     </div>
                     <div style="background: rgba(255,255,255,0.05); border-radius: 15px; padding: 20px; margin: 20px 0;">
                         <div style="opacity: 0.7; margin-bottom: 10px;">Cash Balance</div>
-                        <div style="font-size: 1.5rem; font-weight: 600;">$100,000.00</div>
+                        <div style="font-size: 1.5rem; font-weight: 600;">$${data.cash_balance.toFixed(2)}</div>
                     </div>
+            `;
+            
+            if (data.holdings.length > 0) {
+                portfolioHTML += `<div style="margin-top: 30px;">`;
+                portfolioHTML += `<h4 style="margin-bottom: 20px;">Your Holdings</h4>`;
+                
+                data.holdings.forEach(holding => {
+                    const gainColor = holding.gain_loss >= 0 ? '#10b981' : '#ef4444';
+                    const gainSymbol = holding.gain_loss >= 0 ? '+' : '';
+                    
+                    portfolioHTML += `
+                        <div style="background: rgba(255,255,255,0.05); border-radius: 10px; padding: 20px; margin-bottom: 15px; text-align: left;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                <div>
+                                    <div style="font-weight: 600; font-size: 1.1rem;">${holding.name} (${holding.symbol})</div>
+                                    <div style="opacity: 0.7; font-size: 0.9rem;">${holding.shares} shares</div>
+                                </div>
+                                <div style="text-align: right;">
+                                    <div style="font-size: 1.2rem; font-weight: 600;">$${holding.current_value.toFixed(2)}</div>
+                                    <div style="color: ${gainColor}; font-size: 0.9rem;">
+                                        ${gainSymbol}$${holding.gain_loss.toFixed(2)} (${gainSymbol}${holding.gain_loss_percent.toFixed(2)}%)
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; font-size: 0.9rem; opacity: 0.7;">
+                                <span>Avg Cost: $${holding.purchase_price.toFixed(2)}</span>
+                                <span>Current: $${holding.current_price.toFixed(2)}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                portfolioHTML += `</div>`;
+            } else {
+                portfolioHTML += `
                     <div style="margin-top: 30px; opacity: 0.7;">
                         Start investing to see your holdings here
                     </div>
+                `;
+            }
+
+            portfolioHTML += `</div>`;
+            
+            showToolOverlay('Portfolio', portfolioHTML);
+        }
+        
+        function showPortfolioError() {
+            showToolOverlay('Portfolio', `
+                <div style="text-align: center; padding: 40px;">
+                    <div style="color: #ef4444; margin-bottom: 20px;">Unable to load portfolio</div>
+                    <button onclick="loadPortfolioData()" style="padding: 10px 20px; background: linear-gradient(45deg, #8b5cf6, #06b6d4); color: white; border: none; border-radius: 10px; cursor: pointer;">
+                        Retry
+                    </button>
                 </div>
             `);
         }
