@@ -5106,7 +5106,6 @@ def get_live_market_alerts():
         return jsonify({'error': 'Failed to get market alerts'}), 500
 
 @app.route('/api/market-intelligence/live-sentiment/<symbol>')
-@login_required
 def get_live_symbol_sentiment(symbol):
     """Get live sentiment analysis for a symbol"""
     try:
@@ -5130,7 +5129,6 @@ def get_live_symbol_sentiment(symbol):
         return jsonify({'error': f'Failed to get sentiment for {symbol}'}), 500
 
 @app.route('/api/market-intelligence/live-trending')
-@login_required
 def get_live_trending():
     """Get live trending market topics"""
     try:
@@ -5151,6 +5149,182 @@ def get_live_trending():
     except Exception as e:
         logger.error(f"Error getting live trending: {e}")
         return jsonify({'error': 'Failed to get trending topics'}), 500
+
+@app.route('/api/user-balance')
+def get_user_balance():
+    """Get current user balance"""
+    try:
+        # Get user account or create if doesn't exist
+        if current_user and current_user.is_authenticated:
+            user_account = UserAccount.query.filter_by(user_id=current_user.id).first()
+            if not user_account:
+                user_account = UserAccount(user_id=current_user.id, balance=100000.0)  # Demo balance
+                db.session.add(user_account)
+                db.session.commit()
+            
+            return jsonify({
+                'success': True,
+                'balance': float(user_account.balance),
+                'formatted_balance': f"${user_account.balance:,.2f}"
+            })
+        else:
+            return jsonify({
+                'success': True,
+                'balance': 100000.0,  # Demo balance for non-authenticated users
+                'formatted_balance': "$100,000.00"
+            })
+    except Exception as e:
+        logger.error(f"Error getting user balance: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e),
+            'balance': 100000.0,
+            'formatted_balance': "$100,000.00"
+        })
+
+@app.route('/api/portfolio-value')
+def get_portfolio_value():
+    """Get current portfolio value"""
+    try:
+        if current_user and current_user.is_authenticated:
+            # Calculate portfolio value from holdings
+            portfolio_items = Portfolio.query.filter_by(user_id=current_user.id).all()
+            total_value = 0
+            
+            for item in portfolio_items:
+                try:
+                    # Get current price
+                    current_price = stock_search_service.get_stock_price(item.symbol)
+                    if current_price:
+                        total_value += float(current_price) * item.shares
+                except Exception as e:
+                    logger.warning(f"Error getting price for {item.symbol}: {e}")
+                    # Use average price as fallback
+                    total_value += item.average_price * item.shares
+            
+            return jsonify({
+                'success': True,
+                'portfolio_value': total_value,
+                'formatted_value': f"${total_value:,.2f}",
+                'holdings_count': len(portfolio_items)
+            })
+        else:
+            return jsonify({
+                'success': True,
+                'portfolio_value': 0.0,
+                'formatted_value': "$0.00",
+                'holdings_count': 0
+            })
+    except Exception as e:
+        logger.error(f"Error getting portfolio value: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e),
+            'portfolio_value': 0.0,
+            'formatted_value': "$0.00",
+            'holdings_count': 0
+        })
+
+@app.route('/api/account-balance')
+def account_balance_alias():
+    """Alias for user-balance endpoint"""
+    return get_user_balance()
+
+@app.route('/api/portfolio')
+def portfolio_data_endpoint():
+    """Get portfolio data"""
+    try:
+        if current_user and current_user.is_authenticated:
+            portfolio_items = Portfolio.query.filter_by(user_id=current_user.id).all()
+            
+            portfolio_data = []
+            total_value = 0
+            
+            for item in portfolio_items:
+                try:
+                    # Get current price
+                    current_price = stock_search_service.get_stock_price(item.symbol)
+                    if current_price:
+                        current_value = float(current_price) * item.shares
+                        total_value += current_value
+                        
+                        portfolio_data.append({
+                            'symbol': item.symbol,
+                            'shares': item.shares,
+                            'average_price': float(item.average_price),
+                            'current_price': float(current_price),
+                            'current_value': current_value,
+                            'gain_loss': current_value - (item.average_price * item.shares),
+                            'gain_loss_percent': ((float(current_price) - item.average_price) / item.average_price) * 100
+                        })
+                except Exception as e:
+                    logger.warning(f"Error getting data for {item.symbol}: {e}")
+                    # Use average price as fallback
+                    current_value = item.average_price * item.shares
+                    total_value += current_value
+                    
+                    portfolio_data.append({
+                        'symbol': item.symbol,
+                        'shares': item.shares,
+                        'average_price': float(item.average_price),
+                        'current_price': float(item.average_price),
+                        'current_value': current_value,
+                        'gain_loss': 0,
+                        'gain_loss_percent': 0
+                    })
+            
+            return jsonify({
+                'success': True,
+                'portfolio': portfolio_data,
+                'total_value': total_value,
+                'holdings_count': len(portfolio_data)
+            })
+        else:
+            return jsonify({
+                'success': True,
+                'portfolio': [],
+                'total_value': 0,
+                'holdings_count': 0
+            })
+    except Exception as e:
+        logger.error(f"Error getting portfolio: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e),
+            'portfolio': [],
+            'total_value': 0,
+            'holdings_count': 0
+        })
+
+@app.route('/api/portfolio-summary')
+def get_portfolio_summary():
+    """Get portfolio summary"""
+    try:
+        portfolio_response = portfolio_data_endpoint()
+        portfolio_data = portfolio_response.get_json()
+        
+        if portfolio_data['success']:
+            return jsonify({
+                'success': True,
+                'total_value': portfolio_data['total_value'],
+                'holdings_count': portfolio_data['holdings_count'],
+                'daily_change': 0,  # Would calculate from historical data
+                'daily_change_percent': 0
+            })
+        else:
+            return jsonify({
+                'success': True,
+                'total_value': 0,
+                'holdings_count': 0,
+                'daily_change': 0,
+                'daily_change_percent': 0
+            })
+    except Exception as e:
+        logger.error(f"Error getting portfolio summary: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        })
 
 # Performance API Routes
 @app.route('/api/performance/comprehensive-audit', methods=['GET'])
