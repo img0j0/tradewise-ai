@@ -715,7 +715,7 @@
                         <button onclick="addToWatchlist()" style="padding: 12px 15px; background: linear-gradient(45deg, #f59e0b, #d97706); color: white; border: none; border-radius: 15px; cursor: pointer; font-weight: 600; font-size: 13px; display: flex; align-items: center; justify-content: center; gap: 3px;">
                             ⭐ Watch
                         </button>
-                        <button onclick="showCreateAlert()" style="padding: 12px 15px; background: linear-gradient(45deg, #8b5cf6, #7c3aed); color: white; border: none; border-radius: 15px; cursor: pointer; font-weight: 600; font-size: 13px; display: flex; align-items: center; justify-content: center; gap: 3px;">
+                        <button onclick="window.showCreateAlert()" style="padding: 12px 15px; background: linear-gradient(45deg, #8b5cf6, #7c3aed); color: white; border: none; border-radius: 15px; cursor: pointer; font-weight: 600; font-size: 13px; display: flex; align-items: center; justify-content: center; gap: 3px;">
                             🔔 Alert
                         </button>
                         <button onclick="showBuyModal()" style="padding: 12px 15px; background: linear-gradient(45deg, #10b981, #059669); color: white; border: none; border-radius: 15px; cursor: pointer; font-weight: 600; font-size: 13px; display: flex; align-items: center; justify-content: center; gap: 3px;">
@@ -742,6 +742,15 @@
         
         // Make showCreateAlert available globally
         window.showCreateAlert = showCreateAlert;
+        
+        // Add direct event listener as backup
+        document.addEventListener('click', function(event) {
+            if (event.target.textContent.includes('🔔 Alert')) {
+                console.log('Alert button clicked via event listener!');
+                event.preventDefault();
+                showCreateAlert();
+            }
+        });
         
         // Add to Watchlist function
         async function addToWatchlist() {
