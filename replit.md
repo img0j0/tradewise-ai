@@ -1039,10 +1039,11 @@ Focus: Real-world validation and industry-disrupting innovation
 
 #### ✅ BASIC SECTION REMOVAL FOR INSTITUTIONAL USERS:
 - **"Discover Your Next Investment" Hidden**: Removed new/intermediate investor section from institutional interface
-- **Advanced Investor Focus**: Optimized top-tier subscription for sophisticated users rather than beginners
-- **Tier Integration**: Added optimizeInstitutionalLayout() function to tier_integration.js
-- **Conditional Display**: Free and intermediate users still see discovery section, institutional users see Bloomberg Terminal first
-- **Professional Positioning**: Institutional tier now leads with advanced market intelligence rather than basic investment guidance
+- **Beginner Dropdown Sections Hidden**: Popular Stocks, Investment Themes, and Market Insights dropdowns hidden for institutional users
+- **Advanced Investor Focus**: Optimized top-tier subscription for sophisticated users rather than beginners browsing themed suggestions
+- **Tier Integration**: Added optimizeInstitutionalLayout() function to tier_integration.js with conditional section hiding
+- **Conditional Display**: Free and intermediate users still see all beginner-friendly sections, institutional users see only Bloomberg Terminal and professional features
+- **Professional Positioning**: Institutional tier now leads with advanced market intelligence rather than beginner stock discovery tools
 - **JavaScript Files**: Eliminated fa-search FontAwesome icons from ai_stock_search.js and dashboard.js
 - **Template Files**: Cleaned up search icon references in chatgpt_style.html and chatgpt_style_search.html
 - **Mobile Interface**: Specifically targeted mobile search icon issues identified by user photo evidence

@@ -687,8 +687,8 @@
             
             <!-- Stock Search Content (default view) -->
             <div id="search-content" class="search-content">
-                <!-- Popular Stocks Dropdown -->
-                <div class="popular-stocks-condensed dropdown-container">
+                <!-- Popular Stocks Dropdown (Hidden for Institutional Users) -->
+                <div id="popular-stocks-section" class="popular-stocks-condensed dropdown-container">
                     <div class="popular-indicator" onclick="togglePopularExpanded()">
                         <div class="popular-left">
 ⭐
@@ -741,8 +741,8 @@
                     </div>
                 </div>
                 
-                <!-- Condensed Investment Themes -->
-                <div class="investment-themes-condensed dropdown-container">
+                <!-- Investment Themes Dropdown (Hidden for Institutional Users) -->
+                <div id="investment-themes-section" class="investment-themes-condensed dropdown-container">
                     <div class="themes-indicator" onclick="toggleThemesExpanded()">
                         <div class="themes-left">
 📊
@@ -863,8 +863,8 @@
                     </div>
                 </div>
                 
-                <!-- Market Insights Dropdown -->
-                <div class="market-insights-condensed dropdown-container">
+                <!-- Market Insights Dropdown (Hidden for Institutional Users) -->
+                <div id="market-insights-section" class="market-insights-condensed dropdown-container">
                     <div class="insights-indicator" onclick="toggleInsightsExpanded()">
                         <div class="insights-left">
 📈

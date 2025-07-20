@@ -305,6 +305,21 @@ class TierIntegrationManager {
             console.log('TierIntegrationManager: Basic investor section hidden for institutional users');
         }
         
+        // Hide beginner-friendly dropdown sections for institutional users
+        const beginnerSections = [
+            'popular-stocks-section',
+            'investment-themes-section', 
+            'market-insights-section'
+        ];
+        
+        beginnerSections.forEach(sectionId => {
+            const section = document.getElementById(sectionId);
+            if (section) {
+                section.style.display = 'none';
+                console.log(`TierIntegrationManager: Hidden ${sectionId} for institutional users`);
+            }
+        });
+        
         // Ensure institutional features are prioritized
         this.prioritizeInstitutionalFeatures();
     }
