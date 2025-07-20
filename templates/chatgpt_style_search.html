@@ -78,11 +78,15 @@
             border: none;
             border-radius: 16px;
             padding: 0.75rem;
-            color: white;
+            color: white !important;
             cursor: pointer;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             box-shadow: 0 4px 16px rgba(251, 191, 36, 0.4), 0 0 0 1px rgba(251, 191, 36, 0.1);
             display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 52px;
+            height: 52px;
             align-items: center;
             justify-content: center;
             width: 52px;
@@ -117,9 +121,11 @@
         }
 
         .crown-upgrade-button i {
-            font-size: 1.3rem;
+            font-size: 1.3rem !important;
+            color: white !important;
             animation: crownPulse 4s ease-in-out infinite;
             filter: drop-shadow(0 0 8px rgba(255,255,255,0.3));
+            display: block !important;
         }
 
         @keyframes crownPulse {
