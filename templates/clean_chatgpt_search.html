@@ -748,7 +748,22 @@
             if (event.target.textContent.includes('🔔 Alert')) {
                 console.log('Alert button clicked via event listener!');
                 event.preventDefault();
-                showCreateAlert();
+                
+                // Direct inline implementation to avoid scope issues
+                console.log('=== Alert function executing directly ===');
+                console.log('currentStock:', currentStock);
+                
+                if (!currentStock) {
+                    console.error('No current stock data available');
+                    alert('Please search for a stock first');
+                    return;
+                }
+                
+                // Show simple alert to confirm function execution
+                alert(`Creating alert for ${currentStock.symbol} - ${currentStock.name}`);
+                
+                // Now proceed with the API call
+                createAlertWithAPI();
             }
         });
         
