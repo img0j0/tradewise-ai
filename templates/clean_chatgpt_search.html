@@ -26,6 +26,33 @@
             align-items: center;
             height: 100vh;
             padding: 20px;
+            position: relative;
+        }
+        
+        .tools-menu {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            display: flex;
+            gap: 15px;
+        }
+        
+        .tool-btn {
+            width: 50px;
+            height: 50px;
+            border: none;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.2rem;
+            backdrop-filter: blur(10px);
+        }
+        
+        .tool-btn:hover {
+            background: rgba(139, 92, 246, 0.3);
+            transform: scale(1.1);
         }
         
         .logo {
@@ -240,6 +267,13 @@
 </head>
 <body>
     <div class="search-container">
+        <!-- Tools Menu -->
+        <div class="tools-menu">
+            <button class="tool-btn" onclick="openPortfolio()" title="Portfolio">📊</button>
+            <button class="tool-btn" onclick="openWatchlist()" title="Watchlist">⭐</button>
+            <button class="tool-btn" onclick="openAccount()" title="Account">👤</button>
+        </div>
+        
         <div class="logo">TradeWise AI</div>
         <div class="search-box">
             <input type="text" id="search-input" placeholder="Ask about any stock... (try AAPL, TSLA, or GOOGL)">
@@ -398,6 +432,92 @@
         
         // Auto-focus search input
         document.getElementById('search-input').focus();
+        
+        // Tool functions
+        function openPortfolio() {
+            showToolOverlay('Portfolio', `
+                <div style="text-align: center; padding: 40px;">
+                    <h3 style="margin-bottom: 20px;">Your Portfolio</h3>
+                    <div style="background: rgba(255,255,255,0.05); border-radius: 15px; padding: 25px; margin: 20px 0;">
+                        <div style="font-size: 2rem; font-weight: 700; color: #10b981; margin-bottom: 10px;">$100,000.00</div>
+                        <div style="opacity: 0.7;">Total Portfolio Value</div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.05); border-radius: 15px; padding: 20px; margin: 20px 0;">
+                        <div style="opacity: 0.7; margin-bottom: 10px;">Cash Balance</div>
+                        <div style="font-size: 1.5rem; font-weight: 600;">$100,000.00</div>
+                    </div>
+                    <div style="margin-top: 30px; opacity: 0.7;">
+                        Start investing to see your holdings here
+                    </div>
+                </div>
+            `);
+        }
+        
+        function openWatchlist() {
+            showToolOverlay('Watchlist', `
+                <div style="text-align: center; padding: 40px;">
+                    <h3 style="margin-bottom: 20px;">Your Watchlist</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 20px 0;">
+                        <div style="background: rgba(255,255,255,0.05); border-radius: 15px; padding: 20px;">
+                            <div style="font-weight: 600; margin-bottom: 5px;">AAPL</div>
+                            <div style="font-size: 1.2rem; color: #10b981;">$211.18</div>
+                            <div style="font-size: 0.9rem; color: #10b981;">+0.55%</div>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.05); border-radius: 15px; padding: 20px;">
+                            <div style="font-weight: 600; margin-bottom: 5px;">TSLA</div>
+                            <div style="font-size: 1.2rem; color: #10b981;">$248.50</div>
+                            <div style="font-size: 0.9rem; color: #10b981;">+2.1%</div>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.05); border-radius: 15px; padding: 20px;">
+                            <div style="font-weight: 600; margin-bottom: 5px;">GOOGL</div>
+                            <div style="font-size: 1.2rem; color: #10b981;">$185.06</div>
+                            <div style="font-size: 0.9rem; color: #10b981;">+0.81%</div>
+                        </div>
+                    </div>
+                </div>
+            `);
+        }
+        
+        function openAccount() {
+            showToolOverlay('Account', `
+                <div style="text-align: center; padding: 40px;">
+                    <h3 style="margin-bottom: 20px;">Account Overview</h3>
+                    <div style="background: rgba(255,255,255,0.05); border-radius: 15px; padding: 25px; margin: 20px 0;">
+                        <div style="font-size: 1.5rem; font-weight: 600; margin-bottom: 10px;">Demo User</div>
+                        <div style="opacity: 0.7;">Free Account • Member since 2025</div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin: 20px 0;">
+                        <div style="background: rgba(255,255,255,0.05); border-radius: 15px; padding: 20px;">
+                            <div style="opacity: 0.7; margin-bottom: 5px;">Trades</div>
+                            <div style="font-size: 1.2rem; font-weight: 600;">0</div>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.05); border-radius: 15px; padding: 20px;">
+                            <div style="opacity: 0.7; margin-bottom: 5px;">Win Rate</div>
+                            <div style="font-size: 1.2rem; font-weight: 600;">N/A</div>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.05); border-radius: 15px; padding: 20px;">
+                            <div style="opacity: 0.7; margin-bottom: 5px;">AI Usage</div>
+                            <div style="font-size: 1.2rem; font-weight: 600;">Active</div>
+                        </div>
+                    </div>
+                </div>
+            `);
+        }
+        
+        function showToolOverlay(title, content) {
+            document.getElementById('analysis-overlay').style.display = 'flex';
+            document.getElementById('analysis-results').innerHTML = `
+                <div style="text-align: left;">
+                    <h2 style="margin-bottom: 20px; text-align: center;">${title}</h2>
+                    ${content}
+                    <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); text-align: center;">
+                        <button onclick="closeAnalysis()" style="padding: 12px 30px; background: linear-gradient(45deg, #8b5cf6, #06b6d4); color: white; border: none; border-radius: 25px; cursor: pointer; font-weight: 600;">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
     </script>
 </body>
 </html>

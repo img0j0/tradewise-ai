@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TradeWise AI - Trading Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, #8b5cf6, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .nav-tabs {
+            display: flex;
+            gap: 30px;
+        }
+        
+        .nav-tab {
+            padding: 10px 20px;
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 25px;
+        }
+        
+        .nav-tab.active {
+            background: rgba(139, 92, 246, 0.2);
+            color: white;
+        }
+        
+        .nav-tab:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .search-btn {
+            padding: 10px 20px;
+            background: linear-gradient(45deg, #8b5cf6, #06b6d4);
+            border: none;
+            border-radius: 25px;
+            color: white;
+            cursor: pointer;
+            font-weight: 600;
+            transition: transform 0.3s ease;
+        }
+        
+        .search-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .main-content {
+            padding: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .card h3 {
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+        }
+        
+        .balance-card {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(6, 182, 212, 0.2));
+        }
+        
+        .balance-amount {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #10b981;
+            margin-bottom: 10px;
+        }
+        
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .stat-item:last-child {
+            border-bottom: none;
+        }
+        
+        .stat-value {
+            font-weight: 600;
+        }
+        
+        .positive {
+            color: #10b981;
+        }
+        
+        .negative {
+            color: #ef4444;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            background: linear-gradient(45deg, #8b5cf6, #06b6d4);
+            border: none;
+            border-radius: 25px;
+            color: white;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(139, 92, 246, 0.4);
+        }
+        
+        .quick-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            opacity: 0.7;
+        }
+        
+        .empty-state h4 {
+            margin-bottom: 10px;
+            font-size: 1.3rem;
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .nav-tabs {
+                gap: 15px;
+            }
+            
+            .main-content {
+                padding: 20px 15px;
+            }
+            
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">TradeWise AI</div>
+        <nav class="nav-tabs">
+            <button class="nav-tab active" onclick="showTab('overview')">Overview</button>
+            <button class="nav-tab" onclick="showTab('portfolio')">Portfolio</button>
+            <button class="nav-tab" onclick="showTab('watchlist')">Watchlist</button>
+            <button class="nav-tab" onclick="showTab('account')">Account</button>
+        </nav>
+        <button class="search-btn" onclick="window.location.href='/'">🔍 Search Stocks</button>
+    </div>
+    
+    <div class="main-content">
+        <!-- Overview Tab -->
+        <div id="overview" class="tab-content active">
+            <div class="dashboard-grid">
+                <div class="card balance-card">
+                    <h3>Portfolio Balance</h3>
+                    <div class="balance-amount">$100,000.00</div>
+                    <div style="opacity: 0.8;">Available for trading</div>
+                    <div class="quick-actions">
+                        <button class="btn" onclick="window.location.href='/'">Find Stocks</button>
+                        <button class="btn" style="background: rgba(255,255,255,0.1);">Add Funds</button>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3>Market Overview</h3>
+                    <div class="stat-item">
+                        <span>S&P 500</span>
+                        <span class="stat-value positive">+0.85%</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>NASDAQ</span>
+                        <span class="stat-value positive">+1.20%</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>Dow Jones</span>
+                        <span class="stat-value positive">+0.42%</span>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3>AI Insights</h3>
+                    <div style="margin-bottom: 15px;">
+                        <div style="font-weight: 600; margin-bottom: 5px;">Market Sentiment: Bullish</div>
+                        <div style="opacity: 0.8; font-size: 0.9rem;">Tech stocks showing strong momentum</div>
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <div style="font-weight: 600; margin-bottom: 5px;">Top AI Pick: AAPL</div>
+                        <div style="opacity: 0.8; font-size: 0.9rem;">85% confidence • Strong Buy</div>
+                    </div>
+                    <button class="btn" onclick="window.location.href='/'">Get AI Analysis</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Portfolio Tab -->
+        <div id="portfolio" class="tab-content">
+            <div class="card">
+                <h3>Your Holdings</h3>
+                <div class="empty-state">
+                    <h4>No holdings yet</h4>
+                    <p>Start building your portfolio by searching and analyzing stocks</p>
+                    <div style="margin-top: 20px;">
+                        <button class="btn" onclick="window.location.href='/'">Find Your First Stock</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Watchlist Tab -->
+        <div id="watchlist" class="tab-content">
+            <div class="card">
+                <h3>Your Watchlist</h3>
+                <div class="dashboard-grid">
+                    <div class="card">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <span style="font-weight: 600; font-size: 1.1rem;">AAPL</span>
+                            <span style="font-size: 1.2rem; color: #10b981;">$211.18</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="opacity: 0.7;">Apple Inc.</span>
+                            <span style="color: #10b981; font-size: 0.9rem;">+0.55%</span>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <span style="font-weight: 600; font-size: 1.1rem;">TSLA</span>
+                            <span style="font-size: 1.2rem; color: #10b981;">$248.50</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="opacity: 0.7;">Tesla Inc.</span>
+                            <span style="color: #10b981; font-size: 0.9rem;">+2.1%</span>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <span style="font-weight: 600; font-size: 1.1rem;">GOOGL</span>
+                            <span style="font-size: 1.2rem; color: #10b981;">$185.06</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="opacity: 0.7;">Alphabet Inc.</span>
+                            <span style="color: #10b981; font-size: 0.9rem;">+0.81%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Account Tab -->
+        <div id="account" class="tab-content">
+            <div class="dashboard-grid">
+                <div class="card">
+                    <h3>Account Information</h3>
+                    <div class="stat-item">
+                        <span>Account Type</span>
+                        <span class="stat-value">Free</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>Member Since</span>
+                        <span class="stat-value">2025</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>AI Features</span>
+                        <span class="stat-value positive">Active</span>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3>Trading Stats</h3>
+                    <div class="stat-item">
+                        <span>Total Trades</span>
+                        <span class="stat-value">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>Win Rate</span>
+                        <span class="stat-value">N/A</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>AI Searches</span>
+                        <span class="stat-value">Active</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showTab(tabName) {
+            // Hide all tab contents
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            // Remove active class from all nav tabs
+            const navTabs = document.querySelectorAll('.nav-tab');
+            navTabs.forEach(tab => tab.classList.remove('active'));
+            
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked nav tab
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>

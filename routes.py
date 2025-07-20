@@ -190,6 +190,8 @@ def original_interface():
     """Original complex interface for reference"""
     return render_template('chatgpt_style_search.html')
 
+
+
 @app.route('/profile')
 def profile_page():
     """User profile page"""
@@ -252,8 +254,12 @@ def debug_test():
 
 @app.route('/dashboard')
 def dashboard():
-    """Full ChatGPT-style interface"""
-    return render_template('chatgpt_style_search.html')
+    """Simple trading dashboard"""
+    response = make_response(render_template('simple_trading_dashboard.html'))
+    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '0'
+    return response
 
 @app.route('/analytics')
 def analytics():
