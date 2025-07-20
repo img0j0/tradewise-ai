@@ -338,20 +338,59 @@
         }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{{ url_for('static', filename='js/tier_integration.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/institutional_dropdown_system.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/institutional_tier_fix.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/institutional_premium_features.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/advanced_institutional_tools.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/interface_stabilizer.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/bloomberg_killer_intelligence.js') }}"></script>
+    <!-- Simplified JavaScript without complex institutional features -->
+    <script src="{{ url_for('static', filename='js/ai_stock_search.js') }}"></script>
     <script>
-        // Initialize tier integration on page load
+        // Simple initialization without complex tier management
         document.addEventListener('DOMContentLoaded', function() {
-            if (typeof TierIntegrationManager !== 'undefined') {
-                window.tierManager = new TierIntegrationManager();
+            console.log('TradeWise AI ChatGPT-style interface loaded');
+            
+            // Simple search functionality
+            const searchInput = document.getElementById('stock-search-input');
+            if (searchInput) {
+                searchInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        searchStockAI();
+                    }
+                });
             }
         });
+        
+        // Basic search function
+        function searchStockAI() {
+            const query = document.getElementById('stock-search-input').value.trim();
+            if (!query) return;
+            
+            console.log('Searching for:', query);
+            // Add search functionality here
+        }
+        
+        // Basic dropdown toggles
+        function togglePopularStocks() {
+            const expanded = document.getElementById('popular-stocks-expanded');
+            if (expanded) {
+                expanded.style.display = expanded.style.display === 'none' ? 'block' : 'none';
+            }
+        }
+        
+        function toggleThemesExpanded() {
+            const expanded = document.getElementById('investment-themes-expanded');
+            if (expanded) {
+                expanded.style.display = expanded.style.display === 'none' ? 'block' : 'none';
+            }
+        }
+        
+        function toggleInsightsExpanded() {
+            const expanded = document.getElementById('market-insights-expanded');
+            if (expanded) {
+                expanded.style.display = expanded.style.display === 'none' ? 'block' : 'none';
+            }
+        }
+        
+        function searchStock(symbol) {
+            document.getElementById('stock-search-input').value = symbol;
+            searchStockAI();
+        }
     </script>
 </head>
 <body>
