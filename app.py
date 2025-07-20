@@ -48,8 +48,8 @@ except ImportError:
 # Initialize caching for better performance
 cache = Cache(app, config={'CACHE_TYPE': 'simple'})
 
-# Initialize compression
-compress = Compress(app)
+# Initialize compression - temporarily disabled for debugging
+# compress = Compress(app)
 
 # Initialize Flask-Login
 login_manager = LoginManager()

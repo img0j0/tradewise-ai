@@ -160,46 +160,33 @@ def get_or_create_user_account():
 @app.route('/')
 def index():
     """Main ChatGPT-style advanced interface"""
-    from flask import make_response
-    
-    # Use the original sophisticated template with full functionality
-    html_content = render_template('chatgpt_style_search.html')
-    
-    # Ensure clean response with aggressive cache busting
-    response = make_response(html_content)
-    response.headers['Content-Type'] = 'text/html; charset=utf-8'
-    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0'
-    response.headers['Pragma'] = 'no-cache'
-    response.headers['Expires'] = '0'
-    response.headers['Last-Modified'] = '0'
-    response.headers['ETag'] = ''
-    response.mimetype = 'text/html'
-    return response
+    # Simple clean return without custom headers to avoid rendering issues
+    return render_template('chatgpt_style_search.html')
 
 @app.route('/test')
 def test_page():
     """Clean test page to verify HTML rendering"""
-    from flask import make_response
-    
-    response = make_response(render_template('test_clean.html'))
-    response.headers['Content-Type'] = 'text/html; charset=utf-8'
-    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
-    response.headers['Pragma'] = 'no-cache'
-    response.headers['Expires'] = '0'
-    response.mimetype = 'text/html'
-    return response
+    return render_template('test_clean.html')
+
+@app.route('/simple')
+def simple_test():
+    """Ultra simple HTML test"""
+    return '''<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple Test</title>
+</head>
+<body>
+    <h1>TradeWise AI - Simple Test</h1>
+    <p>If you see this formatted properly, HTML rendering is working!</p>
+    <button onclick="alert('JavaScript works!')">Test Button</button>
+</body>
+</html>'''
 
 @app.route('/dashboard')
 def dashboard():
     """Full ChatGPT-style interface"""
-    from flask import make_response
-    
-    response = make_response(render_template('chatgpt_style_search.html'))
-    response.headers['Content-Type'] = 'text/html; charset=utf-8'
-    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
-    response.headers['Pragma'] = 'no-cache'
-    response.headers['Expires'] = '0'
-    return response
+    return render_template('chatgpt_style_search.html')
 
 @app.route('/analytics')
 def analytics():
