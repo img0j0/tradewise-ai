@@ -322,8 +322,16 @@ function displayComprehensiveStockAnalysis(stockData) {
         searchBox.classList.remove('search-loading');
     }
     
+    // Clear any existing results first
+    hideOldResults();
+    
     // Build comprehensive analysis results using our enhanced API data
     const resultsContainer = document.getElementById('ai-analysis-results');
+    if (!resultsContainer) {
+        console.error('Results container not found');
+        return;
+    }
+    
     const comprehensiveHTML = buildComprehensiveAnalysisHTML(stockData);
     
     resultsContainer.innerHTML = comprehensiveHTML;
@@ -337,6 +345,11 @@ function displayComprehensiveStockAnalysis(stockData) {
             content.style.opacity = '1';
         }
     }, 50);
+    
+    console.log('ChatGPT-style search results displayed successfully');
+    
+    // Scroll to top to ensure overlay is visible
+    window.scrollTo(0, 0);
 }
 
 // Build comprehensive analysis HTML using new API data structure
@@ -1050,6 +1063,14 @@ function quickSearch(symbol) {
 // Alternative function name for compatibility
 window.quickSearch = quickSearch;
 
+// Hide old search results
+function hideOldResults() {
+    const oldResults = document.getElementById('search-results');
+    if (oldResults) {
+        oldResults.style.display = 'none';
+    }
+}
+
 // Close search results function
 function closeSearchResults() {
     const resultsContainer = document.getElementById('ai-analysis-results');
@@ -1065,6 +1086,34 @@ function closeSearchResults() {
     }
 }
 
+// Test function to demonstrate ChatGPT-style overlay
+function testChatGPTOverlay() {
+    const testData = {
+        name: "Apple Inc.",
+        symbol: "AAPL",
+        price: 211.18,
+        change: 1.16,
+        change_percent: 0.55,
+        confidence: 75,
+        analysis: "HOLD",
+        market_sentiment: "NEUTRAL",
+        risk_level: "MEDIUM",
+        investment_thesis: "Strong fundamentals with mixed technical signals indicate holding current position.",
+        key_points: ["Solid revenue growth", "Market leadership position"],
+        fundamental_score: 85,
+        technical_score: 65,
+        market_cap: 3154142035968,
+        volume: 48317144,
+        data_source: "Test Data",
+        timestamp: new Date().toISOString()
+    };
+    
+    displayComprehensiveStockAnalysis(testData);
+}
+
+// Make test function globally available
+window.testChatGPTOverlay = testChatGPTOverlay;
+
 // Reset search button on page load
 document.addEventListener('DOMContentLoaded', function() {
     const searchBtn = document.getElementById('search-btn');
@@ -1072,4 +1121,7 @@ document.addEventListener('DOMContentLoaded', function() {
         searchBtn.disabled = false;
         searchBtn.innerHTML = '<i class="fas fa-brain me-2"></i>Analyze';
     }
+    
+    console.log('TradeWise AI enhanced search interface loaded');
+    console.log('To test ChatGPT-style overlay, type: testChatGPTOverlay()');
 });
