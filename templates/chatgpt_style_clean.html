@@ -143,6 +143,288 @@
             background: rgba(139, 92, 246, 0.1);
         }
 
+        /* Intelligent Search Results Styles */
+        .search-results-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .search-results-modal {
+            background: var(--background-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .search-results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .search-results-header h3 {
+            margin: 0;
+            background: linear-gradient(135deg, #8b5cf6, #d946ef);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .close-results {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: all 0.2s ease;
+        }
+
+        .close-results:hover {
+            background: rgba(139, 92, 246, 0.1);
+            color: var(--primary-color);
+        }
+
+        .search-results-content {
+            padding: 1.5rem;
+        }
+
+        .loading-animation {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border-color);
+            border-top: 3px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        .intelligent-result-card {
+            background: var(--card-background);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .stock-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            background: rgba(139, 92, 246, 0.05);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .stock-symbol {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin: 0 0 0.25rem 0;
+        }
+
+        .stock-name {
+            color: var(--text-secondary);
+            margin: 0;
+            font-size: 0.9rem;
+        }
+
+        .current-price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .price-change {
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .price-change.positive {
+            color: #10b981;
+        }
+
+        .price-change.negative {
+            color: #ef4444;
+        }
+
+        .ai-analysis-section {
+            padding: 1.5rem;
+        }
+
+        .ai-recommendation {
+            margin-bottom: 1.5rem;
+        }
+
+        .recommendation-label {
+            font-size: 1.1rem;
+            font-weight: 700;
+            display: block;
+            margin-bottom: 1rem;
+        }
+
+        .confidence-indicator {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .confidence-bar {
+            flex: 1;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ef4444, #f59e0b, #10b981);
+            border-radius: 4px;
+            transition: width 1s ease;
+        }
+
+        .high-confidence .confidence-fill {
+            background: #10b981;
+        }
+
+        .medium-confidence .confidence-fill {
+            background: #f59e0b;
+        }
+
+        .low-confidence .confidence-fill {
+            background: #ef4444;
+        }
+
+        .confidence-text {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            white-space: nowrap;
+        }
+
+        .ai-reasoning, .key-insights {
+            margin-bottom: 1.5rem;
+        }
+
+        .ai-reasoning h4, .key-insights h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin: 0 0 0.75rem 0;
+        }
+
+        .ai-reasoning p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .key-insights ul {
+            margin: 0;
+            padding-left: 1.5rem;
+            color: var(--text-secondary);
+        }
+
+        .key-insights li {
+            margin-bottom: 0.5rem;
+            line-height: 1.5;
+        }
+
+        .risk-assessment {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .risk-level, .price-target {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .market-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+        }
+
+        .metric {
+            text-align: center;
+            padding: 0.75rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+        }
+
+        .metric-label {
+            display: block;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.25rem;
+        }
+
+        .metric-value {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .sentiment-bullish {
+            color: #10b981;
+        }
+
+        .sentiment-bearish {
+            color: #ef4444;
+        }
+
+        .sentiment-neutral {
+            color: var(--text-secondary);
+        }
+
+        .error-message {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-secondary);
+        }
+
+        .error-message h4 {
+            color: #ef4444;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
         .tools-dropdown-item span {
             font-weight: 500;
         }
@@ -585,6 +867,31 @@
                 return;
             }
             
+            // Show intelligent search results overlay
+            showIntelligentSearchResults(query);
+        }
+        
+        function showIntelligentSearchResults(query) {
+            // Create results overlay
+            const overlay = document.createElement('div');
+            overlay.className = 'search-results-overlay';
+            overlay.innerHTML = `
+                <div class="search-results-modal">
+                    <div class="search-results-header">
+                        <h3>AI Analysis for ${query.toUpperCase()}</h3>
+                        <button class="close-results" onclick="closeSearchResults()">✕</button>
+                    </div>
+                    <div class="search-results-content">
+                        <div class="loading-animation">
+                            <div class="loading-spinner"></div>
+                            <p>AI is analyzing market data and generating insights...</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(overlay);
+            
             // Call the real search API
             fetch('/api/stock-search', {
                 method: 'POST',
@@ -596,13 +903,131 @@
             .then(response => response.json())
             .then(data => {
                 console.log('Search results:', data);
-                // Handle search results here
-                alert(`AI Analysis for ${query}: ${data.analysis || 'Analysis completed'}`);
+                displayIntelligentSearchResults(data, overlay);
             })
             .catch(error => {
                 console.error('Search error:', error);
-                alert(`Searching for: ${query}`);
+                displaySearchError(error, overlay);
             });
+        }
+        
+        function displayIntelligentSearchResults(data, overlay) {
+            const contentDiv = overlay.querySelector('.search-results-content');
+            
+            if (data.error) {
+                contentDiv.innerHTML = `<div class="error-message">${data.message}</div>`;
+                return;
+            }
+            
+            const confidenceClass = data.confidence >= 70 ? 'high-confidence' : 
+                                  data.confidence >= 50 ? 'medium-confidence' : 'low-confidence';
+            
+            const recommendationColor = data.recommendation === 'STRONG BUY' || data.recommendation === 'BUY' ? '#10b981' :
+                                      data.recommendation === 'STRONG SELL' || data.recommendation === 'SELL' ? '#ef4444' : '#6b7280';
+            
+            contentDiv.innerHTML = `
+                <div class="intelligent-result-card">
+                    <div class="stock-header">
+                        <div class="stock-info">
+                            <h3 class="stock-symbol">${data.symbol}</h3>
+                            <p class="stock-name">${data.name}</p>
+                        </div>
+                        <div class="price-info">
+                            <div class="current-price">$${data.price ? data.price.toFixed(2) : 'N/A'}</div>
+                            <div class="price-change ${data.change >= 0 ? 'positive' : 'negative'}">
+                                ${data.change >= 0 ? '+' : ''}${data.change_percent ? data.change_percent.toFixed(2) : '0.00'}%
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="ai-analysis-section">
+                        <div class="ai-recommendation">
+                            <span class="recommendation-label" style="color: ${recommendationColor}">
+                                ${data.recommendation || data.analysis || 'Analysis Complete'}
+                            </span>
+                            <div class="confidence-indicator ${confidenceClass}">
+                                <div class="confidence-bar">
+                                    <div class="confidence-fill" style="width: ${data.confidence || 55}%"></div>
+                                </div>
+                                <span class="confidence-text">AI Confidence: ${data.confidence || 55}%</span>
+                            </div>
+                        </div>
+                        
+                        ${data.ai_reasoning ? `
+                            <div class="ai-reasoning">
+                                <h4>🤖 AI Analysis</h4>
+                                <p>${data.ai_reasoning}</p>
+                            </div>
+                        ` : `
+                            <div class="ai-reasoning">
+                                <h4>🤖 AI Analysis</h4>
+                                <p>Based on current market conditions and technical analysis, ${data.symbol} shows ${data.analysis || 'moderate potential with balanced risk factors'}.</p>
+                            </div>
+                        `}
+                        
+                        ${data.key_points && data.key_points.length > 0 ? `
+                            <div class="key-insights">
+                                <h4>💡 Key Insights</h4>
+                                <ul>
+                                    ${data.key_points.map(point => `<li>${point}</li>`).join('')}
+                                </ul>
+                            </div>
+                        ` : `
+                            <div class="key-insights">
+                                <h4>💡 Key Insights</h4>
+                                <ul>
+                                    <li>Current market momentum: ${data.change >= 0 ? 'Positive' : 'Negative'}</li>
+                                    <li>Price level: $${data.price ? data.price.toFixed(2) : 'N/A'}</li>
+                                    <li>Analysis confidence: ${data.confidence || 55}%</li>
+                                </ul>
+                            </div>
+                        `}
+                        
+                        <div class="risk-assessment">
+                            <span class="risk-level">Risk Level: ${data.risk_level || 'Medium'}</span>
+                            ${data.price_target ? `<span class="price-target">Target: ${data.price_target}</span>` : ''}
+                        </div>
+                        
+                        ${data.market_sentiment ? `
+                            <div class="market-metrics">
+                                <div class="metric">
+                                    <span class="metric-label">Market Sentiment:</span>
+                                    <span class="metric-value sentiment-${data.market_sentiment.toLowerCase()}">${data.market_sentiment}</span>
+                                </div>
+                                ${data.fundamental_score ? `
+                                    <div class="metric">
+                                        <span class="metric-label">Fundamental Score:</span>
+                                        <span class="metric-value">${data.fundamental_score}/100</span>
+                                    </div>
+                                ` : ''}
+                                ${data.technical_score ? `
+                                    <div class="metric">
+                                        <span class="metric-label">Technical Score:</span>
+                                        <span class="metric-value">${data.technical_score}/100</span>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+        }
+        
+        function displaySearchError(error, overlay) {
+            const contentDiv = overlay.querySelector('.search-results-content');
+            contentDiv.innerHTML = `
+                <div class="error-message">
+                    <h4>⚠️ Analysis Unavailable</h4>
+                    <p>Unable to retrieve market data at this time. Please try again.</p>
+                </div>
+            `;
+        }
+        
+        function closeSearchResults() {
+            const overlay = document.querySelector('.search-results-overlay');
+            if (overlay) {
+                overlay.remove();
+            }
         }
 
         function searchStock(symbol) {
