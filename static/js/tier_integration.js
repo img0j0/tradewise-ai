@@ -77,7 +77,10 @@ class TierIntegrationManager {
         
         // Optimize layout for institutional users
         if (this.currentTier === 'Institutional') {
-            this.optimizeInstitutionalLayout();
+            // Use setTimeout to ensure DOM is fully loaded
+            setTimeout(() => {
+                this.optimizeInstitutionalLayout();
+            }, 100);
         }
     }
 
@@ -315,8 +318,25 @@ class TierIntegrationManager {
         beginnerSections.forEach(sectionId => {
             const section = document.getElementById(sectionId);
             if (section) {
-                section.style.display = 'none';
+                section.style.display = 'none !important';
+                section.style.visibility = 'hidden';
+                section.classList.add('institutional-hidden');
                 console.log(`TierIntegrationManager: Hidden ${sectionId} for institutional users`);
+            } else {
+                console.log(`TierIntegrationManager: Section ${sectionId} not found, will retry`);
+            }
+        });
+        
+        // Also hide any dropdown containers that might not have the right ID
+        const allDropdownContainers = document.querySelectorAll('.dropdown-container');
+        allDropdownContainers.forEach((container, index) => {
+            if (container.querySelector('.popular-indicator') || 
+                container.querySelector('.themes-indicator') || 
+                container.querySelector('.insights-indicator')) {
+                container.style.display = 'none !important';
+                container.style.visibility = 'hidden';
+                container.classList.add('institutional-hidden');
+                console.log(`TierIntegrationManager: Hidden dropdown container ${index} for institutional users`);
             }
         });
         
