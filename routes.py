@@ -6,6 +6,7 @@ from price_alerts import price_alert_system
 from smart_stock_alerts import smart_stock_alerts
 from market_news import market_news_service
 from performance_tracker import performance_tracker
+from portfolio_manager import portfolio_manager
 from ai_advice_engine import advice_engine
 from data_service import DataService
 from stock_search import StockSearchService
@@ -6430,5 +6431,130 @@ def stock_search_api():
             'error': 'Search failed',
             'message': 'Unable to retrieve real-time data. Please try again.',
             'analysis': f'Unable to analyze {query} - service temporarily unavailable'
+        }), 500
+
+# Portfolio Management API Endpoints
+@app.route('/api/portfolio/overview', methods=['GET'])
+@login_required
+def portfolio_overview():
+    """Get comprehensive portfolio overview with real-time data"""
+    try:
+        portfolio_data = portfolio_manager.get_user_portfolio(current_user.id)
+        
+        return jsonify({
+            'success': True,
+            'portfolio': portfolio_data['portfolio'] if portfolio_data['success'] else {},
+            'timestamp': datetime.now().isoformat()
+        })
+        
+    except Exception as e:
+        logger.error(f"Error getting portfolio overview: {e}")
+        return jsonify({
+            'success': False,
+            'error': 'Failed to load portfolio data'
+        }), 500
+
+@app.route('/api/portfolio/analytics', methods=['GET'])
+@login_required
+def portfolio_analytics():
+    """Get advanced portfolio analytics and insights"""
+    try:
+        analytics_data = portfolio_manager.get_portfolio_analytics(current_user.id)
+        
+        return jsonify({
+            'success': analytics_data['success'],
+            'analytics': analytics_data.get('analytics', {}),
+            'timestamp': datetime.now().isoformat()
+        })
+        
+    except Exception as e:
+        logger.error(f"Error getting portfolio analytics: {e}")
+        return jsonify({
+            'success': False,
+            'error': 'Failed to load portfolio analytics'
+        }), 500
+
+@app.route('/api/portfolio/performance', methods=['GET'])
+@login_required
+def portfolio_performance():
+    """Get portfolio performance history and charts"""
+    try:
+        days = request.args.get('days', 30, type=int)
+        portfolio_data = portfolio_manager.get_user_portfolio(current_user.id)
+        
+        if portfolio_data['success']:
+            performance_data = portfolio_data['portfolio'].get('performance_data', [])
+            
+            return jsonify({
+                'success': True,
+                'performance_data': performance_data,
+                'total_return': portfolio_data['portfolio'].get('total_return', 0),
+                'total_return_percent': portfolio_data['portfolio'].get('total_return_percent', 0),
+                'timestamp': datetime.now().isoformat()
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'error': 'Failed to load performance data'
+            }), 500
+        
+    except Exception as e:
+        logger.error(f"Error getting portfolio performance: {e}")
+        return jsonify({
+            'success': False,
+            'error': 'Failed to load performance data'
+        }), 500
+
+@app.route('/api/portfolio/rebalance', methods=['POST'])
+@login_required
+def suggest_portfolio_rebalance():
+    """Get AI-powered portfolio rebalancing suggestions"""
+    try:
+        data = request.get_json()
+        target_allocation = data.get('target_allocation', {})
+        risk_tolerance = data.get('risk_tolerance', 'medium')
+        
+        # Get current portfolio
+        portfolio_data = portfolio_manager.get_user_portfolio(current_user.id)
+        if not portfolio_data['success']:
+            return jsonify({
+                'success': False,
+                'error': 'Failed to load current portfolio'
+            }), 500
+        
+        # Generate rebalancing suggestions (simplified implementation)
+        holdings = portfolio_data['portfolio']['holdings']
+        suggestions = []
+        
+        for holding in holdings:
+            # Simple rebalancing logic - can be enhanced with AI
+            current_weight = holding['weight']
+            target_weight = target_allocation.get(holding['symbol'], current_weight)
+            
+            if abs(current_weight - target_weight) > 5:  # 5% threshold
+                action = 'reduce' if current_weight > target_weight else 'increase'
+                difference = abs(current_weight - target_weight)
+                
+                suggestions.append({
+                    'symbol': holding['symbol'],
+                    'action': action,
+                    'current_weight': round(current_weight, 1),
+                    'target_weight': round(target_weight, 1),
+                    'difference': round(difference, 1),
+                    'reasoning': f'Optimize allocation for {holding["symbol"]} based on target'
+                })
+        
+        return jsonify({
+            'success': True,
+            'rebalance_suggestions': suggestions,
+            'current_portfolio_value': portfolio_data['portfolio']['total_value'],
+            'timestamp': datetime.now().isoformat()
+        })
+        
+    except Exception as e:
+        logger.error(f"Error generating rebalance suggestions: {e}")
+        return jsonify({
+            'success': False,
+            'error': 'Failed to generate rebalancing suggestions'
         }), 500
 

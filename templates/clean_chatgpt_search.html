@@ -1077,17 +1077,22 @@
                 showToolOverlay('Portfolio', `
                     <div style="text-align: center; padding: 40px;">
                         <div class="spinner" style="margin: 0 auto 20px;"></div>
-                        <div>Loading your portfolio...</div>
+                        <div style="color: #8b5cf6; font-size: 1.2rem;">Loading your portfolio...</div>
                     </div>
                 `);
                 
-                const response = await fetch('/api/portfolio', {
-                    credentials: 'same-origin'
+                // Add cache busting parameter
+                const timestamp = Date.now();
+                const response = await fetch(`/api/portfolio/overview?_=${timestamp}`, {
+                    headers: {
+                        'Cache-Control': 'no-cache',
+                        'Pragma': 'no-cache'
+                    }
                 });
                 const data = await response.json();
                 
                 if (data.success) {
-                    displayPortfolio(data);
+                    displayEnhancedPortfolio(data.portfolio);
                 } else {
                     showPortfolioError();
                 }
@@ -1097,62 +1102,374 @@
             }
         }
         
-        function displayPortfolio(data) {
+        function displayEnhancedPortfolio(portfolio) {
+            const totalValue = portfolio.total_value || 0;
+            const totalReturn = portfolio.total_return || 0;
+            const totalReturnPercent = portfolio.total_return_percent || 0;
+            const cashBalance = portfolio.cash_balance || 0;
+            const holdings = portfolio.holdings || [];
+            
+            // Determine color for returns
+            const returnColor = totalReturn >= 0 ? '#10b981' : '#ef4444';
+            const returnSymbol = totalReturn >= 0 ? '+' : '';
+            
             let portfolioHTML = `
-                <div style="text-align: center; padding: 20px;">
-                    <h3 style="margin-bottom: 20px;">Your Portfolio</h3>
-                    <div style="background: rgba(255,255,255,0.05); border-radius: 15px; padding: 25px; margin: 20px 0;">
-                        <div style="font-size: 2rem; font-weight: 700; color: #10b981; margin-bottom: 10px;">$${data.total_value.toFixed(2)}</div>
-                        <div style="opacity: 0.7;">Total Portfolio Value</div>
-                    </div>
-                    <div style="background: rgba(255,255,255,0.05); border-radius: 15px; padding: 20px; margin: 20px 0;">
-                        <div style="opacity: 0.7; margin-bottom: 10px;">Cash Balance</div>
-                        <div style="font-size: 1.5rem; font-weight: 600;">$${data.cash_balance.toFixed(2)}</div>
+                <div style="padding: 20px; max-height: 80vh; overflow-y: auto;">
+                    <h3 style="margin-bottom: 25px; text-align: center; color: white;">📊 Portfolio Overview</h3>
+                    
+                    <!-- Portfolio Summary -->
+                    <div style="background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 15px; padding: 20px; margin-bottom: 25px;">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; text-align: center;">
+                            <div>
+                                <div style="font-size: 0.9rem; opacity: 0.8; margin-bottom: 5px;">Total Value</div>
+                                <div style="font-size: 1.5rem; font-weight: 700; color: white;">$${totalValue.toFixed(2)}</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 0.9rem; opacity: 0.8; margin-bottom: 5px;">Total Return</div>
+                                <div style="font-size: 1.2rem; font-weight: 600; color: ${returnColor};">${returnSymbol}$${Math.abs(totalReturn).toFixed(2)}</div>
+                                <div style="font-size: 0.8rem; color: ${returnColor};">(${returnSymbol}${totalReturnPercent.toFixed(2)}%)</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 0.9rem; opacity: 0.8; margin-bottom: 5px;">Cash Balance</div>
+                                <div style="font-size: 1.2rem; font-weight: 600; color: #06b6d4;">$${cashBalance.toFixed(2)}</div>
+                            </div>
+                        </div>
                     </div>
             `;
             
-            if (data.holdings.length > 0) {
-                portfolioHTML += `<div style="margin-top: 30px;">`;
-                portfolioHTML += `<h4 style="margin-bottom: 20px;">Your Holdings</h4>`;
+            if (holdings.length === 0) {
+                portfolioHTML += `
+                    <div style="text-align: center; padding: 40px; background: rgba(255,255,255,0.05); border-radius: 15px;">
+                        <h4 style="margin-bottom: 15px; opacity: 0.8;">No Holdings Yet</h4>
+                        <p style="opacity: 0.7; margin-bottom: 20px;">Start building your portfolio by searching and buying stocks</p>
+                        <button onclick="closeAnalysis()" style="padding: 10px 20px; background: linear-gradient(45deg, #8b5cf6, #06b6d4); color: white; border: none; border-radius: 10px; cursor: pointer;">
+                            Start Investing
+                        </button>
+                    </div>
+                `;
+            } else {
+                portfolioHTML += `
+                    <!-- Holdings -->
+                    <div style="margin-bottom: 25px;">
+                        <h4 style="margin-bottom: 15px; color: #8b5cf6;">📈 Holdings (${holdings.length})</h4>
+                        <div style="display: grid; gap: 15px;">
+                `;
                 
-                data.holdings.forEach(holding => {
-                    const gainColor = holding.gain_loss >= 0 ? '#10b981' : '#ef4444';
-                    const gainSymbol = holding.gain_loss >= 0 ? '+' : '';
+                holdings.forEach(holding => {
+                    const holdingReturn = holding.profit_loss || 0;
+                    const holdingReturnPercent = holding.profit_loss_percent || 0;
+                    const holdingReturnColor = holdingReturn >= 0 ? '#10b981' : '#ef4444';
+                    const holdingReturnSymbol = holdingReturn >= 0 ? '+' : '';
                     
                     portfolioHTML += `
-                        <div style="background: rgba(255,255,255,0.05); border-radius: 10px; padding: 20px; margin-bottom: 15px; text-align: left;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <div style="background: rgba(255,255,255,0.05); border-radius: 12px; padding: 20px; border-left: 4px solid ${holdingReturnColor};">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
                                 <div>
-                                    <div style="font-weight: 600; font-size: 1.1rem;">${holding.name} (${holding.symbol})</div>
-                                    <div style="opacity: 0.7; font-size: 0.9rem;">${holding.shares} shares</div>
+                                    <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: 5px;">${holding.symbol}</div>
+                                    <div style="opacity: 0.7; font-size: 0.9rem;">${holding.quantity} shares @ $${holding.average_price.toFixed(2)}</div>
                                 </div>
                                 <div style="text-align: right;">
-                                    <div style="font-size: 1.2rem; font-weight: 600;">$${holding.current_value.toFixed(2)}</div>
-                                    <div style="color: ${gainColor}; font-size: 0.9rem;">
-                                        ${gainSymbol}$${holding.gain_loss.toFixed(2)} (${gainSymbol}${holding.gain_loss_percent.toFixed(2)}%)
-                                    </div>
+                                    <div style="font-weight: 600; color: white;">$${holding.current_price.toFixed(2)}</div>
+                                    <div style="font-size: 0.8rem; color: ${holdingReturnColor};">${holdingReturnSymbol}${holdingReturnPercent.toFixed(2)}%</div>
                                 </div>
                             </div>
-                            <div style="display: flex; justify-content: space-between; font-size: 0.9rem; opacity: 0.7;">
-                                <span>Avg Cost: $${holding.purchase_price.toFixed(2)}</span>
-                                <span>Current: $${holding.current_price.toFixed(2)}</span>
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <div style="font-size: 0.8rem; opacity: 0.7;">Market Value</div>
+                                    <div style="font-weight: 600;">$${holding.market_value.toFixed(2)}</div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="font-size: 0.8rem; opacity: 0.7;">P&L</div>
+                                    <div style="font-weight: 600; color: ${holdingReturnColor};">${holdingReturnSymbol}$${Math.abs(holdingReturn).toFixed(2)}</div>
+                                </div>
+                                <div style="text-align: right;">
+                                    <div style="font-size: 0.8rem; opacity: 0.7;">Weight</div>
+                                    <div style="font-weight: 600;">${holding.weight.toFixed(1)}%</div>
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 10px; margin-top: 15px;">
+                                <button onclick="searchStock('${holding.symbol}')" style="flex: 1; padding: 8px; background: rgba(139, 92, 246, 0.2); border: 1px solid rgba(139, 92, 246, 0.5); color: #8b5cf6; border-radius: 8px; cursor: pointer; font-size: 0.9rem;">
+                                    Analyze
+                                </button>
+                                <button onclick="showSellModal('${holding.symbol}', ${holding.quantity}, ${holding.current_price})" style="flex: 1; padding: 8px; background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.5); color: #ef4444; border-radius: 8px; cursor: pointer; font-size: 0.9rem;">
+                                    Sell
+                                </button>
                             </div>
                         </div>
                     `;
                 });
                 
-                portfolioHTML += `</div>`;
-            } else {
                 portfolioHTML += `
-                    <div style="margin-top: 30px; opacity: 0.7;">
-                        Start investing to see your holdings here
+                        </div>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div style="display: flex; gap: 10px; margin-top: 25px;">
+                        <button onclick="loadPortfolioAnalytics()" style="flex: 1; padding: 12px; background: rgba(139, 92, 246, 0.2); border: 1px solid rgba(139, 92, 246, 0.5); color: #8b5cf6; border-radius: 10px; cursor: pointer; font-weight: 600;">
+                            📊 Analytics
+                        </button>
+                        <button onclick="closeAnalysis()" style="flex: 1; padding: 12px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 10px; cursor: pointer; font-weight: 600;">
+                            Close
+                        </button>
                     </div>
                 `;
             }
-
+            
             portfolioHTML += `</div>`;
             
             showToolOverlay('Portfolio', portfolioHTML);
+        }
+        
+        async function loadPortfolioAnalytics() {
+            try {
+                showToolOverlay('Portfolio Analytics', `
+                    <div style="text-align: center; padding: 40px;">
+                        <div class="spinner" style="margin: 0 auto 20px;"></div>
+                        <div style="color: #8b5cf6; font-size: 1.2rem;">Loading portfolio analytics...</div>
+                    </div>
+                `);
+                
+                const response = await fetch('/api/portfolio/analytics');
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayPortfolioAnalytics(data.analytics);
+                } else {
+                    showAnalyticsError();
+                }
+            } catch (error) {
+                console.error('Analytics error:', error);
+                showAnalyticsError();
+            }
+        }
+        
+        function displayPortfolioAnalytics(analytics) {
+            const riskMetrics = analytics.risk_metrics || {};
+            const diversification = analytics.diversification || {};
+            const recommendations = analytics.recommendations || [];
+            const sectorAllocation = analytics.sector_allocation || {};
+            
+            let analyticsHTML = `
+                <div style="padding: 20px; max-height: 80vh; overflow-y: auto;">
+                    <h3 style="margin-bottom: 25px; text-align: center; color: white;">📊 Portfolio Analytics</h3>
+                    
+                    <!-- Risk Metrics -->
+                    <div style="background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 15px; padding: 20px; margin-bottom: 20px;">
+                        <h4 style="color: #8b5cf6; margin-bottom: 15px;">⚠️ Risk Analysis</h4>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 15px;">
+                            <div style="text-align: center;">
+                                <div style="font-size: 0.8rem; opacity: 0.7; margin-bottom: 5px;">Risk Level</div>
+                                <div style="font-weight: 600; color: ${riskMetrics.risk_level === 'Low' ? '#10b981' : riskMetrics.risk_level === 'High' ? '#ef4444' : '#f59e0b'};">${riskMetrics.risk_level || 'Medium'}</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 0.8rem; opacity: 0.7; margin-bottom: 5px;">Volatility</div>
+                                <div style="font-weight: 600;">${riskMetrics.volatility || 0}%</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 0.8rem; opacity: 0.7; margin-bottom: 5px;">Sharpe Ratio</div>
+                                <div style="font-weight: 600;">${riskMetrics.sharpe_ratio || 0}</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Diversification -->
+                    <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 15px; padding: 20px; margin-bottom: 20px;">
+                        <h4 style="color: #10b981; margin-bottom: 15px;">🎯 Diversification</h4>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;">
+                            <div style="text-align: center;">
+                                <div style="font-size: 0.8rem; opacity: 0.7; margin-bottom: 5px;">Score</div>
+                                <div style="font-weight: 600; font-size: 1.2rem;">${diversification.diversification_score || 0}/100</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 0.8rem; opacity: 0.7; margin-bottom: 5px;">Holdings</div>
+                                <div style="font-weight: 600;">${diversification.number_of_holdings || 0}</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 0.8rem; opacity: 0.7; margin-bottom: 5px;">Concentration Risk</div>
+                                <div style="font-weight: 600; color: ${diversification.concentration_risk === 'Low' ? '#10b981' : diversification.concentration_risk === 'High' ? '#ef4444' : '#f59e0b'};">${diversification.concentration_risk || 'Medium'}</div>
+                            </div>
+                        </div>
+                    </div>
+            `;
+            
+            // Sector Allocation
+            if (Object.keys(sectorAllocation).length > 0) {
+                analyticsHTML += `
+                    <div style="background: rgba(6, 182, 212, 0.1); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 15px; padding: 20px; margin-bottom: 20px;">
+                        <h4 style="color: #06b6d4; margin-bottom: 15px;">🏢 Sector Allocation</h4>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px;">
+                `;
+                
+                Object.entries(sectorAllocation).forEach(([sector, percentage]) => {
+                    analyticsHTML += `
+                        <div style="text-align: center; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 8px;">
+                            <div style="font-size: 0.8rem; opacity: 0.8; margin-bottom: 5px;">${sector}</div>
+                            <div style="font-weight: 600; color: #06b6d4;">${percentage}%</div>
+                        </div>
+                    `;
+                });
+                
+                analyticsHTML += `
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Recommendations
+            if (recommendations.length > 0) {
+                analyticsHTML += `
+                    <div style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 15px; padding: 20px; margin-bottom: 20px;">
+                        <h4 style="color: #f59e0b; margin-bottom: 15px;">💡 AI Recommendations</h4>
+                        <div style="display: grid; gap: 12px;">
+                `;
+                
+                recommendations.slice(0, 3).forEach(rec => {
+                    const priorityColor = rec.priority === 'high' ? '#ef4444' : rec.priority === 'medium' ? '#f59e0b' : '#10b981';
+                    analyticsHTML += `
+                        <div style="background: rgba(255,255,255,0.05); border-radius: 10px; padding: 15px; border-left: 3px solid ${priorityColor};">
+                            <div style="font-weight: 600; margin-bottom: 5px; color: ${priorityColor};">${rec.title}</div>
+                            <div style="font-size: 0.9rem; opacity: 0.8; margin-bottom: 8px;">${rec.description}</div>
+                            <div style="font-size: 0.8rem; opacity: 0.7;">${rec.action}</div>
+                        </div>
+                    `;
+                });
+                
+                analyticsHTML += `
+                        </div>
+                    </div>
+                `;
+            }
+            
+            analyticsHTML += `
+                    <div style="display: flex; gap: 10px; margin-top: 25px;">
+                        <button onclick="loadPortfolioData()" style="flex: 1; padding: 12px; background: rgba(139, 92, 246, 0.2); border: 1px solid rgba(139, 92, 246, 0.5); color: #8b5cf6; border-radius: 10px; cursor: pointer; font-weight: 600;">
+                            ← Back to Portfolio
+                        </button>
+                        <button onclick="closeAnalysis()" style="flex: 1; padding: 12px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 10px; cursor: pointer; font-weight: 600;">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            showToolOverlay('Portfolio Analytics', analyticsHTML);
+        }
+        
+        function showAnalyticsError() {
+            showToolOverlay('Portfolio Analytics', `
+                <div style="text-align: center; padding: 40px;">
+                    <div style="color: #ef4444; margin-bottom: 20px;">Unable to load analytics</div>
+                    <button onclick="loadPortfolioData()" style="padding: 10px 20px; background: linear-gradient(45deg, #8b5cf6, #06b6d4); color: white; border: none; border-radius: 10px; cursor: pointer;">
+                        Back to Portfolio
+                    </button>
+                </div>
+            `);
+        }
+        
+        function showSellModal(symbol, availableShares, currentPrice) {
+            const sellModalHTML = `
+                <div style="padding: 20px; max-width: 400px; margin: 0 auto;">
+                    <h3 style="text-align: center; margin-bottom: 25px; color: white;">Sell ${symbol}</h3>
+                    
+                    <div style="background: rgba(255,255,255,0.05); border-radius: 15px; padding: 20px; margin-bottom: 20px;">
+                        <div style="text-align: center; margin-bottom: 15px;">
+                            <div style="font-size: 0.9rem; opacity: 0.7; margin-bottom: 5px;">Current Price</div>
+                            <div style="font-size: 1.5rem; font-weight: 700; color: white;">$${currentPrice.toFixed(2)}</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 0.9rem; opacity: 0.7; margin-bottom: 5px;">Available Shares</div>
+                            <div style="font-size: 1.2rem; font-weight: 600; color: #10b981;">${availableShares}</div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600;">Number of Shares to Sell</label>
+                        <input type="number" id="sellQuantity" min="1" max="${availableShares}" value="1" 
+                               style="width: 100%; padding: 12px; border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; background: rgba(255,255,255,0.05); color: white; font-size: 1rem;"
+                               oninput="updateSellTotal('${symbol}', ${currentPrice})">
+                    </div>
+                    
+                    <div id="sellTotal" style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 10px; padding: 15px; margin-bottom: 20px; text-align: center;">
+                        <div style="font-size: 0.9rem; opacity: 0.8; margin-bottom: 5px;">Total Sale Value</div>
+                        <div style="font-size: 1.3rem; font-weight: 700; color: #10b981;">$${currentPrice.toFixed(2)}</div>
+                    </div>
+                    
+                    <div style="display: flex; gap: 12px;">
+                        <button onclick="closeAnalysis()" style="flex: 1; padding: 12px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 10px; cursor: pointer; font-weight: 600;">
+                            Cancel
+                        </button>
+                        <button onclick="executeSellOrder('${symbol}')" style="flex: 1; padding: 12px; background: linear-gradient(45deg, #ef4444, #dc2626); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: 600;">
+                            Sell Shares
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            showToolOverlay('Sell Stock', sellModalHTML);
+        }
+        
+        function updateSellTotal(symbol, currentPrice) {
+            const quantity = parseInt(document.getElementById('sellQuantity').value) || 0;
+            const total = quantity * currentPrice;
+            
+            document.getElementById('sellTotal').innerHTML = `
+                <div style="font-size: 0.9rem; opacity: 0.8; margin-bottom: 5px;">Total Sale Value</div>
+                <div style="font-size: 1.3rem; font-weight: 700; color: #10b981;">$${total.toFixed(2)}</div>
+            `;
+        }
+        
+        async function executeSellOrder(symbol) {
+            try {
+                const quantity = parseInt(document.getElementById('sellQuantity').value);
+                
+                if (!quantity || quantity <= 0) {
+                    alert('Please enter a valid quantity');
+                    return;
+                }
+                
+                // Show loading state
+                showToolOverlay('Processing Sale', `
+                    <div style="text-align: center; padding: 40px;">
+                        <div class="spinner" style="margin: 0 auto 20px;"></div>
+                        <div style="color: #8b5cf6; font-size: 1.2rem;">Processing your sale...</div>
+                    </div>
+                `);
+                
+                const response = await fetch('/api/sell-stock', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        symbol: symbol,
+                        quantity: quantity
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showToolOverlay('Sale Complete', `
+                        <div style="text-align: center; padding: 40px;">
+                            <div style="font-size: 3rem; margin-bottom: 20px;">✅</div>
+                            <h3 style="color: #10b981; margin-bottom: 15px;">Sale Successful!</h3>
+                            <p style="margin-bottom: 20px;">Sold ${quantity} shares of ${symbol}</p>
+                            <p style="color: #06b6d4;">New balance: $${result.new_balance.toFixed(2)}</p>
+                            <button onclick="loadPortfolioData()" style="padding: 12px 24px; background: linear-gradient(45deg, #8b5cf6, #06b6d4); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: 600; margin-top: 20px;">
+                                View Portfolio
+                            </button>
+                        </div>
+                    `);
+                } else {
+                    alert('Error: ' + (result.error || 'Unknown error occurred'));
+                    closeAnalysis();
+                }
+                
+            } catch (error) {
+                console.error('Sell error:', error);
+                alert('Error processing sale. Please try again.');
+                closeAnalysis();
+            }
         }
         
         function showPortfolioError() {
@@ -1163,8 +1480,8 @@
                         <button onclick="loadPortfolioData()" style="padding: 10px 20px; background: linear-gradient(45deg, #8b5cf6, #06b6d4); color: white; border: none; border-radius: 10px; cursor: pointer;">
                             Retry
                         </button>
-                        <button onclick="restorePortfolio()" style="padding: 10px 20px; background: linear-gradient(45deg, #10b981, #059669); color: white; border: none; border-radius: 10px; cursor: pointer;">
-                            Restore Holdings
+                        <button onclick="closeAnalysis()" style="padding: 10px 20px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 10px; cursor: pointer;">
+                            Close
                         </button>
                     </div>
                 </div>
