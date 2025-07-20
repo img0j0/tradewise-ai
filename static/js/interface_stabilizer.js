@@ -1,4 +1,4 @@
-// Interface Stabilizer - Prevents tier switching and ensures Bloomberg Terminal consistency
+// Interface Stabilizer - Prevents tier switching and ensures Institutional Terminal consistency
 let interfaceStabilized = false;
 let stabilizationAttempts = 0;
 const maxStabilizationAttempts = 3;
@@ -11,13 +11,13 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Stabilize interface after slight delay
     setTimeout(function() {
-        stabilizeBloombergInterface();
+        stabilizeInstitutionalInterface();
     }, 1000);
     
     // Monitor for tier switching and prevent it
     setInterval(function() {
         if (!interfaceStabilized && stabilizationAttempts < maxStabilizationAttempts) {
-            stabilizeBloombergInterface();
+            stabilizeInstitutionalInterface();
         }
     }, 2000);
 });
@@ -38,24 +38,24 @@ function forceInstitutionalTier() {
     console.log('Interface Stabilizer: Forced institutional tier');
 }
 
-function stabilizeBloombergInterface() {
+function stabilizeInstitutionalInterface() {
     stabilizationAttempts++;
     console.log(`Interface Stabilizer: Stabilization attempt ${stabilizationAttempts}`);
     
     // Remove any conflicting elements
     removeConflictingElements();
     
-    // Ensure Bloomberg features are present
-    ensureBloombergFeatures();
+    // Ensure Institutional Terminal features are present
+    ensureInstitutionalFeatures();
     
     // Mark as stabilized
     interfaceStabilized = true;
-    console.log('Interface Stabilizer: Bloomberg Terminal interface stabilized');
+    console.log('Interface Stabilizer: Institutional Terminal interface stabilized');
 }
 
 function removeConflictingElements() {
     // Remove any duplicate headers or conflicting tier indicators
-    const existingHeaders = document.querySelectorAll('.institutional-premium-header, .bloomberg-killer-header');
+    const existingHeaders = document.querySelectorAll('.institutional-premium-header, .institutional-terminal-header');
     if (existingHeaders.length > 1) {
         for (let i = 1; i < existingHeaders.length; i++) {
             existingHeaders[i].remove();
@@ -69,10 +69,10 @@ function removeConflictingElements() {
     console.log('Interface Stabilizer: Removed conflicting elements');
 }
 
-function ensureBloombergFeatures() {
-    // Ensure Bloomberg Terminal header is present
-    if (!document.querySelector('.bloomberg-killer-header') && !document.querySelector('.institutional-premium-header')) {
-        addStableBloombergHeader();
+function ensureInstitutionalFeatures() {
+    // Ensure Institutional Terminal header is present
+    if (!document.querySelector('.institutional-terminal-header') && !document.querySelector('.institutional-premium-header')) {
+        addStableInstitutionalHeader();
     }
     
     // Ensure ticker tape is present
@@ -80,25 +80,25 @@ function ensureBloombergFeatures() {
         addStableTickerTape();
     }
     
-    // Ensure key Bloomberg features are loaded
+    // Ensure key Institutional Terminal features are loaded
     ensureKeyFeatures();
 }
 
-function addStableBloombergHeader() {
+function addStableInstitutionalHeader() {
     const header = document.querySelector('.header-content, .d-flex.justify-content-between');
     if (header) {
-        const bloombergHeader = document.createElement('div');
-        bloombergHeader.className = 'bloomberg-killer-header';
-        bloombergHeader.innerHTML = `
+        const institutionalHeader = document.createElement('div');
+        institutionalHeader.className = 'institutional-terminal-header';
+        institutionalHeader.innerHTML = `
             <div style="background: linear-gradient(135deg, #1e40af, #7c3aed); padding: 6px 12px; border-radius: 6px; color: white; font-weight: 600; font-size: 0.75rem; margin-right: 10px; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 15px rgba(30, 64, 175, 0.4); position: relative;">
                 <i class="fas fa-chart-line" style="color: #fbbf24;"></i>
-                BLOOMBERG KILLER
+                INSTITUTIONAL TERMINAL
                 <span style="background: rgba(255,255,255,0.2); padding: 1px 4px; border-radius: 3px; font-size: 0.6rem;">98% SAVINGS</span>
                 <div style="position: absolute; top: -5px; right: -5px; background: #dc2626; color: white; border-radius: 50%; width: 12px; height: 12px; font-size: 0.5rem; display: flex; align-items: center; justify-content: center; animation: pulse 2s infinite;">!</div>
             </div>
         `;
-        header.appendChild(bloombergHeader);
-        console.log('Interface Stabilizer: Added stable Bloomberg header');
+        header.appendChild(institutionalHeader);
+        console.log('Interface Stabilizer: Added stable Institutional Terminal header');
     }
 }
 
@@ -110,7 +110,7 @@ function addStableTickerTape() {
         ticker.innerHTML = `
             <div style="background: rgba(0,0,0,0.9); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 8px; margin-bottom: 15px; overflow: hidden; position: relative; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
                 <div style="color: #fbbf24; font-weight: 600; font-size: 0.7rem; margin-bottom: 5px; display: flex; align-items: center; gap: 8px;">
-                    <i class="fas fa-broadcast-tower"></i> BLOOMBERG TERMINAL KILLER - LIVE MARKET DATA
+                    <i class="fas fa-broadcast-tower"></i> INSTITUTIONAL MARKET TERMINAL - LIVE DATA
                     <span style="background: #dc2626; color: white; padding: 1px 4px; border-radius: 3px; font-size: 0.6rem; animation: pulse 2s infinite;">LIVE</span>
                     <span style="background: #10b981; color: white; padding: 1px 4px; border-radius: 3px; font-size: 0.6rem;">98% SAVINGS</span>
                 </div>
@@ -139,16 +139,16 @@ function addStableTickerTape() {
             </div>
         `;
         container.insertBefore(ticker, container.firstChild);
-        console.log('Interface Stabilizer: Added stable Bloomberg ticker tape');
+        console.log('Interface Stabilizer: Added stable Institutional Terminal ticker tape');
     }
 }
 
 function ensureKeyFeatures() {
-    // Check if key Bloomberg features are present, add them if missing
+    // Check if key Institutional Terminal features are present, add them if missing
     const requiredFeatures = [
         '.real-time-dashboard',
         '.ai-insights-panel', 
-        '.bloomberg-dark-pool',
+        '.institutional-dark-pool',
         '.institutional-tools-section'
     ];
     
@@ -160,8 +160,8 @@ function ensureKeyFeatures() {
                 if (window.activateInstitutionalFeatures) {
                     window.activateInstitutionalFeatures();
                 }
-                if (window.addBloombergKillerFeatures) {
-                    window.addBloombergKillerFeatures();
+                if (window.addInstitutionalTerminalFeatures) {
+                    window.addInstitutionalTerminalFeatures();
                 }
                 if (window.addInstitutionalToolbar) {
                     window.addInstitutionalToolbar();
@@ -173,18 +173,18 @@ function ensureKeyFeatures() {
 
 // Prevent page refreshing from breaking interface
 window.addEventListener('beforeunload', function() {
-    localStorage.setItem('bloombergKillerActive', 'true');
+    localStorage.setItem('institutionalTerminalActive', 'true');
     localStorage.setItem('institutionalTier', 'true');
 });
 
-// Restore Bloomberg interface on page load
+// Restore Institutional Terminal interface on page load
 window.addEventListener('load', function() {
-    if (localStorage.getItem('bloombergKillerActive') === 'true') {
+    if (localStorage.getItem('institutionalTerminalActive') === 'true') {
         forceInstitutionalTier();
-        setTimeout(stabilizeBloombergInterface, 2000);
+        setTimeout(stabilizeInstitutionalInterface, 2000);
     }
 });
 
 // Export functions for use by other scripts
 window.forceInstitutionalTier = forceInstitutionalTier;
-window.stabilizeBloombergInterface = stabilizeBloombergInterface;
+window.stabilizeInstitutionalInterface = stabilizeInstitutionalInterface;

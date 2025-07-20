@@ -165,9 +165,9 @@ function addAdvancedAIInsights() {
 
 function addBloombergStyleDarkPool() {
     const container = document.querySelector('.main-content, .search-section');
-    if (container && !container.querySelector('.bloomberg-dark-pool')) {
+    if (container && !container.querySelector('.institutional-dark-pool')) {
         const darkPool = document.createElement('div');
-        darkPool.className = 'bloomberg-dark-pool';
+        darkPool.className = 'institutional-dark-pool';
         darkPool.innerHTML = `
             <div style="background: linear-gradient(135deg, rgba(220,38,38,0.1), rgba(153,27,27,0.1)); border: 1px solid rgba(220,38,38,0.3); border-radius: 15px; padding: 15px; margin-bottom: 15px; backdrop-filter: blur(10px); position: relative;">
                 <div style="position: absolute; top: 10px; right: 10px; background: rgba(220,38,38,0.8); color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.6rem; font-weight: 600;">

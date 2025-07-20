@@ -291,7 +291,7 @@ function toggleCalendarDetails() {
 }
 
 function addRealTimeTerminalInterface() {
-    // Add Bloomberg-style professional interface elements
+    // Add Institutional Terminal-style professional interface elements
     console.log('Adding real-time terminal interface...');
 }
 
