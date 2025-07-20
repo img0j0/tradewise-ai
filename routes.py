@@ -4865,7 +4865,7 @@ def get_live_market_alerts():
                 'severity': 'MEDIUM',
                 'message': 'Breakout above resistance level at $245',
                 'confidence': 0.72,
-                'timestamp': (datetime.now() - timedelta(minutes=15)).isoformat(),
+                'timestamp': datetime.now().isoformat(),
                 'source': 'TECHNICAL_ANALYSIS'
             }
         ]

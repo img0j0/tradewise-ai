@@ -42,7 +42,7 @@
                         </div>
                         
                         <!-- Market Intelligence Content (Initially Hidden) -->
-                        <div id="market-intelligence-content" style="display: none; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 10px; margin: 10px 0; max-width: 350px;">
+                        <div id="market-intelligence-content" style="display: none; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 10px; margin: 10px 0; max-width: 350px; max-height: 400px; overflow-y: auto; overscroll-behavior: contain;">
                             {% include 'market_intelligence_widget.html' %}
                         </div>
                         
@@ -711,11 +711,15 @@
         border: 1px solid rgba(255, 255, 255, 0.15);
         border-radius: 12px;
         min-width: 200px;
+        max-width: 400px;
+        max-height: 80vh;
         box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
         z-index: 1000;
         margin-top: 0.5rem;
         display: none;
-        overflow: hidden;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        scroll-behavior: smooth;
     }
 
     .tools-dropdown-menu.show {
@@ -4414,6 +4418,13 @@
             if (typeof window.marketIntelligenceWidget === 'undefined') {
                 window.marketIntelligenceWidget = new MarketIntelligenceWidget();
             }
+            // Prevent scroll events from bubbling up
+            content.addEventListener('wheel', function(e) {
+                e.stopPropagation();
+            });
+            content.addEventListener('touchmove', function(e) {
+                e.stopPropagation();
+            });
         } else {
             content.style.display = 'none';
         }
