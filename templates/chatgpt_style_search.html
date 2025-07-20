@@ -18,10 +18,12 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
             animation: shimmer 4s ease-in-out infinite;
-            font-weight: 800;
-            letter-spacing: -0.5px;
+            font-weight: 900;
+            font-size: 1.8rem;
+            letter-spacing: -0.8px;
             text-shadow: 0 0 30px rgba(102, 126, 234, 0.2);
             position: relative;
+            line-height: 1.1;
         }
 
         @keyframes shimmer {
@@ -39,6 +41,7 @@
             flex-direction: column;
             align-items: flex-start;
             animation: brandFadeIn 1.2s ease-out;
+            flex-grow: 1;
         }
 
         @keyframes brandFadeIn {
@@ -55,11 +58,50 @@
         .brand-tagline {
             opacity: 0;
             animation: taglineFadeIn 1s ease-out 0.6s forwards;
-            font-size: 0.8rem;
-            color: #6b7280;
-            font-weight: 500;
-            letter-spacing: 0.3px;
-            margin-top: 2px;
+            font-size: 0.75rem;
+            color: #8b9dc3;
+            font-weight: 600;
+            letter-spacing: 0.2px;
+            margin-top: 3px;
+        }
+
+        /* Crown Upgrade Button */
+        .crown-upgrade-button {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            border: none;
+            border-radius: 12px;
+            padding: 0.75rem;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(251, 191, 36, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .crown-upgrade-button:hover {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(251, 191, 36, 0.4);
+        }
+
+        .crown-upgrade-button:active {
+            transform: translateY(0);
+        }
+
+        .crown-upgrade-button i {
+            font-size: 1.1rem;
+            animation: crownShine 3s ease-in-out infinite;
+        }
+
+        @keyframes crownShine {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
         }
 
         @keyframes taglineFadeIn {
@@ -91,10 +133,19 @@
         /* Mobile responsive adjustments */
         @media (max-width: 768px) {
             .animated-brand {
-                font-size: 1.4rem;
+                font-size: 1.6rem;
+                letter-spacing: -0.6px;
             }
             .brand-tagline {
-                font-size: 0.7rem;
+                font-size: 0.65rem;
+            }
+            .crown-upgrade-button {
+                width: 40px;
+                height: 40px;
+                padding: 0.6rem;
+            }
+            .crown-upgrade-button i {
+                font-size: 1rem;
             }
         }
     </style>
@@ -109,13 +160,12 @@
             <div class="header-left">
                 <div class="brand-container">
                     <span class="brand-name animated-brand">TradeWise AI</span>
-                    <span class="brand-tagline">Bloomberg Terminal for Everyone</span>
+                    <span class="brand-tagline">AI-Powered Trading Platform</span>
                 </div>
             </div>
             <div class="header-right">
-                <button class="upgrade-button-mini" id="upgrade-button" onclick="showUpgradeModal('Pro')">
+                <button class="crown-upgrade-button" id="upgrade-button" onclick="window.location.href='/subscription'">
                     <i class="fas fa-crown"></i>
-                    <span class="upgrade-text">Pro</span>
                 </button>
                 <div class="tools-dropdown">
                     <button class="tools-toggle-compact" onclick="toggleToolsDropdown()">
