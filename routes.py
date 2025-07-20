@@ -49,7 +49,7 @@ except ImportError:
 stripe.api_key = os.environ.get('STRIPE_SECRET_KEY')
 
 # Get domain for Stripe redirects
-YOUR_DOMAIN = os.environ.get('REPLIT_DEV_DOMAIN') if os.environ.get('REPLIT_DEPLOYMENT') != '' else os.environ.get('REPLIT_DOMAINS').split(',')[0] if os.environ.get('REPLIT_DOMAINS') else 'localhost:5000'
+YOUR_DOMAIN = os.environ.get('REPLIT_DEV_DOMAIN') if os.environ.get('REPLIT_DEPLOYMENT') != '' else (os.environ.get('REPLIT_DOMAINS', 'localhost:5000').split(',')[0] if os.environ.get('REPLIT_DOMAINS') else 'localhost:5000')
 
 logger = logging.getLogger(__name__)
 
