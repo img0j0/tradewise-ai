@@ -35,6 +35,16 @@ function forceInstitutionalDisplay() {
         element.style.fontWeight = '600';
     });
     
+    // Add institutional status to header if missing
+    const headerRight = document.querySelector('.header-right, .d-flex.align-items-center');
+    if (headerRight && !headerRight.querySelector('.institutional-status')) {
+        const statusDiv = document.createElement('div');
+        statusDiv.className = 'institutional-status';
+        statusDiv.style.cssText = 'color: #8b5cf6; font-weight: 600; font-size: 0.9rem; margin-right: 15px;';
+        statusDiv.textContent = 'Institutional Features: All Access';
+        headerRight.insertBefore(statusDiv, headerRight.firstChild);
+    }
+    
     // Hide crown upgrade button (institutional users don't need to upgrade)
     const crownButton = document.querySelector('.crown-upgrade-btn');
     if (crownButton) {
