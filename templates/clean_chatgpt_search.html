@@ -793,8 +793,8 @@
         }
         
         // Smart Alert Creation Function
-        async function showCreateAlert() {
-            console.log('showCreateAlert function called!');
+        function showCreateAlert() {
+            console.log('=== showCreateAlert function called! ===');
             console.log('currentStock:', currentStock);
             
             if (!currentStock) {
@@ -803,6 +803,15 @@
                 return;
             }
             
+            // Show simple alert first to test
+            alert(`Creating alert for ${currentStock.symbol} - ${currentStock.name}`);
+            
+            // Then proceed with API call
+            createAlertWithAPI();
+        }
+        
+        // Separate async function for API call
+        async function createAlertWithAPI() {
             try {
                 // Show loading state
                 showToolOverlay('Smart Alerts', `
