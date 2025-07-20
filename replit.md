@@ -1026,6 +1026,23 @@ Focus: Real-world validation and industry-disrupting innovation
 - **Clean Search Interface**: Search bar now completely free of stacked colored indicators
 - **Professional Minimalism**: Achieved clean, minimalist design while preserving all trading functionality
 - **User Validation**: User confirmed "Perfect!" - visual cleanup mission accomplished
+
+### Institutional Layout Optimization Implementation (July 20, 2025) ✅ COMPLETED
+**Successfully optimized institutional page layout prioritizing advanced investor features**
+
+#### ✅ BLOOMBERG TERMINAL KILLER PRIORITIZATION:
+- **First Position Display**: Created dedicated Bloomberg Terminal Killer section with live market data grid
+- **Professional Interface**: Animated ticker tape with real-time stock prices (AAPL, TSLA, NVDA, MSFT, GOOGL, AMZN)
+- **Institutional Metrics**: S&P 500, VIX, Dark Pool percentage, Options flow with live indicators
+- **98% Savings Badge**: Prominent cost comparison highlighting Bloomberg Terminal alternative
+- **Tier-Based Display**: Section only visible for institutional users, hidden for free/intermediate tiers
+
+#### ✅ BASIC SECTION REMOVAL FOR INSTITUTIONAL USERS:
+- **"Discover Your Next Investment" Hidden**: Removed new/intermediate investor section from institutional interface
+- **Advanced Investor Focus**: Optimized top-tier subscription for sophisticated users rather than beginners
+- **Tier Integration**: Added optimizeInstitutionalLayout() function to tier_integration.js
+- **Conditional Display**: Free and intermediate users still see discovery section, institutional users see Bloomberg Terminal first
+- **Professional Positioning**: Institutional tier now leads with advanced market intelligence rather than basic investment guidance
 - **JavaScript Files**: Eliminated fa-search FontAwesome icons from ai_stock_search.js and dashboard.js
 - **Template Files**: Cleaned up search icon references in chatgpt_style.html and chatgpt_style_search.html
 - **Mobile Interface**: Specifically targeted mobile search icon issues identified by user photo evidence

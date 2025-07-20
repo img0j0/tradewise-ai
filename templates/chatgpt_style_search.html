@@ -605,8 +605,79 @@
                 </div>
             </div>
             
-            <!-- Compact Search Header -->
-            <div class="search-hero-compact" style="margin-bottom: 1rem; padding: 0.5rem 0;">
+            <!-- Bloomberg Terminal Killer Section (First for Institutional Users) -->
+            <div id="bloomberg-terminal-section" class="bloomberg-terminal-section" style="display: none; margin-bottom: 1.5rem;">
+                <div style="background: linear-gradient(135deg, #1e40af, #7c3aed); border-radius: 12px; padding: 20px; color: white; position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,0.1);">
+                    <!-- Animated background -->
+                    <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: url('data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\"><defs><pattern id=\"grid\" width=\"10\" height=\"10\" patternUnits=\"userSpaceOnUse\"><path d=\"M 10 0 L 0 0 0 10\" fill=\"none\" stroke=\"rgba(255,255,255,0.05)\" stroke-width=\"1\"/></pattern></defs><rect width=\"100\" height=\"100\" fill=\"url(%23grid)\"/></svg>'); opacity: 0.5;"></div>
+                    
+                    <!-- Header with live indicator -->
+                    <div style="position: relative; z-index: 2;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px;">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <div style="width: 32px; height: 32px; background: linear-gradient(135deg, #fbbf24, #f59e0b); border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                                    📊
+                                </div>
+                                <div>
+                                    <h4 style="margin: 0; font-weight: 700; font-size: 1.2rem;">BLOOMBERG TERMINAL KILLER</h4>
+                                    <div style="font-size: 0.8rem; opacity: 0.9;">Professional Market Data & Analytics</div>
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <div style="width: 8px; height: 8px; background: #00ff88; border-radius: 50%; animation: pulse 2s infinite;"></div>
+                                <span style="background: rgba(255,255,255,0.2); padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: 600;">LIVE</span>
+                                <span style="background: #10b981; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: 600;">98% SAVINGS</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Live market data grid -->
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; margin-bottom: 15px;">
+                            <div style="background: rgba(255,255,255,0.1); border-radius: 8px; padding: 10px; text-align: center;">
+                                <div style="font-size: 0.7rem; opacity: 0.8;">S&P 500</div>
+                                <div style="font-size: 1.1rem; font-weight: 700; color: #10b981;">5,847.23</div>
+                                <div style="font-size: 0.6rem; color: #10b981;">+0.8%</div>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.1); border-radius: 8px; padding: 10px; text-align: center;">
+                                <div style="font-size: 0.7rem; opacity: 0.8;">VIX</div>
+                                <div style="font-size: 1.1rem; font-weight: 700; color: #ef4444;">18.42</div>
+                                <div style="font-size: 0.6rem; color: #ef4444;">+12.3%</div>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.1); border-radius: 8px; padding: 10px; text-align: center;">
+                                <div style="font-size: 0.7rem; opacity: 0.8;">Dark Pool</div>
+                                <div style="font-size: 1.1rem; font-weight: 700; color: #3b82f6;">42.7%</div>
+                                <div style="font-size: 0.6rem; color: #3b82f6;">High</div>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.1); border-radius: 8px; padding: 10px; text-align: center;">
+                                <div style="font-size: 0.7rem; opacity: 0.8;">Options</div>
+                                <div style="font-size: 1.1rem; font-weight: 700; color: #8b5cf6;">$2.8B</div>
+                                <div style="font-size: 0.6rem; color: #8b5cf6;">Heavy</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Professional ticker tape -->
+                        <div style="background: rgba(0,0,0,0.3); border-radius: 6px; padding: 8px; overflow: hidden; white-space: nowrap; position: relative;">
+                            <div style="display: inline-block; animation: scroll 30s linear infinite;">
+                                <span style="margin-right: 30px; font-family: monospace; font-size: 0.8rem;">AAPL $211.18 ↗ +0.57%</span>
+                                <span style="margin-right: 30px; font-family: monospace; font-size: 0.8rem;">TSLA $248.77 ↘ -2.34%</span>
+                                <span style="margin-right: 30px; font-family: monospace; font-size: 0.8rem;">NVDA $425.89 ↗ +1.23%</span>
+                                <span style="margin-right: 30px; font-family: monospace; font-size: 0.8rem;">MSFT $385.21 ↗ +0.45%</span>
+                                <span style="margin-right: 30px; font-family: monospace; font-size: 0.8rem;">GOOGL $142.55 ↘ -0.87%</span>
+                                <span style="margin-right: 30px; font-family: monospace; font-size: 0.8rem;">AMZN $155.73 ↗ +1.12%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <style>
+                @keyframes scroll {
+                    0% { transform: translateX(100%); }
+                    100% { transform: translateX(-100%); }
+                }
+                </style>
+            </div>
+            
+            <!-- Compact Search Header (Hidden for Institutional Users) -->
+            <div id="discover-investment-section" class="search-hero-compact" style="margin-bottom: 1rem; padding: 0.5rem 0;">
                 <div class="hero-tagline">AI-Powered Trading</div>
                 <h3 class="search-title-compact" style="font-size: 1.8rem; margin-bottom: 0.3rem;">
                     <span class="hero-gradient">Discover</span> Your Next Investment

@@ -74,6 +74,11 @@ class TierIntegrationManager {
         
         // Add tier-specific features
         this.addTierFeatures();
+        
+        // Optimize layout for institutional users
+        if (this.currentTier === 'Institutional') {
+            this.optimizeInstitutionalLayout();
+        }
     }
 
     transformHeader() {
@@ -281,6 +286,37 @@ class TierIntegrationManager {
             `;
             searchResults.appendChild(darkPoolPanel);
         }
+    }
+    
+    optimizeInstitutionalLayout() {
+        console.log('TierIntegrationManager: Optimizing layout for institutional users');
+        
+        // Show Bloomberg Terminal section first
+        const bloombergSection = document.getElementById('bloomberg-terminal-section');
+        if (bloombergSection) {
+            bloombergSection.style.display = 'block';
+            console.log('TierIntegrationManager: Bloomberg Terminal section enabled');
+        }
+        
+        // Hide "Discover Your Next Investment" section for advanced investors
+        const discoverSection = document.getElementById('discover-investment-section');
+        if (discoverSection) {
+            discoverSection.style.display = 'none';
+            console.log('TierIntegrationManager: Basic investor section hidden for institutional users');
+        }
+        
+        // Ensure institutional features are prioritized
+        this.prioritizeInstitutionalFeatures();
+    }
+    
+    prioritizeInstitutionalFeatures() {
+        // Ensure dark pool intelligence is visible
+        this.enableDarkPoolFeatures();
+        
+        // Add institutional-specific styling
+        document.body.classList.add('institutional-optimized');
+        
+        console.log('TierIntegrationManager: Institutional layout optimization complete');
     }
 
     setupUpgradePrompts() {
