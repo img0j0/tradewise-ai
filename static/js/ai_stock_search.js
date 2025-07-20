@@ -327,10 +327,16 @@ function displayComprehensiveStockAnalysis(stockData) {
     const comprehensiveHTML = buildComprehensiveAnalysisHTML(stockData);
     
     resultsContainer.innerHTML = comprehensiveHTML;
-    resultsContainer.style.display = 'block';
+    resultsContainer.style.display = 'flex';
     
-    // Scroll to results
-    resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    // Show the results with smooth animation
+    setTimeout(() => {
+        const content = resultsContainer.querySelector('.search-results-content');
+        if (content) {
+            content.style.transform = 'scale(1)';
+            content.style.opacity = '1';
+        }
+    }, 50);
 }
 
 // Build comprehensive analysis HTML using new API data structure
@@ -1043,6 +1049,21 @@ function quickSearch(symbol) {
 
 // Alternative function name for compatibility
 window.quickSearch = quickSearch;
+
+// Close search results function
+function closeSearchResults() {
+    const resultsContainer = document.getElementById('ai-analysis-results');
+    if (resultsContainer) {
+        const content = resultsContainer.querySelector('.search-results-content');
+        if (content) {
+            content.style.transform = 'scale(0.95)';
+            content.style.opacity = '0';
+        }
+        setTimeout(() => {
+            resultsContainer.style.display = 'none';
+        }, 300);
+    }
+}
 
 // Reset search button on page load
 document.addEventListener('DOMContentLoaded', function() {
