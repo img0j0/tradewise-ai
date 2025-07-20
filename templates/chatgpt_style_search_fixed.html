@@ -400,6 +400,7 @@
             cursor: pointer;
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             transition: background 0.2s ease;
+            color: white;
         }
 
         .suggestion-item:hover {
@@ -408,6 +409,11 @@
 
         .suggestion-item:last-child {
             border-bottom: none;
+        }
+
+        @keyframes taglineFadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .ai-result {
@@ -528,10 +534,10 @@
                            id="stock-search-input"
                            placeholder="Ask anything about stocks... (try 'google', 'apple', or 'NVDA')"
                            class="search-input"
-                           onkeypress="handleEnterPress(event)"
+                           onkeypress="handleSearchEnter(event)"
                            oninput="showSearchSuggestions(this.value)"
                            style="background-image: none !important; -webkit-appearance: none; -moz-appearance: none; appearance: none;">
-                    <div class="search-suggestions" id="searchSuggestions" style="display: none;"></div>
+                    <div class="suggestions-container" id="suggestions-container" style="display: none;"></div>
                 </div>
                 
                 <!-- Popular Stock Shortcuts -->
@@ -603,7 +609,7 @@
             </div>
 
             <!-- AI Results Area -->
-            <div class="ai-results" id="aiResults" style="display: none;">
+            <div class="ai-results" id="ai-result" style="display: none;">
                 <!-- AI analysis results displayed here -->
             </div>
         </div>
@@ -633,8 +639,86 @@
             }
         }
 
+        function searchStock(symbol) {
+            document.getElementById('stock-search-input').value = symbol;
+            performStockSearch();
+        }
+
+        function toggleDropdown(dropdownId) {
+            const content = document.getElementById(dropdownId + '-content');
+            if (content) {
+                const isVisible = content.style.display !== 'none';
+                // Hide all dropdowns first
+                document.querySelectorAll('.dropdown-content').forEach(dropdown => {
+                    dropdown.style.display = 'none';
+                });
+                // Show the selected one if it wasn't visible
+                if (!isVisible) {
+                    content.style.display = 'block';
+                    loadDropdownContent(dropdownId);
+                }
+            }
+        }
+
+        function loadDropdownContent(dropdownId) {
+            const content = document.getElementById(dropdownId + '-content');
+            if (!content) return;
+
+            if (dropdownId === 'popular-stocks') {
+                content.innerHTML = 
+                    '<div style="display: grid; gap: 1rem;">' +
+                        '<div class="stock-card" onclick="searchStock(\'AAPL\')" style="background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 10px; cursor: pointer; border: 1px solid rgba(255,255,255,0.1);">' +
+                            '<h4>Apple Inc. (AAPL)</h4>' +
+                            '<p>$150.00 <span style="color: #10b981;">+2.5%</span></p>' +
+                        '</div>' +
+                        '<div class="stock-card" onclick="searchStock(\'TSLA\')" style="background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 10px; cursor: pointer; border: 1px solid rgba(255,255,255,0.1);">' +
+                            '<h4>Tesla Inc. (TSLA)</h4>' +
+                            '<p>$250.00 <span style="color: #ef4444;">-1.2%</span></p>' +
+                        '</div>' +
+                        '<div class="stock-card" onclick="searchStock(\'NVDA\')" style="background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 10px; cursor: pointer; border: 1px solid rgba(255,255,255,0.1);">' +
+                            '<h4>NVIDIA Corp. (NVDA)</h4>' +
+                            '<p>$400.00 <span style="color: #10b981;">+5.8%</span></p>' +
+                        '</div>' +
+                    '</div>';
+            } else if (dropdownId === 'investment-themes') {
+                content.innerHTML = 
+                    '<div style="display: grid; gap: 1rem;">' +
+                        '<div style="background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1);">' +
+                            '<h4>AI & Machine Learning</h4>' +
+                            '<p>Growth: <span style="color: #10b981;">+15.2%</span></p>' +
+                        '</div>' +
+                        '<div style="background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1);">' +
+                            '<h4>Clean Energy</h4>' +
+                            '<p>Growth: <span style="color: #10b981;">+8.7%</span></p>' +
+                        '</div>' +
+                        '<div style="background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1);">' +
+                            '<h4>Cybersecurity</h4>' +
+                            '<p>Growth: <span style="color: #10b981;">+12.1%</span></p>' +
+                        '</div>' +
+                    '</div>';
+            } else if (dropdownId === 'market-insights') {
+                content.innerHTML = 
+                    '<div style="display: grid; gap: 1rem;">' +
+                        '<div style="background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1);">' +
+                            '<h4>Market Sentiment</h4>' +
+                            '<p>Current: <span style="color: #10b981;">Bullish</span></p>' +
+                        '</div>' +
+                        '<div style="background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1);">' +
+                            '<h4>Volatility Index</h4>' +
+                            '<p>Level: <span style="color: #f59e0b;">Moderate</span></p>' +
+                        '</div>' +
+                        '<div style="background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1);">' +
+                            '<h4>AI Opportunities</h4>' +
+                            '<p>Score: <span style="color: #10b981;">8.5/10</span></p>' +
+                        '</div>' +
+                    '</div>';
+            }
+        }
+
         function showSearchSuggestions(query) {
             const suggestions = document.getElementById('suggestions-container');
+            
+            if (!suggestions) return;
             
             if (query.length < 1) {
                 suggestions.style.display = 'none';
@@ -656,7 +740,7 @@
 
             if (filtered.length > 0) {
                 suggestions.innerHTML = filtered.map(stock => 
-                    `<div class="suggestion-item" onclick="selectSuggestion('${stock.split(' ')[0]}')">${stock}</div>`
+                    '<div class="suggestion-item" onclick="selectSuggestion(\'' + stock.split(' ')[0] + '\')">' + stock + '</div>'
                 ).join('');
                 suggestions.style.display = 'block';
             } else {
@@ -666,8 +750,37 @@
 
         function selectSuggestion(symbol) {
             document.getElementById('stock-search-input').value = symbol;
-            document.getElementById('suggestions-container').style.display = 'none';
+            const suggestions = document.getElementById('suggestions-container');
+            if (suggestions) suggestions.style.display = 'none';
             performStockSearch();
+        }
+
+        // Add missing displayStockResult function
+        function displayStockResult(data) {
+            const resultDiv = document.getElementById('ai-result');
+            if (!resultDiv) return;
+            
+            const recommendation = data.recommendation || 'HOLD';
+            const confidence = data.confidence || 75;
+            const price = data.price || '0.00';
+            
+            resultDiv.innerHTML = '<div style="background: rgba(255,255,255,0.05); border-radius: 15px; padding: 2rem; margin: 2rem 0; border: 1px solid rgba(255,255,255,0.1);">' +
+                '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">' +
+                    '<div>' +
+                        '<h2 style="margin: 0; color: white; font-size: 1.5rem;">' + data.symbol + ' - ' + data.name + '</h2>' +
+                        '<p style="margin: 0.5rem 0 0 0; color: rgba(255,255,255,0.7);">Current Price: $' + price + '</p>' +
+                    '</div>' +
+                    '<div style="text-align: right;">' +
+                        '<div style="background: ' + (recommendation === 'BUY' ? '#10b981' : recommendation === 'SELL' ? '#ef4444' : '#f59e0b') + '; color: white; padding: 0.5rem 1rem; border-radius: 20px; font-weight: 600; margin-bottom: 0.5rem;">' + recommendation + '</div>' +
+                        '<div style="color: rgba(255,255,255,0.6); font-size: 0.9rem;">Confidence: ' + confidence + '%</div>' +
+                    '</div>' +
+                '</div>' +
+                '<div style="display: flex; gap: 1rem; flex-wrap: wrap;">' +
+                    '<button onclick="showBuyModal(\'' + data.symbol + '\', \'' + data.name + '\', \'' + price + '\', \'' + recommendation + '\', ' + confidence + ')" style="background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 10px; cursor: pointer; font-weight: 600;">Buy Stock</button>' +
+                    '<button onclick="addToWatchlist(\'' + data.symbol + '\', \'' + data.name + '\', \'' + price + '\')" style="background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); padding: 0.75rem 1.5rem; border-radius: 10px; cursor: pointer; font-weight: 600;">Add to Watchlist</button>' +
+                    '<button onclick="getMoreAnalysis(\'' + data.symbol + '\')" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 10px; cursor: pointer; font-weight: 600;">More Analysis</button>' +
+                '</div>' +
+            '</div>';
         }
 
         function searchStock(symbol) {
