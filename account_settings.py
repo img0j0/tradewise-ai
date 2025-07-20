@@ -53,7 +53,7 @@ class AccountSettingsManager:
                 },
                 'account_info': {
                     'balance': float(account.balance) if account else 0.0,
-                    'total_deposits': float(account.total_deposits) if account else 0.0,
+                    'total_deposits': float(account.total_deposited) if account else 0.0,
                     'total_trades': len(recent_transactions),
                     'account_status': 'Active',
                     'account_type': subscription_info.get('tier', 'Free'),
