@@ -237,14 +237,9 @@ async function searchStockAI() {
             throw new Error('Stock not found');
         }
 
-        console.log('Getting AI analysis for:', symbol);
-        // Get AI analysis
-        const aiAnalysis = await getAIAnalysis(symbol);
-        console.log('AI analysis received:', aiAnalysis);
-        
-        // Display results
-        console.log('Displaying results...');
-        displayStockAnalysis(stockData, aiAnalysis);
+        // The stock data from our new API already includes comprehensive AI analysis
+        console.log('Displaying comprehensive analysis results...');
+        displayComprehensiveStockAnalysis(stockData);
         
     } catch (error) {
         console.error('Error searching stock:', error);
@@ -252,12 +247,17 @@ async function searchStockAI() {
     }
 }
 
-// Search stock data from backend
+// Search stock data from backend using comprehensive API
 async function searchStockData(symbol) {
     try {
-        console.log(`Fetching stock data for: ${symbol}`);
-        const response = await fetch(`/api/search-stock/${symbol}`, {
-            credentials: 'include'
+        console.log(`Fetching comprehensive stock data for: ${symbol}`);
+        const response = await fetch('/api/stock-search', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+            body: JSON.stringify({ query: symbol })
         });
         
         console.log(`Response status: ${response.status}`);
@@ -270,7 +270,8 @@ async function searchStockData(symbol) {
         }
         
         const data = await response.json();
-        console.log('Stock data received:', data);
+        console.log('Comprehensive stock data received:', data);
+        console.log('Search results:', [data]);
         return data;
     } catch (error) {
         console.error('Error fetching stock data:', error);
@@ -305,8 +306,8 @@ async function getAIAnalysis(symbol) {
     }
 }
 
-// Display stock analysis results
-function displayStockAnalysis(stockData, aiAnalysis) {
+// Display comprehensive stock analysis results
+function displayComprehensiveStockAnalysis(stockData) {
     currentAnalyzedStock = stockData;
     
     // Reset search interface
@@ -321,15 +322,208 @@ function displayStockAnalysis(stockData, aiAnalysis) {
         searchBox.classList.remove('search-loading');
     }
     
-    // Build the complete AI analysis results HTML
+    // Build comprehensive analysis results using our enhanced API data
     const resultsContainer = document.getElementById('ai-analysis-results');
-    const analysisHTML = buildAnalysisHTML(stockData, aiAnalysis);
+    const comprehensiveHTML = buildComprehensiveAnalysisHTML(stockData);
     
-    resultsContainer.innerHTML = analysisHTML;
+    resultsContainer.innerHTML = comprehensiveHTML;
     resultsContainer.style.display = 'block';
     
     // Scroll to results
     resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// Build comprehensive analysis HTML using new API data structure
+function buildComprehensiveAnalysisHTML(stockData) {
+    // Extract real-time data from comprehensive API response
+    const currentPrice = parseFloat(stockData.price || stockData.current_price || 0);
+    const change = parseFloat(stockData.change || 0);
+    const changePercent = parseFloat(stockData.change_percent || 0);
+    
+    const changeColor = change >= 0 ? '#10b981' : '#ef4444';
+    const changeSign = change >= 0 ? '+' : '';
+    
+    // Get confidence level color
+    const confidence = parseInt(stockData.confidence || 50);
+    let confidenceColor = '#ef4444'; // Red for low confidence
+    if (confidence > 70) confidenceColor = '#10b981'; // Green for high confidence
+    else if (confidence > 40) confidenceColor = '#f59e0b'; // Yellow for medium confidence
+    
+    // Format market sentiment badge
+    const sentiment = stockData.market_sentiment || 'NEUTRAL';
+    const sentimentColor = {
+        'VERY_BULLISH': '#10b981',
+        'BULLISH': '#34d399', 
+        'NEUTRAL': '#6b7280',
+        'BEARISH': '#f87171',
+        'VERY_BEARISH': '#ef4444'
+    }[sentiment] || '#6b7280';
+    
+    // Format risk level badge
+    const riskLevel = stockData.risk_level || 'MEDIUM';
+    const riskColor = {
+        'LOW': '#10b981',
+        'MEDIUM': '#f59e0b',
+        'HIGH': '#ef4444'
+    }[riskLevel] || '#f59e0b';
+    
+    return `
+        <div class="search-results-overlay">
+            <div class="search-results-content">
+                <!-- Enhanced Stock Header with Real-time Data -->
+                <div class="stock-header">
+                    <div class="stock-info">
+                        <h2 class="stock-name">${stockData.name || 'Unknown Company'}</h2>
+                        <div class="stock-symbol-sector">
+                            <span class="stock-symbol">${stockData.symbol}</span>
+                            <span class="live-indicator">🔴 LIVE</span>
+                        </div>
+                    </div>
+                    <div class="stock-price-info">
+                        <div class="current-price">$${currentPrice.toFixed(2)}</div>
+                        <div class="price-change" style="color: ${changeColor}">
+                            ${changeSign}$${Math.abs(change).toFixed(2)} (${changeSign}${changePercent.toFixed(2)}%)
+                        </div>
+                        <div class="data-timestamp">
+                            Updated: ${stockData.timestamp ? new Date(stockData.timestamp).toLocaleTimeString() : 'Real-time'}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Enhanced AI Analysis Section -->
+                <div class="ai-analysis-section">
+                    <h3>🤖 AI Market Intelligence Analysis</h3>
+                    <div class="analysis-grid">
+                        <!-- AI Recommendation Panel -->
+                        <div class="ai-recommendation-panel">
+                            <div class="recommendation-header">
+                                <div class="recommendation-badge ${(stockData.analysis || 'HOLD').toLowerCase().replace(' ', '-').replace('_', '-')}">${stockData.analysis || 'HOLD'}</div>
+                                <div class="confidence-container">
+                                    <div class="confidence-label">AI Confidence Level</div>
+                                    <div class="confidence-display">
+                                        <div class="confidence-bar">
+                                            <div class="confidence-fill" style="width: ${confidence}%; background-color: ${confidenceColor}"></div>
+                                        </div>
+                                        <span class="confidence-text" style="color: ${confidenceColor}">${confidence}%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Investment Thesis -->
+                            <div class="investment-thesis">
+                                <h5><i class="fas fa-lightbulb"></i> Investment Thesis</h5>
+                                <p>${stockData.investment_thesis || stockData.ai_reasoning || 'AI analysis indicates market conditions and technical factors support current recommendation.'}</p>
+                            </div>
+                            
+                            <!-- Key Insights -->
+                            <div class="key-insights">
+                                <h5><i class="fas fa-chart-line"></i> Key Market Insights</h5>
+                                <ul class="insights-list">
+                                    ${(stockData.key_points || []).map(point => `<li><i class="fas fa-arrow-right"></i> ${point}</li>`).join('')}
+                                    ${(!stockData.key_points || stockData.key_points.length === 0) ? '<li><i class="fas fa-info-circle"></i> Market conditions appear stable</li>' : ''}
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <!-- Intelligence Dashboard -->
+                        <div class="intelligence-dashboard">
+                            <h5><i class="fas fa-brain"></i> AI Intelligence Dashboard</h5>
+                            
+                            <div class="metric-grid">
+                                <div class="metric-item">
+                                    <i class="fas fa-heart" style="color: ${sentimentColor}"></i>
+                                    <span>Market Sentiment</span>
+                                    <span class="badge" style="background-color: ${sentimentColor}">${sentiment.replace('_', ' ')}</span>
+                                </div>
+                                
+                                <div class="metric-item">
+                                    <i class="fas fa-building" style="color: #10b981"></i>
+                                    <span>Fundamental Score</span>
+                                    <span class="score">${stockData.fundamental_score || 50}/100</span>
+                                </div>
+                                
+                                <div class="metric-item">
+                                    <i class="fas fa-chart-bar" style="color: #3b82f6"></i>
+                                    <span>Technical Score</span>
+                                    <span class="score">${stockData.technical_score || 50}/100</span>
+                                </div>
+                                
+                                <div class="metric-item">
+                                    <i class="fas fa-shield-alt" style="color: ${riskColor}"></i>
+                                    <span>Risk Assessment</span>
+                                    <span class="badge" style="background-color: ${riskColor}">${riskLevel}</span>
+                                </div>
+                                
+                                <div class="metric-item">
+                                    <i class="fas fa-crosshairs" style="color: #8b5cf6"></i>
+                                    <span>AI Price Target</span>
+                                    <span class="price-target">${stockData.price_target || 'Under evaluation'}</span>
+                                </div>
+                                
+                                <div class="metric-item">
+                                    <i class="fas fa-exclamation-triangle" style="color: #f59e0b"></i>
+                                    <span>Risk Factors</span>
+                                    <span class="risk-count">${(stockData.risk_factors || ['Market volatility']).length} identified</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Catalyst Events -->
+                            ${stockData.catalyst_events && stockData.catalyst_events.length > 0 ? `
+                            <div class="catalyst-events">
+                                <h6><i class="fas fa-bolt"></i> Market Catalysts</h6>
+                                <ul class="catalyst-list">
+                                    ${stockData.catalyst_events.map(event => `<li><i class="fas fa-lightning-bolt"></i> ${event}</li>`).join('')}
+                                </ul>
+                            </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Real-time Market Data Section -->
+                <div class="market-data-section">
+                    <h4><i class="fas fa-chart-area"></i> Live Market Data</h4>
+                    <div class="market-data-grid">
+                        <div class="data-item">
+                            <span><i class="fas fa-dollar-sign"></i> Market Cap:</span>
+                            <span class="data-value">$${formatLargeNumber(stockData.market_cap || 0)}</span>
+                        </div>
+                        <div class="data-item">
+                            <span><i class="fas fa-volume-up"></i> Volume:</span>
+                            <span class="data-value">${formatLargeNumber(stockData.volume || 0)}</span>
+                        </div>
+                        <div class="data-item">
+                            <span><i class="fas fa-percentage"></i> P/E Ratio:</span>
+                            <span class="data-value">${stockData.pe_ratio ? stockData.pe_ratio.toFixed(2) : 'N/A'}</span>
+                        </div>
+                        <div class="data-item">
+                            <span><i class="fas fa-arrow-up"></i> Day High:</span>
+                            <span class="data-value">$${(stockData.day_high || 0).toFixed(2)}</span>
+                        </div>
+                        <div class="data-item">
+                            <span><i class="fas fa-arrow-down"></i> Day Low:</span>
+                            <span class="data-value">$${(stockData.day_low || 0).toFixed(2)}</span>
+                        </div>
+                        <div class="data-item">
+                            <span><i class="fas fa-coins"></i> Dividend Yield:</span>
+                            <span class="data-value">${stockData.dividend_yield ? (stockData.dividend_yield * 100).toFixed(2) + '%' : 'N/A'}</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Data Source Attribution -->
+                    <div class="data-attribution">
+                        <i class="fas fa-database"></i> Data Source: ${stockData.data_source || 'Yahoo Finance (Real-time)'} | 
+                        Analysis Type: ${stockData.analysis_type || 'Live AI Analysis'}
+                    </div>
+                </div>
+                
+                <!-- Close Button -->
+                <button class="close-results" onclick="closeSearchResults()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+    `;
 }
 
 function buildAnalysisHTML(stockData, aiAnalysis) {
