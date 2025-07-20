@@ -2,9 +2,10 @@
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Institutional Tier Fix: Checking for demo user...');
     
-    // Force institutional status for demo user
+    // Force institutional status for demo user and prevent tier switching
     setTimeout(function() {
         checkAndForceInstitutionalStatus();
+        preventTierSwitching();
     }, 1000);
 });
 
@@ -70,6 +71,39 @@ function forceInstitutionalDisplay() {
     }
     
     console.log('Institutional status forced successfully');
+}
+
+function preventTierSwitching() {
+    // Override any tier switching functions
+    const originalFetch = window.fetch;
+    window.fetch = function(...args) {
+        const url = args[0];
+        if (typeof url === 'string' && url.includes('/api/user-tier-config')) {
+            // Force institutional response
+            return Promise.resolve({
+                json: () => Promise.resolve({
+                    success: true,
+                    tier_config: getInstitutionalConfig()
+                })
+            });
+        }
+        return originalFetch.apply(this, args);
+    };
+    
+    // Prevent localStorage tier changes
+    const originalSetItem = localStorage.setItem;
+    localStorage.setItem = function(key, value) {
+        if (key.includes('tier') || key.includes('Tier')) {
+            return; // Ignore tier changes
+        }
+        return originalSetItem.apply(this, arguments);
+    };
+    
+    // Set stable tier values
+    localStorage.setItem('stableTier', 'Institutional');
+    sessionStorage.setItem('bloombergKiller', 'active');
+    
+    console.log('Tier switching prevention activated');
 }
 
 function getInstitutionalConfig() {

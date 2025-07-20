@@ -1,10 +1,20 @@
 // Bloomberg Terminal Killer - Advanced Intelligence System
 document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(function() {
-        addBloombergKillerFeatures();
-        addRealTimeTerminalInterface();
-        addInstitutionalGradeAnalytics();
-    }, 4000);
+    // Check if interface is stabilized first
+    if (sessionStorage.getItem('bloombergKiller') === 'active') {
+        setTimeout(function() {
+            addBloombergKillerFeatures();
+            addRealTimeTerminalInterface();
+            addInstitutionalGradeAnalytics();
+        }, 2000);
+    } else {
+        // Wait for stabilizer
+        setTimeout(function() {
+            addBloombergKillerFeatures();
+            addRealTimeTerminalInterface();
+            addInstitutionalGradeAnalytics();
+        }, 4000);
+    }
 });
 
 function addBloombergKillerFeatures() {
