@@ -68,14 +68,14 @@
             min-height: 100vh;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
-            padding: 80px 20px 20px 20px; /* Added top padding to body for back button clearance */
+            padding: 20px;
             overflow-x: hidden;
             word-wrap: break-word;
         }
         .contact-container {
             max-width: 800px;
             width: 100%;
-            margin: 100px auto 20px auto; /* Increased top margin to 100px to avoid back button overlap */
+            margin: 20px auto;
             padding: 20px;
             background: rgba(255, 255, 255, 0.95);
             border-radius: 20px;
@@ -86,7 +86,37 @@
         .contact-header {
             text-align: center;
             margin-bottom: 40px;
-            padding-top: 20px; /* Additional top padding to ensure clearance */
+            position: relative;
+        }
+        
+        .back-nav-integrated {
+            position: absolute;
+            top: -15px;
+            left: 0;
+            z-index: 10;
+        }
+        
+        .back-btn-integrated {
+            background: rgba(255, 255, 255, 0.9);
+            color: #6366f1;
+            padding: 8px 16px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .back-btn-integrated:hover {
+            background: rgba(255, 255, 255, 1);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+            color: #4f46e5;
+            text-decoration: none;
         }
         .contact-header h1 {
             color: #2c3e50;
@@ -187,7 +217,20 @@
         /* Mobile responsive fixes */
         @media (max-width: 768px) {
             .contact-container {
-                margin: 120px auto 20px auto; /* Extra large margin on mobile for back button */
+                margin: 20px auto;
+            }
+            
+            .back-nav-integrated {
+                position: relative;
+                top: 0;
+                left: 0;
+                margin-bottom: 20px;
+                text-align: left;
+            }
+            
+            .back-btn-integrated {
+                font-size: 0.85rem;
+                padding: 6px 12px;
             }
             
             .pricing-comparison {
@@ -278,20 +321,18 @@
     </style>
 </head>
 <body>
-    <!-- Back Navigation -->
-    <div class="back-navigation">
-        <a href="/" class="back-btn">
-            <i class="fas fa-arrow-left"></i>
-            <span>Back to Dashboard</span>
-        </a>
-    </div>
-    
     <div class="contact-container">
-
-        
         <div class="contact-header">
-            <h1><i class="fas fa-university text-primary"></i> Institutional Features</h1>
-            <p class="subtitle">Bloomberg Terminal-level capabilities for institutions</p>
+            <div class="back-nav-integrated">
+                <a href="/" class="back-btn-integrated">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Back to Dashboard</span>
+                </a>
+            </div>
+            <div style="margin-top: 25px;">
+                <h1><i class="fas fa-university text-primary"></i> Institutional Features</h1>
+                <p class="subtitle">Bloomberg Terminal-level capabilities for institutions</p>
+            </div>
         </div>
 
         <div class="feature-highlight">
