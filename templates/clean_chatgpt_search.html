@@ -1285,8 +1285,15 @@
                     </div>
                 `);
 
+                console.log('Fetching alerts from /api/alerts/active');
                 const response = await fetch('/api/alerts/active');
+                
+                if (!response.ok) {
+                    throw new Error('Network response was not ok: ' + response.status);
+                }
+                
                 const alertsData = await response.json();
+                console.log('Received alerts data:', alertsData);
                 
                 let alertsHTML = `
                     <div style="padding: 20px; max-height: 80vh; overflow-y: auto;">
@@ -1303,38 +1310,46 @@
                     `;
                     
                     alertsData.alerts.forEach((alert, index) => {
-                        const statusColor = (alert.active || alert.status === 'active') ? '#10b981' : '#6b7280';
-                        const conditionText = alert.conditions && alert.conditions.length > 0 ? 
-                            alert.conditions[0].condition.replace('_', ' ').toUpperCase() : 
-                            'ALERT';
+                        try {
+                            console.log('Processing alert:', alert);
+                            const statusColor = (alert.active === true) ? '#10b981' : '#6b7280';
+                            const conditionText = (alert.conditions && alert.conditions.length > 0 && alert.conditions[0].condition) ? 
+                                alert.conditions[0].condition.replace(/_/g, ' ').toUpperCase() : 
+                                'ALERT';
                         
-                        alertsHTML += `
-                            <div style="background: rgba(255,255,255,0.05); border-radius: 12px; padding: 20px; border-left: 4px solid ${statusColor};">
-                                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
-                                    <div>
-                                        <div style="font-weight: 600; font-size: 1.1rem; color: white; margin-bottom: 8px;">
-                                            ${alert.symbol} - ${conditionText}
+                            const targetValue = (alert.conditions && alert.conditions.length > 0 && alert.conditions[0].value) ?
+                                alert.conditions[0].value.toFixed(2) : 'N/A';
+                            const createdDate = alert.created_at ? new Date(alert.created_at).toLocaleDateString() : 'Unknown';
+                        
+                            alertsHTML += `
+                                <div style="background: rgba(255,255,255,0.05); border-radius: 12px; padding: 20px; border-left: 4px solid ${statusColor};">
+                                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
+                                        <div>
+                                            <div style="font-weight: 600; font-size: 1.1rem; color: white; margin-bottom: 8px;">
+                                                ${alert.symbol || 'Unknown'} - ${conditionText}
+                                            </div>
+                                            <div style="opacity: 0.8; margin-bottom: 8px;">
+                                                Target: $${targetValue}
+                                            </div>
+                                            <div style="font-size: 0.9rem; opacity: 0.7;">
+                                                Created: ${createdDate}
+                                            </div>
                                         </div>
-                                        <div style="opacity: 0.8; margin-bottom: 8px;">
-                                            Target: $${alert.conditions && alert.conditions.length > 0 && alert.conditions[0].value ? 
-                                                alert.conditions[0].value.toFixed(2) : 'N/A'}
+                                        <div style="text-align: right;">
+                                            <div style="color: ${statusColor}; font-weight: 600; font-size: 0.9rem; margin-bottom: 10px; text-transform: capitalize;">
+                                                ${alert.active ? 'Active' : 'Inactive'}
+                                            </div>
+                                            <button onclick="deleteAlert('${alert.id || ''}')" 
+                                                    style="padding: 6px 12px; background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 6px; cursor: pointer; font-size: 0.8rem;">
+                                                Delete
+                                            </button>
                                         </div>
-                                        <div style="font-size: 0.9rem; opacity: 0.7;">
-                                            Created: ${new Date(alert.created_at).toLocaleDateString()}
-                                        </div>
-                                    </div>
-                                    <div style="text-align: right;">
-                                        <div style="color: ${statusColor}; font-weight: 600; font-size: 0.9rem; margin-bottom: 10px; text-transform: capitalize;">
-                                            ${alert.active ? 'Active' : 'Inactive'}
-                                        </div>
-                                        <button onclick="deleteAlert('${alert.id}')" 
-                                                style="padding: 6px 12px; background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 6px; cursor: pointer; font-size: 0.8rem;">
-                                            Delete
-                                        </button>
                                     </div>
                                 </div>
-                            </div>
-                        `;
+                            `;
+                        } catch (alertError) {
+                            console.error('Error processing alert:', alertError, alert);
+                        }
                     });
                     
                     alertsHTML += `</div>`;
@@ -1367,10 +1382,16 @@
                 console.error('Error loading alerts:', error);
                 showToolOverlay('Stock Alerts', `
                     <div style="text-align: center; padding: 40px;">
-                        <div style="color: #ef4444; margin-bottom: 20px;">Error loading alerts</div>
-                        <button onclick="closeAnalysis()" style="padding: 10px 20px; background: linear-gradient(45deg, #8b5cf6, #06b6d4); color: white; border: none; border-radius: 10px; cursor: pointer;">
-                            Close
-                        </button>
+                        <div style="color: #ef4444; margin-bottom: 20px; font-size: 1.2rem;">⚠️ Error Loading Alerts</div>
+                        <div style="opacity: 0.8; margin-bottom: 25px;">Unable to fetch alert data. Please check your connection and try again.</div>
+                        <div style="display: flex; gap: 10px; justify-content: center;">
+                            <button onclick="openPriceAlerts()" style="padding: 10px 20px; background: linear-gradient(45deg, #8b5cf6, #06b6d4); color: white; border: none; border-radius: 10px; cursor: pointer;">
+                                Try Again
+                            </button>
+                            <button onclick="closeAnalysis()" style="padding: 10px 20px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 10px; cursor: pointer;">
+                                Close
+                            </button>
+                        </div>
                     </div>
                 `);
             }
