@@ -2103,6 +2103,61 @@ def market_intelligence_live_trending():
         logger.error(f"Error getting market intelligence trending: {e}")
         return jsonify({'success': False, 'error': str(e)}), 500
 
+@app.route('/api/search/suggestions')
+def search_suggestions():
+    """Get stock search suggestions"""
+    try:
+        query = request.args.get('q', '').upper()
+        if not query or len(query) < 1:
+            return jsonify({'success': True, 'suggestions': []})
+        
+        # Popular stock symbols for suggestions
+        popular_stocks = [
+            {'symbol': 'AAPL', 'name': 'Apple Inc.', 'sector': 'Technology'},
+            {'symbol': 'MSFT', 'name': 'Microsoft Corporation', 'sector': 'Technology'},
+            {'symbol': 'GOOGL', 'name': 'Alphabet Inc.', 'sector': 'Technology'},
+            {'symbol': 'AMZN', 'name': 'Amazon.com Inc.', 'sector': 'Consumer Discretionary'},
+            {'symbol': 'TSLA', 'name': 'Tesla Inc.', 'sector': 'Consumer Discretionary'},
+            {'symbol': 'NVDA', 'name': 'NVIDIA Corporation', 'sector': 'Technology'},
+            {'symbol': 'META', 'name': 'Meta Platforms Inc.', 'sector': 'Technology'},
+            {'symbol': 'JPM', 'name': 'JPMorgan Chase & Co.', 'sector': 'Financial Services'},
+            {'symbol': 'JNJ', 'name': 'Johnson & Johnson', 'sector': 'Healthcare'},
+            {'symbol': 'V', 'name': 'Visa Inc.', 'sector': 'Financial Services'}
+        ]
+        
+        # Filter suggestions based on query
+        suggestions = [
+            stock for stock in popular_stocks 
+            if query in stock['symbol'] or query in stock['name'].upper()
+        ][:5]
+        
+        return jsonify({'success': True, 'suggestions': suggestions})
+    except Exception as e:
+        logger.error(f"Error getting search suggestions: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/stock-search/<symbol>')
+def stock_search(symbol):
+    """Get detailed stock information"""
+    try:
+        # Use the existing stock search functionality
+        from stock_search import get_stock_data, get_ai_stock_analysis
+        
+        stock_data = get_stock_data(symbol.upper())
+        if not stock_data:
+            return jsonify({'success': False, 'error': 'Stock not found'}), 404
+        
+        ai_analysis = get_ai_stock_analysis(symbol.upper())
+        
+        return jsonify({
+            'success': True,
+            'stock_data': stock_data,
+            'ai_analysis': ai_analysis
+        })
+    except Exception as e:
+        logger.error(f"Error searching stock {symbol}: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
 @app.route('/api/analytics', methods=['POST'])
 @login_required
 def analytics_api():
