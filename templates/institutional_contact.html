@@ -75,7 +75,7 @@
         .contact-container {
             max-width: 800px;
             width: 100%;
-            margin: 20px auto;
+            margin: 70px auto 20px auto; /* Added top margin to avoid back button overlap */
             padding: 20px;
             background: rgba(255, 255, 255, 0.95);
             border-radius: 20px;
@@ -185,6 +185,10 @@
         
         /* Mobile responsive fixes */
         @media (max-width: 768px) {
+            .contact-container {
+                margin: 80px auto 20px auto; /* Extra margin on mobile for back button */
+            }
+            
             .pricing-comparison {
                 flex-direction: row;
                 justify-content: space-around;
