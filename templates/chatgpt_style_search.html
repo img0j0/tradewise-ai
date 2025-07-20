@@ -1089,6 +1089,67 @@
         transition: all 0.3s ease;
     }
 
+    /* Floating minimized theme button */
+    .floating-theme-btn {
+        position: fixed;
+        bottom: 120px;
+        right: 20px;
+        background: linear-gradient(135deg, #1a1a2e, #16213e);
+        border-radius: 12px;
+        padding: 0.75rem;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        border: 1px solid rgba(96, 165, 250, 0.3);
+        z-index: 1000;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: all 0.3s ease;
+        cursor: pointer;
+        max-width: 200px;
+    }
+
+    .floating-theme-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+        border-color: rgba(96, 165, 250, 0.5);
+    }
+
+    .floating-theme-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.25rem;
+        color: white;
+        position: relative;
+    }
+
+    .floating-theme-name {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #60a5fa;
+        text-align: center;
+    }
+
+    .floating-theme-performance {
+        font-size: 0.75rem;
+        color: #00D4AA;
+        font-weight: 600;
+    }
+
+    .floating-expand-icon {
+        position: absolute;
+        top: -0.5rem;
+        right: -0.5rem;
+        background: rgba(96, 165, 250, 0.2);
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.7rem;
+        color: #60a5fa;
+    }
+
     .theme-pill-more {
         background: rgba(255, 255, 255, 0.1);
         color: rgba(255, 255, 255, 0.6);
@@ -3688,20 +3749,38 @@
 
     // Theme minimize/maximize functionality
     function toggleThemeMinimize(themeName) {
-        const themeDetails = document.getElementById('theme-details-' + themeName);
-        const minimizeBtn = document.getElementById('minimize-theme-btn-' + themeName);
-        const icon = minimizeBtn.querySelector('i');
+        const themeCard = document.getElementById('theme-card-' + themeName);
+        const existingFloatingBtn = document.getElementById('floating-theme-' + themeName);
         
-        if (themeDetails.style.display === 'none') {
-            // Expand theme
-            themeDetails.style.display = 'block';
-            icon.className = 'fas fa-minus';
-            minimizeBtn.title = 'Minimize Theme';
+        if (existingFloatingBtn) {
+            // Restore theme from minimized state
+            existingFloatingBtn.remove();
+            themeCard.style.display = 'block';
+            themeCard.scrollIntoView({ behavior: 'smooth' });
         } else {
-            // Minimize theme
-            themeDetails.style.display = 'none';
-            icon.className = 'fas fa-plus';
-            minimizeBtn.title = 'Expand Theme';
+            // Minimize theme completely and create floating restore button
+            themeCard.style.display = 'none';
+            
+            // Create floating restore button
+            const floatingBtn = document.createElement('div');
+            floatingBtn.id = 'floating-theme-' + themeName;
+            floatingBtn.className = 'floating-theme-btn';
+            floatingBtn.innerHTML = 
+                '<div class="floating-theme-content" onclick="toggleThemeMinimize(\'' + themeName + '\')">' +
+                    '<div class="floating-theme-name">' + themeName + ' Theme</div>' +
+                    '<div class="floating-theme-performance">+' + getThemePerformance(themeName) + '% YTD</div>' +
+                    '<i class="fas fa-expand-alt floating-expand-icon"></i>' +
+                '</div>';
+            
+            // Add to search results container
+            const resultsContainer = document.getElementById('search-results');
+            resultsContainer.appendChild(floatingBtn);
+            
+            // Smooth animation
+            setTimeout(() => {
+                floatingBtn.style.opacity = '1';
+                floatingBtn.style.transform = 'translateY(0)';
+            }, 100);
         }
     }
 
