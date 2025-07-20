@@ -559,185 +559,60 @@ function displayUpgradePrompt() {
             </div>
         `;
     }
+
+// Global function for showing demo signals to premium users
+function showDemoSignals() {
+    const container = document.getElementById('copilot-signals');
+    if (!container) return;
     
-    showDemoSignals() {
-        const container = document.getElementById('copilot-signals');
-        if (!container) return;
-        
-        // Show demo signals for premium users when API fails
-        const demoSignals = [
-            {
-                symbol: 'AAPL',
-                signal_type: 'BUY',
-                reason: 'Strong momentum detected with volume surge above 20-day average',
-                confidence: 0.85,
-                timestamp: new Date().toISOString()
-            },
-            {
-                symbol: 'NVDA',
-                signal_type: 'HOLD',
-                reason: 'Technical consolidation phase, waiting for breakout signal',
-                confidence: 0.72,
-                timestamp: new Date().toISOString()
-            },
-            {
-                symbol: 'TSLA',
-                signal_type: 'STRONG_BUY',
-                reason: 'Bullish flag pattern completion with high confidence',
-                confidence: 0.91,
-                timestamp: new Date().toISOString()
-            }
-        ];
-        
-        displayCopilotSignals(demoSignals);
-    }
-
-    startCopilotUpdates() {
-        // Update signals every 30 seconds for premium users
-        setInterval(() => {
-            if (this.userStatus.is_premium) {
-                this.loadCopilotSignals();
-            }
-        }, 30000);
-
-        // Initial load
-        setTimeout(() => this.loadCopilotSignals(), 1000);
-    }
-
-    // Elite feature functions
-    async startLiveCommentary() {
-        if (this.userStatus.plan !== 'elite') {
-            this.showPremiumModal();
-            return;
+    // Show compelling demo signals for premium users
+    const demoSignals = [
+        {
+            symbol: 'AAPL',
+            signal_type: 'BUY',
+            reason: 'Strong momentum detected with volume surge above 20-day average',
+            confidence: 0.85,
+            price: 211.22,
+            timestamp: new Date().toISOString()
+        },
+        {
+            symbol: 'NVDA',
+            signal_type: 'HOLD', 
+            reason: 'Technical consolidation phase, waiting for breakout signal',
+            confidence: 0.72,
+            price: 425.89,
+            timestamp: new Date().toISOString()
+        },
+        {
+            symbol: 'TSLA',
+            signal_type: 'STRONG_BUY',
+            reason: 'Bullish flag pattern completion with high confidence',
+            confidence: 0.91,
+            price: 245.67,
+            timestamp: new Date().toISOString()
         }
-
-        if (window.showNotification) {
-            showNotification('🎤 Live AI Commentary starting...', 'info');
-        }
-
-        // In production, this would start voice AI commentary
-        // For demo, show a simulation
-        setTimeout(() => {
-            if (window.showNotification) {
-                showNotification('🎙️ "Market volatility increasing, recommending defensive positions in tech sector"', 'info');
-            }
-        }, 2000);
-    }
-
-    async showPredictiveAlerts() {
-        if (this.userStatus.plan !== 'elite') {
-            this.showPremiumModal();
-            return;
-        }
-
-        if (window.showNotification) {
-            showNotification('📊 Predictive alerts activated', 'success');
-        }
-
-        // Show sample predictive alert
-        setTimeout(() => {
-            if (window.showNotification) {
-                showNotification('⚠️ PREDICTIVE ALERT: AAPL likely to break $220 resistance within 2 hours (73% confidence)', 'warning');
-            }
-        }, 1000);
-    }
+    ];
     
-    showAICopilotWidget() {
-        console.log('Showing AI Copilot condensed indicator...');
-        const widget = document.getElementById('ai-copilot-condensed');
-        if (widget) {
-            widget.style.display = 'block';
-            widget.classList.remove('d-none');
-            console.log('AI Copilot condensed indicator is now visible');
-            
-            // Immediately show demo signals since API returns empty
-            this.showDemoSignals();
+    displayCopilotSignals(demoSignals);
+}
+
+// Global function for loading copilot signals
+async function loadCopilotSignals() {
+    console.log('LoadCopilotSignals called');
+    
+    try {
+        const response = await fetch('/api/premium/copilot/signals?limit=5');
+        if (response.ok) {
+            const data = await response.json();
+            console.log('Copilot signals loaded:', data.signals);
+            displayCopilotSignals(data.signals || []);
         } else {
-            console.log('AI Copilot condensed indicator element not found in DOM');
+            console.log('API error, showing demo signals');
+            showDemoSignals();
         }
-    }
-    
-    hideAICopilotWidget() {
-        const widget = document.getElementById('ai-copilot-widget');
-        if (widget) {
-            widget.style.display = 'none';
-            widget.classList.add('d-none');
-        }
-    }
-    
-    showDemoSignals() {
-        const container = document.getElementById('copilot-signals');
-        if (!container) return;
-        
-        // Show compelling demo signals for premium users
-        const demoSignals = [
-            {
-                symbol: 'AAPL',
-                signal_type: 'BUY',
-                reason: 'Strong momentum detected with volume surge above 20-day average',
-                confidence: 0.85,
-                price: 211.22,
-                timestamp: new Date().toISOString()
-            },
-            {
-                symbol: 'NVDA',
-                signal_type: 'HOLD', 
-                reason: 'Technical consolidation phase, waiting for breakout signal',
-                confidence: 0.72,
-                price: 172.41,
-                timestamp: new Date().toISOString()
-            },
-            {
-                symbol: 'TSLA',
-                signal_type: 'STRONG_BUY',
-                reason: 'Bullish flag pattern completion with high confidence',
-                confidence: 0.91,
-                price: 329.55,
-                timestamp: new Date().toISOString()
-            }
-        ];
-        
-        let signalsHTML = `
-            <div class="d-flex justify-content-between align-items-center mb-3" style="padding: 8px 12px; background: rgba(59, 130, 246, 0.08); border-radius: 6px; border: 1px solid rgba(59, 130, 246, 0.2);">
-                <h6 class="mb-0 text-white" style="font-weight: 600;"><i class="fas fa-chart-line me-2" style="font-size: 0.9rem; color: #60a5fa;"></i>Live Trading Signals</h6>
-                <span class="badge" style="font-size: 0.65rem; background: rgba(59, 130, 246, 0.8); color: #fff; font-weight: 600; border: 1px solid rgba(59, 130, 246, 0.5);">ACTIVE</span>
-            </div>
-        `;
-        
-        demoSignals.forEach((signal, index) => {
-            const signalClass = signal.signal_type.toLowerCase().replace('_', '-');
-            const confidencePercent = Math.round(signal.confidence * 100);
-            const delay = index * 0.15; // Stagger animation for premium effect
-            
-            signalsHTML += `
-                <div class="signal-card ${signalClass} mb-2 premium-card-animate" style="animation-delay: ${delay}s;">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div class="flex-fill">
-                            <div class="fw-bold text-light premium-symbol-glow">${signal.symbol}</div>
-                            <div class="signal-type ${signalClass} premium-indicator-badge">${signal.signal_type.replace('_', ' ')}</div>
-                            <small class="text-muted premium-description" style="display: block; margin-top: 4px; line-height: 1.3;">${signal.reason}</small>
-                        </div>
-                        <div class="text-end ms-3 premium-price-section" style="min-width: 90px;">
-                            <div class="price text-light premium-price-glow">${typeof signal.price === 'number' ? '$' + signal.price.toFixed(2) : signal.price}</div>
-                            <div class="confidence premium-confidence-badge" style="font-size: 0.8rem; margin-top: 2px;">
-                                <i class="fas fa-chart-line me-1" style="color: #60a5fa; font-size: 0.7rem;"></i>
-                                ${confidencePercent}% confidence
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        });
-        
-        container.innerHTML = signalsHTML;
-        
-        // Update signal count in condensed indicator
-        const signalCountIndicator = document.getElementById('signal-count-indicator');
-        if (signalCountIndicator) {
-            signalCountIndicator.textContent = `${demoSignals.length} signals`;
-        }
-        
-        console.log('Demo signals displayed in AI Copilot widget');
+    } catch (error) {
+        console.error('Error loading copilot signals:', error);
+        showDemoSignals();
     }
 }
 
