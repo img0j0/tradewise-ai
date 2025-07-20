@@ -159,7 +159,16 @@ def get_or_create_user_account():
 
 @app.route('/')
 def index():
-    """Cache busting test to verify new interface loads"""
+    """Main clean trading interface"""
+    response = make_response(render_template('clean_trading_interface.html'))
+    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '0'
+    return response
+
+@app.route('/cache-test')
+def cache_test():
+    """Cache busting test page"""
     from datetime import datetime
     response = make_response(render_template('cache_busting_test.html', current_time=datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
     response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
