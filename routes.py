@@ -30,6 +30,7 @@ from feature_enhancement_engine import feature_enhancement_engine
 from real_time_performance_monitor import performance_monitor
 from dynamic_search_autocomplete import autocomplete_engine
 from monetization_strategy import get_monetization_engine
+from real_time_market_intelligence import market_intelligence
 # Import will be done after setup
 realtime_service = None
 
@@ -4808,3 +4809,105 @@ def delete_account():
     except Exception as e:
         logger.error(f"Error deleting account: {e}")
         return jsonify({'success': False, 'error': 'Failed to delete account'}), 500
+
+# Real-Time Market Intelligence API Endpoints
+
+@app.route('/api/market-intelligence/live-overview')
+@login_required
+def get_live_market_intelligence():
+    """Get live market intelligence overview"""
+    try:
+        # Start monitoring if not already started
+        if not market_intelligence.is_monitoring:
+            market_intelligence.start_monitoring()
+            
+            # Add default symbols to monitor
+            default_symbols = ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'TSLA', 'META', 'NVDA', 'NFLX']
+            for symbol in default_symbols:
+                market_intelligence.add_symbol_to_monitor(symbol)
+        
+        overview = market_intelligence.get_market_overview()
+        
+        return jsonify({
+            'success': True,
+            'data': overview
+        })
+        
+    except Exception as e:
+        logger.error(f"Error getting live market intelligence: {e}")
+        return jsonify({'error': 'Failed to get market intelligence'}), 500
+
+@app.route('/api/market-intelligence/live-alerts')
+@login_required
+def get_live_market_alerts():
+    """Get live market intelligence alerts"""
+    try:
+        alerts = []
+        for alert in market_intelligence.active_alerts:
+            alerts.append({
+                'symbol': alert.symbol,
+                'type': alert.alert_type,
+                'severity': alert.severity,
+                'message': alert.message,
+                'confidence': alert.confidence,
+                'timestamp': alert.timestamp.isoformat(),
+                'source': alert.source
+            })
+        
+        return jsonify({
+            'success': True,
+            'data': {
+                'alerts': alerts,
+                'total_count': len(alerts),
+                'severity_breakdown': {
+                    'critical': len([a for a in market_intelligence.active_alerts if a.severity == 'CRITICAL']),
+                    'high': len([a for a in market_intelligence.active_alerts if a.severity == 'HIGH']),
+                    'medium': len([a for a in market_intelligence.active_alerts if a.severity == 'MEDIUM']),
+                    'low': len([a for a in market_intelligence.active_alerts if a.severity == 'LOW'])
+                }
+            }
+        })
+        
+    except Exception as e:
+        logger.error(f"Error getting live alerts: {e}")
+        return jsonify({'error': 'Failed to get market alerts'}), 500
+
+@app.route('/api/market-intelligence/live-sentiment/<symbol>')
+@login_required
+def get_live_symbol_sentiment(symbol):
+    """Get live sentiment analysis for a symbol"""
+    try:
+        # Add to monitoring and get sentiment
+        market_intelligence.add_symbol_to_monitor(symbol)
+        
+        sentiment_data = market_intelligence.sentiment_cache.get(symbol.upper(), {})
+        
+        if not sentiment_data:
+            # Force sentiment calculation
+            sentiment_data = market_intelligence._calculate_symbol_sentiment(symbol.upper())
+            market_intelligence.sentiment_cache[symbol.upper()] = sentiment_data
+        
+        return jsonify({
+            'success': True,
+            'data': sentiment_data
+        })
+        
+    except Exception as e:
+        logger.error(f"Error getting live sentiment for {symbol}: {e}")
+        return jsonify({'error': f'Failed to get sentiment for {symbol}'}), 500
+
+@app.route('/api/market-intelligence/live-trending')
+@login_required
+def get_live_trending():
+    """Get live trending market topics"""
+    try:
+        trending = market_intelligence.get_trending_topics()
+        
+        return jsonify({
+            'success': True,
+            'data': trending
+        })
+        
+    except Exception as e:
+        logger.error(f"Error getting live trending: {e}")
+        return jsonify({'error': 'Failed to get trending topics'}), 500

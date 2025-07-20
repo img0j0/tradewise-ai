@@ -1,0 +1,269 @@
+<!-- Real-Time Market Intelligence Widget -->
+<div class="market-intelligence-widget" style="margin-top: 20px;">
+    <div class="intelligence-header" style="display: flex; align-items: center; margin-bottom: 15px;">
+        <i class="fas fa-brain" style="color: #00d4ff; margin-right: 10px; font-size: 18px;"></i>
+        <h4 style="margin: 0; color: white; font-weight: 600;">Live Market Intelligence</h4>
+        <div class="live-indicator" style="margin-left: auto; display: flex; align-items: center;">
+            <div class="pulse-dot" style="width: 8px; height: 8px; background: #00ff88; border-radius: 50%; margin-right: 5px; animation: pulse 2s infinite;"></div>
+            <span style="color: #00ff88; font-size: 12px; font-weight: 500;">LIVE</span>
+        </div>
+    </div>
+
+    <!-- Market Sentiment Overview -->
+    <div class="sentiment-overview" style="background: rgba(255,255,255,0.05); border-radius: 10px; padding: 15px; margin-bottom: 15px;">
+        <div class="sentiment-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <span style="color: #888; font-size: 14px;">Market Sentiment</span>
+            <div id="sentiment-score" style="color: #00ff88; font-weight: 600; font-size: 16px;">Loading...</div>
+        </div>
+        <div class="sentiment-bar" style="background: rgba(255,255,255,0.1); height: 6px; border-radius: 3px; overflow: hidden;">
+            <div id="sentiment-fill" style="height: 100%; background: linear-gradient(90deg, #ff4757, #ffa502, #2ed573); transition: width 0.5s ease;"></div>
+        </div>
+        <div class="sentiment-details" style="display: flex; justify-content: space-between; margin-top: 8px; font-size: 12px;">
+            <span style="color: #ff4757;">Bearish</span>
+            <span style="color: #ffa502;">Neutral</span>
+            <span style="color: #2ed573;">Bullish</span>
+        </div>
+    </div>
+
+    <!-- Live Alerts -->
+    <div class="live-alerts" style="background: rgba(255,255,255,0.05); border-radius: 10px; padding: 15px; margin-bottom: 15px;">
+        <div class="alerts-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <span style="color: #888; font-size: 14px;">Active Alerts</span>
+            <div id="alert-count" style="background: #ff6b6b; color: white; border-radius: 50%; width: 20px; height: 20px; font-size: 11px; display: flex; align-items: center; justify-content: center; font-weight: 600;">0</div>
+        </div>
+        <div id="alerts-container" style="max-height: 150px; overflow-y: auto;">
+            <div style="text-align: center; color: #666; font-size: 12px; padding: 20px 0;">
+                No alerts at this time
+            </div>
+        </div>
+    </div>
+
+    <!-- Trending Topics -->
+    <div class="trending-topics" style="background: rgba(255,255,255,0.05); border-radius: 10px; padding: 15px;">
+        <div class="trending-header" style="display: flex; align-items: center; margin-bottom: 10px;">
+            <i class="fas fa-fire" style="color: #ff6b6b; margin-right: 8px;"></i>
+            <span style="color: #888; font-size: 14px;">Trending Now</span>
+        </div>
+        <div id="trending-container">
+            <div style="text-align: center; color: #666; font-size: 12px; padding: 20px 0;">
+                Loading trending topics...
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CSS Animations -->
+<style>
+@keyframes pulse {
+    0% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.2); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+.alert-item {
+    background: rgba(255,255,255,0.03);
+    border-radius: 6px;
+    padding: 8px 10px;
+    margin-bottom: 6px;
+    border-left: 3px solid;
+    font-size: 12px;
+    line-height: 1.3;
+}
+
+.alert-critical { border-left-color: #ff4757; }
+.alert-high { border-left-color: #ff6348; }
+.alert-medium { border-left-color: #ffa502; }
+.alert-low { border-left-color: #57606f; }
+
+.trending-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    font-size: 12px;
+}
+
+.trending-item:last-child {
+    border-bottom: none;
+}
+
+.trending-sentiment {
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 600;
+}
+
+.sentiment-positive { background: rgba(46, 213, 115, 0.2); color: #2ed573; }
+.sentiment-negative { background: rgba(255, 71, 87, 0.2); color: #ff4757; }
+.sentiment-neutral { background: rgba(255, 165, 2, 0.2); color: #ffa502; }
+</style>
+
+<!-- JavaScript for Real-Time Updates -->
+<script>
+class MarketIntelligenceWidget {
+    constructor() {
+        this.updateInterval = null;
+        this.isActive = false;
+        this.init();
+    }
+
+    init() {
+        this.startUpdates();
+        this.bindEvents();
+    }
+
+    startUpdates() {
+        if (this.updateInterval) return;
+        
+        this.isActive = true;
+        this.updateInterval = setInterval(() => {
+            if (this.isActive) {
+                this.updateMarketIntelligence();
+            }
+        }, 30000); // Update every 30 seconds
+
+        // Initial update
+        this.updateMarketIntelligence();
+    }
+
+    stopUpdates() {
+        this.isActive = false;
+        if (this.updateInterval) {
+            clearInterval(this.updateInterval);
+            this.updateInterval = null;
+        }
+    }
+
+    bindEvents() {
+        // Pause updates when user is not active
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                this.isActive = false;
+            } else {
+                this.isActive = true;
+            }
+        });
+    }
+
+    async updateMarketIntelligence() {
+        try {
+            // Update market overview
+            const overviewResponse = await fetch('/api/market-intelligence/live-overview');
+            if (overviewResponse.ok) {
+                const overviewData = await overviewResponse.json();
+                this.updateSentimentDisplay(overviewData.data);
+            }
+
+            // Update alerts
+            const alertsResponse = await fetch('/api/market-intelligence/live-alerts');
+            if (alertsResponse.ok) {
+                const alertsData = await alertsResponse.json();
+                this.updateAlertsDisplay(alertsData.data);
+            }
+
+            // Update trending topics
+            const trendingResponse = await fetch('/api/market-intelligence/live-trending');
+            if (trendingResponse.ok) {
+                const trendingData = await trendingResponse.json();
+                this.updateTrendingDisplay(trendingData.data);
+            }
+
+        } catch (error) {
+            console.log('Market intelligence update error:', error);
+        }
+    }
+
+    updateSentimentDisplay(data) {
+        if (!data || !data.market_sentiment) return;
+
+        const sentiment = data.market_sentiment;
+        const scoreElement = document.getElementById('sentiment-score');
+        const fillElement = document.getElementById('sentiment-fill');
+
+        if (scoreElement && fillElement) {
+            const score = sentiment.average_sentiment || 0;
+            const direction = sentiment.sentiment_direction || 'NEUTRAL';
+            
+            // Update score display
+            scoreElement.textContent = direction;
+            scoreElement.className = 'sentiment-' + direction.toLowerCase();
+
+            // Update sentiment bar (convert -1 to 1 range to 0-100%)
+            const fillPercent = ((score + 1) / 2) * 100;
+            fillElement.style.width = fillPercent + '%';
+
+            // Color based on sentiment
+            if (score > 0.1) {
+                scoreElement.style.color = '#2ed573';
+            } else if (score < -0.1) {
+                scoreElement.style.color = '#ff4757';
+            } else {
+                scoreElement.style.color = '#ffa502';
+            }
+        }
+    }
+
+    updateAlertsDisplay(data) {
+        if (!data) return;
+
+        const countElement = document.getElementById('alert-count');
+        const containerElement = document.getElementById('alerts-container');
+
+        if (countElement) {
+            countElement.textContent = data.total_count || 0;
+        }
+
+        if (containerElement && data.alerts) {
+            if (data.alerts.length === 0) {
+                containerElement.innerHTML = '<div style="text-align: center; color: #666; font-size: 12px; padding: 20px 0;">No alerts at this time</div>';
+            } else {
+                const alertsHtml = data.alerts.slice(0, 5).map(alert => 
+                    '<div class="alert-item alert-' + alert.severity.toLowerCase() + '">' +
+                    '<div style="font-weight: 600; color: white;">' + alert.symbol + '</div>' +
+                    '<div style="color: #ccc; margin-top: 2px;">' + alert.message + '</div>' +
+                    '</div>'
+                ).join('');
+                containerElement.innerHTML = alertsHtml;
+            }
+        }
+    }
+
+    updateTrendingDisplay(data) {
+        if (!data || !Array.isArray(data)) return;
+
+        const containerElement = document.getElementById('trending-container');
+        if (!containerElement) return;
+
+        if (data.length === 0) {
+            containerElement.innerHTML = '<div style="text-align: center; color: #666; font-size: 12px; padding: 20px 0;">No trending topics found</div>';
+        } else {
+            const trendingHtml = data.slice(0, 5).map(topic => {
+                let sentimentClass = 'sentiment-neutral';
+                if (topic.sentiment > 0.1) sentimentClass = 'sentiment-positive';
+                else if (topic.sentiment < -0.1) sentimentClass = 'sentiment-negative';
+
+                return '<div class="trending-item">' +
+                    '<span style="color: white;">' + topic.topic + '</span>' +
+                    '<div style="display: flex; align-items: center; gap: 8px;">' +
+                    '<span style="color: #888; font-size: 10px;">' + topic.mention_count + '</span>' +
+                    '<span class="trending-sentiment ' + sentimentClass + '">' + 
+                    (topic.sentiment > 0 ? '+' : '') + (topic.sentiment * 100).toFixed(0) + '%' +
+                    '</span>' +
+                    '</div>' +
+                    '</div>';
+            }).join('');
+            containerElement.innerHTML = trendingHtml;
+        }
+    }
+}
+
+// Initialize market intelligence widget when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    if (typeof window.marketIntelligenceWidget === 'undefined') {
+        window.marketIntelligenceWidget = new MarketIntelligenceWidget();
+        console.log('Market Intelligence Widget initialized');
+    }
+});
+</script>
