@@ -545,8 +545,15 @@ def api_remove_from_watchlist():
 def get_demo_portfolio():
     """Get portfolio from session storage"""
     if 'demo_portfolio' not in session:
-        # Initialize with sample holdings if empty
-        session['demo_portfolio'] = [
+        session['demo_portfolio'] = []
+    
+    # If portfolio only has GOOGL, add the other holdings back
+    portfolio = session['demo_portfolio']
+    symbols = [holding['symbol'] for holding in portfolio]
+    
+    if len(portfolio) == 1 and 'GOOGL' in symbols:
+        # Add back the missing holdings
+        portfolio.extend([
             {
                 'symbol': 'TSLA',
                 'shares': 5,
@@ -561,13 +568,49 @@ def get_demo_portfolio():
                 'total_cost': 225.50,
                 'timestamp': 1753025000
             }
-        ]
+        ])
+        session['demo_portfolio'] = portfolio
+        session.modified = True
+    
     return session['demo_portfolio']
 
 def save_demo_portfolio(portfolio):
     """Save portfolio to session storage"""
     session['demo_portfolio'] = portfolio
     session.modified = True
+
+@app.route('/api/portfolio/reset', methods=['POST'])
+def reset_portfolio():
+    """Reset portfolio with sample holdings"""
+    try:
+        session['demo_portfolio'] = [
+            {
+                'symbol': 'TSLA',
+                'shares': 5,
+                'price': 240.50,
+                'total_cost': 1202.50,
+                'timestamp': 1753020000
+            },
+            {
+                'symbol': 'AAPL', 
+                'shares': 1,
+                'price': 225.50,
+                'total_cost': 225.50,
+                'timestamp': 1753025000
+            },
+            {
+                'symbol': 'GOOGL',
+                'shares': 1,
+                'price': 185.06,
+                'total_cost': 185.06,
+                'timestamp': 1753029681
+            }
+        ]
+        session.modified = True
+        return jsonify({'success': True, 'message': 'Portfolio reset with sample holdings'})
+    except Exception as e:
+        logger.error(f"Portfolio reset error: {e}")
+        return jsonify({'success': False, 'error': 'Failed to reset portfolio'})
 
 @app.route('/api/portfolio', methods=['GET'])
 def api_get_portfolio():
