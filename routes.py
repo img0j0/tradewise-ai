@@ -914,6 +914,34 @@ def get_stock_details(symbol):
         logger.error(f"Error getting stock details: {e}")
         return jsonify({'error': 'Failed to load stock details'}), 500
 
+@app.route('/api/market-news')
+def get_market_news():
+    """Get market news and sentiment analysis"""
+    try:
+        # Get market overview news
+        market_overview = market_news_service.get_market_overview_news()
+        
+        # Get trending stocks news
+        trending_news = market_news_service.get_trending_stocks_news()
+        
+        # Get sector sentiment
+        sector_sentiment = market_news_service.get_sector_sentiment()
+        
+        return jsonify({
+            'success': True,
+            'market_overview': market_overview,
+            'trending_news': trending_news,
+            'sector_sentiment': sector_sentiment,
+            'timestamp': datetime.now().isoformat()
+        })
+        
+    except Exception as e:
+        logger.error(f"Error getting market news: {e}")
+        return jsonify({
+            'success': False,
+            'error': 'Failed to load market news'
+        }), 500
+
 @app.route('/api/alerts')
 @login_required
 def get_alerts():
