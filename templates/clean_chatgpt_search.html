@@ -39,6 +39,82 @@
             max-width: calc(100vw - 60px);
         }
         
+        .tools-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .dropdown-toggle {
+            width: 50px;
+            height: 50px;
+            border: none;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.2rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .dropdown-toggle:hover {
+            background: rgba(139, 92, 246, 0.3);
+            transform: scale(1.05);
+        }
+        
+        .dropdown-menu {
+            position: absolute;
+            top: 60px;
+            right: 0;
+            background: rgba(26, 26, 46, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 10px;
+            min-width: 200px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 10000;
+        }
+        
+        .dropdown-menu.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 15px;
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        
+        .dropdown-item:hover {
+            background: rgba(139, 92, 246, 0.2);
+            color: white;
+            text-decoration: none;
+        }
+        
+        .dropdown-item .icon {
+            font-size: 1.1rem;
+            width: 20px;
+            text-align: center;
+        }
+        
         .tool-btn {
             width: 50px;
             height: 50px;
@@ -64,41 +140,41 @@
             .tools-menu {
                 position: fixed;
                 top: 20px;
-                left: 50%;
-                transform: translateX(-50%);
-                right: auto;
+                right: 20px;
+                left: auto;
+                transform: none;
                 gap: 12px;
                 background: none;
                 backdrop-filter: none;
                 padding: 0;
                 border-radius: 0;
                 border: none;
-                max-width: calc(100vw - 40px);
-                overflow-x: auto;
-                scrollbar-width: none;
-                -ms-overflow-style: none;
+                max-width: none;
+                overflow: visible;
                 z-index: 1000;
             }
             
-            .tools-menu::-webkit-scrollbar {
-                display: none;
-            }
-            
-            .tool-btn {
+            .dropdown-toggle {
                 width: 44px;
                 height: 44px;
                 font-size: 1.1rem;
-                min-width: 44px;
                 background: rgba(255, 255, 255, 0.08);
                 border: 1px solid rgba(255, 255, 255, 0.12);
                 backdrop-filter: blur(20px);
                 box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             }
             
-            .tool-btn:hover, .tool-btn:active {
+            .dropdown-toggle:hover, .dropdown-toggle:active {
                 background: rgba(139, 92, 246, 0.15);
                 transform: scale(1.02);
                 border-color: rgba(139, 92, 246, 0.3);
+            }
+            
+            .dropdown-menu {
+                top: 54px;
+                right: 0;
+                min-width: 180px;
+                max-width: calc(100vw - 40px);
             }
             
             .search-container {
@@ -108,15 +184,24 @@
         
         @media (max-width: 480px) {
             .tools-menu {
-                gap: 10px;
                 top: 15px;
+                right: 15px;
             }
             
-            .tool-btn {
+            .dropdown-toggle {
                 width: 42px;
                 height: 42px;
                 font-size: 1rem;
-                min-width: 42px;
+            }
+            
+            .dropdown-menu {
+                top: 50px;
+                min-width: 160px;
+            }
+            
+            .dropdown-item {
+                padding: 10px 12px;
+                font-size: 0.85rem;
             }
             
             .search-container {
@@ -425,33 +510,50 @@
     <div class="search-container">
         <!-- Tools Menu -->
         <div class="tools-menu">
-            <button class="tool-btn" onclick="openPortfolio()" title="Portfolio">📊</button>
-            <button class="tool-btn" onclick="openWatchlist()" title="Watchlist">⭐</button>
-            <button class="tool-btn" onclick="openPriceAlerts()" title="Price Alerts">🔔</button>
-            <button class="tool-btn" onclick="openMarketNews()" title="Market News">📰</button>
-            <button class="tool-btn" onclick="openPerformance()" title="Performance Analysis">📈</button>
-            <button class="tool-btn" onclick="openAccount()" title="Account">👤</button>
-            <button class="tool-btn" onclick="toggleAuthMenu()" title="Login/Logout">🔐</button>
+            <div class="tools-dropdown">
+                <button class="dropdown-toggle" onclick="toggleDropdown()" title="Tools & Account">
+                    🛠️
+                </button>
+                <div class="dropdown-menu" id="toolsDropdown">
+                    <div class="dropdown-item" onclick="openPortfolio()">
+                        <span class="icon">📊</span>
+                        <span>My Portfolio</span>
+                    </div>
+                    <div class="dropdown-item" onclick="openWatchlist()">
+                        <span class="icon">⭐</span>
+                        <span>Watchlist</span>
+                    </div>
+                    <div class="dropdown-item" onclick="openPriceAlerts()">
+                        <span class="icon">🔔</span>
+                        <span>Price Alerts</span>
+                    </div>
+                    <div class="dropdown-item" onclick="openMarketNews()">
+                        <span class="icon">📰</span>
+                        <span>Market News</span>
+                    </div>
+                    <div class="dropdown-item" onclick="openPerformance()">
+                        <span class="icon">📈</span>
+                        <span>Performance Analysis</span>
+                    </div>
+                    <div class="dropdown-item" onclick="openAccount()">
+                        <span class="icon">👤</span>
+                        <span>Account Settings</span>
+                    </div>
+                    <div style="border-top: 1px solid rgba(255,255,255,0.1); margin: 8px 0; padding-top: 8px;">
+                        <div class="dropdown-item" onclick="window.location.href='/login'">
+                            <span class="icon">🔐</span>
+                            <span>Sign In</span>
+                        </div>
+                        <div class="dropdown-item" onclick="handleLogout()">
+                            <span class="icon">🚪</span>
+                            <span>Sign Out</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         
-        <!-- Authentication Dropdown Menu -->
-        <div id="auth-dropdown" style="display: none; position: fixed; top: 70px; right: 20px; background: rgba(26, 26, 46, 0.95); border: 1px solid rgba(255,255,255,0.2); border-radius: 15px; padding: 15px; min-width: 200px; z-index: 1000; backdrop-filter: blur(10px);">
-            <div style="margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.1);">
-                <div style="font-weight: 600; margin-bottom: 5px;">Authentication</div>
-                <div style="opacity: 0.7; font-size: 0.9rem;">Manage your account</div>
-            </div>
-            <div style="display: flex; flex-direction: column; gap: 10px;">
-                <button onclick="window.location.href='/login'" style="padding: 10px 15px; background: linear-gradient(45deg, #8b5cf6, #06b6d4); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: 600;">
-                    Sign In
-                </button>
-                <button onclick="window.location.href='/register'" style="padding: 10px 15px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 10px; cursor: pointer;">
-                    Sign Up
-                </button>
-                <button onclick="handleLogout()" style="padding: 10px 15px; background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.5); color: #ef4444; border-radius: 10px; cursor: pointer;">
-                    Sign Out
-                </button>
-            </div>
-        </div>
+
         
         <div class="logo">TradeWise AI</div>
         <div class="search-box">
@@ -1206,21 +1308,17 @@
             }
         }
 
-        // Authentication Menu Functions
-        function toggleAuthMenu() {
-            const dropdown = document.getElementById('auth-dropdown');
-            if (dropdown.style.display === 'none' || !dropdown.style.display) {
-                dropdown.style.display = 'block';
-            } else {
-                dropdown.style.display = 'none';
-            }
+        // Dropdown Menu Functions
+        function toggleDropdown() {
+            const dropdown = document.getElementById('toolsDropdown');
+            dropdown.classList.toggle('show');
         }
 
         function handleLogout() {
             if (confirm('Are you sure you want to sign out?')) {
                 // In production, this would call logout API
                 alert('You have been signed out successfully');
-                document.getElementById('auth-dropdown').style.display = 'none';
+                document.getElementById('toolsDropdown').classList.remove('show');
                 // Could redirect to login page if needed
                 // window.location.href = '/login';
             }
@@ -1228,11 +1326,11 @@
 
         // Close dropdown when clicking outside
         document.addEventListener('click', function(event) {
-            const dropdown = document.getElementById('auth-dropdown');
-            const authButton = event.target.closest('.tool-btn[title="Login/Logout"]');
+            const dropdown = document.getElementById('toolsDropdown');
+            const toggle = document.querySelector('.dropdown-toggle');
             
-            if (!authButton && !dropdown.contains(event.target)) {
-                dropdown.style.display = 'none';
+            if (!toggle.contains(event.target) && !dropdown.contains(event.target)) {
+                dropdown.classList.remove('show');
             }
         });
 
