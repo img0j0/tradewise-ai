@@ -159,8 +159,12 @@ def get_or_create_user_account():
 
 @app.route('/')
 def index():
-    """Main ChatGPT-style advanced interface"""
-    # Simple clean return without custom headers to avoid rendering issues
+    """Main clean trading interface"""
+    return render_template('clean_trading_interface.html')
+
+@app.route('/original')
+def original_interface():
+    """Original complex interface for reference"""
     return render_template('chatgpt_style_search.html')
 
 @app.route('/test')
