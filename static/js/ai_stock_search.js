@@ -237,15 +237,23 @@ async function searchStockAI() {
             throw new Error('Stock not found');
         }
 
-        // Force display of comprehensive ChatGPT-style analysis
-        console.log('Displaying comprehensive ChatGPT-style analysis...');
+        // FORCE DISPLAY: Only use the enhanced ChatGPT-style overlay
+        console.log('=== FORCING COMPREHENSIVE CHATGPT-STYLE ANALYSIS ===');
         console.log('Stock data structure:', stockData);
         
-        // Ensure old results are hidden
+        // Completely hide and disable old results
         hideOldResults();
         
-        // Force call to enhanced display function
+        // Disable any other display functions
+        const oldSearchResults = document.getElementById('search-results');
+        if (oldSearchResults) {
+            oldSearchResults.remove(); // Completely remove old container
+        }
+        
+        // ONLY call the enhanced display function
         displayComprehensiveStockAnalysis(stockData);
+        
+        console.log('=== ENHANCED DISPLAY FUNCTION CALLED ===');
         
     } catch (error) {
         console.error('Error searching stock:', error);
@@ -587,7 +595,7 @@ function buildComprehensiveAnalysisHTML(stockData) {
     `;
 }
 
-function buildAnalysisHTML(stockData, aiAnalysis) {
+function buildAnalysisHTML_OLD_DISABLED(stockData, aiAnalysis) {
     const priceChange = stockData.current_price - stockData.previous_close;
     const priceChangePercent = (priceChange / stockData.previous_close) * 100;
     const changeClass = priceChange >= 0 ? 'text-success' : 'text-danger';
@@ -1166,6 +1174,68 @@ function testChatGPTOverlay() {
 
 // Make test function globally available
 window.testChatGPTOverlay = testChatGPTOverlay;
+
+// Force overlay display function - use this to debug
+function forceShowOverlay() {
+    const testData = {
+        name: "Test Stock",
+        symbol: "TEST",
+        price: 100.00,
+        change: 5.00,
+        change_percent: 5.0,
+        confidence: 85,
+        analysis: "STRONG BUY",
+        market_sentiment: "BULLISH",
+        risk_level: "LOW",
+        investment_thesis: "This is a test of the ChatGPT-style overlay display system.",
+        key_points: ["Test point 1", "Test point 2"],
+        fundamental_score: 90,
+        technical_score: 80,
+        market_cap: 1000000000,
+        volume: 1000000,
+        data_source: "Test System",
+        timestamp: new Date().toISOString()
+    };
+    
+    console.log('=== FORCING OVERLAY DISPLAY TEST ===');
+    
+    // Remove any existing overlay
+    const existing = document.getElementById('ai-analysis-results');
+    if (existing) existing.remove();
+    
+    // Create new overlay
+    const overlay = document.createElement('div');
+    overlay.id = 'ai-analysis-results';
+    overlay.style.cssText = `
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        background: rgba(0, 0, 0, 0.95) !important;
+        z-index: 999999 !important;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        padding: 20px !important;
+    `;
+    overlay.innerHTML = `
+        <div style="background: white; padding: 40px; border-radius: 10px; max-width: 600px; color: black;">
+            <h2>ChatGPT-Style Overlay Test</h2>
+            <p>If you can see this, the overlay system is working!</p>
+            <p><strong>Stock:</strong> ${testData.name} (${testData.symbol})</p>
+            <p><strong>Price:</strong> $${testData.price}</p>
+            <p><strong>Analysis:</strong> ${testData.analysis}</p>
+            <p><strong>Confidence:</strong> ${testData.confidence}%</p>
+            <button onclick="document.getElementById('ai-analysis-results').remove()" style="padding: 10px 20px; margin-top: 20px; background: #007bff; color: white; border: none; border-radius: 5px;">Close Test</button>
+        </div>
+    `;
+    
+    document.body.appendChild(overlay);
+    console.log('Test overlay created and displayed');
+}
+
+window.forceShowOverlay = forceShowOverlay;
 
 // Reset search button on page load
 document.addEventListener('DOMContentLoaded', function() {
