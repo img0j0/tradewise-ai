@@ -3772,9 +3772,8 @@
                     '<i class="fas fa-expand-alt floating-expand-icon"></i>' +
                 '</div>';
             
-            // Add to search results container
-            const resultsContainer = document.getElementById('search-results');
-            resultsContainer.appendChild(floatingBtn);
+            // Add to body instead of search results container
+            document.body.appendChild(floatingBtn);
             
             // Smooth animation
             setTimeout(() => {
