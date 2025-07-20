@@ -291,40 +291,38 @@ class AIAutocompleteEngine {
         const suggestionsContainer = document.getElementById('search-suggestions');
         const suggestionsList = document.getElementById('suggestions-list');
         
-        suggestionsList.innerHTML = `
-            <div class="suggestions-header">
-                <i class="fas fa-fire me-2"></i>
-                <span>Popular Searches</span>
-            </div>
-            ${suggestions.map((suggestion, index) => {
+        suggestionsList.innerHTML = 
+            '<div class="suggestions-header">' +
+                '<i class="fas fa-fire me-2"></i>' +
+                '<span>Popular Searches</span>' +
+            '</div>' +
+            suggestions.map(function(suggestion, index) {
                 const changePercent = ((suggestion.current_price - suggestion.previous_close) / suggestion.previous_close) * 100;
                 const changeClass = changePercent >= 0 ? 'text-success' : 'text-danger';
                 const changeIcon = changePercent >= 0 ? 'fa-arrow-up' : 'fa-arrow-down';
                 
-                return `
-                    <button class="suggestion-item popular-suggestion" onclick="selectEnhancedSuggestion(${JSON.stringify(suggestion).replace(/"/g, '&quot;')})" type="button">
-                        <div class="suggestion-main">
-                            <div class="suggestion-icon">
-                                <i class="fas fa-star"></i>
-                            </div>
-                            <div class="suggestion-content">
-                                <div class="suggestion-symbol">${suggestion.symbol}</div>
-                                <div class="suggestion-name">${suggestion.name}</div>
-                            </div>
-                        </div>
-                        <div class="suggestion-metrics">
-                            <div class="price-info">
-                                <div class="current-price">$${suggestion.current_price?.toFixed(2) || 'N/A'}</div>
-                                <div class="price-change ${changeClass}">
-                                    <i class="fas ${changeIcon}"></i>
-                                    ${changePercent.toFixed(2)}%
-                                </div>
+                return '<button class="suggestion-item popular-suggestion" onclick="selectEnhancedSuggestion(' + 
+                    JSON.stringify(suggestion).replace(/"/g, '&quot;') + ')" type="button">' +
+                        '<div class="suggestion-main">' +
+                            '<div class="suggestion-icon">' +
+                                '<i class="fas fa-star"></i>' +
+                            '</div>' +
+                            '<div class="suggestion-content">' +
+                                '<div class="suggestion-symbol">' + suggestion.symbol + '</div>' +
+                                '<div class="suggestion-name">' + suggestion.name + '</div>'
                             </div>
                         </div>
-                    </button>
-                `;
-            }).join('')}
-        `;
+                        '<div class="suggestion-metrics">' +
+                            '<div class="price-info">' +
+                                '<div class="current-price">$' + (suggestion.current_price ? suggestion.current_price.toFixed(2) : 'N/A') + '</div>' +
+                                '<div class="price-change ' + changeClass + '">' +
+                                    '<i class="fas ' + changeIcon + '"></i>' +
+                                    changePercent.toFixed(2) + '%' +
+                                '</div>' +
+                            '</div>' +
+                        '</div>' +
+                    '</button>';
+            }).join('');
         
         suggestionsContainer.style.display = 'block';
         this.selectedSuggestionIndex = -1;

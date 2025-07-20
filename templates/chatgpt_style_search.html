@@ -5332,6 +5332,18 @@
     
     <!-- Premium JavaScript -->
     <script src="{{ url_for('static', filename='js/premium.js') }}"></script>
+    <script>
+        // Institutional Contact Functions
+        function openInstitutionalContact() {
+            window.location.href = '/institutional-contact';
+        }
+        
+        function openSettings() {
+            window.location.href = '/settings';
+        }
+        
+        console.log('Institutional contact functions loaded');
+    </script>
     
     <!-- AI Team Chat Widget (Full Implementation) -->
     <div class="ai-team-launcher" id="ai-team-launcher" style="position: fixed; bottom: 120px; right: 30px; width: 60px; height: 60px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3); z-index: 999; transition: all 0.3s ease; color: white; font-size: 24px;">
