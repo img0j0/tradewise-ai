@@ -7,31 +7,66 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function addInstitutionalToolbar() {
-    if (!document.querySelector('.institutional-toolbar')) {
-        const toolbar = document.createElement('div');
-        toolbar.className = 'institutional-toolbar';
-        toolbar.innerHTML = `
-            <div style="position: fixed; bottom: 20px; right: 20px; background: rgba(0,0,0,0.9); border: 1px solid rgba(139,92,246,0.5); border-radius: 15px; padding: 15px; z-index: 1000; backdrop-filter: blur(10px); min-width: 200px;">
-                <div style="color: #8b5cf6; font-weight: 700; margin-bottom: 10px; text-align: center; border-bottom: 1px solid rgba(139,92,246,0.3); padding-bottom: 8px;">
-                    <i class="fas fa-crown"></i> Institutional Tools
+    // Remove existing toolbar to avoid duplicates
+    const existingToolbar = document.querySelector('.institutional-toolbar');
+    if (existingToolbar) {
+        existingToolbar.remove();
+    }
+    
+    // Add organized institutional tools section
+    const container = document.querySelector('.main-content, .search-section');
+    if (container && !container.querySelector('.institutional-tools-section')) {
+        const toolsSection = document.createElement('div');
+        toolsSection.className = 'institutional-tools-section';
+        toolsSection.innerHTML = `
+            <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; padding: 15px; margin-bottom: 15px; backdrop-filter: blur(10px);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <h4 style="color: #8b5cf6; font-weight: 700; margin: 0; display: flex; align-items: center; gap: 8px; font-size: 1rem;">
+                        <i class="fas fa-crown"></i>
+                        Institutional Tools
+                        <span style="background: #8b5cf6; color: white; font-size: 0.6rem; padding: 2px 6px; border-radius: 4px;">$199</span>
+                    </h4>
+                    <button onclick="toggleToolsDetails()" style="background: none; border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.7); padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 0.7rem;">
+                        <i class="fas fa-chevron-down" id="tools-chevron"></i> Expand
+                    </button>
                 </div>
-                <div style="display: flex; flex-direction: column; gap: 8px;">
-                    <button onclick="openAdvancedChart()" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed); border: none; color: white; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 0.8rem; display: flex; align-items: center; gap: 8px;">
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;">
+                    <button onclick="openAdvancedChart()" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed); border: none; color: white; padding: 10px; border-radius: 8px; cursor: pointer; font-size: 0.8rem; display: flex; align-items: center; gap: 8px; transition: all 0.3s;">
                         <i class="fas fa-chart-area"></i> Level II Data
                     </button>
-                    <button onclick="openOrderFlow()" style="background: linear-gradient(135deg, #dc2626, #b91c1c); border: none; color: white; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 0.8rem; display: flex; align-items: center; gap: 8px;">
+                    <button onclick="openOrderFlow()" style="background: linear-gradient(135deg, #dc2626, #b91c1c); border: none; color: white; padding: 10px; border-radius: 8px; cursor: pointer; font-size: 0.8rem; display: flex; align-items: center; gap: 8px; transition: all 0.3s;">
                         <i class="fas fa-water"></i> Options Flow
                     </button>
-                    <button onclick="openRiskManager()" style="background: linear-gradient(135deg, #10b981, #059669); border: none; color: white; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 0.8rem; display: flex; align-items: center; gap: 8px;">
+                    <button onclick="openRiskManager()" style="background: linear-gradient(135deg, #10b981, #059669); border: none; color: white; padding: 10px; border-radius: 8px; cursor: pointer; font-size: 0.8rem; display: flex; align-items: center; gap: 8px; transition: all 0.3s;">
                         <i class="fas fa-shield-alt"></i> Risk Manager
                     </button>
-                    <button onclick="openAIBot()" style="background: linear-gradient(135deg, #f59e0b, #d97706); border: none; color: white; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 0.8rem; display: flex; align-items: center; gap: 8px;">
+                    <button onclick="openAIBot()" style="background: linear-gradient(135deg, #f59e0b, #d97706); border: none; color: white; padding: 10px; border-radius: 8px; cursor: pointer; font-size: 0.8rem; display: flex; align-items: center; gap: 8px; transition: all 0.3s;">
                         <i class="fas fa-robot"></i> AI Trading Bot
                     </button>
                 </div>
+                <div id="tools-details" style="display: none; margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1);">
+                    <div style="display: grid; grid-template-columns: 1fr; gap: 10px;">
+                        <div style="background: rgba(255,255,255,0.02); border-radius: 8px; padding: 12px;">
+                            <div style="color: #8b5cf6; font-size: 0.8rem; font-weight: 600; margin-bottom: 5px;">Level II Market Data</div>
+                            <div style="color: rgba(255,255,255,0.8); font-size: 0.7rem;">Real-time order book depth with bid/ask spreads and institutional block detection</div>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.02); border-radius: 8px; padding: 12px;">
+                            <div style="color: #dc2626; font-size: 0.8rem; font-weight: 600; margin-bottom: 5px;">Smart Money Options Flow</div>
+                            <div style="color: rgba(255,255,255,0.8); font-size: 0.7rem;">Track institutional option purchases and unusual activity alerts</div>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.02); border-radius: 8px; padding: 12px;">
+                            <div style="color: #10b981; font-size: 0.8rem; font-weight: 600; margin-bottom: 5px;">Professional Risk Management</div>
+                            <div style="color: rgba(255,255,255,0.8); font-size: 0.7rem;">Portfolio beta analysis, Sharpe ratio monitoring, and auto-rebalancing</div>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.02); border-radius: 8px; padding: 12px;">
+                            <div style="color: #f59e0b; font-size: 0.8rem; font-weight: 600; margin-bottom: 5px;">Autonomous AI Trading</div>
+                            <div style="color: rgba(255,255,255,0.8); font-size: 0.7rem;">87% success rate AI bot with institutional-grade algorithms</div>
+                        </div>
+                    </div>
+                </div>
             </div>
         `;
-        document.body.appendChild(toolbar);
+        container.appendChild(toolsSection);
     }
 }
 

@@ -20,8 +20,7 @@ function activateInstitutionalFeatures() {
     // Add dark pool intelligence
     addDarkPoolIntelligence();
     
-    // Add institutional trading tools
-    addInstitutionalTradingTools();
+    // Trading tools are now handled by advanced_institutional_tools.js
     
     // Add advanced charting
     addAdvancedCharting();
@@ -55,37 +54,49 @@ function addRealTimeMarketDashboard() {
         const dashboard = document.createElement('div');
         dashboard.className = 'real-time-dashboard';
         dashboard.innerHTML = `
-            <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; padding: 20px; margin-bottom: 20px; backdrop-filter: blur(10px);">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                    <h4 style="color: #8b5cf6; font-weight: 700; margin: 0; display: flex; align-items: center; gap: 10px;">
+            <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; padding: 15px; margin-bottom: 15px; backdrop-filter: blur(10px);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <h4 style="color: #8b5cf6; font-weight: 700; margin: 0; display: flex; align-items: center; gap: 8px; font-size: 1rem;">
                         <i class="fas fa-chart-line"></i>
                         Live Market Intelligence
                         <span style="background: #dc2626; color: white; font-size: 0.6rem; padding: 2px 6px; border-radius: 4px;">LIVE</span>
                     </h4>
-                    <div style="color: rgba(255,255,255,0.6); font-size: 0.8rem;">
-                        <i class="fas fa-wifi"></i> Real-time data feed
+                    <button onclick="toggleMarketDetails()" style="background: none; border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.7); padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 0.7rem;">
+                        <i class="fas fa-chevron-down" id="market-chevron"></i> Details
+                    </button>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px;">
+                    <div style="background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3); border-radius: 8px; padding: 10px; text-align: center;">
+                        <div style="color: #10b981; font-size: 0.7rem; margin-bottom: 3px;">S&P 500</div>
+                        <div style="font-size: 1.1rem; font-weight: 700; color: #10b981;">5,847.23</div>
+                        <div style="font-size: 0.6rem; color: #10b981;">+0.8%</div>
+                    </div>
+                    <div style="background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); border-radius: 8px; padding: 10px; text-align: center;">
+                        <div style="color: #ef4444; font-size: 0.7rem; margin-bottom: 3px;">VIX</div>
+                        <div style="font-size: 1.1rem; font-weight: 700; color: #ef4444;">18.42</div>
+                        <div style="font-size: 0.6rem; color: #ef4444;">+12.3%</div>
+                    </div>
+                    <div style="background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.3); border-radius: 8px; padding: 10px; text-align: center;">
+                        <div style="color: #3b82f6; font-size: 0.7rem; margin-bottom: 3px;">Dark Pool</div>
+                        <div style="font-size: 1.1rem; font-weight: 700; color: #3b82f6;">42.7%</div>
+                        <div style="font-size: 0.6rem; color: #3b82f6;">High</div>
+                    </div>
+                    <div style="background: rgba(139,92,246,0.1); border: 1px solid rgba(139,92,246,0.3); border-radius: 8px; padding: 10px; text-align: center;">
+                        <div style="color: #8b5cf6; font-size: 0.7rem; margin-bottom: 3px;">Options</div>
+                        <div style="font-size: 1.1rem; font-weight: 700; color: #8b5cf6;">$2.8B</div>
+                        <div style="font-size: 0.6rem; color: #8b5cf6;">Heavy</div>
                     </div>
                 </div>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
-                    <div style="background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3); border-radius: 10px; padding: 15px;">
-                        <div style="color: #10b981; font-size: 0.8rem; margin-bottom: 5px;">S&P 500</div>
-                        <div style="font-size: 1.4rem; font-weight: 700; color: #10b981;">5,847.23</div>
-                        <div style="font-size: 0.7rem; color: #10b981;">+0.8% (+45.67)</div>
-                    </div>
-                    <div style="background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); border-radius: 10px; padding: 15px;">
-                        <div style="color: #ef4444; font-size: 0.8rem; margin-bottom: 5px;">VIX</div>
-                        <div style="font-size: 1.4rem; font-weight: 700; color: #ef4444;">18.42</div>
-                        <div style="font-size: 0.7rem; color: #ef4444;">+12.3% (+2.02)</div>
-                    </div>
-                    <div style="background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.3); border-radius: 10px; padding: 15px;">
-                        <div style="color: #3b82f6; font-size: 0.8rem; margin-bottom: 5px;">Dark Pool</div>
-                        <div style="font-size: 1.4rem; font-weight: 700; color: #3b82f6;">42.7%</div>
-                        <div style="font-size: 0.7rem; color: #3b82f6;">Above Normal</div>
-                    </div>
-                    <div style="background: rgba(139,92,246,0.1); border: 1px solid rgba(139,92,246,0.3); border-radius: 10px; padding: 15px;">
-                        <div style="color: #8b5cf6; font-size: 0.8rem; margin-bottom: 5px;">Options Flow</div>
-                        <div style="font-size: 1.4rem; font-weight: 700; color: #8b5cf6;">$2.8B</div>
-                        <div style="font-size: 0.7rem; color: #8b5cf6;">Heavy Activity</div>
+                <div id="market-details" style="display: none; margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1);">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
+                        <div style="background: rgba(255,255,255,0.02); border-radius: 8px; padding: 10px;">
+                            <div style="color: #10b981; font-size: 0.8rem; font-weight: 600; margin-bottom: 5px;">Market Momentum</div>
+                            <div style="color: rgba(255,255,255,0.8); font-size: 0.7rem;">Strong bullish trend detected across major indices</div>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.02); border-radius: 8px; padding: 10px;">
+                            <div style="color: #f59e0b; font-size: 0.8rem; font-weight: 600; margin-bottom: 5px;">AI Recommendation</div>
+                            <div style="color: rgba(255,255,255,0.8); font-size: 0.7rem;">Consider defensive positions due to elevated VIX</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -100,32 +111,48 @@ function addAdvancedAIInsights() {
         const aiPanel = document.createElement('div');
         aiPanel.className = 'ai-insights-panel';
         aiPanel.innerHTML = `
-            <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; padding: 20px; margin-bottom: 20px; backdrop-filter: blur(10px);">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                    <h4 style="color: #8b5cf6; font-weight: 700; margin: 0; display: flex; align-items: center; gap: 10px;">
+            <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; padding: 15px; margin-bottom: 15px; backdrop-filter: blur(10px);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <h4 style="color: #8b5cf6; font-weight: 700; margin: 0; display: flex; align-items: center; gap: 8px; font-size: 1rem;">
                         <i class="fas fa-brain"></i>
                         AI Market Predictions
-                        <span style="background: #f59e0b; color: white; font-size: 0.6rem; padding: 2px 6px; border-radius: 4px;">INSTITUTIONAL</span>
+                        <span style="background: #f59e0b; color: white; font-size: 0.6rem; padding: 2px 6px; border-radius: 4px;">97.3%</span>
                     </h4>
-                    <div style="color: rgba(255,255,255,0.6); font-size: 0.8rem;">
-                        97.3% Accuracy
+                    <button onclick="toggleAIDetails()" style="background: none; border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.7); padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 0.7rem;">
+                        <i class="fas fa-chevron-down" id="ai-chevron"></i> View All
+                    </button>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px;">
+                    <div style="background: rgba(16,185,129,0.1); border-left: 3px solid #10b981; padding: 10px; border-radius: 6px;">
+                        <div style="color: #10b981; font-weight: 600; font-size: 0.8rem; margin-bottom: 3px;">BUY</div>
+                        <div style="color: white; font-size: 0.8rem; margin-bottom: 3px;">NVDA</div>
+                        <div style="color: rgba(255,255,255,0.7); font-size: 0.7rem;">87% Conf.</div>
+                    </div>
+                    <div style="background: rgba(239,68,68,0.1); border-left: 3px solid #ef4444; padding: 10px; border-radius: 6px;">
+                        <div style="color: #ef4444; font-weight: 600; font-size: 0.8rem; margin-bottom: 3px;">SELL</div>
+                        <div style="color: white; font-size: 0.8rem; margin-bottom: 3px;">TSLA</div>
+                        <div style="color: rgba(255,255,255,0.7); font-size: 0.7rem;">92% Conf.</div>
+                    </div>
+                    <div style="background: rgba(59,130,246,0.1); border-left: 3px solid #3b82f6; padding: 10px; border-radius: 6px;">
+                        <div style="color: #3b82f6; font-weight: 600; font-size: 0.8rem; margin-bottom: 3px;">WATCH</div>
+                        <div style="color: white; font-size: 0.8rem; margin-bottom: 3px;">AAPL</div>
+                        <div style="color: rgba(255,255,255,0.7); font-size: 0.7rem;">79% Conf.</div>
                     </div>
                 </div>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
-                    <div style="background: rgba(16,185,129,0.1); border-left: 4px solid #10b981; padding: 15px; border-radius: 8px;">
-                        <div style="color: #10b981; font-weight: 600; margin-bottom: 5px;">BUY Signal</div>
-                        <div style="color: white; font-size: 0.9rem; margin-bottom: 8px;">NVDA - 87% Confidence</div>
-                        <div style="color: rgba(255,255,255,0.7); font-size: 0.8rem;">AI detected unusual institutional accumulation</div>
-                    </div>
-                    <div style="background: rgba(239,68,68,0.1); border-left: 4px solid #ef4444; padding: 15px; border-radius: 8px;">
-                        <div style="color: #ef4444; font-weight: 600; margin-bottom: 5px;">SELL Signal</div>
-                        <div style="color: white; font-size: 0.9rem; margin-bottom: 8px;">TSLA - 92% Confidence</div>
-                        <div style="color: rgba(255,255,255,0.7); font-size: 0.8rem;">Options flow indicates major outflow</div>
-                    </div>
-                    <div style="background: rgba(59,130,246,0.1); border-left: 4px solid #3b82f6; padding: 15px; border-radius: 8px;">
-                        <div style="color: #3b82f6; font-weight: 600; margin-bottom: 5px;">WATCH Signal</div>
-                        <div style="color: white; font-size: 0.9rem; margin-bottom: 8px;">AAPL - 79% Confidence</div>
-                        <div style="color: rgba(255,255,255,0.7); font-size: 0.8rem;">Breakout pattern forming</div>
+                <div id="ai-details" style="display: none; margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1);">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 10px;">
+                        <div style="background: rgba(16,185,129,0.1); border-left: 4px solid #10b981; padding: 12px; border-radius: 8px;">
+                            <div style="color: #10b981; font-weight: 600; margin-bottom: 5px;">NVDA - Strong Buy</div>
+                            <div style="color: rgba(255,255,255,0.8); font-size: 0.8rem;">Unusual institutional accumulation detected. Dark pool activity shows 3.2M shares bought by major funds.</div>
+                        </div>
+                        <div style="background: rgba(239,68,68,0.1); border-left: 4px solid #ef4444; padding: 12px; border-radius: 8px;">
+                            <div style="color: #ef4444; font-weight: 600; margin-bottom: 5px;">TSLA - Strong Sell</div>
+                            <div style="color: rgba(255,255,255,0.8); font-size: 0.8rem;">Options flow indicates major outflow. Large PUT purchases suggest institutional exit strategy.</div>
+                        </div>
+                        <div style="background: rgba(59,130,246,0.1); border-left: 4px solid #3b82f6; padding: 12px; border-radius: 8px;">
+                            <div style="color: #3b82f6; font-weight: 600; margin-bottom: 5px;">AAPL - Watch</div>
+                            <div style="color: rgba(255,255,255,0.8); font-size: 0.8rem;">Breakout pattern forming above $210 resistance. Volume confirmation needed.</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -134,85 +161,9 @@ function addAdvancedAIInsights() {
     }
 }
 
-function addDarkPoolIntelligence() {
-    const container = document.querySelector('.main-content, .search-section');
-    if (container && !container.querySelector('.dark-pool-intelligence')) {
-        const darkPool = document.createElement('div');
-        darkPool.className = 'dark-pool-intelligence';
-        darkPool.innerHTML = `
-            <div style="background: linear-gradient(135deg, rgba(220,38,38,0.1), rgba(153,27,27,0.1)); border: 1px solid rgba(220,38,38,0.3); border-radius: 15px; padding: 20px; margin-bottom: 20px; backdrop-filter: blur(10px);">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                    <h4 style="color: #dc2626; font-weight: 700; margin: 0; display: flex; align-items: center; gap: 10px;">
-                        <i class="fas fa-user-secret"></i>
-                        Dark Pool Intelligence
-                        <span style="background: #dc2626; color: white; font-size: 0.6rem; padding: 2px 6px; border-radius: 4px;">ELITE</span>
-                    </h4>
-                    <div style="color: rgba(255,255,255,0.6); font-size: 0.8rem;">
-                        <i class="fas fa-shield-alt"></i> Institutional Only
-                    </div>
-                </div>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px;">
-                    <div style="background: rgba(0,0,0,0.3); border: 1px solid rgba(220,38,38,0.2); border-radius: 10px; padding: 15px;">
-                        <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 10px;">
-                            <div style="color: #dc2626; font-weight: 600;">Large Block Activity</div>
-                            <span style="background: #dc2626; color: white; font-size: 0.6rem; padding: 1px 4px; border-radius: 3px;">HOT</span>
-                        </div>
-                        <div style="color: white; font-size: 0.9rem; margin-bottom: 5px;">AAPL: 2.3M shares @ $211.15</div>
-                        <div style="color: rgba(255,255,255,0.7); font-size: 0.8rem;">Goldman Sachs - 14:32 EST</div>
-                    </div>
-                    <div style="background: rgba(0,0,0,0.3); border: 1px solid rgba(220,38,38,0.2); border-radius: 10px; padding: 15px;">
-                        <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 10px;">
-                            <div style="color: #dc2626; font-weight: 600;">Unusual Volume</div>
-                            <span style="background: #f59e0b; color: white; font-size: 0.6rem; padding: 1px 4px; border-radius: 3px;">ALERT</span>
-                        </div>
-                        <div style="color: white; font-size: 0.9rem; margin-bottom: 5px;">NVDA: 847% above average</div>
-                        <div style="color: rgba(255,255,255,0.7); font-size: 0.8rem;">Multiple institutions buying</div>
-                    </div>
-                </div>
-            </div>
-        `;
-        container.appendChild(darkPool);
-    }
-}
 
-function addInstitutionalTradingTools() {
-    const container = document.querySelector('.main-content, .search-section');
-    if (container && !container.querySelector('.trading-tools')) {
-        const tools = document.createElement('div');
-        tools.className = 'trading-tools';
-        tools.innerHTML = `
-            <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; padding: 20px; margin-bottom: 20px; backdrop-filter: blur(10px);">
-                <h4 style="color: #8b5cf6; font-weight: 700; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
-                    <i class="fas fa-tools"></i>
-                    Professional Trading Tools
-                </h4>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
-                    <button style="background: linear-gradient(135deg, #8b5cf6, #7c3aed); border: none; color: white; padding: 15px; border-radius: 10px; cursor: pointer; transition: all 0.3s;">
-                        <i class="fas fa-robot" style="font-size: 1.2rem; margin-bottom: 5px; display: block;"></i>
-                        <div style="font-weight: 600;">AI Trading Bot</div>
-                        <div style="font-size: 0.8rem; opacity: 0.9;">Automated execution</div>
-                    </button>
-                    <button style="background: linear-gradient(135deg, #3b82f6, #1d4ed8); border: none; color: white; padding: 15px; border-radius: 10px; cursor: pointer; transition: all 0.3s;">
-                        <i class="fas fa-chart-area" style="font-size: 1.2rem; margin-bottom: 5px; display: block;"></i>
-                        <div style="font-weight: 600;">Level II Data</div>
-                        <div style="font-size: 0.8rem; opacity: 0.9;">Order book depth</div>
-                    </button>
-                    <button style="background: linear-gradient(135deg, #10b981, #059669); border: none; color: white; padding: 15px; border-radius: 10px; cursor: pointer; transition: all 0.3s;">
-                        <i class="fas fa-shield-alt" style="font-size: 1.2rem; margin-bottom: 5px; display: block;"></i>
-                        <div style="font-weight: 600;">Risk Manager</div>
-                        <div style="font-size: 0.8rem; opacity: 0.9;">Portfolio protection</div>
-                    </button>
-                    <button style="background: linear-gradient(135deg, #f59e0b, #d97706); border: none; color: white; padding: 15px; border-radius: 10px; cursor: pointer; transition: all 0.3s;">
-                        <i class="fas fa-analytics" style="font-size: 1.2rem; margin-bottom: 5px; display: block;"></i>
-                        <div style="font-weight: 600;">Options Flow</div>
-                        <div style="font-size: 0.8rem; opacity: 0.9;">Smart money tracking</div>
-                    </button>
-                </div>
-            </div>
-        `;
-        container.appendChild(tools);
-    }
-}
+
+// This function is now replaced by the organized toolbar in advanced_institutional_tools.js
 
 function addAdvancedCharting() {
     // Add advanced charting capabilities indicator
@@ -312,6 +263,55 @@ function addProfessionalNotifications() {
                 setTimeout(() => notifications.remove(), 500);
             }
         }, 10000);
+    }
+}
+
+// Navigation functions for collapsible sections
+function toggleMarketDetails() {
+    const details = document.getElementById('market-details');
+    const chevron = document.getElementById('market-chevron');
+    if (details.style.display === 'none') {
+        details.style.display = 'block';
+        chevron.className = 'fas fa-chevron-up';
+    } else {
+        details.style.display = 'none';
+        chevron.className = 'fas fa-chevron-down';
+    }
+}
+
+function toggleAIDetails() {
+    const details = document.getElementById('ai-details');
+    const chevron = document.getElementById('ai-chevron');
+    if (details.style.display === 'none') {
+        details.style.display = 'block';
+        chevron.className = 'fas fa-chevron-up';
+    } else {
+        details.style.display = 'none';
+        chevron.className = 'fas fa-chevron-down';
+    }
+}
+
+function toggleDarkPoolDetails() {
+    const details = document.getElementById('darkpool-details');
+    const chevron = document.getElementById('darkpool-chevron');
+    if (details.style.display === 'none') {
+        details.style.display = 'block';
+        chevron.className = 'fas fa-chevron-up';
+    } else {
+        details.style.display = 'none';
+        chevron.className = 'fas fa-chevron-down';
+    }
+}
+
+function toggleToolsDetails() {
+    const details = document.getElementById('tools-details');
+    const chevron = document.getElementById('tools-chevron');
+    if (details.style.display === 'none') {
+        details.style.display = 'block';
+        chevron.className = 'fas fa-chevron-up';
+    } else {
+        details.style.display = 'none';
+        chevron.className = 'fas fa-chevron-down';
     }
 }
 
