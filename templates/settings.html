@@ -249,30 +249,40 @@
         // Debug: Check if script is loading
         console.log('Settings page script loading...');
         
-        function toggleSetting(toggle) {
-            console.log('Toggle clicked', toggle);
-            console.log('Toggle classes before:', toggle.className);
+        // Make sure function is available globally first
+        window.toggleSetting = function(toggle) {
+            console.log('toggleSetting called with:', toggle);
+            console.log('Element type:', typeof toggle);
+            console.log('Element classList:', toggle.classList);
+            console.log('Classes before:', toggle.className);
             
-            toggle.classList.toggle('active');
-            
-            console.log('Toggle classes after:', toggle.className);
-            
-            // Update aria-checked for accessibility
-            const isActive = toggle.classList.contains('active');
-            toggle.setAttribute('aria-checked', isActive.toString());
-            
-            // Add visual feedback
-            toggle.style.transform = 'scale(0.95)';
-            setTimeout(() => {
-                toggle.style.transform = 'scale(1)';
-            }, 100);
-            
-            // Save state immediately
-            saveToggleState();
-        }
+            try {
+                toggle.classList.toggle('active');
+                console.log('Classes after:', toggle.className);
+                
+                // Update aria-checked for accessibility
+                const isActive = toggle.classList.contains('active');
+                toggle.setAttribute('aria-checked', isActive.toString());
+                
+                // Add visual feedback
+                toggle.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    toggle.style.transform = 'scale(1)';
+                }, 100);
+                
+                // Save state immediately
+                saveToggleState();
+                console.log('Toggle operation completed successfully');
+                
+            } catch (error) {
+                console.error('Error in toggleSetting:', error);
+            }
+        };
         
-        // Make function globally available
-        window.toggleSetting = toggleSetting;
+        // Also create local reference
+        function toggleSetting(toggle) {
+            return window.toggleSetting(toggle);
+        }
 
         function saveToggleState() {
             // Get all toggle states

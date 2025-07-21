@@ -715,6 +715,16 @@ def settings_test_page():
     """Settings test page for debugging toggles"""
     return render_template('settings_test.html')
 
+@app.route('/toggle-debug')
+def toggle_debug_page():
+    """Toggle debug page for investigating switch issues"""
+    return render_template('toggle_debug.html')
+
+@app.route('/settings-simple')
+def settings_simple_page():
+    """Simple settings page for testing basic toggle functionality"""
+    return render_template('settings_simple.html')
+
 @app.route('/trading-history')
 def trading_history_page():
     """Trading history page"""
