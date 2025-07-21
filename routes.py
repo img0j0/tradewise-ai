@@ -707,8 +707,8 @@ def watchlist_page():
 
 @app.route('/settings')
 def settings_page():
-    """Account settings page"""
-    return render_template('settings.html')
+    """Account settings page with simple on/off buttons"""
+    return render_template('settings_buttons.html')
 
 @app.route('/settings-test')
 def settings_test_page():
