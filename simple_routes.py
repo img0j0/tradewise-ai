@@ -2,6 +2,7 @@ from flask import make_response, jsonify, render_template, request
 from app import app
 import time
 from intelligent_stock_analyzer import search_and_analyze_stock
+from mobile_personal_assistant import mobile_assistant
 
 # Cache-busting headers
 def add_cache_headers(response):
@@ -317,9 +318,9 @@ def api_portfolio():
 
 @app.route('/')
 def index():
-    """Optimized AI search interface - no subscription tiers"""
+    """Mobile Personal Investment Assistant"""
     try:
-        response = make_response(render_template('optimized_ai_search.html'))
+        response = make_response(render_template('mobile_personal_assistant.html'))
         response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
         response.headers['Pragma'] = 'no-cache'
         response.headers['Expires'] = '0'
@@ -597,3 +598,26 @@ def test_two_tier():
     """Test the two-tier analysis system directly"""
     response = make_response(render_template('test_two_tier.html'))
     return add_cache_headers(response)
+
+@app.route("/api/mobile-assistant-data")
+def api_mobile_assistant_data():
+    """Mobile assistant personalized data endpoint"""
+    try:
+        # Get personalized data from mobile assistant
+        assistant_data = mobile_assistant.get_mobile_dashboard_data()
+        return jsonify(assistant_data)
+    except Exception as e:
+        return jsonify({"error": f"Assistant data failed: {str(e)}"}), 500
+
+@app.route("/search")
+def search_page():
+    """Dedicated search page with optimized AI search interface"""
+    try:
+        response = make_response(render_template("optimized_ai_search.html"))
+        response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+        response.headers["Pragma"] = "no-cache"
+        response.headers["Expires"] = "0"
+        return response
+    except Exception as e:
+        return jsonify({"error": f"Search page failed: {str(e)}"}), 500
+
