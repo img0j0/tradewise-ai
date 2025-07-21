@@ -361,6 +361,7 @@ def create_alert():
 def create_smart_alert():
     """Create smart alerts from AI suggestions"""
     try:
+        global created_alerts
         data = request.get_json()
         symbol = data.get('symbol', '').upper()
         alert_configs = data.get('alert_configs', [])
@@ -368,7 +369,7 @@ def create_smart_alert():
         if not symbol or not alert_configs:
             return jsonify({'success': False, 'error': 'Symbol and alert configurations required'}), 400
         
-        created_alerts = []
+        new_alerts = []
         for config in alert_configs:
             condition = config.get('condition', 'above')
             value = float(config.get('value', 0))
@@ -377,33 +378,51 @@ def create_smart_alert():
             # Create alert entry
             alert_id = f"smart_alert_{symbol}_{condition}_{int(datetime.now().timestamp())}"
             
-            alert_details = {
-                'alert_id': alert_id,
-                'symbol': symbol,
-                'condition': condition,
-                'value': value,
-                'title': title,
-                'created_at': datetime.now().isoformat(),
-                'type': 'smart_alert'
+            # Map condition to category for display
+            category_map = {
+                'above': 'bullish',
+                'below': 'bearish', 
+                'rsi_below': 'technical',
+                'rsi_above': 'technical',
+                'volume_spike': 'volume'
             }
             
+            alert_details = {
+                'id': alert_id,
+                'symbol': symbol,
+                'type': 'smart_alert',
+                'condition': condition,
+                'target_value': value,
+                'current_value': 0,  # Would be updated with real data
+                'title': title,
+                'description': f'Smart alert for {symbol} - {title}',
+                'status': 'active',
+                'created_at': datetime.now().isoformat(),
+                'category': category_map.get(condition, 'general')
+            }
+            
+            # Add to global alerts list
             created_alerts.append(alert_details)
+            new_alerts.append(alert_details)
         
         return jsonify({
             'success': True,
-            'message': f'Created {len(created_alerts)} smart alert(s) for {symbol}',
-            'alerts': created_alerts
+            'message': f'Created {len(new_alerts)} smart alert(s) for {symbol}',
+            'alerts': new_alerts
         })
         
     except Exception as e:
         logger.error(f'Error creating smart alerts: {e}')
         return jsonify({'success': False, 'error': str(e)}), 500
 
+# Global variable to store created alerts in memory
+created_alerts = []
+
 @app.route('/api/alerts/active')
 def get_active_alerts():
     """Get all active alerts for the user"""
     try:
-        # Demo alerts for display purposes
+        # Combine demo alerts with any dynamically created alerts
         demo_alerts = [
             {
                 'id': 'alert_001',
@@ -446,10 +465,13 @@ def get_active_alerts():
             }
         ]
         
+        # Add dynamically created alerts
+        all_alerts = demo_alerts + created_alerts
+        
         return jsonify({
             'success': True,
-            'alerts': demo_alerts,
-            'total': len(demo_alerts)
+            'alerts': all_alerts,
+            'total': len(all_alerts)
         })
         
     except Exception as e:
@@ -460,8 +482,18 @@ def get_active_alerts():
 def delete_alert(alert_id):
     """Delete a specific alert"""
     try:
-        # In production, delete from database
-        # For demo, return success
+        global created_alerts
+        
+        # Remove from created_alerts list if it exists there
+        initial_count = len(created_alerts)
+        created_alerts = [alert for alert in created_alerts if alert['id'] != alert_id]
+        
+        if len(created_alerts) < initial_count:
+            logger.info(f"Deleted created alert {alert_id}")
+        else:
+            # For demo alerts, just log the deletion (they can't actually be removed from demo data)
+            logger.info(f"Demo alert {alert_id} deletion requested")
+        
         return jsonify({
             'success': True,
             'message': f'Alert {alert_id} deleted successfully'
