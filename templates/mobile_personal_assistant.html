@@ -679,25 +679,26 @@
                     return;
                 }
 
-                resultsContainer.innerHTML = `
-                    <div class="assistant-response">
-                        <div class="response-header">
-                            <i class="fas fa-robot"></i>
-                            <span>Assistant Analysis</span>
+                // Use the pre-formatted mobile-optimized response
+                if (data.formatted_response) {
+                    resultsContainer.innerHTML = data.formatted_response;
+                } else {
+                    // Fallback for older format
+                    resultsContainer.innerHTML = `
+                        <div class="assistant-response">
+                            <div class="response-header">
+                                <i class="fas fa-robot"></i>
+                                <span>Assistant Analysis</span>
+                            </div>
+                            <div class="response-content">
+                                <h4>${data.company_name || data.symbol}</h4>
+                                <p class="current-price">$${data.current_price}</p>
+                                <p class="recommendation ${data.recommendation?.toLowerCase()}">${data.recommendation}</p>
+                                <p class="analysis">${data.ai_analysis || 'Analysis not available'}</p>
+                            </div>
                         </div>
-                        <div class="response-content">
-                            <h4>${data.company_name || data.symbol}</h4>
-                            <p class="current-price">$${data.current_price}</p>
-                            <p class="recommendation ${data.recommendation?.toLowerCase()}">${data.recommendation}</p>
-                            <p class="analysis">${data.ai_analysis}</p>
-                        </div>
-                        <div class="quick-actions-response">
-                            <button onclick="addToWatchlist('${data.symbol}')">Add to Watchlist</button>
-                            <button onclick="setAlert('${data.symbol}')">Set Alert</button>
-                            <button onclick="getMoreAnalysis('${data.symbol}')">More Analysis</button>
-                        </div>
-                    </div>
-                `;
+                    `;
+                }
             },
 
             showError(message) {
@@ -795,8 +796,116 @@
             PersonalAssistant.showNotification(`Alert set for ${symbol}!`, 'success');
         }
 
-        function getMoreAnalysis(symbol) {
-            PersonalAssistant.performSearch(`detailed analysis ${symbol}`);
+        function getDetailedAnalysis(symbol) {
+            PersonalAssistant.performSearch(`detailed technical analysis ${symbol}`);
+        }
+
+        // Additional mobile-optimized styling for search results
+        const mobileAnalysisStyles = `
+        <style>
+        .assistant-response {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 20px;
+            padding: 20px;
+            margin: 20px 0;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        
+        .response-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            color: #8b5cf6;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .response-content h4 {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #ffffff;
+            margin: 0 0 12px 0;
+        }
+        
+        .current-price {
+            font-size: 1.4em;
+            font-weight: 700;
+            color: #22c55e;
+            margin: 8px 0;
+        }
+        
+        .recommendation {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin: 8px 0;
+        }
+        
+        .recommendation.buy, .recommendation.strong.buy {
+            background: #22c55e;
+            color: white;
+        }
+        
+        .recommendation.hold {
+            background: #f59e0b;
+            color: white;
+        }
+        
+        .recommendation.sell, .recommendation.strong.sell {
+            background: #ef4444;
+            color: white;
+        }
+        
+        .analysis {
+            font-size: 0.9em;
+            line-height: 1.5;
+            color: rgba(255, 255, 255, 0.9);
+            margin: 12px 0;
+            padding: 12px;
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 12px;
+        }
+        
+        .quick-actions-response {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-top: 16px;
+        }
+        
+        .quick-actions-response button {
+            padding: 10px 8px;
+            border: none;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: var(--primary-gradient);
+            color: white;
+        }
+        
+        .quick-actions-response button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+        }
+        </style>
+        `;
+        
+        // Inject the styles
+        if (!document.getElementById('mobile-analysis-styles')) {
+            const styleElement = document.createElement('div');
+            styleElement.id = 'mobile-analysis-styles';
+            styleElement.innerHTML = mobileAnalysisStyles;
+            document.head.appendChild(styleElement);
         }
 
         // Initialize when page loads

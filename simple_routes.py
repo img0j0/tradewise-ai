@@ -28,7 +28,9 @@ def api_stock_search():
         stock_data = search_and_analyze_stock(query)
         
         if stock_data:
-            return jsonify(stock_data)
+            # Use mobile assistant to format the response optimally
+            formatted_data = mobile_assistant.format_mobile_optimized_response(stock_data)
+            return jsonify(formatted_data)
         else:
             return jsonify({
                 'error': 'Stock not found',
