@@ -121,7 +121,7 @@
         }
 
         .search-section {
-            padding: 4rem 2rem 2rem;
+            padding: 7rem 2rem 3rem;
             text-align: center;
             background: linear-gradient(180deg, rgba(10, 11, 15, 0.8) 0%, rgba(10, 11, 15, 0.95) 100%);
         }
@@ -211,16 +211,16 @@
         }
 
         .dropdown-nav-section {
-            padding: 2rem;
+            padding: 1rem 2rem 4rem;
             background: rgba(10, 11, 15, 0.95);
         }
 
         .dropdown-nav {
-            max-width: 800px;
+            max-width: 600px;
             margin: 0 auto;
             display: flex;
             flex-direction: column;
-            gap: 1rem;
+            gap: 0.75rem;
         }
 
         .dropdown-item {
@@ -232,14 +232,14 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 1.5rem;
+            padding: 1rem 1.25rem;
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
+            border-radius: 12px;
             color: white;
             cursor: pointer;
             transition: all 0.3s ease;
-            font-size: 1rem;
+            font-size: 0.95rem;
         }
 
         .dropdown-btn:hover {
@@ -357,25 +357,55 @@
                 gap: 1rem;
             }
 
-            .hero-title {
-                font-size: 2.5rem;
+            .search-section {
+                padding: 6rem 1rem 2rem;
             }
 
-            .main-content {
-                padding: 2rem 1rem;
+            .search-title {
+                font-size: 2rem;
             }
 
-            .dropdown-navigation {
-                flex-direction: column;
-                align-items: center;
+            .robot-mascot {
+                top: 100px;
+                width: 50px;
+                height: 70px;
+            }
+
+            .robot-head {
+                width: 35px;
+                height: 35px;
+            }
+
+            .robot-body {
+                width: 25px;
+                height: 20px;
+            }
+
+            .dropdown-nav-section {
+                padding: 1rem 1rem 3rem;
+            }
+
+            .dropdown-nav {
+                gap: 0.5rem;
+            }
+
+            .dropdown-btn {
+                padding: 0.75rem 1rem;
+                font-size: 0.9rem;
             }
 
             .dropdown-content {
-                min-width: 300px;
-                left: 0;
-                right: 0;
-                transform: none;
-                margin: 0.5rem;
+                margin-top: 0.25rem;
+                padding: 1rem;
+            }
+
+            .popular-shortcuts {
+                gap: 0.5rem;
+            }
+
+            .shortcut-btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.85rem;
             }
         }
 
@@ -507,22 +537,22 @@
         
         /* Robot Mascot Styles */
         .robot-mascot {
-            position: absolute;
-            top: 150px;
+            position: fixed;
+            top: 120px;
             left: 50%;
             transform: translateX(-50%);
-            width: 80px;
-            height: 100px;
-            z-index: 10;
+            width: 60px;
+            height: 80px;
+            z-index: 1000;
             animation: robotFloat 3s ease-in-out infinite;
         }
         
         .robot-head {
             position: relative;
-            width: 50px;
-            height: 50px;
+            width: 40px;
+            height: 40px;
             background: linear-gradient(135deg, #8b5cf6, #06b6d4);
-            border-radius: 10px;
+            border-radius: 8px;
             margin: 0 auto;
             animation: robotBlink 3s infinite;
         }
@@ -580,11 +610,11 @@
         }
         
         .robot-body {
-            width: 40px;
-            height: 35px;
+            width: 30px;
+            height: 25px;
             background: linear-gradient(135deg, #8b5cf6, #06b6d4);
-            border-radius: 8px;
-            margin: 8px auto;
+            border-radius: 6px;
+            margin: 6px auto;
             position: relative;
         }
         
@@ -785,16 +815,16 @@
                     </div>
 
                     <div class="dropdown-item">
-                        <button class="dropdown-btn" onclick="toggleDropdown('market-insights')">
+                        <button class="dropdown-btn" onclick="toggleDropdown('trading-tools')">
                             <div class="dropdown-content-header">
-                                <span class="dropdown-icon">🧠</span>
-                                <span class="dropdown-title">Market Insights</span>
-                                <span class="dropdown-indicator">Live data</span>
+                                <span class="dropdown-icon">🛠️</span>
+                                <span class="dropdown-title">Trading Tools</span>
+                                <span class="dropdown-indicator">Portfolio, Alerts, Charts</span>
                             </div>
                             <span class="dropdown-arrow">▼</span>
                         </button>
-                        <div class="dropdown-content" id="market-insights-content" style="display: none;">
-                            <!-- Content loaded by dropdown system -->
+                        <div class="dropdown-content" id="trading-tools-content" style="display: none;">
+                            <!-- Trading tools consolidated here -->
                         </div>
                     </div>
                 </div>
@@ -888,20 +918,24 @@
                             '<p>Growth: <span style="color: #10b981;">+12.1%</span></p>' +
                         '</div>' +
                     '</div>';
-            } else if (dropdownId === 'market-insights') {
+            } else if (dropdownId === 'trading-tools') {
                 content.innerHTML = 
                     '<div style="display: grid; gap: 1rem;">' +
-                        '<div style="background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1);">' +
-                            '<h4>Market Sentiment</h4>' +
-                            '<p>Current: <span style="color: #10b981;">Bullish</span></p>' +
+                        '<div onclick="alert(\'My Portfolio - Coming Soon!\')" style="background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 10px; cursor: pointer; border: 1px solid rgba(255,255,255,0.1);">' +
+                            '<h4>📊 My Portfolio</h4>' +
+                            '<p>View holdings and performance</p>' +
                         '</div>' +
-                        '<div style="background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1);">' +
-                            '<h4>Volatility Index</h4>' +
-                            '<p>Level: <span style="color: #f59e0b;">Moderate</span></p>' +
+                        '<div onclick="alert(\'Price Alerts - Coming Soon!\')" style="background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 10px; cursor: pointer; border: 1px solid rgba(255,255,255,0.1);">' +
+                            '<h4>🔔 Price Alerts</h4>' +
+                            '<p>Set custom stock alerts</p>' +
                         '</div>' +
-                        '<div style="background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1);">' +
-                            '<h4>AI Opportunities</h4>' +
-                            '<p>Score: <span style="color: #10b981;">8.5/10</span></p>' +
+                        '<div onclick="alert(\'Market Analytics - Coming Soon!\')" style="background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 10px; cursor: pointer; border: 1px solid rgba(255,255,255,0.1);">' +
+                            '<h4>📈 Market Analytics</h4>' +
+                            '<p>Advanced market insights</p>' +
+                        '</div>' +
+                        '<div onclick="alert(\'Watchlist - Coming Soon!\')" style="background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 10px; cursor: pointer; border: 1px solid rgba(255,255,255,0.1);">' +
+                            '<h4>⭐ My Watchlist</h4>' +
+                            '<p>Track favorite stocks</p>' +
                         '</div>' +
                     '</div>';
             }
