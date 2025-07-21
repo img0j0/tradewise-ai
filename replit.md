@@ -13,6 +13,7 @@ Goal: Create an app used by thousands of people worldwide to improve their inves
 Focus: Real-world validation and industry-disrupting innovation
 Design Philosophy: "Simple but powerful" with confirmed preference for minimalist, clean interfaces
 UI Preference: User explicitly loves minimalist look and consolidated dropdown solution
+UX Enhancement: User wants modal tabs with minimize/close functionality for better navigation
 Strategic Direction: AI-powered investment assistant (NO trading platform complexity)
 Platform Priority: Intelligent stock research and analysis tool for informed investment decisions
 Core Mission: Help investors evaluate opportunities through advanced AI analysis and insights
