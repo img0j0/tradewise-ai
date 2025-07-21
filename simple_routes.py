@@ -49,6 +49,32 @@ def api_stock_search_legacy(symbol):
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@app.route('/api/stock-detailed-analysis', methods=['POST'])
+def api_stock_detailed_analysis():
+    """Detailed stock analysis API endpoint with advanced technical indicators"""
+    try:
+        data = request.get_json()
+        symbol = data.get('symbol', '').strip().upper()
+        
+        if not symbol:
+            return jsonify({'error': 'Symbol parameter is required'}), 400
+            
+        # Use intelligent stock analyzer for detailed data
+        from intelligent_stock_analyzer import get_detailed_technical_analysis
+        
+        detailed_data = get_detailed_technical_analysis(symbol)
+        
+        if detailed_data:
+            return jsonify(detailed_data)
+        else:
+            return jsonify({
+                'error': 'Detailed analysis unavailable',
+                'message': f'Could not generate detailed analysis for "{symbol}". Please try again.'
+            }), 404
+            
+    except Exception as e:
+        return jsonify({'error': f'Detailed analysis failed: {str(e)}'}), 500
+
 @app.route('/api/dashboard')
 def api_dashboard():
     """Dashboard data API endpoint"""

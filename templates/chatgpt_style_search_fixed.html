@@ -701,6 +701,130 @@
             font-weight: 700 !important;
         }
 
+        /* Quick Analysis Styles */
+        .quick-analysis-section {
+            margin: 2rem 0;
+            padding: 1.5rem;
+            background: rgba(59, 130, 246, 0.05);
+            border-radius: 15px;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .quick-analysis-section h4 {
+            color: #60a5fa;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .confidence-indicator {
+            margin-top: 1rem;
+        }
+
+        .confidence-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #10b981, #059669);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .confidence-text {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 600;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .action-buttons button {
+            flex: 1;
+            min-width: 140px;
+        }
+
+        /* Detailed Analysis Styles */
+        .detailed-analysis-section {
+            margin-top: 2rem;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .detailed-analysis-section h5 {
+            color: #8b5cf6;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .detailed-actions {
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .analysis-loading {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .analysis-loading .loading-spinner {
+            width: 40px;
+            height: 40px;
+            margin: 0 auto 1rem;
+        }
+
+        /* Error Styles */
+        .error-container {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            border-radius: 15px;
+        }
+
+        .error-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .error-message {
+            text-align: center;
+            padding: 1.5rem;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            border-radius: 10px;
+        }
+
         .btn-primary, .btn-secondary {
             padding: 0.8rem 1.5rem;
             border: none;
@@ -1059,7 +1183,7 @@
 </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{{ url_for('static', filename='js/intelligent_search.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/intelligent_search_new.js') }}"></script>
     <script>
         // Initialize the intelligent search system
         window.intelligentSearch = new IntelligentStockSearch();

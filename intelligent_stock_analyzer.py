@@ -425,3 +425,130 @@ stock_analyzer = IntelligentStockAnalyzer()
 def search_and_analyze_stock(query: str) -> Optional[Dict]:
     """Main function to search and analyze stocks"""
     return stock_analyzer.search_stock(query)
+
+def get_detailed_technical_analysis(symbol: str) -> Optional[Dict]:
+    """
+    Get detailed technical analysis for a specific stock symbol
+    Returns comprehensive technical indicators and financial metrics
+    """
+    try:
+        import yfinance as yf
+        import numpy as np
+        
+        # Fetch stock data
+        ticker = yf.Ticker(symbol)
+        info = ticker.info
+        hist = ticker.history(period="1y")
+        
+        if hist.empty:
+            return None
+            
+        current_price = hist['Close'].iloc[-1]
+        
+        # Calculate advanced technical indicators
+        close_prices = hist['Close']
+        volumes = hist['Volume']
+        
+        # RSI
+        delta = close_prices.diff()
+        gain = (delta.where(delta > 0, 0)).rolling(window=14).mean()
+        loss = (-delta.where(delta < 0, 0)).rolling(window=14).mean()
+        rs = gain / loss
+        rsi = 100 - (100 / (1 + rs))
+        current_rsi = rsi.iloc[-1] if not rsi.empty else None
+        
+        # MACD
+        ema_12 = close_prices.ewm(span=12).mean()
+        ema_26 = close_prices.ewm(span=26).mean()
+        macd = ema_12 - ema_26
+        macd_signal = macd.ewm(span=9).mean()
+        current_macd = macd.iloc[-1] if not macd.empty else None
+        current_macd_signal = macd_signal.iloc[-1] if not macd_signal.empty else None
+        
+        # Bollinger Bands
+        sma_20 = close_prices.rolling(window=20).mean()
+        std_20 = close_prices.rolling(window=20).std()
+        bb_upper = sma_20 + (std_20 * 2)
+        bb_lower = sma_20 - (std_20 * 2)
+        
+        # Determine BB position
+        bb_position = "Middle"
+        if current_price > bb_upper.iloc[-1]:
+            bb_position = "Above Upper Band"
+        elif current_price < bb_lower.iloc[-1]:
+            bb_position = "Below Lower Band"
+        
+        # Volume analysis
+        avg_volume = volumes.mean()
+        current_volume = volumes.iloc[-1]
+        volume_trend = "Normal Volume"
+        if current_volume > avg_volume * 1.5:
+            volume_trend = "High Volume"
+        elif current_volume < avg_volume * 0.5:
+            volume_trend = "Low Volume"
+        
+        # Financial metrics from info
+        market_cap = info.get('marketCap', 0)
+        pe_ratio = info.get('trailingPE', None)
+        beta = info.get('beta', None)
+        week_52_high = info.get('fiftyTwoWeekHigh', current_price)
+        week_52_low = info.get('fiftyTwoWeekLow', current_price)
+        avg_volume_info = info.get('averageVolume', avg_volume)
+        
+        # Generate AI analysis
+        risk_score = 5  # Default medium risk
+        if current_rsi:
+            if current_rsi > 70:
+                risk_score += 2
+            elif current_rsi < 30:
+                risk_score -= 1
+                
+        if beta and beta > 1.5:
+            risk_score += 1
+            
+        opportunity_score = max(1, min(10, 10 - risk_score))
+        
+        # Price target calculation
+        price_target = current_price * 1.1  # 10% upside target
+        if current_rsi and current_rsi < 40:
+            price_target = current_price * 1.15  # More upside if oversold
+        
+        risk_analysis = "Standard market risk with typical volatility patterns."
+        if current_rsi and current_rsi > 70:
+            risk_analysis = "Elevated risk due to overbought conditions. Consider taking profits."
+        elif current_rsi and current_rsi < 30:
+            risk_analysis = "Lower risk entry point due to oversold conditions. Potential buying opportunity."
+        
+        recommendation_reasoning = "Analysis based on technical indicators and market position."
+        if current_macd and current_macd_signal:
+            if current_macd > current_macd_signal:
+                recommendation_reasoning += " MACD shows positive momentum."
+            else:
+                recommendation_reasoning += " MACD indicates weakening momentum."
+        
+        return {
+            # Technical Indicators
+            'rsi': current_rsi,
+            'macd': current_macd,
+            'macd_signal': 1 if current_macd and current_macd_signal and current_macd > current_macd_signal else -1,
+            'bb_position': bb_position,
+            'volume_trend': volume_trend,
+            
+            # Financial Metrics
+            'market_cap': market_cap,
+            'pe_ratio': pe_ratio,
+            'beta': beta,
+            'week_52_high': week_52_high,
+            'week_52_low': week_52_low,
+            'avg_volume': avg_volume_info,
+            'price_target': price_target,
+            
+            # AI Analysis
+            'risk_analysis': risk_analysis,
+            'opportunity_score': opportunity_score,
+            'recommendation_reasoning': recommendation_reasoning
+        }
+        
+    except Exception as e:
+        logger.error(f"Error in detailed analysis for {symbol}: {e}")
+        return None
