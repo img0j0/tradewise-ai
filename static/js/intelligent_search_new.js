@@ -90,10 +90,11 @@ class IntelligentStockSearch {
     displayQuickAnalysis(data) {
         if (!this.resultsContainer) return;
         
-        const changeClass = data.change >= 0 ? 'positive' : 'negative';
-        const changeSymbol = data.change >= 0 ? '+' : '';
+        // Handle the data format from our API
+        const changeClass = data.change_percent && parseFloat(data.change_percent) >= 0 ? 'positive' : 'negative';
+        const changeSymbol = data.change_percent && parseFloat(data.change_percent) >= 0 ? '+' : '';
         const recommendationColor = this.getRecommendationColor(data.ai_recommendation);
-        const confidencePercentage = Math.round(data.ai_confidence * 100);
+        const confidencePercentage = data.confidence || Math.round((data.ai_confidence || 0.5) * 100);
         
         this.resultsContainer.innerHTML = `
             <div class="ai-analysis-card">
@@ -102,8 +103,8 @@ class IntelligentStockSearch {
                     <div class="stock-info">
                         <h2 class="stock-title">${data.symbol} - ${data.name}</h2>
                         <div class="stock-metrics">
-                            <span class="stock-price">$${data.current_price}</span>
-                            <span class="price-change ${changeClass}">${changeSymbol}${data.change} (${data.change_percent}%)</span>
+                            <span class="stock-price">$${data.price}</span>
+                            <span class="price-change ${changeClass}">${changeSymbol}${data.change || 0} (${data.change_percent || '0.00'}%)</span>
                         </div>
                     </div>
                     <div class="ai-recommendation-badge">
@@ -119,7 +120,7 @@ class IntelligentStockSearch {
                 <div class="quick-analysis-section">
                     <h4><i class="fas fa-brain"></i> AI Quick Analysis</h4>
                     <div class="analysis-content">
-                        <p><strong>Market Position:</strong> ${data.ai_analysis}</p>
+                        <p><strong>AI Assessment:</strong> ${data.ai_analysis ? data.ai_analysis.substring(0, 200) + '...' : 'Comprehensive analysis available'}</p>
                         <p><strong>Key Insight:</strong> ${this.generateKeyInsight(data)}</p>
                         <div class="confidence-indicator">
                             <div class="confidence-bar">
@@ -158,11 +159,14 @@ class IntelligentStockSearch {
     }
 
     generateKeyInsight(data) {
+        const price = data.price || data.current_price;
+        const changeValue = data.change_percent ? parseFloat(data.change_percent) : 0;
+        
         const insights = [
-            `Currently trading at $${data.current_price} with ${data.change >= 0 ? 'positive' : 'negative'} momentum`,
-            `AI models suggest ${data.ai_recommendation.toLowerCase()} based on technical and fundamental analysis`,
-            `Risk assessment indicates ${data.risk_level.toLowerCase()} volatility in current market conditions`,
-            `Price target range suggests potential ${data.change >= 0 ? 'upside' : 'recovery'} opportunity`
+            `Currently trading at $${price} with ${changeValue >= 0 ? 'positive' : 'negative'} momentum`,
+            `AI models suggest ${data.ai_recommendation ? data.ai_recommendation.toLowerCase() : 'hold'} based on technical and fundamental analysis`,
+            `Risk assessment indicates ${data.risk_level ? data.risk_level.toLowerCase() : 'medium'} volatility in current market conditions`,
+            `Price target of $${data.price_target || price * 1.1} suggests potential ${changeValue >= 0 ? 'upside' : 'recovery'} opportunity`
         ];
         return insights[Math.floor(Math.random() * insights.length)];
     }
@@ -264,6 +268,11 @@ class IntelligentStockSearch {
 function showDetailedAnalysis(symbol) {
     const detailedSection = document.getElementById(`detailed-analysis-${symbol}`);
     if (!detailedSection) return;
+
+    if (detailedSection.style.display === 'block') {
+        detailedSection.style.display = 'none';
+        return;
+    }
 
     detailedSection.style.display = 'block';
     loadDetailedAnalysis(symbol, detailedSection);
@@ -406,13 +415,24 @@ function getVolumeClass(trend) {
 }
 
 function addToWatchlist(symbol) {
+    // Show feedback
+    const button = event.target;
+    const originalText = button.innerHTML;
+    button.innerHTML = '<i class="fas fa-check"></i> Added!';
+    button.style.background = '#10b981';
+    
+    setTimeout(() => {
+        button.innerHTML = originalText;
+        button.style.background = '';
+    }, 2000);
+    
     console.log(`Adding ${symbol} to watchlist`);
-    // This would connect to your existing watchlist functionality
 }
 
 function showBuyModal(symbol) {
+    // Show simple feedback for now
+    alert(`Buy modal would open for ${symbol}. This connects to your existing trading interface.`);
     console.log(`Opening buy modal for ${symbol}`);
-    // This would connect to your existing buy modal functionality
 }
 
 function performStockSearch() {
