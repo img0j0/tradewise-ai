@@ -54,7 +54,7 @@ cache = Cache(app, config={'CACHE_TYPE': 'simple'})
 # Initialize Flask-Login
 login_manager = LoginManager()
 login_manager.init_app(app)
-login_manager.login_view = 'login'
+login_manager.login_view = 'login_page'  # type: ignore
 login_manager.login_message = 'Please log in to access this page.'
 
 @login_manager.user_loader
