@@ -232,7 +232,10 @@
             </div>
         </div>
 
-        <button class="save-btn" onclick="saveAllSettings()">Save All Settings</button>
+        <div style="display: flex; gap: 15px; margin-top: 20px;">
+            <button class="save-btn" onclick="saveAllSettings()" style="flex: 1;">Save All Settings</button>
+            <button onclick="window.location.href='/'" style="padding: 15px 25px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 12px; cursor: pointer; font-weight: 600; transition: all 0.3s ease;" onmouseover="this.style.background='rgba(255,255,255,0.15)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'">← Back to Main</button>
+        </div>
     </div>
 
     <script>
