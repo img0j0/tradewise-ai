@@ -440,3 +440,10 @@ def index():
 def health_check():
     """Simple health check"""
     return "OK"
+
+@app.route('/debug')
+def debug_search():
+    """Debug search interface for testing two-tier analysis"""
+    from flask import render_template_string
+    response = make_response(render_template('debug_search.html'))
+    return add_cache_headers(response)

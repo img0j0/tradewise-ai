@@ -1183,10 +1183,12 @@
 </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{{ url_for('static', filename='js/intelligent_search_new.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/intelligent_search_new.js') }}?v={{ range(1, 10000) | random }}"></script>
     <script>
-        // Initialize the intelligent search system
+        // Initialize the intelligent search system with cache busting
+        console.log('Initializing IntelligentStockSearch...');
         window.intelligentSearch = new IntelligentStockSearch();
+        console.log('IntelligentStockSearch initialized successfully');
     </script>
     <script>
         let currentDropdown = null;
