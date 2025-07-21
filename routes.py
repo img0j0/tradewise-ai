@@ -708,7 +708,11 @@ def watchlist_page():
 @app.route('/settings')
 def settings_page():
     """Account settings page with simple on/off buttons"""
-    return render_template('settings_buttons.html')
+    response = make_response(render_template('settings_buttons.html'))
+    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '0'
+    return response
 
 @app.route('/settings-test')
 def settings_test_page():
