@@ -29,25 +29,24 @@ except Exception as e:
 def save_analysis_to_history(symbol, stock_data, insights):
     """Save analysis results for historical tracking and comparison"""
     try:
-        analysis = StockAnalysis(
-            symbol=symbol,
-            price_at_analysis=float(stock_data.get('current_price', 0)),
-            recommendation=insights.get('recommendation', 'HOLD'),
-            confidence_score=float(insights.get('confidence', 50)),
-            fundamental_score=float(insights.get('fundamental_score', 50)),
-            technical_score=float(insights.get('technical_score', 50)),
-            risk_level=insights.get('risk_level', 'Medium'),
-            analysis_details=json.dumps({
-                'market_sentiment': insights.get('market_sentiment', 'Neutral'),
-                'investment_thesis': insights.get('analysis', 'Analysis not available'),
-                'pe_ratio': stock_data.get('pe_ratio'),
-                'market_cap': stock_data.get('market_cap')
-            }),
-            market_conditions=json.dumps({
-                'analysis_timestamp': datetime.now().isoformat(),
-                'data_source': 'Yahoo Finance'
-            })
-        )
+        analysis = StockAnalysis()
+        analysis.symbol = symbol
+        analysis.price_at_analysis = float(stock_data.get('current_price', 0))
+        analysis.recommendation = insights.get('recommendation', 'HOLD')
+        analysis.confidence_score = float(insights.get('confidence', 50))
+        analysis.fundamental_score = float(insights.get('fundamental_score', 50))
+        analysis.technical_score = float(insights.get('technical_score', 50))
+        analysis.risk_level = insights.get('risk_level', 'Medium')
+        analysis.analysis_details = json.dumps({
+            'market_sentiment': insights.get('market_sentiment', 'Neutral'),
+            'investment_thesis': insights.get('analysis', 'Analysis not available'),
+            'pe_ratio': stock_data.get('pe_ratio'),
+            'market_cap': stock_data.get('market_cap')
+        })
+        analysis.market_conditions = json.dumps({
+            'analysis_timestamp': datetime.now().isoformat(),
+            'data_source': 'Yahoo Finance'
+        })
         db.session.add(analysis)
         db.session.commit()
         logger.info(f"Saved analysis for {symbol} to history")
@@ -174,7 +173,7 @@ def get_analysis_history(symbol):
             })
         
         return jsonify({
-            'success': True,
+            'success': True, 
             'symbol': symbol.upper(),
             'analysis_history': history
         })
@@ -198,10 +197,9 @@ def add_to_analysis_watchlist():
         demo_watchlist.add(symbol)
         
         # Save to database for future tracking
-        watchlist_item = WatchlistItem(
-            symbol=symbol,
-            notes=notes
-        )
+        watchlist_item = WatchlistItem()
+        watchlist_item.symbol = symbol
+        watchlist_item.notes = notes
         db.session.add(watchlist_item)
         db.session.commit()
         
@@ -357,6 +355,48 @@ def create_alert():
         
     except Exception as e:
         logger.error(f'Error creating alert: {e}')
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/alerts/create-smart', methods=['POST'])
+def create_smart_alert():
+    """Create smart alerts from AI suggestions"""
+    try:
+        data = request.get_json()
+        symbol = data.get('symbol', '').upper()
+        alert_configs = data.get('alert_configs', [])
+        
+        if not symbol or not alert_configs:
+            return jsonify({'success': False, 'error': 'Symbol and alert configurations required'}), 400
+        
+        created_alerts = []
+        for config in alert_configs:
+            condition = config.get('condition', 'above')
+            value = float(config.get('value', 0))
+            title = config.get('title', 'Smart Alert')
+            
+            # Create alert entry
+            alert_id = f"smart_alert_{symbol}_{condition}_{int(datetime.now().timestamp())}"
+            
+            alert_details = {
+                'alert_id': alert_id,
+                'symbol': symbol,
+                'condition': condition,
+                'value': value,
+                'title': title,
+                'created_at': datetime.now().isoformat(),
+                'type': 'smart_alert'
+            }
+            
+            created_alerts.append(alert_details)
+        
+        return jsonify({
+            'success': True,
+            'message': f'Created {len(created_alerts)} smart alert(s) for {symbol}',
+            'alerts': created_alerts
+        })
+        
+    except Exception as e:
+        logger.error(f'Error creating smart alerts: {e}')
         return jsonify({'success': False, 'error': str(e)}), 500
 
 # Create database tables
