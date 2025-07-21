@@ -97,11 +97,26 @@
             border-radius: 25px;
             position: relative;
             cursor: pointer;
-            transition: background 0.3s;
+            transition: all 0.3s ease;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+            border: 2px solid transparent;
+        }
+
+        .toggle:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
+        }
+
+        .toggle:focus {
+            outline: 2px solid var(--primary-color);
+            outline-offset: 3px;
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
         }
 
         .toggle.active {
-            background: var(--primary-color);
+            background: linear-gradient(135deg, #8b5cf6, #d946ef);
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.5);
+            border: 2px solid rgba(139, 92, 246, 0.3);
         }
 
         .toggle::after {
@@ -113,11 +128,38 @@
             position: absolute;
             top: 2.5px;
             left: 2.5px;
-            transition: left 0.3s;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
         }
 
         .toggle.active::after {
             left: 27.5px;
+            background: #ffffff;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Mobile touch optimization */
+        @media (max-width: 768px) {
+            .toggle {
+                width: 60px;
+                height: 30px;
+                min-width: 60px; /* Prevent shrinking */
+            }
+            
+            .toggle::after {
+                width: 24px;
+                height: 24px;
+                top: 3px;
+                left: 3px;
+            }
+            
+            .toggle.active::after {
+                left: 33px;
+            }
+            
+            .setting-item {
+                padding: 1.5rem 0;
+            }
         }
 
         .save-btn {
@@ -130,6 +172,18 @@
             font-weight: 600;
             width: 100%;
             margin-top: 1rem;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .save-btn:hover {
+            background: linear-gradient(135deg, #8b5cf6, #d946ef);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+        }
+
+        .save-btn:active {
+            transform: translateY(0);
         }
     </style>
 </head>
@@ -148,14 +202,14 @@
                     <div class="setting-label">Email Notifications</div>
                     <div class="setting-description">Receive email alerts for trades and market updates</div>
                 </div>
-                <div class="toggle active" onclick="toggleSetting(this)"></div>
+                <div class="toggle active" onclick="toggleSetting(this)" tabindex="0" role="switch" aria-checked="true" onkeypress="if(event.key==='Enter'||event.key===' ')toggleSetting(this)" aria-label="Email Notifications toggle"></div>
             </div>
             <div class="setting-item">
                 <div>
                     <div class="setting-label">Push Notifications</div>
                     <div class="setting-description">Get real-time notifications on your device</div>
                 </div>
-                <div class="toggle" onclick="toggleSetting(this)"></div>
+                <div class="toggle" onclick="toggleSetting(this)" tabindex="0" role="switch" aria-checked="false" onkeypress="if(event.key==='Enter'||event.key===' ')toggleSetting(this)" aria-label="Push Notifications toggle"></div>
             </div>
         </div>
 
@@ -166,14 +220,14 @@
                     <div class="setting-label">Confirmation Prompts</div>
                     <div class="setting-description">Require confirmation before executing trades</div>
                 </div>
-                <div class="toggle active" onclick="toggleSetting(this)"></div>
+                <div class="toggle active" onclick="toggleSetting(this)" tabindex="0" role="switch" aria-checked="true" onkeypress="if(event.key==='Enter'||event.key===' ')toggleSetting(this)" aria-label="Confirmation Prompts toggle"></div>
             </div>
             <div class="setting-item">
                 <div>
                     <div class="setting-label">AI Recommendations</div>
                     <div class="setting-description">Show AI-powered trading recommendations</div>
                 </div>
-                <div class="toggle active" onclick="toggleSetting(this)"></div>
+                <div class="toggle active" onclick="toggleSetting(this)" tabindex="0" role="switch" aria-checked="true" onkeypress="if(event.key==='Enter'||event.key===' ')toggleSetting(this)" aria-label="AI Recommendations toggle"></div>
             </div>
         </div>
 
@@ -184,7 +238,7 @@
                     <div class="setting-label">Data Analytics</div>
                     <div class="setting-description">Allow anonymous usage analytics for platform improvement</div>
                 </div>
-                <div class="toggle active" onclick="toggleSetting(this)"></div>
+                <div class="toggle active" onclick="toggleSetting(this)" tabindex="0" role="switch" aria-checked="true" onkeypress="if(event.key==='Enter'||event.key===' ')toggleSetting(this)" aria-label="Data Analytics toggle"></div>
             </div>
         </div>
 
@@ -193,12 +247,76 @@
 
     <script>
         function toggleSetting(toggle) {
+            console.log('Toggle clicked', toggle);
             toggle.classList.toggle('active');
+            
+            // Update aria-checked for accessibility
+            const isActive = toggle.classList.contains('active');
+            toggle.setAttribute('aria-checked', isActive.toString());
+            
+            // Add visual feedback
+            toggle.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                toggle.style.transform = 'scale(1)';
+            }, 100);
+            
+            // Save state immediately
+            saveToggleState();
+        }
+
+        function saveToggleState() {
+            // Get all toggle states
+            const toggleStates = {};
+            document.querySelectorAll('.toggle').forEach((toggle, index) => {
+                toggleStates[`toggle_${index}`] = toggle.classList.contains('active');
+            });
+            
+            // Store in localStorage for persistence
+            localStorage.setItem('tradeWiseSettings', JSON.stringify(toggleStates));
+            console.log('Settings saved to localStorage', toggleStates);
+        }
+
+        function loadToggleState() {
+            // Load saved states from localStorage
+            const savedStates = localStorage.getItem('tradeWiseSettings');
+            if (savedStates) {
+                const toggleStates = JSON.parse(savedStates);
+                document.querySelectorAll('.toggle').forEach((toggle, index) => {
+                    const key = `toggle_${index}`;
+                    if (toggleStates[key] !== undefined) {
+                        if (toggleStates[key]) {
+                            toggle.classList.add('active');
+                            toggle.setAttribute('aria-checked', 'true');
+                        } else {
+                            toggle.classList.remove('active');
+                            toggle.setAttribute('aria-checked', 'false');
+                        }
+                    }
+                });
+                console.log('Settings loaded from localStorage', toggleStates);
+            }
         }
 
         function saveSettings() {
-            alert('Settings saved successfully!');
+            saveToggleState();
+            
+            // Show success message
+            const btn = event.target;
+            const originalText = btn.textContent;
+            btn.textContent = '✓ Settings Saved!';
+            btn.style.background = '#22c55e';
+            
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.style.background = 'var(--primary-color)';
+            }, 2000);
         }
+
+        // Load saved settings when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadToggleState();
+            console.log('Settings page loaded, toggle states restored');
+        });
     </script>
 </body>
 </html>
