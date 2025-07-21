@@ -399,6 +399,78 @@ def create_smart_alert():
         logger.error(f'Error creating smart alerts: {e}')
         return jsonify({'success': False, 'error': str(e)}), 500
 
+@app.route('/api/alerts/active')
+def get_active_alerts():
+    """Get all active alerts for the user"""
+    try:
+        # Demo alerts for display purposes
+        demo_alerts = [
+            {
+                'id': 'alert_001',
+                'symbol': 'AAPL',
+                'type': 'price_target',
+                'condition': 'above',
+                'target_value': 225.00,
+                'current_value': 212.48,
+                'title': 'AAPL Price Alert',
+                'description': 'Alert when Apple rises above $225',
+                'status': 'active',
+                'created_at': '2025-07-21T20:00:00Z',
+                'category': 'bullish'
+            },
+            {
+                'id': 'alert_002',
+                'symbol': 'MSFT',
+                'type': 'technical',
+                'condition': 'rsi_below',
+                'target_value': 30,
+                'current_value': 45,
+                'title': 'MSFT RSI Oversold',
+                'description': 'Alert when Microsoft RSI drops below 30',
+                'status': 'active',
+                'created_at': '2025-07-21T18:30:00Z',
+                'category': 'technical'
+            },
+            {
+                'id': 'alert_003',
+                'symbol': 'GOOGL',
+                'type': 'volume',
+                'condition': 'volume_spike',
+                'target_value': 2.0,
+                'current_value': 1.2,
+                'title': 'GOOGL Volume Spike',
+                'description': 'Alert when Google volume exceeds 2x average',
+                'status': 'active',
+                'created_at': '2025-07-21T16:15:00Z',
+                'category': 'volume'
+            }
+        ]
+        
+        return jsonify({
+            'success': True,
+            'alerts': demo_alerts,
+            'total': len(demo_alerts)
+        })
+        
+    except Exception as e:
+        logger.error(f'Error getting active alerts: {e}')
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/alerts/<alert_id>/delete', methods=['DELETE'])
+def delete_alert(alert_id):
+    """Delete a specific alert"""
+    try:
+        # In production, delete from database
+        # For demo, return success
+        return jsonify({
+            'success': True,
+            'message': f'Alert {alert_id} deleted successfully'
+        })
+        
+    except Exception as e:
+        logger.error(f'Error deleting alert {alert_id}: {e}')
+        return jsonify({'success': False, 'error': str(e)}), 500
+
 # Create database tables
 with app.app_context():
     db.create_all()
