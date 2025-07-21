@@ -1230,25 +1230,41 @@
             `;
             
             suggestions.forEach((suggestion, index) => {
-                const confidenceColor = suggestion.confidence === 'High' ? '#10b981' : 
-                                       suggestion.confidence === 'Medium' ? '#f59e0b' : '#6b7280';
+                // Map category to color and icon
+                const categoryColors = {
+                    'bullish': '#10b981',
+                    'bearish': '#ef4444', 
+                    'technical': '#f59e0b',
+                    'volume': '#06b6d4'
+                };
+                const categoryIcons = {
+                    'bullish': '🚀',
+                    'bearish': '📉',
+                    'technical': '📊', 
+                    'volume': '📈'
+                };
+                
+                const categoryColor = categoryColors[suggestion.category] || '#8b5cf6';
+                const categoryIcon = categoryIcons[suggestion.category] || '🔔';
                 
                 alertHTML += `
-                    <div style="background: rgba(255,255,255,0.05); border-radius: 10px; padding: 20px; border-left: 4px solid ${confidenceColor};">
+                    <div style="background: rgba(255,255,255,0.05); border-radius: 10px; padding: 20px; border-left: 4px solid ${categoryColor};">
                         <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
-                            <div>
+                            <div style="flex: 1;">
                                 <div style="font-weight: 600; font-size: 1.1rem; margin-bottom: 5px;">
-                                    ${suggestion.icon} ${suggestion.title}
+                                    ${categoryIcon} ${suggestion.label}
                                 </div>
                                 <div style="opacity: 0.8; margin-bottom: 8px;">${suggestion.description}</div>
-                                <div style="font-size: 0.9rem; opacity: 0.7;">${suggestion.reasoning}</div>
-                            </div>
-                            <div style="text-align: right;">
-                                <div style="color: ${confidenceColor}; font-weight: 600; font-size: 0.9rem; margin-bottom: 10px;">
-                                    ${suggestion.confidence} Confidence
+                                <div style="font-size: 0.9rem; opacity: 0.7; color: ${categoryColor};">
+                                    ${suggestion.category.charAt(0).toUpperCase() + suggestion.category.slice(1)} Alert
                                 </div>
-                                <button onclick="createQuickAlert('${suggestion.condition}', ${suggestion.value}, '${suggestion.title}')" 
-                                        style="padding: 8px 16px; background: linear-gradient(45deg, #8b5cf6, #7c3aed); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 0.9rem;">
+                            </div>
+                            <div style="text-align: right; margin-left: 15px;">
+                                <div style="color: ${categoryColor}; font-weight: 600; font-size: 0.9rem; margin-bottom: 10px;">
+                                    ${suggestion.type === 'price_target' ? 'Price' : suggestion.type === 'technical' ? 'Technical' : 'Volume'}
+                                </div>
+                                <button onclick="createQuickAlert('${suggestion.condition}', ${suggestion.value}, '${suggestion.label.replace(/'/g, "\\'")}')" 
+                                        style="padding: 8px 16px; background: linear-gradient(45deg, ${categoryColor}, ${categoryColor}dd); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 0.9rem; white-space: nowrap;">
                                     Create Alert
                                 </button>
                             </div>
