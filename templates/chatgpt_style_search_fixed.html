@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/premium_features.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/tier_styles.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/institutional_ui_optimization.css') }}">
+    <link href="{{ url_for('static', filename='css/two_tier_analysis.css') }}?v={{ range(1, 10000) | random }}" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -1183,7 +1184,7 @@
 </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{{ url_for('static', filename='js/intelligent_search_new.js') }}?v={{ range(1, 10000) | random }}"></script>
+    <script src="{{ url_for('static', filename='js/two_tier_search.js') }}?v={{ range(1, 10000) | random }}"></script>
     <script>
         // Initialize the intelligent search system with cache busting
         console.log('Initializing IntelligentStockSearch...');
