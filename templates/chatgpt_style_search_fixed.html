@@ -504,6 +504,180 @@
             background: rgba(255, 255, 255, 0.2);
             box-shadow: 0 10px 30px rgba(255, 255, 255, 0.1);
         }
+        
+        /* Robot Mascot Styles */
+        .robot-mascot {
+            position: absolute;
+            top: 150px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 100px;
+            z-index: 10;
+            animation: robotFloat 3s ease-in-out infinite;
+        }
+        
+        .robot-head {
+            position: relative;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            border-radius: 10px;
+            margin: 0 auto;
+            animation: robotBlink 3s infinite;
+        }
+        
+        .robot-eye {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            top: 15px;
+            animation: robotBlink 3s infinite;
+        }
+        
+        .robot-eye.left {
+            left: 50%;
+            transform: translateX(-50%) translateX(-8px);
+        }
+        
+        .robot-eye.right {
+            left: 50%;
+            transform: translateX(-50%) translateX(8px);
+        }
+        
+        .robot-mouth {
+            position: absolute;
+            bottom: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 12px;
+            height: 3px;
+            background: white;
+            border-radius: 2px;
+        }
+        
+        .robot-antenna {
+            position: absolute;
+            top: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 12px;
+            background: white;
+        }
+        
+        .robot-antenna::after {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: -2px;
+            width: 6px;
+            height: 6px;
+            background: #06b6d4;
+            border-radius: 50%;
+        }
+        
+        .robot-body {
+            width: 40px;
+            height: 35px;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            border-radius: 8px;
+            margin: 8px auto;
+            position: relative;
+        }
+        
+        .robot-arm {
+            width: 6px;
+            height: 20px;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            border-radius: 3px;
+            position: absolute;
+            top: 60px;
+        }
+        
+        .robot-arm.left {
+            left: 17px;
+            animation: robotWaveLeft 4s ease-in-out infinite;
+        }
+        
+        .robot-arm.right {
+            right: 17px;
+            animation: robotWaveRight 4s ease-in-out infinite;
+        }
+        
+        .robot-legs {
+            position: absolute;
+            bottom: 6px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 6px;
+        }
+        
+        .robot-leg {
+            width: 6px;
+            height: 12px;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            border-radius: 3px;
+        }
+        
+        .robot-thought {
+            position: absolute;
+            top: -35px;
+            right: -5px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #1a1a1a;
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-size: 10px;
+            font-weight: 600;
+            opacity: 0;
+            animation: robotThought 6s ease-in-out infinite;
+            white-space: nowrap;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .robot-thought::after {
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: 8px;
+            width: 0;
+            height: 0;
+            border-left: 3px solid transparent;
+            border-right: 3px solid transparent;
+            border-top: 3px solid rgba(255, 255, 255, 0.9);
+        }
+        
+        @keyframes robotFloat {
+            0%, 100% { transform: translateX(-50%) translateY(0px); }
+            50% { transform: translateX(-50%) translateY(-5px); }
+        }
+        
+        @keyframes robotBlink {
+            0%, 90%, 100% { opacity: 1; }
+            95% { opacity: 0; }
+        }
+        
+        @keyframes robotWaveLeft {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-10deg); }
+            75% { transform: rotate(5deg); }
+        }
+        
+        @keyframes robotWaveRight {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(10deg); }
+            75% { transform: rotate(-5deg); }
+        }
+        
+        @keyframes robotThought {
+            0%, 70% { opacity: 0; transform: translateY(5px); }
+            75%, 85% { opacity: 1; transform: translateY(0px); }
+            90%, 100% { opacity: 0; transform: translateY(5px); }
+        }
     </style>
 </head>
 <body>
@@ -523,6 +697,24 @@
 
         <!-- Main Content Area -->
         <div class="main-area">
+            <!-- Robot Mascot -->
+            <div class="robot-mascot">
+                <div class="robot-head">
+                    <div class="robot-eye left"></div>
+                    <div class="robot-eye right"></div>
+                    <div class="robot-mouth"></div>
+                    <div class="robot-antenna"></div>
+                </div>
+                <div class="robot-body"></div>
+                <div class="robot-arm left"></div>
+                <div class="robot-arm right"></div>
+                <div class="robot-legs">
+                    <div class="robot-leg"></div>
+                    <div class="robot-leg"></div>
+                </div>
+                <div class="robot-thought">Analyzing markets... 📈</div>
+            </div>
+            
             <!-- Centered Search Section -->
             <div class="search-section">
                 <div class="hero-tagline">AI-Powered Trading</div>

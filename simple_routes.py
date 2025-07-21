@@ -1,6 +1,15 @@
-from flask import make_response, jsonify
+from flask import make_response, jsonify, render_template
 from app import app
 import time
+
+# Cache-busting headers
+def add_cache_headers(response):
+    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '0'
+    return response
+
+# Note: Main route is defined below
 
 # Working API endpoints for our tools
 @app.route('/api/stock-search/<symbol>')
@@ -129,10 +138,9 @@ def api_portfolio():
 
 @app.route('/')
 def index():
-    """Load the actual ChatGPT-style interface with fresh robot"""
+    """Load the optimized ChatGPT-style interface"""
     try:
-        from flask import render_template
-        response = make_response(render_template('clean_interface_fixed.html'))
+        response = make_response(render_template('chatgpt_style_search_fixed.html'))
         response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
         response.headers['Pragma'] = 'no-cache'
         response.headers['Expires'] = '0'
