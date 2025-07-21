@@ -5,7 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TradeWise AI - Clean Search</title>
     <!-- Robot Mascot CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/robot_mascot.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/robot_mascot.css') }}?v={{ range(1000, 9999) | random }}">
+    
+    <!-- Force robot center positioning -->
+    <style>
+        .ai-robot-mascot {
+            position: absolute !important;
+            top: 120px !important;
+            left: 50% !important;
+            transform: translateX(-50%) !important;
+            width: 100px !important;
+            height: 100px !important;
+            z-index: 1000 !important;
+            cursor: pointer !important;
+            transition: all 0.3s ease !important;
+        }
+        
+        @media (max-width: 768px) {
+            .ai-robot-mascot {
+                top: 80px !important;
+                width: 80px !important;
+                height: 80px !important;
+            }
+        }
+    </style>
     <style>
         * {
             margin: 0;
