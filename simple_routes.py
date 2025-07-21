@@ -1,6 +1,7 @@
-from flask import make_response, jsonify, render_template
+from flask import make_response, jsonify, render_template, request
 from app import app
 import time
+from intelligent_stock_analyzer import search_and_analyze_stock
 
 # Cache-busting headers
 def add_cache_headers(response):
@@ -12,24 +13,39 @@ def add_cache_headers(response):
 # Note: Main route is defined below
 
 # Working API endpoints for our tools
-@app.route('/api/stock-search/<symbol>')
-def api_stock_search(symbol):
-    """Stock search API endpoint"""
+@app.route('/api/stock-search', methods=['POST'])
+def api_stock_search():
+    """Intelligent stock search API endpoint with real market data"""
     try:
-        # Simulate stock data with realistic values
-        stock_data = {
-            'symbol': symbol.upper(),
-            'name': f'{symbol.upper()} Corporation',
-            'price': 150.25,
-            'change': 2.34,
-            'change_percent': 1.58,
-            'volume': 1234567,
-            'market_cap': '2.1T' if symbol.upper() == 'AAPL' else '850B',
-            'ai_recommendation': 'BUY' if symbol.upper() in ['AAPL', 'MSFT'] else 'HOLD',
-            'confidence': 85.2,
-            'analysis': f'Strong fundamentals and growth prospects for {symbol.upper()}. AI analysis indicates positive sentiment.'
-        }
-        return jsonify(stock_data)
+        data = request.get_json()
+        query = data.get('query', '').strip()
+        
+        if not query:
+            return jsonify({'error': 'Query parameter is required'}), 400
+            
+        # Use intelligent stock analyzer for real market data
+        stock_data = search_and_analyze_stock(query)
+        
+        if stock_data:
+            return jsonify(stock_data)
+        else:
+            return jsonify({
+                'error': 'Stock not found',
+                'message': f'Could not find stock data for "{query}". Please check the symbol or company name.'
+            }), 404
+            
+    except Exception as e:
+        return jsonify({'error': f'Analysis failed: {str(e)}'}), 500
+
+@app.route('/api/stock-search/<symbol>')
+def api_stock_search_legacy(symbol):
+    """Legacy stock search endpoint - redirects to intelligent search"""
+    try:
+        stock_data = search_and_analyze_stock(symbol)
+        if stock_data:
+            return jsonify(stock_data)
+        else:
+            return jsonify({'error': 'Stock not found'}), 404
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 

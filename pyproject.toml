@@ -38,4 +38,5 @@ dependencies = [
     "anthropic>=0.58.2",
     "trafilatura>=2.0.0",
     "psutil>=7.0.0",
+    "beautifulsoup4>=4.13.4",
 ]
