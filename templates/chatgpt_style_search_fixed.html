@@ -1186,10 +1186,8 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{{ url_for('static', filename='js/two_tier_search.js') }}?v={{ range(1, 10000) | random }}"></script>
     <script>
-        // Initialize the intelligent search system with cache busting
-        console.log('Initializing IntelligentStockSearch...');
-        window.intelligentSearch = new IntelligentStockSearch();
-        console.log('IntelligentStockSearch initialized successfully');
+        // Two-tier search system is now loaded and ready
+        console.log('TradeWise AI Two-Tier Analysis System Ready');
     </script>
     <script>
         let currentDropdown = null;
@@ -1215,8 +1213,8 @@
             const searchInput = document.getElementById('stock-search-input');
             const query = searchInput.value.trim();
             
-            if (query && window.intelligentSearch) {
-                window.intelligentSearch.search(query);
+            if (query && window.twoTierSearch) {
+                window.twoTierSearch.search(query);
             }
         }
 
@@ -1225,20 +1223,9 @@
             performStockSearch();
         }
 
-        function toggleDropdown(dropdownId) {
-            const content = document.getElementById(dropdownId + '-content');
-            if (content) {
-                const isVisible = content.style.display !== 'none';
-                // Hide all dropdowns first
-                document.querySelectorAll('.dropdown-content').forEach(dropdown => {
-                    dropdown.style.display = 'none';
-                });
-                // Show the selected one if it wasn't visible
-                if (!isVisible) {
-                    content.style.display = 'block';
-                    loadDropdownContent(dropdownId);
-                }
-            }
+        // Dropdown content loading function
+        function loadDropdownContent_alt(dropdownId) {
+            // Alternative dropdown loading function to avoid conflicts
         }
 
         function loadDropdownContent(dropdownId) {

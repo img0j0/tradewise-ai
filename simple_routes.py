@@ -444,6 +444,11 @@ def health_check():
 @app.route('/debug')
 def debug_search():
     """Debug search interface for testing two-tier analysis"""
-    from flask import render_template_string
     response = make_response(render_template('debug_search.html'))
+    return add_cache_headers(response)
+
+@app.route('/test-two-tier')
+def test_two_tier():
+    """Test the two-tier analysis system directly"""
+    response = make_response(render_template('test_two_tier.html'))
     return add_cache_headers(response)

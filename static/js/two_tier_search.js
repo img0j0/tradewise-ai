@@ -258,11 +258,46 @@ window.twoTierSearch = {
     },
     
     buyStock(symbol) {
-        alert(`Buy functionality for ${symbol} would be implemented here`);
+        // Show buy modal or redirect to buy page
+        console.log(`Buy stock functionality for ${symbol}`);
+        // You can implement actual buy functionality here
     },
     
     addToWatchlist(symbol) {
-        alert(`Added ${symbol} to watchlist`);
+        console.log(`Added ${symbol} to watchlist`);
+        // Show success message instead of alert
+        this.showNotification(`Added ${symbol} to your watchlist`, 'success');
+    },
+    
+    showNotification(message, type = 'info') {
+        // Create a notification element
+        const notification = document.createElement('div');
+        notification.className = `notification notification-${type}`;
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: ${type === 'success' ? '#22c55e' : '#06b6d4'};
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            z-index: 10000;
+            animation: slideIn 0.3s ease;
+        `;
+        notification.textContent = message;
+        
+        document.body.appendChild(notification);
+        
+        // Remove after 3 seconds
+        setTimeout(() => {
+            notification.style.animation = 'slideOut 0.3s ease';
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 300);
+        }, 3000);
     },
     
     displayError(message) {
