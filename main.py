@@ -2,7 +2,8 @@ from app import app, db
 
 # Import models and routes after app is created
 import models
-import routes
+# Import simple routes instead of complex routes to avoid errors
+import simple_routes
 
 # Install comprehensive TradeWise AI enhancements
 from comprehensive_enhancement_manager import install_all_enhancements

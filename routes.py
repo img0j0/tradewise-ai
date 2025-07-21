@@ -169,11 +169,197 @@ def get_or_create_user_account():
 @app.route('/')
 def index():
     """Clean ChatGPT-style interface without institutional complexity"""
-    response = make_response(render_template('clean_chatgpt_search.html'))
-    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
-    response.headers['Pragma'] = 'no-cache'
-    response.headers['Expires'] = '0'
-    return response
+    try:
+        response = make_response(render_template('clean_chatgpt_search.html'))
+        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+        response.headers['Pragma'] = 'no-cache'
+        response.headers['Expires'] = '0'
+        return response
+    except Exception as e:
+        logger.error(f"Error loading main template: {e}")
+        # Return simple HTML with the robot directly embedded
+        return f"""
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>TradeWise AI</title>
+    <style>
+        body {{
+            background: linear-gradient(135deg, #0f0f23, #1a1a2e);
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 50px 20px;
+            min-height: 100vh;
+            margin: 0;
+        }}
+        .logo {{ font-size: 2.5em; margin: 20px 0; }}
+        .error {{ color: #06b6d4; margin: 20px 0; }}
+        
+        /* Fresh Robot Mascot */
+        .ai-robot-mascot {{
+            position: relative;
+            display: inline-block;
+            width: 80px;
+            height: 80px;
+            margin: 30px auto;
+            animation: robotFloat 3s ease-in-out infinite;
+        }}
+        
+        .robot-head {{
+            width: 40px;
+            height: 32px;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            border-radius: 16px;
+            position: absolute;
+            top: 0;
+            left: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 3px 12px rgba(139, 92, 246, 0.4);
+        }}
+        
+        .robot-body {{
+            width: 48px;
+            height: 36px;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            border-radius: 12px;
+            position: absolute;
+            top: 28px;
+            left: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 3px 12px rgba(139, 92, 246, 0.4);
+        }}
+        
+        .robot-eyes {{
+            position: absolute;
+            top: 12px;
+            left: 28px;
+            display: flex;
+            gap: 8px;
+        }}
+        
+        .robot-eye {{
+            width: 6px;
+            height: 6px;
+            background: white;
+            border-radius: 50%;
+            animation: robotBlink 4s infinite;
+        }}
+        
+        .robot-mouth {{
+            position: absolute;
+            top: 22px;
+            left: 32px;
+            width: 12px;
+            height: 3px;
+            background: white;
+            border-radius: 2px;
+        }}
+        
+        .robot-antenna {{
+            position: absolute;
+            top: -6px;
+            left: 38px;
+            width: 2px;
+            height: 12px;
+            background: white;
+        }}
+        
+        .robot-antenna::after {{
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: -2px;
+            width: 6px;
+            height: 6px;
+            background: #06b6d4;
+            border-radius: 50%;
+        }}
+        
+        .robot-arm {{
+            width: 6px;
+            height: 20px;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            border-radius: 3px;
+            position: absolute;
+            top: 35px;
+        }}
+        
+        .robot-arm.left {{
+            left: 8px;
+            animation: robotWaveLeft 4s ease-in-out infinite;
+        }}
+        
+        .robot-arm.right {{
+            right: 8px;
+            animation: robotWaveRight 4s ease-in-out infinite;
+        }}
+        
+        .robot-legs {{
+            position: absolute;
+            bottom: 6px;
+            left: 30px;
+            display: flex;
+            gap: 6px;
+        }}
+        
+        .robot-leg {{
+            width: 6px;
+            height: 12px;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            border-radius: 3px;
+        }}
+        
+        @keyframes robotFloat {{
+            0%, 100% {{ transform: translateY(0px); }}
+            50% {{ transform: translateY(-5px); }}
+        }}
+        
+        @keyframes robotBlink {{
+            0%, 90%, 100% {{ opacity: 1; }}
+            95% {{ opacity: 0; }}
+        }}
+        
+        @keyframes robotWaveLeft {{
+            0%, 100% {{ transform: rotate(0deg); }}
+            25% {{ transform: rotate(-10deg); }}
+            75% {{ transform: rotate(5deg); }}
+        }}
+        
+        @keyframes robotWaveRight {{
+            0%, 100% {{ transform: rotate(0deg); }}
+            25% {{ transform: rotate(10deg); }}
+            75% {{ transform: rotate(-5deg); }}
+        }}
+    </style>
+</head>
+<body>
+    <div class="ai-robot-mascot">
+        <div class="robot-head">
+            <div class="robot-eyes">
+                <div class="robot-eye"></div>
+                <div class="robot-eye"></div>
+            </div>
+            <div class="robot-mouth"></div>
+            <div class="robot-antenna"></div>
+        </div>
+        <div class="robot-body"></div>
+        <div class="robot-arm left"></div>
+        <div class="robot-arm right"></div>
+        <div class="robot-legs">
+            <div class="robot-leg"></div>
+            <div class="robot-leg"></div>
+        </div>
+    </div>
+    
+    <div class="logo">TradeWise AI</div>
+    <div class="error">Fresh Robot Mascot Test</div>
+    <p>This is a simplified version showing the fresh robot design directly in the HTML.</p>
+    <p>Error: {str(e)}</p>
+</body>
+</html>
+        """
 
 @app.route('/cache-test')
 def cache_test():
