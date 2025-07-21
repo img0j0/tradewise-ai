@@ -256,6 +256,109 @@ def get_analysis_watchlist():
         logger.error(f'Error getting analysis watchlist: {e}')
         return jsonify({'success': False, 'error': str(e)}), 500
 
+@app.route('/api/alerts/suggestions/<symbol>')
+def get_alert_suggestions(symbol):
+    """Get smart alert suggestions for a stock symbol"""
+    try:
+        symbol = symbol.upper()
+        
+        # Get current stock data for alert suggestions
+        stock_data = stock_search_service.search_stock(symbol)
+        if not stock_data:
+            return jsonify({'success': False, 'error': 'Stock not found'}), 404
+            
+        current_price = float(stock_data.get('current_price', 0))
+        
+        # Generate intelligent alert suggestions based on current price and analysis
+        suggestions = [
+            {
+                'type': 'price_target',
+                'label': f'Price above ${(current_price * 1.05):.2f}',
+                'description': f'Alert when {symbol} rises 5% from current price',
+                'condition': 'above',
+                'value': current_price * 1.05,
+                'category': 'bullish'
+            },
+            {
+                'type': 'price_target', 
+                'label': f'Price below ${(current_price * 0.95):.2f}',
+                'description': f'Alert when {symbol} drops 5% from current price',
+                'condition': 'below',
+                'value': current_price * 0.95,
+                'category': 'bearish'
+            },
+            {
+                'type': 'technical',
+                'label': 'RSI Oversold (< 30)',
+                'description': f'Alert when {symbol} RSI indicates oversold conditions',
+                'condition': 'rsi_below',
+                'value': 30,
+                'category': 'technical'
+            },
+            {
+                'type': 'technical', 
+                'label': 'RSI Overbought (> 70)',
+                'description': f'Alert when {symbol} RSI indicates overbought conditions',
+                'condition': 'rsi_above',
+                'value': 70,
+                'category': 'technical'
+            },
+            {
+                'type': 'volume',
+                'label': 'High Volume Spike',
+                'description': f'Alert when {symbol} volume exceeds 2x average',
+                'condition': 'volume_spike',
+                'value': 2.0,
+                'category': 'volume'
+            }
+        ]
+        
+        return jsonify({
+            'success': True,
+            'symbol': symbol,
+            'current_price': current_price,
+            'suggestions': suggestions
+        })
+        
+    except Exception as e:
+        logger.error(f'Error getting alert suggestions for {symbol}: {e}')
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/alerts/create', methods=['POST'])
+def create_alert():
+    """Create a new price or technical alert for a stock"""
+    try:
+        data = request.get_json()
+        symbol = data.get('symbol', '').upper()
+        alert_type = data.get('type', 'price_target')
+        condition = data.get('condition', 'above')
+        value = float(data.get('value', 0))
+        description = data.get('description', '')
+        
+        if not symbol or not value:
+            return jsonify({'success': False, 'error': 'Symbol and value required'}), 400
+            
+        # In production, save alert to database
+        # For demo, return success message
+        alert_id = f"alert_{symbol}_{int(datetime.now().timestamp())}"
+        
+        return jsonify({
+            'success': True,
+            'alert_id': alert_id,
+            'message': f'Alert created: {description}',
+            'details': {
+                'symbol': symbol,
+                'type': alert_type,
+                'condition': condition,
+                'value': value,
+                'created_at': datetime.now().isoformat()
+            }
+        })
+        
+    except Exception as e:
+        logger.error(f'Error creating alert: {e}')
+        return jsonify({'success': False, 'error': str(e)}), 500
+
 # Create database tables
 with app.app_context():
     db.create_all()
