@@ -7,7 +7,7 @@ def index():
     """Load the actual ChatGPT-style interface with fresh robot"""
     try:
         from flask import render_template
-        response = make_response(render_template('clean_chatgpt_search.html'))
+        response = make_response(render_template('clean_interface_fixed.html'))
         response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
         response.headers['Pragma'] = 'no-cache'
         response.headers['Expires'] = '0'

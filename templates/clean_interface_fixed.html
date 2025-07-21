@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TradeWise AI - Clean Interface</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: white;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        .search-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            padding: 20px;
+            position: relative;
+        }
+        
+        /* Fresh Robot Mascot */
+        .ai-robot-mascot {
+            position: absolute;
+            top: 160px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 80px;
+            z-index: 1000;
+            animation: robotFloat 3s ease-in-out infinite;
+        }
+        
+        .robot-head {
+            width: 40px;
+            height: 32px;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            border-radius: 16px;
+            position: absolute;
+            top: 0;
+            left: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 3px 12px rgba(139, 92, 246, 0.4);
+        }
+        
+        .robot-body {
+            width: 48px;
+            height: 36px;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            border-radius: 12px;
+            position: absolute;
+            top: 28px;
+            left: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 3px 12px rgba(139, 92, 246, 0.4);
+        }
+        
+        .robot-eyes {
+            position: absolute;
+            top: 12px;
+            left: 28px;
+            display: flex;
+            gap: 8px;
+        }
+        
+        .robot-eye {
+            width: 6px;
+            height: 6px;
+            background: white;
+            border-radius: 50%;
+            animation: robotBlink 4s infinite;
+        }
+        
+        .robot-mouth {
+            position: absolute;
+            top: 22px;
+            left: 32px;
+            width: 12px;
+            height: 3px;
+            background: white;
+            border-radius: 2px;
+        }
+        
+        .robot-antenna {
+            position: absolute;
+            top: -6px;
+            left: 38px;
+            width: 2px;
+            height: 12px;
+            background: white;
+        }
+        
+        .robot-antenna::after {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: -2px;
+            width: 6px;
+            height: 6px;
+            background: #06b6d4;
+            border-radius: 50%;
+        }
+        
+        .robot-arm {
+            width: 6px;
+            height: 20px;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            border-radius: 3px;
+            position: absolute;
+            top: 35px;
+        }
+        
+        .robot-arm.left {
+            left: 8px;
+            animation: robotWaveLeft 4s ease-in-out infinite;
+        }
+        
+        .robot-arm.right {
+            right: 8px;
+            animation: robotWaveRight 4s ease-in-out infinite;
+        }
+        
+        .robot-legs {
+            position: absolute;
+            bottom: 6px;
+            left: 30px;
+            display: flex;
+            gap: 6px;
+        }
+        
+        .robot-leg {
+            width: 6px;
+            height: 12px;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            border-radius: 3px;
+        }
+        
+        .robot-thought {
+            position: absolute;
+            top: -25px;
+            right: -5px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #1a1a1a;
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-size: 10px;
+            font-weight: 600;
+            opacity: 0;
+            animation: robotThought 6s ease-in-out infinite;
+            white-space: nowrap;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .robot-thought::after {
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: 8px;
+            width: 0;
+            height: 0;
+            border-left: 3px solid transparent;
+            border-right: 3px solid transparent;
+            border-top: 3px solid rgba(255, 255, 255, 0.9);
+        }
+        
+        @keyframes robotFloat {
+            0%, 100% { transform: translateX(-50%) translateY(0px); }
+            50% { transform: translateX(-50%) translateY(-5px); }
+        }
+        
+        @keyframes robotBlink {
+            0%, 90%, 100% { opacity: 1; }
+            95% { opacity: 0; }
+        }
+        
+        @keyframes robotWaveLeft {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-10deg); }
+            75% { transform: rotate(5deg); }
+        }
+        
+        @keyframes robotWaveRight {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(10deg); }
+            75% { transform: rotate(-5deg); }
+        }
+        
+        @keyframes robotThought {
+            0%, 70%, 100% { opacity: 0; }
+            10%, 60% { opacity: 1; }
+        }
+        
+        .logo {
+            font-size: 3.5rem;
+            font-weight: bold;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-align: center;
+        }
+        
+        .search-box {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-top: 40px;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 20px 60px 20px 25px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .search-box input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.15);
+            border-color: #8b5cf6;
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+        }
+        
+        .search-box input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .search-box button {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 45px;
+            height: 45px;
+            border: none;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            color: white;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+        
+        .search-box button:hover {
+            transform: translateY(-50%) scale(1.05);
+            box-shadow: 0 5px 15px rgba(139, 92, 246, 0.4);
+        }
+        
+        .tools-menu {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+        }
+        
+        .tools-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .dropdown-toggle {
+            width: 50px;
+            height: 50px;
+            border: none;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.2rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .dropdown-toggle:hover {
+            background: rgba(139, 92, 246, 0.3);
+            transform: scale(1.05);
+        }
+        
+        .analysis-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(26, 26, 46, 0.95);
+            backdrop-filter: blur(20px);
+            display: none;
+            z-index: 10000;
+        }
+        
+        .analysis-overlay.show {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .analysis-content {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 90%;
+            max-height: 90%;
+            overflow-y: auto;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        @media (max-width: 768px) {
+            .logo {
+                font-size: 2.5rem;
+            }
+            
+            .search-box {
+                max-width: 90%;
+            }
+            
+            .tools-menu {
+                top: 20px;
+                right: 20px;
+            }
+            
+            .ai-robot-mascot {
+                top: 120px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="search-container">
+        <!-- Tools Menu -->
+        <div class="tools-menu">
+            <div class="tools-dropdown">
+                <button class="dropdown-toggle" onclick="toggleDropdown()">🛠️</button>
+            </div>
+        </div>
+        
+        <!-- Fresh AI Robot Mascot -->
+        <div class="ai-robot-mascot">
+            <div class="robot-thought">Analyzing markets...</div>
+            <div class="robot-head">
+                <div class="robot-eyes">
+                    <div class="robot-eye"></div>
+                    <div class="robot-eye"></div>
+                </div>
+                <div class="robot-mouth"></div>
+                <div class="robot-antenna"></div>
+            </div>
+            <div class="robot-body"></div>
+            <div class="robot-arm left"></div>
+            <div class="robot-arm right"></div>
+            <div class="robot-legs">
+                <div class="robot-leg"></div>
+                <div class="robot-leg"></div>
+            </div>
+        </div>
+        
+        <div class="logo">TradeWise AI</div>
+        <div class="search-box">
+            <input type="text" id="search-input" placeholder="Ask about any stock... (try AAPL, TSLA, or GOOGL)">
+            <button id="search-btn">🔍</button>
+        </div>
+    </div>
+    
+    <!-- Analysis Overlay -->
+    <div id="analysis-overlay" class="analysis-overlay">
+        <div class="analysis-content">
+            <div id="analysis-results">
+                <!-- Results will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simple search functionality
+        document.getElementById('search-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                performSearch();
+            }
+        });
+        
+        document.getElementById('search-btn').addEventListener('click', performSearch);
+        
+        function performSearch() {
+            const input = document.getElementById('search-input');
+            const query = input.value.trim();
+            
+            if (!query) {
+                alert('Please enter a stock symbol');
+                return;
+            }
+            
+            showAnalysisOverlay();
+            
+            // Show loading state
+            document.getElementById('analysis-results').innerHTML = `
+                <div style="text-align: center; padding: 40px;">
+                    <div style="font-size: 1.5rem; margin-bottom: 20px;">🔍 Analyzing ${query.toUpperCase()}</div>
+                    <div style="color: #06b6d4;">AI is processing market data...</div>
+                </div>
+            `;
+        }
+        
+        function showAnalysisOverlay() {
+            document.getElementById('analysis-overlay').classList.add('show');
+        }
+        
+        function hideAnalysisOverlay() {
+            document.getElementById('analysis-overlay').classList.remove('show');
+        }
+        
+        function toggleDropdown() {
+            alert('Tools menu - Additional features coming soon!');
+        }
+        
+        // Close overlay when clicking outside
+        document.getElementById('analysis-overlay').addEventListener('click', function(e) {
+            if (e.target === this) {
+                hideAnalysisOverlay();
+            }
+        });
+        
+        // ESC key to close overlay
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                hideAnalysisOverlay();
+            }
+        });
+    </script>
+</body>
+</html>
