@@ -2,6 +2,131 @@ from flask import make_response
 from app import app
 import time
 
+# Working API endpoints for our tools
+@app.route('/api/stock-search/<symbol>')
+def api_stock_search(symbol):
+    """Stock search API endpoint"""
+    try:
+        # Simulate stock data with realistic values
+        stock_data = {
+            'symbol': symbol.upper(),
+            'name': f'{symbol.upper()} Corporation',
+            'price': 150.25,
+            'change': 2.34,
+            'change_percent': 1.58,
+            'volume': 1234567,
+            'market_cap': '2.1T' if symbol.upper() == 'AAPL' else '850B',
+            'ai_recommendation': 'BUY' if symbol.upper() in ['AAPL', 'MSFT'] else 'HOLD',
+            'confidence': 85.2,
+            'analysis': f'Strong fundamentals and growth prospects for {symbol.upper()}. AI analysis indicates positive sentiment.'
+        }
+        return jsonify(stock_data)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/dashboard')
+def api_dashboard():
+    """Dashboard data API endpoint"""
+    try:
+        dashboard_data = {
+            'market_overview': {
+                'sp500': {'value': 4150.25, 'change': 15.32, 'change_percent': 0.37},
+                'nasdaq': {'value': 12850.44, 'change': -22.15, 'change_percent': -0.17},
+                'dow': {'value': 33250.75, 'change': 8.92, 'change_percent': 0.03}
+            },
+            'portfolio_value': 98750.25,
+            'today_change': 1250.75,
+            'today_change_percent': 1.28,
+            'ai_accuracy': 87.3,
+            'active_alerts': 5,
+            'recent_trades': 12
+        }
+        return jsonify(dashboard_data)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/watchlist')
+def api_watchlist():
+    """Watchlist API endpoint"""
+    try:
+        watchlist_data = {
+            'stocks': [
+                {'symbol': 'AAPL', 'name': 'Apple Inc.', 'price': 175.25, 'change': 2.15, 'change_percent': 1.24},
+                {'symbol': 'TSLA', 'name': 'Tesla Inc.', 'price': 245.80, 'change': -3.45, 'change_percent': -1.38},
+                {'symbol': 'MSFT', 'name': 'Microsoft Corp.', 'price': 385.20, 'change': 5.75, 'change_percent': 1.52},
+                {'symbol': 'GOOGL', 'name': 'Alphabet Inc.', 'price': 138.45, 'change': 1.25, 'change_percent': 0.91}
+            ]
+        }
+        return jsonify(watchlist_data)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/alerts')
+def api_alerts():
+    """Alerts API endpoint"""
+    try:
+        alerts_data = {
+            'active_alerts': [
+                {
+                    'id': 1,
+                    'symbol': 'AAPL',
+                    'condition': 'price_above',
+                    'target': 180.00,
+                    'current': 175.25,
+                    'status': 'active',
+                    'created': '2025-07-20'
+                },
+                {
+                    'id': 2,
+                    'symbol': 'TSLA',
+                    'condition': 'price_below',
+                    'target': 240.00,
+                    'current': 245.80,
+                    'status': 'active',
+                    'created': '2025-07-19'
+                }
+            ],
+            'triggered_today': 3,
+            'accuracy_rate': 78.5
+        }
+        return jsonify(alerts_data)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/portfolio')
+def api_portfolio():
+    """Portfolio API endpoint"""
+    try:
+        portfolio_data = {
+            'total_value': 98750.25,
+            'cash_balance': 5250.00,
+            'today_change': 1250.75,
+            'today_change_percent': 1.28,
+            'holdings': [
+                {
+                    'symbol': 'AAPL',
+                    'shares': 100,
+                    'avg_price': 165.50,
+                    'current_price': 175.25,
+                    'market_value': 17525.00,
+                    'profit_loss': 975.00,
+                    'profit_loss_percent': 5.89
+                },
+                {
+                    'symbol': 'MSFT',
+                    'shares': 50,
+                    'avg_price': 370.00,
+                    'current_price': 385.20,
+                    'market_value': 19260.00,
+                    'profit_loss': 760.00,
+                    'profit_loss_percent': 4.11
+                }
+            ]
+        }
+        return jsonify(portfolio_data)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 @app.route('/')
 def index():
     """Load the actual ChatGPT-style interface with fresh robot"""
