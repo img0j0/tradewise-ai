@@ -708,10 +708,14 @@ def watchlist_page():
 @app.route('/settings')
 def settings_page():
     """Account settings page with simple on/off buttons"""
-    response = make_response(render_template('settings_buttons.html'))
-    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    # Force cache bypass with timestamp
+    import time
+    timestamp = str(int(time.time()))
+    response = make_response(render_template('settings_buttons.html', cache_buster=timestamp))
+    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0'
     response.headers['Pragma'] = 'no-cache'
     response.headers['Expires'] = '0'
+    response.headers['Last-Modified'] = 'Thu, 01 Jan 1970 00:00:00 GMT'
     return response
 
 @app.route('/settings-test')
@@ -728,6 +732,17 @@ def toggle_debug_page():
 def settings_simple_page():
     """Simple settings page for testing basic toggle functionality"""
     return render_template('settings_simple.html')
+
+@app.route('/settings-new')
+def settings_new_page():
+    """New settings page - bypasses all cache"""
+    import time
+    response = make_response(render_template('settings_buttons.html'))
+    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '0'
+    response.headers['ETag'] = str(int(time.time()))
+    return response
 
 @app.route('/trading-history')
 def trading_history_page():
