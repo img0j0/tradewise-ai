@@ -4,6 +4,13 @@
 
 TradeWise AI is a sophisticated trading platform that provides AI-powered investment advice, real-time market data, portfolio management, and advanced analytics. The platform combines modern web technologies with machine learning capabilities to deliver institutional-grade trading tools to retail investors.
 
+## Recent Changes (July 21, 2025)
+- **Major Codebase Cleanup**: Removed 50+ conflicting Python modules and JavaScript files that were causing errors and interface conflicts
+- **Streamlined Architecture**: Simplified routes.py to focus on core stock search functionality with real Yahoo Finance integration
+- **Template Cleanup**: Consolidated to clean_chatgpt_search.html as primary interface, removing duplicate and conflicting templates
+- **Robot Mascot Fix**: Properly centered facial features using CSS transforms for perfect alignment
+- **Stable Core Functionality**: Stock search API working reliably with real-time data from Yahoo Finance
+
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
