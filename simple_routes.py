@@ -180,16 +180,24 @@ def api_portfolio():
 
 @app.route('/')
 def index():
-    """Load the optimized ChatGPT-style interface"""
+    """Optimized AI search interface - no subscription tiers"""
     try:
-        response = make_response(render_template('chatgpt_style_search_fixed.html'))
+        response = make_response(render_template('optimized_ai_search.html'))
         response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
         response.headers['Pragma'] = 'no-cache'
         response.headers['Expires'] = '0'
         return response
     except Exception as e:
-        # Fallback if template fails
-        html = f"""
+        # Fallback to original interface if optimized fails
+        try:
+            response = make_response(render_template('chatgpt_style_search_fixed.html'))
+            response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+            response.headers['Pragma'] = 'no-cache'
+            response.headers['Expires'] = '0'
+            return response
+        except:
+            # Final fallback
+            html = f"""
 <!DOCTYPE html>
 <html>
 <head>

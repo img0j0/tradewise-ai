@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TradeWise AI - Intelligent Stock Analysis</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #0A0B0F;
+            color: white;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px 0;
+        }
+
+        .brand {
+            font-size: 2.5em;
+            font-weight: 700;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .tagline {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.1em;
+        }
+
+        .search-section {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        .search-container {
+            position: relative;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 18px 60px 18px 20px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .search-input:focus {
+            border-color: #06b6d4;
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 20px rgba(6, 182, 212, 0.3);
+        }
+
+        .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .search-button {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 30px;
+            height: 30px;
+            border: none;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .search-button:hover {
+            transform: translateY(-50%) scale(1.05);
+        }
+
+        .results-container {
+            display: none;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        .stock-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .stock-info h2 {
+            font-size: 2.2em;
+            font-weight: 700;
+            color: #06b6d4;
+            margin: 0;
+        }
+
+        .stock-info p {
+            color: rgba(255, 255, 255, 0.8);
+            margin: 5px 0;
+            font-size: 1.1em;
+        }
+
+        .price-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .price {
+            font-size: 1.8em;
+            font-weight: 600;
+            color: white;
+        }
+
+        .change-positive {
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-weight: 600;
+        }
+
+        .change-negative {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-weight: 600;
+        }
+
+        .ai-badges {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: flex-end;
+        }
+
+        .recommendation-badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.9em;
+        }
+
+        .hold { background: rgba(251, 191, 36, 0.2); color: #fbbf24; border: 1px solid #fbbf24; }
+        .buy { background: rgba(34, 197, 94, 0.2); color: #22c55e; border: 1px solid #22c55e; }
+        .sell { background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid #ef4444; }
+
+        .confidence-badge {
+            background: rgba(139, 92, 246, 0.2);
+            color: #8b5cf6;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+
+        .analysis-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .analysis-section h3 {
+            color: #06b6d4;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .analysis-content {
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .confidence-bar {
+            margin: 20px 0;
+        }
+
+        .bar-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .bar {
+            flex-grow: 1;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #8b5cf6, #06b6d4);
+            transition: width 0.5s ease;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .metric-item {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .metric-label {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.85em;
+        }
+
+        .metric-value {
+            font-weight: 600;
+            font-size: 1.1em;
+            color: white;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin: 25px 0;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            flex: 1;
+            min-width: 150px;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .detailed-analysis {
+            display: none;
+            animation: slideDown 0.3s ease;
+        }
+
+        .technical-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .technical-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .technical-card h4 {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.95em;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .technical-value {
+            font-size: 1.4em;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 5px;
+        }
+
+        .technical-status {
+            font-size: 0.85em;
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-weight: 500;
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            border-top: 3px solid #06b6d4;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 15px; }
+            .brand { font-size: 2em; }
+            .stock-header { flex-direction: column; align-items: flex-start; }
+            .ai-badges { align-items: flex-start; }
+            .action-buttons { flex-direction: column; }
+            .btn { min-width: auto; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1 class="brand">TradeWise AI</h1>
+            <p class="tagline">Intelligent Stock Analysis Powered by Advanced AI</p>
+        </div>
+
+        <!-- Search Section -->
+        <div class="search-section">
+            <div class="search-container">
+                <input type="text" 
+                       id="stock-search-input" 
+                       class="search-input" 
+                       placeholder="Enter stock symbol or company name (e.g., AAPL, Tesla)"
+                       onkeypress="handleSearchEnter(event)">
+                <button class="search-button" onclick="performStockSearch()">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Results Container -->
+        <div id="results-container" class="results-container">
+            <!-- Search results will be displayed here -->
+        </div>
+    </div>
+
+    <script>
+        // Optimized AI Search System
+        const AISearch = {
+            async search(query) {
+                try {
+                    console.log('Searching for:', query);
+                    this.showLoading();
+                    
+                    const response = await fetch('/api/stock-search', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ query: query })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`API Error: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    this.displayResults(data);
+                    
+                } catch (error) {
+                    console.error('Search error:', error);
+                    this.displayError(error.message);
+                }
+            },
+
+            showLoading() {
+                const container = document.getElementById('results-container');
+                container.style.display = 'block';
+                container.innerHTML = `
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>AI analyzing stock data...</p>
+                    </div>
+                `;
+            },
+
+            displayResults(data) {
+                const container = document.getElementById('results-container');
+                const changeClass = parseFloat(data.change_percent) >= 0 ? 'change-positive' : 'change-negative';
+                const recClass = data.ai_recommendation.toLowerCase();
+                
+                container.innerHTML = `
+                    <!-- Stock Header -->
+                    <div class="stock-header">
+                        <div class="stock-info">
+                            <h2>${data.symbol}</h2>
+                            <p>${data.name}</p>
+                            <div class="price-info">
+                                <span class="price">$${data.price}</span>
+                                <span class="${changeClass}">${data.change_percent}%</span>
+                            </div>
+                        </div>
+                        <div class="ai-badges">
+                            <div class="recommendation-badge ${recClass}">${data.ai_recommendation}</div>
+                            <div class="confidence-badge">${data.confidence}% Confidence</div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Analysis -->
+                    <div class="analysis-section">
+                        <h3><i class="fas fa-brain"></i> AI Quick Analysis</h3>
+                        <div class="analysis-content">
+                            ${data.ai_analysis}
+                        </div>
+                        
+                        <div class="confidence-bar">
+                            <div class="bar-container">
+                                <div class="bar">
+                                    <div class="bar-fill" style="width: ${data.confidence}%"></div>
+                                </div>
+                                <span style="font-weight: 600; color: #8b5cf6;">${data.confidence}% AI Confidence</span>
+                            </div>
+                        </div>
+
+                        <div class="metrics-grid">
+                            <div class="metric-item">
+                                <span class="metric-label">Risk Level</span>
+                                <span class="metric-value" style="color: #fbbf24;">${data.risk_level}</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-label">Market Cap</span>
+                                <span class="metric-value">$${(data.market_cap / 1e9).toFixed(1)}B</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-label">P/E Ratio</span>
+                                <span class="metric-value">${data.pe_ratio ? data.pe_ratio.toFixed(2) : 'N/A'}</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-label">Price Target</span>
+                                <span class="metric-value" style="color: #8b5cf6;">$${data.price_target ? data.price_target.toFixed(2) : 'N/A'}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="action-buttons">
+                        <button onclick="AISearch.showDetailed('${data.symbol}')" class="btn btn-primary">
+                            <i class="fas fa-chart-line"></i> View Detailed Technical Analysis
+                        </button>
+                        <button onclick="alert('Buy ${data.symbol} functionality')" class="btn btn-secondary">
+                            <i class="fas fa-shopping-cart"></i> Buy Stock
+                        </button>
+                        <button onclick="alert('Added ${data.symbol} to watchlist')" class="btn btn-secondary">
+                            <i class="fas fa-star"></i> Add to Watchlist
+                        </button>
+                    </div>
+
+                    <!-- Detailed Analysis (Hidden Initially) -->
+                    <div id="detailed-analysis-${data.symbol}" class="detailed-analysis">
+                        <!-- Detailed content will be loaded here -->
+                    </div>
+                `;
+            },
+
+            async showDetailed(symbol) {
+                const detailedSection = document.getElementById(`detailed-analysis-${symbol}`);
+                detailedSection.style.display = 'block';
+                
+                detailedSection.innerHTML = `
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>Loading comprehensive technical analysis...</p>
+                    </div>
+                `;
+
+                try {
+                    const response = await fetch('/api/stock-detailed-analysis', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ symbol: symbol })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`API Error: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    
+                    detailedSection.innerHTML = `
+                        <div class="analysis-section">
+                            <h3><i class="fas fa-chart-bar"></i> Detailed Technical Analysis</h3>
+                            
+                            <div class="technical-grid">
+                                <div class="technical-card">
+                                    <h4>RSI (Relative Strength Index)</h4>
+                                    <div class="technical-value">${data.rsi ? data.rsi.toFixed(2) : 'N/A'}</div>
+                                    <div class="technical-status">
+                                        ${data.rsi ? (data.rsi > 70 ? 'Overbought' : data.rsi < 30 ? 'Oversold' : 'Neutral range') : 'No data'}
+                                    </div>
+                                </div>
+                                
+                                <div class="technical-card">
+                                    <h4>MACD Signal</h4>
+                                    <div class="technical-value">${data.macd_signal === 1 ? 'Bullish' : 'Bearish'}</div>
+                                    <div class="technical-status" style="background: ${data.macd_signal === 1 ? 'rgba(34, 197, 94, 0.2)' : 'rgba(239, 68, 68, 0.2)'}; color: ${data.macd_signal === 1 ? '#22c55e' : '#ef4444'};">
+                                        ${data.macd_signal === 1 ? 'Upward momentum' : 'Downward pressure'}
+                                    </div>
+                                </div>
+                                
+                                <div class="technical-card">
+                                    <h4>52-Week Range</h4>
+                                    <div class="technical-value">$${data.week_52_low} - $${data.week_52_high}</div>
+                                    <div class="technical-status">Trading range</div>
+                                </div>
+                                
+                                <div class="technical-card">
+                                    <h4>AI Price Target</h4>
+                                    <div class="technical-value">$${data.price_target ? data.price_target.toFixed(2) : 'N/A'}</div>
+                                    <div class="technical-status" style="background: rgba(139, 92, 246, 0.2); color: #8b5cf6;">AI prediction</div>
+                                </div>
+                            </div>
+                            
+                            <div style="margin-top: 25px; padding: 20px; background: rgba(139, 92, 246, 0.1); border-radius: 12px; border: 1px solid rgba(139, 92, 246, 0.2);">
+                                <h4 style="color: #8b5cf6; margin-bottom: 10px; font-size: 1.1em;">Risk Assessment</h4>
+                                <p style="line-height: 1.6; color: rgba(255, 255, 255, 0.9); margin: 0;">${data.risk_analysis || 'Risk analysis based on current market conditions and stock volatility.'}</p>
+                            </div>
+                        </div>
+                    `;
+                    
+                } catch (error) {
+                    detailedSection.innerHTML = `
+                        <div class="analysis-section">
+                            <h3>Detailed Technical Analysis</h3>
+                            <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 12px; padding: 20px; color: rgba(255, 255, 255, 0.9);">
+                                Unable to load detailed analysis: ${error.message}
+                            </div>
+                        </div>
+                    `;
+                }
+            },
+
+            displayError(message) {
+                const container = document.getElementById('results-container');
+                container.innerHTML = `
+                    <div class="loading">
+                        <div style="font-size: 3em; margin-bottom: 15px;">⚠️</div>
+                        <h3>Search Error</h3>
+                        <p>${message}</p>
+                        <button onclick="document.getElementById('results-container').style.display='none'" 
+                                style="padding: 10px 20px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; color: white; cursor: pointer; margin-top: 15px;">
+                            Try Again
+                        </button>
+                    </div>
+                `;
+            }
+        };
+
+        // Global functions
+        function performStockSearch() {
+            const searchInput = document.getElementById('stock-search-input');
+            const query = searchInput.value.trim();
+            
+            if (query) {
+                AISearch.search(query);
+            }
+        }
+
+        function handleSearchEnter(event) {
+            if (event.key === 'Enter') {
+                performStockSearch();
+            }
+        }
+
+        console.log('Optimized AI Search System loaded successfully');
+    </script>
+</body>
+</html>
