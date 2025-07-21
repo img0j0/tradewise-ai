@@ -3,6 +3,20 @@ from app import app, db
 # Import models and routes after app is created
 import models
 import routes
+
+# Install comprehensive TradeWise AI enhancements
+from comprehensive_enhancement_manager import install_all_enhancements
+
+print("🚀 Installing TradeWise AI Comprehensive Enhancements...")
+enhancement_result = install_all_enhancements(app)
+
+if enhancement_result['success']:
+    print("✅ All enhancements installed successfully!")
+    print(f"📊 Features: {enhancement_result['features_installed']} installed")
+    print("🎯 TradeWise AI: Full-Featured Trading Platform Ready")
+else:
+    print("⚠️  Some enhancements may not be available")
+    print(f"Error: {enhancement_result.get('error', 'Unknown')}")
 from ai_trading_copilot import start_ai_copilot
 
 # Apply production optimizations
