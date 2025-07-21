@@ -236,6 +236,9 @@ class IntelligentStockSearch {
                     <button class="btn-secondary" onclick="intelligentSearch.actionAnalyze('${data.symbol}')">
                         <i class="fas fa-chart-line"></i> Detailed Analysis
                     </button>
+                    <button class="btn-close" onclick="intelligentSearch.hideAnalysis()">
+                        <i class="fas fa-times"></i> Hide Analysis
+                    </button>
                 </div>
             </div>
         `;
@@ -309,6 +312,30 @@ class IntelligentStockSearch {
         if (this.searchInput) {
             this.searchInput.focus();
         }
+    }
+
+    hideAnalysis() {
+        if (this.resultsContainer) {
+            // Smooth fade out animation
+            this.resultsContainer.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+            this.resultsContainer.style.opacity = '0';
+            this.resultsContainer.style.transform = 'translateY(-20px)';
+            
+            setTimeout(() => {
+                this.resultsContainer.style.display = 'none';
+                this.resultsContainer.innerHTML = '';
+                // Reset styles for next use
+                this.resultsContainer.style.opacity = '1';
+                this.resultsContainer.style.transform = 'translateY(0)';
+                this.resultsContainer.style.transition = '';
+            }, 300);
+        }
+        
+        if (this.searchInput) {
+            this.searchInput.focus();
+        }
+        
+        this.showNotification('Analysis hidden - ready for new search', 'info');
     }
     
     // Action handlers
