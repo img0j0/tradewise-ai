@@ -2,14 +2,18 @@
 
 ## Overview
 
-TradeWise AI is a sophisticated trading platform that provides AI-powered investment advice, real-time market data, portfolio management, and advanced analytics. The platform combines modern web technologies with machine learning capabilities to deliver institutional-grade trading tools to retail investors.
+TradeWise AI is a sophisticated stock analysis platform that provides AI-powered investment research, real-time market data, and comprehensive stock insights. The platform combines modern web technologies with machine learning capabilities to deliver institutional-grade analysis tools focused purely on investment research without trading capabilities.
 
 ## Recent Changes (July 21, 2025)
+- **Strategic Platform Pivot**: Successfully transformed from trading platform to pure stock analysis platform
 - **Major Codebase Cleanup**: Removed 50+ conflicting Python modules and JavaScript files that were causing errors and interface conflicts
-- **Streamlined Architecture**: Simplified routes.py to focus on core stock search functionality with real Yahoo Finance integration
-- **Template Cleanup**: Consolidated to clean_chatgpt_search.html as primary interface, removing duplicate and conflicting templates
+- **Trading Functionality Removal**: Eliminated all trading capabilities (accounts, transactions, payments, portfolio trading)
+- **Analysis-Focused Database**: New models for StockAnalysis and WatchlistItem to track analysis history and research insights
+- **API Transformation**: Updated /api/stock-search to /api/stock-analysis with enhanced AI-powered research capabilities
+- **Analysis History Tracking**: Added functionality to save and compare AI recommendations over time
+- **Streamlined Architecture**: Clean, focused codebase without conflicting interfaces or redundant trading code
 - **Robot Mascot Fix**: Properly centered facial features using CSS transforms for perfect alignment
-- **Stable Core Functionality**: Stock search API working reliably with real-time data from Yahoo Finance
+- **Stable Core Functionality**: Stock analysis API working reliably with real-time data from Yahoo Finance
 
 ## User Preferences
 
