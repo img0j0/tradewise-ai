@@ -316,21 +316,24 @@ window.twoTierSearch = {
     }
 };
 
-// Override the existing search function
-window.performStockSearch = function() {
-    const searchInput = document.getElementById('stock-search-input');
-    const query = searchInput.value.trim();
-    
-    if (query) {
-        window.twoTierSearch.search(query);
-    }
-};
+// Ensure functions are only defined once globally
+if (!window.performStockSearch) {
+    window.performStockSearch = function() {
+        const searchInput = document.getElementById('stock-search-input');
+        const query = searchInput.value.trim();
+        
+        if (query && window.twoTierSearch) {
+            window.twoTierSearch.search(query);
+        }
+    };
+}
 
-// Also handle Enter key
-window.handleSearchEnter = function(event) {
-    if (event.key === 'Enter') {
-        window.performStockSearch();
-    }
-};
+if (!window.handleSearchEnter) {
+    window.handleSearchEnter = function(event) {
+        if (event.key === 'Enter') {
+            window.performStockSearch();
+        }
+    };
+}
 
 console.log('Two-tier search system loaded successfully');
