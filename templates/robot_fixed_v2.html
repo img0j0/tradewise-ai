@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TradeWise AI - Robot Fixed</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        
+        .container {
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.8;
+            margin-bottom: 40px;
+        }
+        
+        /* Robot container - CLEAN AND SIMPLE */
+        .ai-robot-mascot {
+            position: relative;
+            width: 60px;
+            height: 60px;
+            margin: 40px auto;
+            cursor: pointer;
+            animation: robotFloat 3s ease-in-out infinite;
+        }
+        
+        /* Head - positioned at top */
+        .robot-head {
+            width: 30px;
+            height: 24px;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            border-radius: 12px;
+            position: absolute;
+            top: 0;
+            left: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
+        }
+        
+        /* Body - positioned below head */
+        .robot-body {
+            width: 36px;
+            height: 28px;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            border-radius: 8px;
+            position: absolute;
+            top: 20px;
+            left: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
+        }
+        
+        /* Eyes - on the head */
+        .robot-eyes {
+            position: absolute;
+            top: 8px;
+            left: 20px;
+            display: flex;
+            gap: 6px;
+        }
+        
+        .robot-eye {
+            width: 4px;
+            height: 4px;
+            background: white;
+            border-radius: 50%;
+            animation: robotBlink 4s infinite;
+        }
+        
+        /* Mouth - on the head */
+        .robot-mouth {
+            position: absolute;
+            top: 16px;
+            left: 24px;
+            width: 8px;
+            height: 2px;
+            background: white;
+            border-radius: 1px;
+        }
+        
+        /* Antenna - on top of head */
+        .robot-antenna {
+            position: absolute;
+            top: -4px;
+            left: 28px;
+            width: 1px;
+            height: 8px;
+            background: white;
+        }
+        
+        .robot-antenna::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -1px;
+            width: 3px;
+            height: 3px;
+            background: #06b6d4;
+            border-radius: 50%;
+        }
+        
+        /* Left arm - attached to body */
+        .robot-arm.left {
+            width: 4px;
+            height: 14px;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            border-radius: 2px;
+            position: absolute;
+            top: 25px;
+            left: 6px;
+            animation: robotWaveLeft 4s ease-in-out infinite;
+        }
+        
+        /* Right arm - attached to body */
+        .robot-arm.right {
+            width: 4px;
+            height: 14px;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            border-radius: 2px;
+            position: absolute;
+            top: 25px;
+            right: 6px;
+            animation: robotWaveRight 4s ease-in-out infinite;
+        }
+        
+        /* Legs - at bottom of body */
+        .robot-legs {
+            position: absolute;
+            bottom: 4px;
+            left: 22px;
+            display: flex;
+            gap: 4px;
+        }
+        
+        .robot-leg {
+            width: 4px;
+            height: 8px;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            border-radius: 2px;
+        }
+        
+        /* Thought bubble */
+        .robot-thought {
+            position: absolute;
+            top: -25px;
+            right: -5px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #1a1a1a;
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-size: 9px;
+            font-weight: 600;
+            opacity: 0;
+            animation: robotThought 6s ease-in-out infinite;
+            white-space: nowrap;
+        }
+        
+        .robot-thought::after {
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: 8px;
+            width: 0;
+            height: 0;
+            border-left: 3px solid transparent;
+            border-right: 3px solid transparent;
+            border-top: 3px solid rgba(255, 255, 255, 0.9);
+        }
+        
+        /* Animations */
+        @keyframes robotFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        @keyframes robotBlink {
+            0%, 90%, 100% { opacity: 1; }
+            95% { opacity: 0; }
+        }
+        
+        @keyframes robotWaveLeft {
+            0%, 50%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-15deg); }
+        }
+        
+        @keyframes robotWaveRight {
+            0%, 50%, 100% { transform: rotate(0deg); }
+            75% { transform: rotate(15deg); }
+        }
+        
+        @keyframes robotThought {
+            0%, 80%, 100% { opacity: 0; }
+            10%, 70% { opacity: 1; }
+        }
+        
+        .search-interface {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-top: 20px;
+        }
+        
+        .search-box {
+            width: 100%;
+            max-width: 500px;
+            padding: 15px 20px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            outline: none;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+        }
+        
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(0, 255, 0, 0.1);
+            border-radius: 10px;
+            color: #00ff00;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>TradeWise AI</h1>
+        <p class="subtitle">AI-Powered Trading Platform</p>
+        
+        <!-- Robot Mascot -->
+        <div class="ai-robot-mascot">
+            <!-- Head -->
+            <div class="robot-head"></div>
+            
+            <!-- Body -->
+            <div class="robot-body"></div>
+            
+            <!-- Eyes -->
+            <div class="robot-eyes">
+                <div class="robot-eye"></div>
+                <div class="robot-eye"></div>
+            </div>
+            
+            <!-- Mouth -->
+            <div class="robot-mouth"></div>
+            
+            <!-- Antenna -->
+            <div class="robot-antenna"></div>
+            
+            <!-- Arms -->
+            <div class="robot-arm left"></div>
+            <div class="robot-arm right"></div>
+            
+            <!-- Legs -->
+            <div class="robot-legs">
+                <div class="robot-leg"></div>
+                <div class="robot-leg"></div>
+            </div>
+            
+            <!-- Thought Bubble -->
+            <div class="robot-thought">💹 Analyzing markets...</div>
+        </div>
+        
+        <div class="search-interface">
+            <input type="text" class="search-box" placeholder="Search for stocks..." />
+        </div>
+        
+        <div class="status">
+            ✅ Robot mascot alignment test - All components properly positioned
+        </div>
+    </div>
+</body>
+</html>

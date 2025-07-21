@@ -198,6 +198,15 @@ def original_interface():
     """Original complex interface for reference"""
     return render_template('chatgpt_style_search.html')
 
+@app.route('/robot-test')
+def robot_test():
+    """Robot alignment test page - bypasses all caching issues"""
+    response = make_response(render_template('robot_fixed_v2.html'))
+    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '0'
+    return response
+
 @app.route('/login')
 def login_page():
     """User login page"""
