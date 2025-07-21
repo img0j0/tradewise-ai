@@ -1333,9 +1333,10 @@
                 });
                 
                 const result = await response.json();
+                console.log('Quick alert creation result:', result);
                 
                 if (result.success) {
-                    alert(`Alert created successfully for ${currentStock.symbol}!`);
+                    alert(`Smart alert created successfully for ${currentStock.symbol}!`);
                     closeAnalysis();
                 } else {
                     alert('Error creating alert: ' + (result.error || 'Unknown error'));
@@ -2278,13 +2279,25 @@
             }
             
             try {
+                console.log('Deleting alert:', alertId);
                 const response = await fetch(`/api/alerts/${alertId}/delete`, {
-                    method: 'DELETE'
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
                 });
                 
+                console.log('Delete response status:', response.status);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
                 const result = await response.json();
+                console.log('Delete result:', result);
                 
                 if (result.success) {
+                    alert(`Alert deleted successfully!`);
                     // Reload the alerts display
                     openPriceAlerts();
                 } else {
@@ -2292,7 +2305,7 @@
                 }
             } catch (error) {
                 console.error('Error deleting alert:', error);
-                alert('Error deleting alert');
+                alert(`Error deleting alert: ${error.message}`);
             }
         }
 
