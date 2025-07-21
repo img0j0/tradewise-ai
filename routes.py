@@ -710,6 +710,11 @@ def settings_page():
     """Account settings page"""
     return render_template('settings.html')
 
+@app.route('/settings-test')
+def settings_test_page():
+    """Settings test page for debugging toggles"""
+    return render_template('settings_test.html')
+
 @app.route('/trading-history')
 def trading_history_page():
     """Trading history page"""

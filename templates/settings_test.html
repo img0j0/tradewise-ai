@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings Test</title>
+    <style>
+        body {
+            background: #0a0a0a;
+            color: white;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            padding: 2rem;
+        }
+
+        .toggle {
+            width: 60px;
+            height: 30px;
+            background: #333;
+            border-radius: 30px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 20px;
+            display: inline-block;
+        }
+
+        .toggle.active {
+            background: linear-gradient(135deg, #8b5cf6, #d946ef);
+        }
+
+        .toggle::after {
+            content: '';
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            transition: all 0.3s ease;
+        }
+
+        .toggle.active::after {
+            left: 33px;
+        }
+
+        .test-item {
+            margin: 20px 0;
+            padding: 20px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Toggle Switch Test</h1>
+    
+    <div class="test-item">
+        <label>Test Toggle 1:</label>
+        <div class="toggle active" onclick="toggleSwitch(this)"></div>
+        <span id="status1">ON</span>
+    </div>
+    
+    <div class="test-item">
+        <label>Test Toggle 2:</label>
+        <div class="toggle" onclick="toggleSwitch(this)"></div>
+        <span id="status2">OFF</span>
+    </div>
+    
+    <div class="test-item">
+        <label>Test Toggle 3:</label>
+        <div class="toggle active" onclick="toggleSwitch(this)"></div>
+        <span id="status3">ON</span>
+    </div>
+
+    <button onclick="testAllToggles()" style="padding: 10px 20px; background: #8b5cf6; color: white; border: none; border-radius: 5px; cursor: pointer; margin: 20px 0;">
+        Test All Toggles
+    </button>
+
+    <div id="console-output" style="background: #111; padding: 20px; border-radius: 10px; margin-top: 20px; font-family: monospace; font-size: 12px;">
+        <strong>Console Output:</strong><br>
+    </div>
+
+    <script>
+        function log(message) {
+            const output = document.getElementById('console-output');
+            output.innerHTML += '<br>' + new Date().toLocaleTimeString() + ': ' + message;
+            console.log(message);
+        }
+
+        function toggleSwitch(toggle) {
+            log('Toggle clicked: ' + toggle.className);
+            
+            // Toggle the active class
+            toggle.classList.toggle('active');
+            
+            // Update status text
+            const isActive = toggle.classList.contains('active');
+            const statusText = isActive ? 'ON' : 'OFF';
+            
+            log('Toggle is now: ' + statusText);
+            
+            // Find the status span (next sibling)
+            const statusSpan = toggle.parentNode.querySelector('span');
+            if (statusSpan) {
+                statusSpan.textContent = statusText;
+            }
+            
+            // Visual feedback
+            toggle.style.transform = 'scale(0.9)';
+            setTimeout(() => {
+                toggle.style.transform = 'scale(1)';
+            }, 100);
+        }
+
+        function testAllToggles() {
+            log('Testing all toggles programmatically...');
+            document.querySelectorAll('.toggle').forEach((toggle, index) => {
+                setTimeout(() => {
+                    log('Auto-toggling switch ' + (index + 1));
+                    toggleSwitch(toggle);
+                }, index * 500);
+            });
+        }
+
+        // Test on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            log('Page loaded, toggles initialized');
+            
+            // Add click event listeners as backup
+            document.querySelectorAll('.toggle').forEach((toggle, index) => {
+                toggle.addEventListener('click', function() {
+                    log('Event listener triggered for toggle ' + (index + 1));
+                });
+            });
+        });
+    </script>
+</body>
+</html>

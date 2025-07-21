@@ -202,14 +202,14 @@
                     <div class="setting-label">Email Notifications</div>
                     <div class="setting-description">Receive email alerts for trades and market updates</div>
                 </div>
-                <div class="toggle active" onclick="toggleSetting(this)" tabindex="0" role="switch" aria-checked="true" onkeypress="if(event.key==='Enter'||event.key===' ')toggleSetting(this)" aria-label="Email Notifications toggle"></div>
+                <div class="toggle active" tabindex="0" role="switch" aria-checked="true" aria-label="Email Notifications toggle"></div>
             </div>
             <div class="setting-item">
                 <div>
                     <div class="setting-label">Push Notifications</div>
                     <div class="setting-description">Get real-time notifications on your device</div>
                 </div>
-                <div class="toggle" onclick="toggleSetting(this)" tabindex="0" role="switch" aria-checked="false" onkeypress="if(event.key==='Enter'||event.key===' ')toggleSetting(this)" aria-label="Push Notifications toggle"></div>
+                <div class="toggle" tabindex="0" role="switch" aria-checked="false" aria-label="Push Notifications toggle"></div>
             </div>
         </div>
 
@@ -220,14 +220,14 @@
                     <div class="setting-label">Confirmation Prompts</div>
                     <div class="setting-description">Require confirmation before executing trades</div>
                 </div>
-                <div class="toggle active" onclick="toggleSetting(this)" tabindex="0" role="switch" aria-checked="true" onkeypress="if(event.key==='Enter'||event.key===' ')toggleSetting(this)" aria-label="Confirmation Prompts toggle"></div>
+                <div class="toggle active" tabindex="0" role="switch" aria-checked="true" aria-label="Confirmation Prompts toggle"></div>
             </div>
             <div class="setting-item">
                 <div>
                     <div class="setting-label">AI Recommendations</div>
                     <div class="setting-description">Show AI-powered trading recommendations</div>
                 </div>
-                <div class="toggle active" onclick="toggleSetting(this)" tabindex="0" role="switch" aria-checked="true" onkeypress="if(event.key==='Enter'||event.key===' ')toggleSetting(this)" aria-label="AI Recommendations toggle"></div>
+                <div class="toggle active" tabindex="0" role="switch" aria-checked="true" aria-label="AI Recommendations toggle"></div>
             </div>
         </div>
 
@@ -238,7 +238,7 @@
                     <div class="setting-label">Data Analytics</div>
                     <div class="setting-description">Allow anonymous usage analytics for platform improvement</div>
                 </div>
-                <div class="toggle active" onclick="toggleSetting(this)" tabindex="0" role="switch" aria-checked="true" onkeypress="if(event.key==='Enter'||event.key===' ')toggleSetting(this)" aria-label="Data Analytics toggle"></div>
+                <div class="toggle active" tabindex="0" role="switch" aria-checked="true" aria-label="Data Analytics toggle"></div>
             </div>
         </div>
 
@@ -246,9 +246,16 @@
     </div>
 
     <script>
+        // Debug: Check if script is loading
+        console.log('Settings page script loading...');
+        
         function toggleSetting(toggle) {
             console.log('Toggle clicked', toggle);
+            console.log('Toggle classes before:', toggle.className);
+            
             toggle.classList.toggle('active');
+            
+            console.log('Toggle classes after:', toggle.className);
             
             // Update aria-checked for accessibility
             const isActive = toggle.classList.contains('active');
@@ -263,6 +270,9 @@
             // Save state immediately
             saveToggleState();
         }
+        
+        // Make function globally available
+        window.toggleSetting = toggleSetting;
 
         function saveToggleState() {
             // Get all toggle states
@@ -314,7 +324,32 @@
 
         // Load saved settings when page loads
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, initializing toggles...');
             loadToggleState();
+            
+            // Add backup event listeners
+            document.querySelectorAll('.toggle').forEach((toggle, index) => {
+                console.log('Adding event listener to toggle', index);
+                
+                // Remove any existing onclick to avoid conflicts
+                toggle.removeAttribute('onclick');
+                
+                // Add click event listener
+                toggle.addEventListener('click', function(e) {
+                    console.log('Event listener triggered for toggle', index);
+                    toggleSetting(this);
+                });
+                
+                // Add keyboard event listener
+                toggle.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        console.log('Keyboard event triggered for toggle', index);
+                        toggleSetting(this);
+                    }
+                });
+            });
+            
             console.log('Settings page loaded, toggle states restored');
         });
     </script>
