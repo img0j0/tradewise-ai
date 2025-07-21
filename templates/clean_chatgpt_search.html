@@ -21,74 +21,74 @@
             transition: all 0.3s ease !important;
         }
         
-        /* Fix robot body alignment */
-        .robot-body {
-            width: 75px !important;
-            height: 56px !important;
-            background: linear-gradient(135deg, #8b5cf6, #06b6d4) !important;
-            border-radius: 18px !important;
-            position: absolute !important;
-            top: 31px !important;
-            left: 12px !important;
-            box-shadow: 0 10px 25px rgba(139, 92, 246, 0.4) !important;
-            border: 2px solid rgba(255, 255, 255, 0.2) !important;
-        }
-        
-        /* Fix robot head alignment */
+        /* Fix robot head alignment - should be on top */
         .robot-head {
             width: 62px !important;
             height: 50px !important;
             background: linear-gradient(135deg, #8b5cf6, #06b6d4) !important;
             border-radius: 25px !important;
             position: absolute !important;
-            top: 6px !important;
+            top: 0px !important;
             left: 19px !important;
             box-shadow: 0 6px 18px rgba(139, 92, 246, 0.5) !important;
             border: 2px solid rgba(255, 255, 255, 0.2) !important;
         }
         
-        /* Fix robot eyes alignment */
+        /* Fix robot body alignment - should be below head */
+        .robot-body {
+            width: 75px !important;
+            height: 56px !important;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4) !important;
+            border-radius: 18px !important;
+            position: absolute !important;
+            top: 45px !important;
+            left: 12px !important;
+            box-shadow: 0 10px 25px rgba(139, 92, 246, 0.4) !important;
+            border: 2px solid rgba(255, 255, 255, 0.2) !important;
+        }
+        
+        /* Fix robot eyes alignment - relative to head position */
         .robot-eyes {
             display: flex !important;
             gap: 12px !important;
             position: absolute !important;
             top: 15px !important;
-            left: 15px !important;
+            left: 34px !important;
         }
         
-        /* Fix robot arms alignment */
+        /* Fix robot arms alignment - attach to body */
         .robot-arms {
             position: absolute !important;
-            top: 42px !important;
+            top: 55px !important;
         }
         
         .robot-arm.left {
-            left: -8px !important;
+            left: 0px !important;
         }
         
         .robot-arm.right {
-            right: -8px !important;
+            right: 0px !important;
         }
         
-        /* Fix robot legs alignment */
+        /* Fix robot legs alignment - should be at bottom under body */
         .robot-legs {
             position: absolute !important;
             bottom: 0 !important;
-            left: 28px !important;
+            left: 34px !important;
             display: flex !important;
-            gap: 10px !important;
+            gap: 8px !important;
         }
         
-        /* Fix robot mouth alignment */
+        /* Fix robot mouth alignment - relative to head */
         .robot-mouth {
             position: absolute !important;
-            bottom: 10px !important;
-            left: 26px !important;
+            bottom: 35px !important;
+            left: 41px !important;
             width: 18px !important;
             height: 4px !important;
         }
         
-        /* Fix robot antenna alignment */
+        /* Fix robot antenna alignment - on top of head */
         .robot-antenna {
             position: absolute !important;
             top: -6px !important;
