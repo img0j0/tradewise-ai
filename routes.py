@@ -707,16 +707,8 @@ def watchlist_page():
 
 @app.route('/settings')
 def settings_page():
-    """Account settings page with simple on/off buttons"""
-    # Force cache bypass with timestamp
-    import time
-    timestamp = str(int(time.time()))
-    response = make_response(render_template('settings_buttons.html', cache_buster=timestamp))
-    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0'
-    response.headers['Pragma'] = 'no-cache'
-    response.headers['Expires'] = '0'
-    response.headers['Last-Modified'] = 'Thu, 01 Jan 1970 00:00:00 GMT'
-    return response
+    """Redirect to working button settings page to bypass cache issues"""
+    return redirect('/settings-new')
 
 @app.route('/settings-test')
 def settings_test_page():

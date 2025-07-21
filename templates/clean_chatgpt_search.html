@@ -2507,6 +2507,11 @@
 
         // Quick Actions Functions
         function openAccountSettings() {
+            // Redirect to working button settings page
+            window.location.href = '/settings-new';
+        }
+        
+        function openAccountSettingsModal() {
             closeAnalysis(); // Close current modal first
             showToolOverlay('Account Settings', `
                 <div style="padding: 30px; max-height: 80vh; overflow-y: auto;">
