@@ -446,22 +446,45 @@ def get_active_alerts():
         for config in demo_alert_configs:
             if config['id'] not in deleted_demo_alerts:
                 try:
-                    # Get real-time data for each symbol
+                    # Get comprehensive real-time data for each symbol
                     ticker = yf.Ticker(config['symbol'])
                     info = ticker.info
+                    hist = ticker.history(period="5d")
+                    
                     current_price = info.get('currentPrice', info.get('regularMarketPrice', 0))
                     
-                    # Calculate current value based on alert type
+                    # Get additional market data
+                    market_cap = info.get('marketCap', 0)
+                    volume = info.get('volume', 0)
+                    avg_volume = info.get('averageVolume', 1)
+                    day_change = info.get('regularMarketChangePercent', 0)
+                    
+                    # Calculate technical indicators
+                    if len(hist) >= 14:
+                        # Simple RSI calculation
+                        delta = hist['Close'].diff()
+                        gain = (delta.where(delta > 0, 0)).rolling(window=14).mean()
+                        loss = (-delta.where(delta < 0, 0)).rolling(window=14).mean()
+                        rs = gain / loss
+                        rsi = 100 - (100 / (1 + rs))
+                        current_rsi = rsi.iloc[-1] if hasattr(rsi, 'iloc') and len(rsi) > 0 else 50
+                    else:
+                        current_rsi = 50
+                    
+                    # Calculate current value and enhanced descriptions based on alert type
                     if config['type'] == 'price_target':
                         current_value = current_price
-                        description = f"Alert when {config['symbol']} {'rises above' if config['condition'] == 'above' else 'drops below'} ${config['target_value']}"
+                        trend = "bullish" if day_change > 0 else "bearish"
+                        description = f"AI Alert: {config['symbol']} {'rises above' if config['condition'] == 'above' else 'drops below'} ${config['target_value']:.2f} | Current: ${current_price:.2f} ({day_change:+.1f}%) | {trend.title()} momentum"
                     elif config['type'] == 'technical':
-                        # Mock RSI calculation (in production would use technical indicators)
-                        current_value = 45  # Placeholder RSI value
-                        description = f"Alert when {config['symbol']} RSI drops below {config['target_value']}"
+                        current_value = current_rsi
+                        rsi_signal = "Oversold" if current_rsi < 30 else "Overbought" if current_rsi > 70 else "Neutral"
+                        description = f"AI Technical Alert: {config['symbol']} RSI drops below {config['target_value']} | Current RSI: {current_rsi:.1f} ({rsi_signal}) | Price: ${current_price:.2f}"
                     else:  # volume
-                        current_value = 1.2  # Placeholder volume ratio
-                        description = f"Alert when {config['symbol']} volume exceeds {config['target_value']}x average"
+                        volume_ratio = volume / avg_volume if avg_volume > 0 else 0
+                        current_value = volume_ratio
+                        volume_signal = "High" if volume_ratio > 1.5 else "Normal"
+                        description = f"AI Volume Alert: {config['symbol']} volume exceeds {config['target_value']}x average | Current: {volume_ratio:.1f}x ({volume_signal}) | Price: ${current_price:.2f}"
                     
                     alert = {
                         'id': config['id'],
@@ -474,7 +497,14 @@ def get_active_alerts():
                         'description': description,
                         'status': 'active',
                         'created_at': '2025-07-21T20:00:00Z',
-                        'category': config['category']
+                        'category': config['category'],
+                        'ai_insights': {
+                            'market_cap': f"${market_cap / 1e9:.1f}B" if market_cap > 1e9 else f"${market_cap / 1e6:.0f}M",
+                            'day_change': f"{day_change:+.1f}%",
+                            'volume_ratio': f"{volume / avg_volume:.1f}x avg" if avg_volume > 0 else "N/A",
+                            'rsi': f"{current_rsi:.1f}",
+                            'trend_signal': "Bullish" if day_change > 1 else "Bearish" if day_change < -1 else "Neutral"
+                        }
                     }
                     active_demo_alerts.append(alert)
                 except Exception as e:
@@ -495,19 +525,48 @@ def get_active_alerts():
                     }
                     active_demo_alerts.append(alert)
         
-        # Update created alerts with current market data
+        # Update created alerts with comprehensive market data
         updated_created_alerts = []
         for alert in created_alerts:
             try:
                 ticker = yf.Ticker(alert['symbol'])
                 info = ticker.info
+                hist = ticker.history(period="5d")
+                
                 current_price = info.get('currentPrice', info.get('regularMarketPrice', 0))
+                day_change = info.get('regularMarketChangePercent', 0)
+                volume = info.get('volume', 0)
+                avg_volume = info.get('averageVolume', 1)
+                market_cap = info.get('marketCap', 0)
+                
+                # Calculate RSI
+                if len(hist) >= 14:
+                    delta = hist['Close'].diff()
+                    gain = (delta.where(delta > 0, 0)).rolling(window=14).mean()
+                    loss = (-delta.where(delta < 0, 0)).rolling(window=14).mean()
+                    rs = gain / loss
+                    rsi = 100 - (100 / (1 + rs))
+                    current_rsi = rsi.iloc[-1] if hasattr(rsi, 'iloc') and len(rsi) > 0 else 50
+                else:
+                    current_rsi = 50
                 
                 updated_alert = alert.copy()
                 if alert['condition'] in ['above', 'below']:
                     updated_alert['current_value'] = current_price
+                    updated_alert['description'] = f"Smart AI Alert: {alert['symbol']} {'rises above' if alert['condition'] == 'above' else 'drops below'} ${alert['target_value']:.2f} | Current: ${current_price:.2f} ({day_change:+.1f}%)"
+                
+                # Add AI insights
+                updated_alert['ai_insights'] = {
+                    'market_cap': f"${market_cap / 1e9:.1f}B" if market_cap > 1e9 else f"${market_cap / 1e6:.0f}M",
+                    'day_change': f"{day_change:+.1f}%",
+                    'volume_ratio': f"{volume / avg_volume:.1f}x avg" if avg_volume > 0 else "N/A",
+                    'rsi': f"{current_rsi:.1f}",
+                    'trend_signal': "Bullish" if day_change > 1 else "Bearish" if day_change < -1 else "Neutral"
+                }
+                
                 updated_created_alerts.append(updated_alert)
-            except:
+            except Exception as e:
+                logger.warning(f'Error updating alert data for {alert["symbol"]}: {e}')
                 updated_created_alerts.append(alert)
         
         # Combine alerts
