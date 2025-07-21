@@ -415,15 +415,16 @@ def create_smart_alert():
         logger.error(f'Error creating smart alerts: {e}')
         return jsonify({'success': False, 'error': str(e)}), 500
 
-# Global variable to store created alerts in memory
+# Global variables to store alerts in memory
 created_alerts = []
+deleted_demo_alerts = set()  # Track deleted demo alert IDs
 
 @app.route('/api/alerts/active')
 def get_active_alerts():
     """Get all active alerts for the user"""
     try:
-        # Combine demo alerts with any dynamically created alerts
-        demo_alerts = [
+        # Define all possible demo alerts
+        all_demo_alerts = [
             {
                 'id': 'alert_001',
                 'symbol': 'AAPL',
@@ -465,8 +466,11 @@ def get_active_alerts():
             }
         ]
         
-        # Add dynamically created alerts
-        all_alerts = demo_alerts + created_alerts
+        # Filter out deleted demo alerts
+        active_demo_alerts = [alert for alert in all_demo_alerts if alert['id'] not in deleted_demo_alerts]
+        
+        # Combine with dynamically created alerts
+        all_alerts = active_demo_alerts + created_alerts
         
         return jsonify({
             'success': True,
@@ -482,17 +486,23 @@ def get_active_alerts():
 def delete_alert(alert_id):
     """Delete a specific alert"""
     try:
-        global created_alerts
+        global created_alerts, deleted_demo_alerts
         
         # Remove from created_alerts list if it exists there
-        initial_count = len(created_alerts)
+        initial_created_count = len(created_alerts)
         created_alerts = [alert for alert in created_alerts if alert['id'] != alert_id]
         
-        if len(created_alerts) < initial_count:
+        # Check if it was a demo alert
+        demo_alert_ids = {'alert_001', 'alert_002', 'alert_003'}
+        
+        if len(created_alerts) < initial_created_count:
             logger.info(f"Deleted created alert {alert_id}")
+        elif alert_id in demo_alert_ids:
+            # Add to deleted demo alerts set
+            deleted_demo_alerts.add(alert_id)
+            logger.info(f"Marked demo alert {alert_id} as deleted")
         else:
-            # For demo alerts, just log the deletion (they can't actually be removed from demo data)
-            logger.info(f"Demo alert {alert_id} deletion requested")
+            logger.warning(f"Alert {alert_id} not found")
         
         return jsonify({
             'success': True,
