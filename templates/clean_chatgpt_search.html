@@ -4,89 +4,82 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TradeWise AI - Clean Search</title>
-    <!-- Properly Sized Robot Mascot - Perfect Alignment -->
-    <style>
-        /* Robot container - SCALED UP FOR VISIBILITY */
+
+        /* Fresh Robot Mascot - Clean Implementation */
         .ai-robot-mascot {
             position: absolute;
-            top: 120px;
+            top: 160px;
             left: 50%;
             transform: translateX(-50%);
-            width: 120px;
-            height: 120px;
+            width: 80px;
+            height: 80px;
             z-index: 1000;
-            cursor: pointer;
             animation: robotFloat 3s ease-in-out infinite;
         }
         
-        /* Head - positioned at top (2x scale) */
         .robot-head {
-            width: 60px;
-            height: 48px;
-            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
-            border-radius: 24px;
-            position: absolute;
-            top: 0;
-            left: 30px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 0 4px 16px rgba(139, 92, 246, 0.4);
-        }
-        
-        /* Body - positioned below head (2x scale) */
-        .robot-body {
-            width: 72px;
-            height: 56px;
+            width: 40px;
+            height: 32px;
             background: linear-gradient(135deg, #8b5cf6, #06b6d4);
             border-radius: 16px;
             position: absolute;
-            top: 40px;
-            left: 24px;
+            top: 0;
+            left: 20px;
             border: 2px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 0 4px 16px rgba(139, 92, 246, 0.4);
+            box-shadow: 0 3px 12px rgba(139, 92, 246, 0.4);
         }
         
-        /* Eyes - on the head (2x scale) */
+        .robot-body {
+            width: 48px;
+            height: 36px;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            border-radius: 12px;
+            position: absolute;
+            top: 28px;
+            left: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 3px 12px rgba(139, 92, 246, 0.4);
+        }
+        
         .robot-eyes {
             position: absolute;
-            top: 16px;
-            left: 40px;
+            top: 12px;
+            left: 28px;
             display: flex;
-            gap: 12px;
+            gap: 8px;
         }
         
         .robot-eye {
-            width: 8px;
-            height: 8px;
+            width: 6px;
+            height: 6px;
             background: white;
             border-radius: 50%;
             animation: robotBlink 4s infinite;
         }
         
-        /* Mouth - on the head (2x scale) */
         .robot-mouth {
             position: absolute;
-            top: 32px;
-            left: 48px;
-            width: 16px;
-            height: 4px;
+            top: 22px;
+            left: 32px;
+            width: 12px;
+            height: 3px;
             background: white;
             border-radius: 2px;
         }
         
-        /* Antenna - on top of head (2x scale) */
         .robot-antenna {
             position: absolute;
-            top: -8px;
-            left: 56px;
+            top: -6px;
+            left: 38px;
             width: 2px;
-            height: 16px;
+            height: 12px;
             background: white;
         }
         
         .robot-antenna::after {
             content: '';
             position: absolute;
-            top: -4px;
+            top: -3px;
             left: -2px;
             width: 6px;
             height: 6px;
@@ -94,52 +87,49 @@
             border-radius: 50%;
         }
         
-        /* Arms - attached to body (2x scale) */
         .robot-arm {
-            width: 8px;
-            height: 28px;
+            width: 6px;
+            height: 20px;
             background: linear-gradient(135deg, #8b5cf6, #06b6d4);
-            border-radius: 4px;
+            border-radius: 3px;
             position: absolute;
-            top: 50px;
+            top: 35px;
         }
         
         .robot-arm.left {
-            left: 12px;
+            left: 8px;
             animation: robotWaveLeft 4s ease-in-out infinite;
         }
         
         .robot-arm.right {
-            right: 12px;
+            right: 8px;
             animation: robotWaveRight 4s ease-in-out infinite;
         }
         
-        /* Legs - at bottom of body (2x scale) */
         .robot-legs {
             position: absolute;
-            bottom: 8px;
-            left: 44px;
+            bottom: 6px;
+            left: 30px;
             display: flex;
-            gap: 8px;
+            gap: 6px;
         }
         
         .robot-leg {
-            width: 8px;
-            height: 16px;
+            width: 6px;
+            height: 12px;
             background: linear-gradient(135deg, #8b5cf6, #06b6d4);
-            border-radius: 4px;
+            border-radius: 3px;
         }
         
-        /* Thought bubble (scaled for larger robot) */
         .robot-thought {
             position: absolute;
-            top: -35px;
-            right: -10px;
+            top: -25px;
+            right: -5px;
             background: rgba(255, 255, 255, 0.9);
             color: #1a1a1a;
-            padding: 6px 12px;
-            border-radius: 12px;
-            font-size: 11px;
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-size: 10px;
             font-weight: 600;
             opacity: 0;
             animation: robotThought 6s ease-in-out infinite;
@@ -150,16 +140,16 @@
         .robot-thought::after {
             content: '';
             position: absolute;
-            bottom: -4px;
-            left: 12px;
+            bottom: -3px;
+            left: 8px;
             width: 0;
             height: 0;
-            border-left: 4px solid transparent;
-            border-right: 4px solid transparent;
-            border-top: 4px solid rgba(255, 255, 255, 0.9);
+            border-left: 3px solid transparent;
+            border-right: 3px solid transparent;
+            border-top: 3px solid rgba(255, 255, 255, 0.9);
         }
         
-        /* Animations */
+        /* Fresh Animations */
         @keyframes robotFloat {
             0%, 100% { transform: translateX(-50%) translateY(0px); }
             50% { transform: translateX(-50%) translateY(-5px); }
@@ -171,58 +161,20 @@
         }
         
         @keyframes robotWaveLeft {
-            0%, 50%, 100% { transform: rotate(0deg); }
-            25% { transform: rotate(-15deg); }
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-10deg); }
+            75% { transform: rotate(5deg); }
         }
         
         @keyframes robotWaveRight {
-            0%, 50%, 100% { transform: rotate(0deg); }
-            75% { transform: rotate(15deg); }
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(10deg); }
+            75% { transform: rotate(-5deg); }
         }
         
         @keyframes robotThought {
-            0%, 80%, 100% { opacity: 0; }
-            10%, 70% { opacity: 1; }
-        }
-        
-        /* Mobile responsive */
-        @media (max-width: 768px) {
-            .ai-robot-mascot {
-                top: 80px;
-                width: 50px;
-                height: 50px;
-            }
-            
-            .robot-head {
-                width: 25px;
-                height: 20px;
-                left: 12px;
-            }
-            
-            .robot-body {
-                width: 30px;
-                height: 24px;
-                left: 10px;
-                top: 16px;
-            }
-            
-            .robot-eyes {
-                left: 17px;
-                top: 6px;
-            }
-            
-            .robot-mouth {
-                left: 20px;
-                top: 13px;
-            }
-            
-            .robot-antenna {
-                left: 24px;
-            }
-            
-            .robot-legs {
-                left: 18px;
-            }
+            0%, 70%, 100% { opacity: 0; }
+            10%, 60% { opacity: 1; }
         }
     </style>
     <style>
@@ -759,9 +711,9 @@
             </div>
         </div>
         
-        <!-- AI Robot Mascot with Complete Anatomy -->
+        <!-- Fresh AI Robot Mascot -->
         <div class="ai-robot-mascot">
-            <div class="robot-thought">AI thinking...</div>
+            <div class="robot-thought">Analyzing markets...</div>
             <div class="robot-head">
                 <div class="robot-eyes">
                     <div class="robot-eye"></div>
