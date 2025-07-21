@@ -2278,7 +2278,7 @@
             }
             
             try {
-                const response = await fetch(`/api/alerts/delete/${alertId}`, {
+                const response = await fetch(`/api/alerts/${alertId}/delete`, {
                     method: 'DELETE'
                 });
                 
