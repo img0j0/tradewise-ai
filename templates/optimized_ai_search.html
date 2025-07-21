@@ -142,15 +142,15 @@
 
         .results-container {
             display: none;
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            border-radius: 24px;
-            padding: 0;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 20px;
             backdrop-filter: blur(20px);
-            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.4);
-            overflow: visible;
-            animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            max-height: 85vh;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            max-height: 90vh;
+            overflow-y: auto;
         }
 
         @keyframes slideUp {
@@ -688,94 +688,122 @@
 
             displayResults(data) {
                 const container = document.getElementById('results-container');
-                const changeClass = parseFloat(data.change_percent) >= 0 ? 'change-positive' : 'change-negative';
-                const recClass = data.ai_recommendation.toLowerCase();
+                container.style.display = 'block';
                 
                 container.innerHTML = `
-                    <!-- Modal Header with Controls -->
-                    <div style="background: linear-gradient(135deg, #1a1a2e, #16213e); padding: 15px 30px; border-radius: 20px 20px 0 0; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); margin: -20px -20px 20px -20px;">
-                        <h3 style="color: #06b6d4; margin: 0; display: flex; align-items: center; gap: 10px; font-size: 1.1em;">
-                            <i class="fas fa-brain"></i> AI Quick Analysis - ${data.symbol}
+                    <!-- ChatGPT-Style Header with Simple Close -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h3 style="color: #8b5cf6; margin: 0; font-size: 1.2em; font-weight: 600;">
+                            <i class="fas fa-robot"></i> AI Investment Analysis
                         </h3>
-                        <div style="display: flex; gap: 8px;">
-                            <button onclick="AISearch.minimizeQuickAnalysis()" style="background: rgba(255,193,7,0.2); border: 1px solid #ffc107; color: #ffc107; border-radius: 6px; padding: 5px 8px; cursor: pointer; font-size: 12px;" title="Minimize">
-                                <i class="fas fa-minus"></i>
-                            </button>
-                            <button onclick="document.getElementById('results-container').style.display='none'" style="background: rgba(220,53,69,0.2); border: 1px solid #dc3545; color: #dc3545; border-radius: 6px; padding: 5px 8px; cursor: pointer; font-size: 12px;" title="Close">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
+                        <button onclick="document.getElementById('results-container').style.display='none'" 
+                                style="background: rgba(255,255,255,0.1); border: none; color: rgba(255,255,255,0.6); border-radius: 8px; padding: 8px; cursor: pointer; transition: all 0.2s ease;" 
+                                onmouseover="this.style.background='rgba(255,255,255,0.2)'" 
+                                onmouseout="this.style.background='rgba(255,255,255,0.1)'">
+                            <i class="fas fa-times"></i>
+                        </button>
                     </div>
 
-                    <!-- Stock Header -->
-                    <div class="stock-header">
-                        <div class="stock-info">
-                            <h2>${data.symbol}</h2>
-                            <p>${data.name}</p>
-                            <div class="price-info">
-                                <span class="price">$${data.price}</span>
-                                <span class="${changeClass}">${data.change_percent}%</span>
-                            </div>
-                        </div>
-                        <div class="ai-badges">
-                            <div class="recommendation-badge ${recClass}">${data.ai_recommendation}</div>
-                            <div class="confidence-badge">${data.confidence}% Confidence</div>
-                        </div>
-                    </div>
-
-                    <!-- Quick Analysis -->
-                    <div class="analysis-section">
-                        <h3 style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px; color: #8b5cf6; font-size: 1.2em;">
-                            <i class="fas fa-brain"></i> AI Quick Analysis
-                        </h3>
-                        <div class="analysis-content" style="line-height: 1.7; color: rgba(255, 255, 255, 0.9); font-size: 15px;">
-                            ${data.ai_analysis}
-                        </div>
+                    <!-- ChatGPT-Style Stock Analysis Card -->
+                    <div style="background: rgba(255, 255, 255, 0.04); border-radius: 16px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.08); max-height: 80vh; overflow-y: auto;">
                         
-                        <div class="confidence-bar">
-                            <div class="bar-container">
-                                <div class="bar">
-                                    <div class="bar-fill" style="width: ${data.confidence}%"></div>
+                        <!-- Stock Header - Clean & Simple -->
+                        <div style="padding: 20px 24px; border-bottom: 1px solid rgba(255, 255, 255, 0.08);">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+                                <div>
+                                    <h2 style="color: white; margin: 0 0 4px 0; font-size: 1.5em; font-weight: 600;">${data.symbol}</h2>
+                                    <p style="color: rgba(255, 255, 255, 0.7); margin: 0; font-size: 0.9em;">${data.name || data.company_name}</p>
                                 </div>
-                                <span style="font-weight: 600; color: #8b5cf6;">${data.confidence}% AI Confidence</span>
+                                <div style="text-align: right;">
+                                    <div style="font-size: 1.4em; font-weight: 700; color: white; margin-bottom: 2px;">$${data.current_price || data.price}</div>
+                                    <div style="color: ${(data.price_change || data.change_percent) >= 0 ? '#22c55e' : '#ef4444'}; font-weight: 500; font-size: 0.85em;">
+                                        ${(data.price_change || data.change_percent) >= 0 ? '+' : ''}${data.change_percent || 'N/A'}%
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- AI Badges - Simplified -->
+                            <div style="display: flex; flex-wrap: wrap; gap: 6px; align-items: center;">
+                                <span style="padding: 4px 8px; border-radius: 8px; font-weight: 600; font-size: 0.75em; text-transform: uppercase; background: ${data.ai_recommendation === 'BUY' || data.ai_recommendation === 'STRONG BUY' ? '#22c55e' : data.ai_recommendation === 'SELL' || data.ai_recommendation === 'STRONG SELL' ? '#ef4444' : '#f59e0b'}; color: white;">
+                                    ${data.ai_recommendation || 'HOLD'}
+                                </span>
+                                <span style="background: rgba(139, 92, 246, 0.15); color: #a855f7; padding: 3px 6px; border-radius: 6px; font-size: 0.7em; font-weight: 500;">
+                                    ${data.confidence}% AI
+                                </span>
+                                <span style="background: rgba(251, 191, 36, 0.15); color: #fbbf24; padding: 3px 6px; border-radius: 6px; font-size: 0.7em; font-weight: 500;">
+                                    ${data.risk_level} Risk
+                                </span>
                             </div>
                         </div>
 
-                        <div class="metrics-grid">
-                            <div class="metric-item">
-                                <span class="metric-label">Risk Level</span>
-                                <span class="metric-value" style="color: #fbbf24;">${data.risk_level}</span>
+                        <!-- AI Analysis - ChatGPT Conversation Style -->
+                        <div style="padding: 20px 24px;">
+                            <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 16px;">
+                                <div style="width: 28px; height: 28px; background: linear-gradient(135deg, #8b5cf6, #06b6d4); border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                    <i class="fas fa-robot" style="color: white; font-size: 12px;"></i>
+                                </div>
+                                <div style="flex: 1;">
+                                    <div style="color: rgba(255, 255, 255, 0.9); line-height: 1.6; font-size: 0.9em; margin-bottom: 16px;">
+                                        ${data.ai_analysis}
+                                    </div>
+                                </div>
                             </div>
-                            <div class="metric-item">
-                                <span class="metric-label">Market Cap</span>
-                                <span class="metric-value">$${(data.market_cap / 1e9).toFixed(1)}B</span>
+                            
+                            <!-- Key Metrics - Clean Grid -->
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 8px; margin-bottom: 16px;">
+                                <div style="background: rgba(255, 255, 255, 0.04); padding: 8px; border-radius: 6px; text-align: center;">
+                                    <div style="color: rgba(255, 255, 255, 0.6); font-size: 0.7em; margin-bottom: 2px;">Market Cap</div>
+                                    <div style="color: white; font-weight: 600; font-size: 0.8em;">$${((data.market_cap || 0) / 1e9).toFixed(1)}B</div>
+                                </div>
+                                <div style="background: rgba(255, 255, 255, 0.04); padding: 8px; border-radius: 6px; text-align: center;">
+                                    <div style="color: rgba(255, 255, 255, 0.6); font-size: 0.7em; margin-bottom: 2px;">P/E Ratio</div>
+                                    <div style="color: white; font-weight: 600; font-size: 0.8em;">${data.pe_ratio ? data.pe_ratio.toFixed(1) : 'N/A'}</div>
+                                </div>
+                                <div style="background: rgba(255, 255, 255, 0.04); padding: 8px; border-radius: 6px; text-align: center;">
+                                    <div style="color: rgba(255, 255, 255, 0.6); font-size: 0.7em; margin-bottom: 2px;">Target</div>
+                                    <div style="color: #8b5cf6; font-weight: 600; font-size: 0.8em;">$${data.price_target ? data.price_target.toFixed(0) : 'N/A'}</div>
+                                </div>
                             </div>
-                            <div class="metric-item">
-                                <span class="metric-label">P/E Ratio</span>
-                                <span class="metric-value">${data.pe_ratio ? data.pe_ratio.toFixed(2) : 'N/A'}</span>
-                            </div>
-                            <div class="metric-item">
-                                <span class="metric-label">Price Target</span>
-                                <span class="metric-value" style="color: #8b5cf6;">$${data.price_target ? data.price_target.toFixed(2) : 'N/A'}</span>
+                            
+                            <!-- Confidence Bar - Minimalist -->
+                            <div style="background: rgba(139, 92, 246, 0.1); border-radius: 6px; padding: 10px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                                    <span style="color: rgba(255, 255, 255, 0.8); font-size: 0.75em;">AI Confidence</span>
+                                    <span style="color: #8b5cf6; font-weight: 600; font-size: 0.8em;">${data.confidence}%</span>
+                                </div>
+                                <div style="background: rgba(255, 255, 255, 0.1); height: 4px; border-radius: 2px; overflow: hidden;">
+                                    <div style="background: linear-gradient(90deg, #8b5cf6, #06b6d4); height: 100%; width: ${data.confidence}%; transition: width 0.6s ease;"></div>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Action Buttons -->
-                    <div class="action-buttons mobile-action-buttons" style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 25px; padding: 20px; border-top: 1px solid rgba(255, 255, 255, 0.08); position: sticky; bottom: 0; background: rgba(10, 11, 15, 0.95); backdrop-filter: blur(10px); border-radius: 0 0 24px 24px;">
-                        <button onclick="AISearch.showDetailed('${data.symbol}')" class="action-button mobile-action-button">
-                            <i class="fas fa-chart-line"></i> Detailed Analysis
-                        </button>
-                        <button onclick="AISearch.generateInvestmentPlan('${data.symbol}')" class="action-button secondary mobile-action-button">
-                            <i class="fas fa-lightbulb"></i> Investment Strategy
-                        </button>
-                        <button onclick="AISearch.compareWithSimilar('${data.symbol}')" class="action-button secondary mobile-action-button">
-                            <i class="fas fa-balance-scale"></i> Compare Peers
-                        </button>
+                        <!-- Action Buttons - ChatGPT Style -->
+                        <div style="padding: 16px 24px; border-top: 1px solid rgba(255, 255, 255, 0.08); background: rgba(255, 255, 255, 0.02);">
+                            <div style="display: flex; flex-wrap: wrap; gap: 6px; justify-content: center;">
+                                <button onclick="AISearch.showDetailed('${data.symbol}')" 
+                                        style="background: rgba(139, 92, 246, 0.12); color: #a855f7; border: 1px solid rgba(139, 92, 246, 0.25); padding: 6px 12px; border-radius: 8px; font-size: 0.8em; font-weight: 500; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; gap: 4px;"
+                                        onmouseover="this.style.background='rgba(139, 92, 246, 0.2)'"
+                                        onmouseout="this.style.background='rgba(139, 92, 246, 0.12)'">
+                                    <i class="fas fa-chart-line" style="font-size: 10px;"></i> Details
+                                </button>
+                                <button onclick="AISearch.generateInvestmentPlan('${data.symbol}')" 
+                                        style="background: rgba(6, 182, 212, 0.12); color: #06b6d4; border: 1px solid rgba(6, 182, 212, 0.25); padding: 6px 12px; border-radius: 8px; font-size: 0.8em; font-weight: 500; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; gap: 4px;"
+                                        onmouseover="this.style.background='rgba(6, 182, 212, 0.2)'"
+                                        onmouseout="this.style.background='rgba(6, 182, 212, 0.12)'">
+                                    <i class="fas fa-lightbulb" style="font-size: 10px;"></i> Strategy
+                                </button>
+                                <button onclick="AISearch.compareWithSimilar('${data.symbol}')" 
+                                        style="background: rgba(34, 197, 94, 0.12); color: #22c55e; border: 1px solid rgba(34, 197, 94, 0.25); padding: 6px 12px; border-radius: 8px; font-size: 0.8em; font-weight: 500; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; gap: 4px;"
+                                        onmouseover="this.style.background='rgba(34, 197, 94, 0.2)'"
+                                        onmouseout="this.style.background='rgba(34, 197, 94, 0.12)'">
+                                    <i class="fas fa-balance-scale" style="font-size: 10px;"></i> Compare
+                                </button>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Detailed Analysis (Hidden Initially) -->
-                    <div id="detailed-analysis-${data.symbol}" class="detailed-analysis">
+                    <div id="detailed-analysis-${data.symbol}" class="detailed-analysis" style="margin-top: 20px;">
                         <!-- Detailed content will be loaded here -->
                     </div>
                 `;
