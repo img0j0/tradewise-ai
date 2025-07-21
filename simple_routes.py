@@ -3,9 +3,18 @@ from app import app
 import time
 
 @app.route('/')
-def simple_index():
-    """Simple working page with fresh robot"""
-    html = f"""
+def index():
+    """Load the actual ChatGPT-style interface with fresh robot"""
+    try:
+        from flask import render_template
+        response = make_response(render_template('clean_chatgpt_search.html'))
+        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+        response.headers['Pragma'] = 'no-cache'
+        response.headers['Expires'] = '0'
+        return response
+    except Exception as e:
+        # Fallback if template fails
+        html = f"""
 <!DOCTYPE html>
 <html>
 <head>
