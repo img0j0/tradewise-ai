@@ -75,6 +75,143 @@ def api_stock_detailed_analysis():
     except Exception as e:
         return jsonify({'error': f'Detailed analysis failed: {str(e)}'}), 500
 
+@app.route('/api/investment-plan', methods=['POST'])
+def api_investment_plan():
+    """Generate AI investment plan for a specific stock"""
+    try:
+        data = request.get_json()
+        symbol = data.get('symbol', '').strip().upper()
+        
+        if not symbol:
+            return jsonify({'error': 'Symbol parameter is required'}), 400
+            
+        # Generate AI investment strategy
+        from intelligent_stock_analyzer import search_and_analyze_stock
+        stock_data = search_and_analyze_stock(symbol)
+        
+        if not stock_data:
+            return jsonify({'error': 'Stock data not available'}), 404
+            
+        # Create investment plan based on AI analysis
+        recommendation = stock_data.get('ai_recommendation', 'HOLD')
+        confidence = stock_data.get('confidence', 50)
+        risk_level = stock_data.get('risk_level', 'Medium')
+        price = stock_data.get('price', 0)
+        
+        investment_plan = f"""
+        <div style="background: rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+            <h4 style="color: #8b5cf6; margin-bottom: 15px;">Investment Strategy Overview</h4>
+            <p><strong>Recommendation:</strong> {recommendation} with {confidence}% AI Confidence</p>
+            <p><strong>Risk Assessment:</strong> {risk_level} risk profile</p>
+            <p><strong>Current Price:</strong> ${price}</p>
+        </div>
+        
+        <div style="background: rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+            <h4 style="color: #06b6d4; margin-bottom: 15px;">AI Investment Strategy</h4>
+            {"<p><strong>Conservative Approach:</strong> Consider dollar-cost averaging over 3-6 months to reduce volatility risk.</p>" if recommendation in ["BUY", "STRONG BUY"] else ""}
+            {"<p><strong>Entry Strategy:</strong> Strong fundamentals suggest potential for long-term growth. Consider accumulating on any market dips.</p>" if recommendation == "STRONG BUY" else ""}
+            {"<p><strong>Holding Strategy:</strong> Monitor quarterly earnings and technical indicators for optimal exit timing.</p>" if recommendation == "HOLD" else ""}
+            {"<p><strong>Risk Management:</strong> Set stop-loss at 10-15% below entry price to protect capital.</p>" if recommendation in ["SELL", "STRONG SELL"] else ""}
+            <p><strong>Position Sizing:</strong> Based on {risk_level.lower()} risk level, consider allocating {'5-10%' if risk_level == 'High' else '10-15%' if risk_level == 'Medium' else '15-20%'} of portfolio.</p>
+        </div>
+        
+        <div style="background: rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 20px;">
+            <h4 style="color: #22c55e; margin-bottom: 15px;">Key Monitoring Points</h4>
+            <ul style="margin: 0; padding-left: 20px;">
+                <li>Watch for quarterly earnings reports and guidance updates</li>
+                <li>Monitor industry trends and competitive positioning</li>
+                <li>Track technical indicators: RSI, MACD, and volume patterns</li>
+                <li>Review portfolio allocation quarterly to maintain risk balance</li>
+            </ul>
+        </div>
+        """
+        
+        return jsonify({
+            'symbol': symbol,
+            'plan': investment_plan
+        })
+        
+    except Exception as e:
+        return jsonify({'error': f'Investment plan generation failed: {str(e)}'}), 500
+
+@app.route('/api/stock-comparison', methods=['POST'])
+def api_stock_comparison():
+    """Generate AI stock comparison analysis"""
+    try:
+        data = request.get_json()
+        symbol = data.get('symbol', '').strip().upper()
+        
+        if not symbol:
+            return jsonify({'error': 'Symbol parameter is required'}), 400
+            
+        # Get stock data for comparison
+        from intelligent_stock_analyzer import search_and_analyze_stock
+        stock_data = search_and_analyze_stock(symbol)
+        
+        if not stock_data:
+            return jsonify({'error': 'Stock data not available'}), 404
+            
+        # Generate comparison analysis
+        sector = stock_data.get('sector', 'Technology')
+        pe_ratio = stock_data.get('pe_ratio', 'N/A')
+        market_cap = stock_data.get('market_cap', 0)
+        recommendation = stock_data.get('ai_recommendation', 'HOLD')
+        
+        # Create sector comparison based on known data
+        sector_comparisons = {
+            'Technology': ['AAPL', 'MSFT', 'GOOGL', 'META', 'NVDA'],
+            'Healthcare': ['JNJ', 'PFE', 'UNH', 'ABBV', 'MRK'],
+            'Financial Services': ['JPM', 'BAC', 'WFC', 'GS', 'MS'],
+            'Consumer Cyclical': ['AMZN', 'TSLA', 'HD', 'MCD', 'NKE'],
+            'Consumer Defensive': ['PG', 'KO', 'PEP', 'WMT', 'COST']
+        }
+        
+        similar_stocks = sector_comparisons.get(sector, ['SPY', 'QQQ', 'DIA'])
+        similar_stocks = [s for s in similar_stocks if s != symbol][:4]
+        
+        comparison_analysis = f"""
+        <div style="background: rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+            <h4 style="color: #8b5cf6; margin-bottom: 15px;">Sector Analysis: {sector}</h4>
+            <p><strong>Market Position:</strong> {symbol} operates in the {sector} sector with a market cap of ${(market_cap/1e9):.1f}B</p>
+            <p><strong>Valuation:</strong> P/E ratio of {pe_ratio if pe_ratio != 'N/A' else 'N/A'} {'(Premium valuation)' if isinstance(pe_ratio, (int, float)) and pe_ratio > 25 else '(Reasonable valuation)' if isinstance(pe_ratio, (int, float)) and pe_ratio < 20 else ''}</p>
+        </div>
+        
+        <div style="background: rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+            <h4 style="color: #06b6d4; margin-bottom: 15px;">Peer Comparison</h4>
+            <p><strong>Similar Stocks to Research:</strong></p>
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 15px 0;">
+                {' '.join([f'<div style="background: rgba(255,255,255,0.1); padding: 8px 12px; border-radius: 8px; text-align: center;">{stock}</div>' for stock in similar_stocks])}
+            </div>
+            <p style="font-size: 0.9em; color: rgba(255,255,255,0.7);">Research these stocks using our AI assistant to compare fundamentals, technical indicators, and growth prospects.</p>
+        </div>
+        
+        <div style="background: rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 20px;">
+            <h4 style="color: #22c55e; margin-bottom: 15px;">AI Competitive Assessment</h4>
+            <p><strong>Relative Positioning:</strong> Our AI rates {symbol} as {recommendation} within its sector.</p>
+            <ul style="margin: 10px 0; padding-left: 20px;">
+                <li><strong>Strengths:</strong> {
+                    'Strong technical momentum and market position' if recommendation in ['BUY', 'STRONG BUY'] else
+                    'Stable fundamentals with steady performance' if recommendation == 'HOLD' else
+                    'Potential value opportunity if market conditions improve'
+                }</li>
+                <li><strong>Considerations:</strong> {
+                    'Monitor for profit-taking at current levels' if recommendation in ['BUY', 'STRONG BUY'] else
+                    'Watch for catalyst events to drive future growth' if recommendation == 'HOLD' else
+                    'Assess fundamental deterioration vs temporary headwinds'
+                }</li>
+                <li><strong>Sector Outlook:</strong> Compare with peer performance and industry trends for complete picture</li>
+            </ul>
+        </div>
+        """
+        
+        return jsonify({
+            'symbol': symbol,
+            'comparison': comparison_analysis
+        })
+        
+    except Exception as e:
+        return jsonify({'error': f'Stock comparison failed: {str(e)}'}), 500
+
 @app.route('/api/dashboard')
 def api_dashboard():
     """Dashboard data API endpoint"""

@@ -392,7 +392,7 @@
         <!-- Header -->
         <div class="header">
             <h1 class="brand">TradeWise AI</h1>
-            <p class="tagline">Intelligent Stock Analysis Powered by Advanced AI</p>
+            <p class="tagline">Your AI-Powered Investment Research Assistant</p>
         </div>
 
         <!-- Search Section -->
@@ -401,7 +401,7 @@
                 <input type="text" 
                        id="stock-search-input" 
                        class="search-input" 
-                       placeholder="Enter stock symbol or company name (e.g., AAPL, Tesla)"
+                       placeholder="Research any stock: Enter symbol or company name (e.g., AAPL, Tesla)"
                        onkeypress="handleSearchEnter(event)">
                 <button class="search-button" onclick="performStockSearch()">
                     <i class="fas fa-search"></i>
@@ -516,11 +516,11 @@
                         <button onclick="AISearch.showDetailed('${data.symbol}')" class="btn btn-primary">
                             <i class="fas fa-chart-line"></i> View Detailed Technical Analysis
                         </button>
-                        <button onclick="alert('Buy ${data.symbol} functionality')" class="btn btn-secondary">
-                            <i class="fas fa-shopping-cart"></i> Buy Stock
+                        <button onclick="AISearch.generateInvestmentPlan('${data.symbol}')" class="btn btn-secondary">
+                            <i class="fas fa-lightbulb"></i> Generate Investment Plan
                         </button>
-                        <button onclick="alert('Added ${data.symbol} to watchlist')" class="btn btn-secondary">
-                            <i class="fas fa-star"></i> Add to Watchlist
+                        <button onclick="AISearch.compareWithSimilar('${data.symbol}')" class="btn btn-secondary">
+                            <i class="fas fa-chart-bar"></i> Compare with Similar Stocks
                         </button>
                     </div>
 
@@ -622,6 +622,93 @@
                     </div>
                 `;
             }
+        };
+
+        // Investment Research Functions
+        AISearch.generateInvestmentPlan = async function(symbol) {
+            try {
+                const response = await fetch('/api/investment-plan', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ symbol: symbol })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    this.showInvestmentPlan(data);
+                } else {
+                    alert('Investment plan generation temporarily unavailable');
+                }
+            } catch (error) {
+                alert('Investment plan generation temporarily unavailable');
+            }
+        };
+
+        AISearch.compareWithSimilar = async function(symbol) {
+            try {
+                const response = await fetch('/api/stock-comparison', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ symbol: symbol })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    this.showComparison(data);
+                } else {
+                    alert('Stock comparison temporarily unavailable');
+                }
+            } catch (error) {
+                alert('Stock comparison temporarily unavailable');
+            }
+        };
+
+        AISearch.showInvestmentPlan = function(data) {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+                background: rgba(0,0,0,0.8); z-index: 1000;
+                display: flex; align-items: center; justify-content: center;
+                padding: 20px;
+            `;
+            modal.innerHTML = `
+                <div style="background: #0A0B0F; border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 30px; max-width: 600px; width: 100%; max-height: 80vh; overflow-y: auto;">
+                    <h3 style="color: #06b6d4; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-lightbulb"></i> AI Investment Strategy for ${data.symbol}
+                    </h3>
+                    <div style="color: rgba(255,255,255,0.9); line-height: 1.6;">
+                        ${data.plan}
+                    </div>
+                    <button onclick="this.parentElement.parentElement.remove()" style="margin-top: 20px; padding: 12px 20px; background: linear-gradient(135deg, #8b5cf6, #06b6d4); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                        Close Strategy
+                    </button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        };
+
+        AISearch.showComparison = function(data) {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+                background: rgba(0,0,0,0.8); z-index: 1000;
+                display: flex; align-items: center; justify-content: center;
+                padding: 20px;
+            `;
+            modal.innerHTML = `
+                <div style="background: #0A0B0F; border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 30px; max-width: 800px; width: 100%; max-height: 80vh; overflow-y: auto;">
+                    <h3 style="color: #06b6d4; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-chart-bar"></i> AI Stock Comparison Analysis
+                    </h3>
+                    <div style="color: rgba(255,255,255,0.9); line-height: 1.6;">
+                        ${data.comparison}
+                    </div>
+                    <button onclick="this.parentElement.parentElement.remove()" style="margin-top: 20px; padding: 12px 20px; background: linear-gradient(135deg, #8b5cf6, #06b6d4); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                        Close Analysis
+                    </button>
+                </div>
+            `;
+            document.body.appendChild(modal);
         };
 
         // Global functions
