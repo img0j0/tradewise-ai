@@ -894,7 +894,7 @@
                         <button onclick="addToWatchlistFromAnalysis()" style="padding: 12px 15px; background: linear-gradient(45deg, #f59e0b, #d97706); color: white; border: none; border-radius: 15px; cursor: pointer; font-weight: 600; font-size: 13px; display: flex; align-items: center; justify-content: center; gap: 3px;">
                             ⭐ Watch
                         </button>
-                        <button onclick="window.showCreateAlert()" style="padding: 12px 15px; background: linear-gradient(45deg, #8b5cf6, #7c3aed); color: white; border: none; border-radius: 15px; cursor: pointer; font-weight: 600; font-size: 13px; display: flex; align-items: center; justify-content: center; gap: 3px;">
+                        <button onclick="showCreateAlert()" style="padding: 12px 15px; background: linear-gradient(45deg, #8b5cf6, #7c3aed); color: white; border: none; border-radius: 15px; cursor: pointer; font-weight: 600; font-size: 13px; display: flex; align-items: center; justify-content: center; gap: 3px;">
                             🔔 Alert
                         </button>
                         <button onclick="showBuyModal()" style="padding: 12px 15px; background: linear-gradient(45deg, #10b981, #059669); color: white; border: none; border-radius: 15px; cursor: pointer; font-weight: 600; font-size: 13px; display: flex; align-items: center; justify-content: center; gap: 3px;">
@@ -919,32 +919,10 @@
             alert('Test function works!');
         };
         
-        // Make showCreateAlert available globally
+        // Make functions globally available for button clicks
         window.showCreateAlert = showCreateAlert;
-        
-        // Add direct event listener as backup
-        document.addEventListener('click', function(event) {
-            if (event.target.textContent.includes('🔔 Alert')) {
-                console.log('Alert button clicked via event listener!');
-                event.preventDefault();
-                
-                // Direct inline implementation to avoid scope issues
-                console.log('=== Alert function executing directly ===');
-                console.log('currentStock:', currentStock);
-                
-                if (!currentStock) {
-                    console.error('No current stock data available');
-                    alert('Please search for a stock first');
-                    return;
-                }
-                
-                // Show simple alert to confirm function execution
-                alert(`Creating alert for ${currentStock.symbol} - ${currentStock.name}`);
-                
-                // Now proceed with the API call
-                createAlertWithAPI();
-            }
-        });
+        window.addToWatchlistFromAnalysis = addToWatchlistFromAnalysis;
+        window.showBuyModal = showBuyModal;
         
         // Add to Watchlist function from analysis overlay
         async function addToWatchlistFromAnalysis() {
@@ -2391,45 +2369,7 @@
             `);
         }
         
-        // Smart Alert Creation Functions
-        function showCreateAlert() {
-            if (!currentStock) {
-                alert('Please search for a stock first');
-                return;
-            }
-            
-            const modal = document.createElement('div');
-            modal.id = 'alert-modal';
-            modal.style.cssText = `
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(0,0,0,0.8);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                z-index: 1000;
-                backdrop-filter: blur(5px);
-                overflow-y: auto;
-            `;
-            
-            // Get alert suggestions for this stock
-            fetch(`/api/alerts/suggestions/${currentStock.symbol}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success && data.suggestions) {
-                        showAlertModal(data.suggestions);
-                    } else {
-                        showAlertModal([]);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error getting alert suggestions:', error);
-                    showAlertModal([]);
-                });
-        }
+        // Removed duplicate showCreateAlert function - using the one above
         
         function showAlertModal(suggestions) {
             const modal = document.getElementById('alert-modal');
@@ -3483,7 +3423,17 @@
         }
     </script>
     
-    <!-- Robot Mascot JavaScript -->
-    <script src="{{ url_for('static', filename='js/robot_mascot.js') }}"></script>
+    <!-- Robot Mascot JavaScript (optional - only if file exists) -->
+    <script>
+        // Only load robot mascot if file exists, don't break if missing
+        try {
+            const script = document.createElement('script');
+            script.src = "{{ url_for('static', filename='js/robot_mascot.js') }}";
+            script.onerror = function() { console.log('Robot mascot script not found - continuing without it'); };
+            document.head.appendChild(script);
+        } catch(e) {
+            console.log('Robot mascot initialization skipped');
+        }
+    </script>
 </body>
 </html>
