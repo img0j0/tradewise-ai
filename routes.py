@@ -387,13 +387,23 @@ def create_smart_alert():
                 'volume_spike': 'volume'
             }
             
+            # Get current market data for the alert
+            try:
+                import yfinance as yf
+                ticker = yf.Ticker(symbol)
+                info = ticker.info
+                current_price = info.get('currentPrice', info.get('regularMarketPrice', 0))
+                current_value = current_price if condition in ['above', 'below'] else 0
+            except:
+                current_value = 0
+            
             alert_details = {
                 'id': alert_id,
                 'symbol': symbol,
                 'type': 'smart_alert',
                 'condition': condition,
                 'target_value': value,
-                'current_value': 0,  # Would be updated with real data
+                'current_value': current_value,
                 'title': title,
                 'description': f'Smart alert for {symbol} - {title}',
                 'status': 'active',
@@ -423,54 +433,85 @@ deleted_demo_alerts = set()  # Track deleted demo alert IDs
 def get_active_alerts():
     """Get all active alerts for the user"""
     try:
-        # Define all possible demo alerts
-        all_demo_alerts = [
-            {
-                'id': 'alert_001',
-                'symbol': 'AAPL',
-                'type': 'price_target',
-                'condition': 'above',
-                'target_value': 225.00,
-                'current_value': 212.48,
-                'title': 'AAPL Price Alert',
-                'description': 'Alert when Apple rises above $225',
-                'status': 'active',
-                'created_at': '2025-07-21T20:00:00Z',
-                'category': 'bullish'
-            },
-            {
-                'id': 'alert_002',
-                'symbol': 'MSFT',
-                'type': 'technical',
-                'condition': 'rsi_below',
-                'target_value': 30,
-                'current_value': 45,
-                'title': 'MSFT RSI Oversold',
-                'description': 'Alert when Microsoft RSI drops below 30',
-                'status': 'active',
-                'created_at': '2025-07-21T18:30:00Z',
-                'category': 'technical'
-            },
-            {
-                'id': 'alert_003',
-                'symbol': 'GOOGL',
-                'type': 'volume',
-                'condition': 'volume_spike',
-                'target_value': 2.0,
-                'current_value': 1.2,
-                'title': 'GOOGL Volume Spike',
-                'description': 'Alert when Google volume exceeds 2x average',
-                'status': 'active',
-                'created_at': '2025-07-21T16:15:00Z',
-                'category': 'volume'
-            }
+        import yfinance as yf
+        
+        # Define demo alerts with real-time data updates
+        demo_alert_configs = [
+            {'id': 'alert_001', 'symbol': 'AAPL', 'target_value': 225.00, 'condition': 'above', 'type': 'price_target', 'category': 'bullish', 'title': 'AAPL Price Alert'},
+            {'id': 'alert_002', 'symbol': 'MSFT', 'target_value': 30, 'condition': 'rsi_below', 'type': 'technical', 'category': 'technical', 'title': 'MSFT RSI Oversold'},
+            {'id': 'alert_003', 'symbol': 'GOOGL', 'target_value': 2.0, 'condition': 'volume_spike', 'type': 'volume', 'category': 'volume', 'title': 'GOOGL Volume Spike'}
         ]
         
-        # Filter out deleted demo alerts
-        active_demo_alerts = [alert for alert in all_demo_alerts if alert['id'] not in deleted_demo_alerts]
+        active_demo_alerts = []
+        for config in demo_alert_configs:
+            if config['id'] not in deleted_demo_alerts:
+                try:
+                    # Get real-time data for each symbol
+                    ticker = yf.Ticker(config['symbol'])
+                    info = ticker.info
+                    current_price = info.get('currentPrice', info.get('regularMarketPrice', 0))
+                    
+                    # Calculate current value based on alert type
+                    if config['type'] == 'price_target':
+                        current_value = current_price
+                        description = f"Alert when {config['symbol']} {'rises above' if config['condition'] == 'above' else 'drops below'} ${config['target_value']}"
+                    elif config['type'] == 'technical':
+                        # Mock RSI calculation (in production would use technical indicators)
+                        current_value = 45  # Placeholder RSI value
+                        description = f"Alert when {config['symbol']} RSI drops below {config['target_value']}"
+                    else:  # volume
+                        current_value = 1.2  # Placeholder volume ratio
+                        description = f"Alert when {config['symbol']} volume exceeds {config['target_value']}x average"
+                    
+                    alert = {
+                        'id': config['id'],
+                        'symbol': config['symbol'],
+                        'type': config['type'],
+                        'condition': config['condition'],
+                        'target_value': config['target_value'],
+                        'current_value': current_value,
+                        'title': config['title'],
+                        'description': description,
+                        'status': 'active',
+                        'created_at': '2025-07-21T20:00:00Z',
+                        'category': config['category']
+                    }
+                    active_demo_alerts.append(alert)
+                except Exception as e:
+                    logger.warning(f'Error getting data for {config["symbol"]}: {e}')
+                    # Fall back to static data if API fails
+                    alert = {
+                        'id': config['id'],
+                        'symbol': config['symbol'],
+                        'type': config['type'],
+                        'condition': config['condition'],
+                        'target_value': config['target_value'],
+                        'current_value': 0,
+                        'title': config['title'],
+                        'description': f"Alert for {config['symbol']} - data unavailable",
+                        'status': 'active',
+                        'created_at': '2025-07-21T20:00:00Z',
+                        'category': config['category']
+                    }
+                    active_demo_alerts.append(alert)
         
-        # Combine with dynamically created alerts
-        all_alerts = active_demo_alerts + created_alerts
+        # Update created alerts with current market data
+        updated_created_alerts = []
+        for alert in created_alerts:
+            try:
+                ticker = yf.Ticker(alert['symbol'])
+                info = ticker.info
+                current_price = info.get('currentPrice', info.get('regularMarketPrice', 0))
+                
+                updated_alert = alert.copy()
+                if alert['condition'] in ['above', 'below']:
+                    updated_alert['current_value'] = current_price
+                updated_created_alerts.append(updated_alert)
+            except:
+                updated_created_alerts.append(alert)
+        
+        # Combine alerts
+        all_alerts = active_demo_alerts + updated_created_alerts
         
         return jsonify({
             'success': True,
