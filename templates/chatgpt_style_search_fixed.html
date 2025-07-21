@@ -1027,6 +1027,10 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{{ url_for('static', filename='js/intelligent_search.js') }}"></script>
     <script>
+        // Initialize the intelligent search system
+        window.intelligentSearch = new IntelligentStockSearch();
+    </script>
+    <script>
         let currentDropdown = null;
 
         function toggleDropdown(dropdownId) {
@@ -1043,6 +1047,15 @@
         function handleSearchEnter(event) {
             if (event.key === 'Enter') {
                 performStockSearch();
+            }
+        }
+
+        function performStockSearch() {
+            const searchInput = document.getElementById('stock-search-input');
+            const query = searchInput.value.trim();
+            
+            if (query && window.intelligentSearch) {
+                window.intelligentSearch.search(query);
             }
         }
 
