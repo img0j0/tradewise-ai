@@ -1,10 +1,11 @@
 from flask import render_template, jsonify, request, make_response
 from app import app, db
-from models import Trade, Portfolio, Alert, UserAccount, Transaction, User
+from models import User, StockAnalysis, WatchlistItem
 from ai_insights import AIInsightsEngine
 from data_service import DataService
 from stock_search import StockSearchService
 import logging
+import json
 from datetime import datetime
 
 logger = logging.getLogger(__name__)
@@ -14,20 +15,48 @@ data_service = DataService()
 ai_engine = AIInsightsEngine()
 stock_search_service = StockSearchService()
 
-# Simple demo watchlist storage
+# Simple demo watchlist for stock analysis tracking
 demo_watchlist = set(['AAPL', 'TSLA', 'GOOGL', 'MSFT', 'NVDA'])
 
-# Train AI model on startup
+# Train AI model on startup for stock analysis
 try:
     stocks_data = data_service.get_all_stocks()
     ai_engine.train_model(stocks_data)
-    logger.info("AI model trained successfully")
+    logger.info("AI analysis model trained successfully")
 except Exception as e:
-    logger.error(f"Error training AI model: {e}")
+    logger.error(f"Error training AI analysis model: {e}")
+
+def save_analysis_to_history(symbol, stock_data, insights):
+    """Save analysis results for historical tracking and comparison"""
+    try:
+        analysis = StockAnalysis(
+            symbol=symbol,
+            price_at_analysis=float(stock_data.get('current_price', 0)),
+            recommendation=insights.get('recommendation', 'HOLD'),
+            confidence_score=float(insights.get('confidence', 50)),
+            fundamental_score=float(insights.get('fundamental_score', 50)),
+            technical_score=float(insights.get('technical_score', 50)),
+            risk_level=insights.get('risk_level', 'Medium'),
+            analysis_details=json.dumps({
+                'market_sentiment': insights.get('market_sentiment', 'Neutral'),
+                'investment_thesis': insights.get('analysis', 'Analysis not available'),
+                'pe_ratio': stock_data.get('pe_ratio'),
+                'market_cap': stock_data.get('market_cap')
+            }),
+            market_conditions=json.dumps({
+                'analysis_timestamp': datetime.now().isoformat(),
+                'data_source': 'Yahoo Finance'
+            })
+        )
+        db.session.add(analysis)
+        db.session.commit()
+        logger.info(f"Saved analysis for {symbol} to history")
+    except Exception as e:
+        logger.error(f"Error saving analysis to history: {e}")
 
 @app.route('/')
 def index():
-    """Clean ChatGPT-style search interface"""
+    """Clean stock analysis interface powered by AI"""
     try:
         response = make_response(render_template('clean_chatgpt_search.html'))
         response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
@@ -35,12 +64,12 @@ def index():
         response.headers['Expires'] = '0'
         return response
     except Exception as e:
-        logger.error(f"Error loading template: {e}")
-        return jsonify({'error': 'Template loading error'}), 500
+        logger.error(f"Error loading analysis interface: {e}")
+        return jsonify({'error': 'Analysis interface loading error'}), 500
 
-@app.route('/api/stock-search', methods=['POST'])
-def stock_search_api():
-    """Enhanced real-time stock search API for ChatGPT-style interface"""
+@app.route('/api/stock-analysis', methods=['POST'])
+def stock_analysis_api():
+    """AI-powered stock analysis API for comprehensive investment research"""
     try:
         data = request.get_json()
         query = data.get('query', '').strip()
@@ -60,11 +89,14 @@ def stock_search_api():
                 'message': f'No data found for "{query}"'
             }), 404
         
-        # Get comprehensive AI insights with real-time analysis
+        # Get comprehensive AI analysis insights
         ai_engine = AIInsightsEngine()
         insights = ai_engine.get_insights(query.upper(), stock_data)
         
-        # Build comprehensive real-time response
+        # Save analysis to history for tracking and comparison
+        save_analysis_to_history(query.upper(), stock_data, insights)
+        
+        # Build comprehensive analysis response
         response = {
             'success': True,
             'symbol': stock_data.get('symbol', query.upper()),
@@ -76,8 +108,8 @@ def stock_search_api():
             'pe_ratio': stock_data.get('pe_ratio'),
             'data_source': 'Yahoo Finance (Real-time)',
             
-            # AI Analysis
-            'analysis': insights.get('recommendation', 'HOLD'),
+            # AI Analysis Results
+            'recommendation': insights.get('recommendation', 'HOLD'),
             'confidence': int(insights.get('confidence', 50)),
             'investment_thesis': insights.get('analysis', 'Analysis not available'),
             'market_sentiment': insights.get('market_sentiment', 'Neutral'),
@@ -104,67 +136,116 @@ def stock_search_api():
             </div>
             ''',
             
-            'quick_actions': [
+            'analysis_actions': [
                 {'action': 'addToWatchlist("' + query.upper() + '")', 'text': f'Add {query.upper()} to Watchlist'},
-                {'action': 'setAlert("' + query.upper() + '")', 'text': 'Set Price Alert'},
-                {'action': 'getDetailedAnalysis("' + query.upper() + '")', 'text': 'Get Detailed Analysis'},
-                {'action': 'comparePeers("' + query.upper() + '")', 'text': 'Compare with Peers'}
+                {'action': 'getHistoricalAnalysis("' + query.upper() + '")', 'text': 'View Analysis History'},
+                {'action': 'getDetailedAnalysis("' + query.upper() + '")', 'text': 'Deep Dive Analysis'},
+                {'action': 'comparePeers("' + query.upper() + '")', 'text': 'Compare with Competitors'}
             ]
         }
         
-        logger.info(f"Stock search successful for {query}: {response['symbol']} at ${response['price']}")
+        logger.info(f"Stock analysis successful for {query}: {response['symbol']} at ${response['price']} - {response['recommendation']}")
         return jsonify(response)
         
     except Exception as e:
-        logger.error(f'Error in stock_search_api: {e}')
+        logger.error(f'Error in stock_analysis_api: {e}')
         return jsonify({
-            'error': 'Search failed',
-            'message': 'Unable to retrieve real-time data. Please try again.',
-            'analysis': f'Unable to analyze {query} - service temporarily unavailable'
+            'error': 'Analysis failed',
+            'message': 'Unable to retrieve analysis data. Please try again.',
+            'analysis': f'Unable to analyze {query} - analysis service temporarily unavailable'
         }), 500
 
+@app.route('/api/analysis-history/<symbol>')
+def get_analysis_history(symbol):
+    """Get historical analysis data for a stock"""
+    try:
+        analyses = StockAnalysis.query.filter_by(symbol=symbol.upper()).order_by(StockAnalysis.analysis_date.desc()).limit(10).all()
+        
+        history = []
+        for analysis in analyses:
+            history.append({
+                'date': analysis.analysis_date.isoformat(),
+                'price': analysis.price_at_analysis,
+                'recommendation': analysis.recommendation,
+                'confidence': analysis.confidence_score,
+                'fundamental_score': analysis.fundamental_score,
+                'technical_score': analysis.technical_score,
+                'risk_level': analysis.risk_level
+            })
+        
+        return jsonify({
+            'success': True,
+            'symbol': symbol.upper(),
+            'analysis_history': history
+        })
+        
+    except Exception as e:
+        logger.error(f'Error getting analysis history for {symbol}: {e}')
+        return jsonify({'success': False, 'error': str(e)}), 500
+
 @app.route('/api/watchlist/add', methods=['POST'])
-def add_to_watchlist():
-    """Add stock to watchlist"""
+def add_to_analysis_watchlist():
+    """Add stock to analysis watchlist for tracking"""
     try:
         data = request.get_json()
         symbol = data.get('symbol', '').upper()
+        notes = data.get('notes', '')
         
         if not symbol:
             return jsonify({'success': False, 'error': 'Symbol required'}), 400
             
-        # Add to demo watchlist
+        # Add to demo watchlist (in production, save to database)
         demo_watchlist.add(symbol)
+        
+        # Save to database for future tracking
+        watchlist_item = WatchlistItem(
+            symbol=symbol,
+            notes=notes
+        )
+        db.session.add(watchlist_item)
+        db.session.commit()
         
         return jsonify({
             'success': True,
-            'message': f'{symbol} added to watchlist',
+            'message': f'{symbol} added to analysis watchlist',
             'watchlist': list(demo_watchlist)
         })
         
     except Exception as e:
-        logger.error(f'Error adding to watchlist: {e}')
+        logger.error(f'Error adding to analysis watchlist: {e}')
         return jsonify({'success': False, 'error': str(e)}), 500
 
-@app.route('/api/watchlist', methods=['GET'])
-def get_watchlist():
-    """Get user watchlist with real-time data"""
+@app.route('/api/analysis-watchlist')
+def get_analysis_watchlist():
+    """Get analysis watchlist with current data and latest analysis results"""
     try:
         watchlist_data = []
         
         for symbol in demo_watchlist:
             try:
                 stock_data = stock_search_service.search_stock(symbol)
+                latest_analysis = StockAnalysis.query.filter_by(symbol=symbol).order_by(StockAnalysis.analysis_date.desc()).first()
+                
                 if stock_data:
-                    watchlist_data.append({
+                    item = {
                         'symbol': symbol,
                         'name': stock_data.get('name', symbol),
                         'price': float(stock_data.get('current_price', 0)),
                         'change': float(stock_data.get('price_change', 0)),
                         'change_percent': float(stock_data.get('price_change_percent', 0))
-                    })
+                    }
+                    
+                    # Add latest analysis if available
+                    if latest_analysis:
+                        item.update({
+                            'latest_recommendation': latest_analysis.recommendation,
+                            'latest_confidence': latest_analysis.confidence_score,
+                            'analysis_date': latest_analysis.analysis_date.isoformat()
+                        })
+                    
+                    watchlist_data.append(item)
             except Exception as e:
-                logger.error(f'Error getting data for {symbol}: {e}')
+                logger.error(f'Error getting analysis data for {symbol}: {e}')
         
         return jsonify({
             'success': True,
@@ -172,7 +253,7 @@ def get_watchlist():
         })
         
     except Exception as e:
-        logger.error(f'Error getting watchlist: {e}')
+        logger.error(f'Error getting analysis watchlist: {e}')
         return jsonify({'success': False, 'error': str(e)}), 500
 
 # Create database tables

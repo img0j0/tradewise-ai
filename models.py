@@ -12,26 +12,12 @@ class User(UserMixin, db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     last_login = db.Column(db.DateTime)
     
-    # Premium subscription fields
-    subscription_type = db.Column(db.String(20), default='free')  # 'free', 'pro', 'elite'
-    subscription_expires = db.Column(db.DateTime, nullable=True)
-    subscription_created = db.Column(db.DateTime, nullable=True)
+    # Analysis preferences
+    preferred_sectors = db.Column(db.Text)  # JSON string of preferred sectors
+    analysis_settings = db.Column(db.Text)  # JSON string of user analysis preferences
     
-    # Institutional subscription fields
-    subscription_tier = db.Column(db.String(20), default='Free')  # Free, Pro, Elite, Institutional
-    subscription_start_date = db.Column(db.DateTime, nullable=True)
-    subscription_end_date = db.Column(db.DateTime, nullable=True)
-    subscription_status = db.Column(db.String(20), default='active')  # active, expired, cancelled
-    
-    # Watchlist data stored as JSON
+    # Watchlist data stored as JSON for stock analysis tracking
     watchlists = db.Column(db.Text)
-    
-    # Relationships
-    user_account = db.relationship('UserAccount', backref='user', uselist=False, cascade='all, delete-orphan')
-    trades = db.relationship('Trade', backref='user', lazy='dynamic', cascade='all, delete-orphan')
-    portfolio = db.relationship('Portfolio', backref='user', lazy='dynamic', cascade='all, delete-orphan')
-    alerts = db.relationship('Alert', backref='user', lazy='dynamic', cascade='all, delete-orphan')
-    transactions = db.relationship('Transaction', backref='user', lazy='dynamic', cascade='all, delete-orphan')
     
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -48,116 +34,49 @@ class User(UserMixin, db.Model):
             'last_login': self.last_login.isoformat() if self.last_login else None
         }
 
-class Trade(db.Model):
+class StockAnalysis(db.Model):
+    """Store historical stock analysis results for comparison and tracking"""
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    symbol = db.Column(db.String(10), nullable=False)
-    action = db.Column(db.String(10), nullable=False)  # 'buy' or 'sell'
-    quantity = db.Column(db.Integer, nullable=False)
-    price = db.Column(db.Float, nullable=False)
+    symbol = db.Column(db.String(10), nullable=False, index=True)
+    analysis_date = db.Column(db.DateTime, default=datetime.utcnow)
+    price_at_analysis = db.Column(db.Float, nullable=False)
+    
+    # AI Analysis Results
+    recommendation = db.Column(db.String(10), nullable=False)  # BUY, SELL, HOLD
     confidence_score = db.Column(db.Float, nullable=False)
-    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
-    is_simulated = db.Column(db.Boolean, default=True)
-    profit_loss = db.Column(db.Float, default=0.0)
+    fundamental_score = db.Column(db.Float, nullable=False)
+    technical_score = db.Column(db.Float, nullable=False)
+    risk_level = db.Column(db.String(20), nullable=False)
+    
+    # Analysis Details (stored as JSON)
+    analysis_details = db.Column(db.Text)  # JSON string with detailed analysis
+    market_conditions = db.Column(db.Text)  # JSON string with market context
     
     def to_dict(self):
         return {
             'id': self.id,
             'symbol': self.symbol,
-            'action': self.action,
-            'quantity': self.quantity,
-            'price': self.price,
+            'analysis_date': self.analysis_date.isoformat(),
+            'price_at_analysis': self.price_at_analysis,
+            'recommendation': self.recommendation,
             'confidence_score': self.confidence_score,
-            'timestamp': self.timestamp.isoformat(),
-            'is_simulated': self.is_simulated,
-            'profit_loss': self.profit_loss
+            'fundamental_score': self.fundamental_score,
+            'technical_score': self.technical_score,
+            'risk_level': self.risk_level
         }
 
-class Portfolio(db.Model):
+class WatchlistItem(db.Model):
+    """Simple watchlist for tracking stocks of interest"""
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    symbol = db.Column(db.String(10), nullable=False)
-    quantity = db.Column(db.Integer, nullable=False)
-    avg_price = db.Column(db.Float, nullable=False)
-    
-    @property
-    def average_price(self):
-        """Alias for avg_price to fix portfolio analytics error"""
-        return self.avg_price
-    last_updated = db.Column(db.DateTime, default=datetime.utcnow)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)  # Optional user association
+    symbol = db.Column(db.String(10), nullable=False, index=True)
+    added_date = db.Column(db.DateTime, default=datetime.utcnow)
+    notes = db.Column(db.Text)  # User notes about why they're watching this stock
     
     def to_dict(self):
         return {
             'id': self.id,
             'symbol': self.symbol,
-            'quantity': self.quantity,
-            'avg_price': self.avg_price,
-            'last_updated': self.last_updated.isoformat()
-        }
-
-class Alert(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    symbol = db.Column(db.String(10), nullable=False)
-    alert_type = db.Column(db.String(20), nullable=False)  # 'buy', 'sell', 'watch'
-    message = db.Column(db.Text, nullable=False)
-    confidence_score = db.Column(db.Float, nullable=False)
-    is_active = db.Column(db.Boolean, default=True)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'symbol': self.symbol,
-            'alert_type': self.alert_type,
-            'message': self.message,
-            'confidence_score': self.confidence_score,
-            'is_active': self.is_active,
-            'created_at': self.created_at.isoformat()
-        }
-
-class UserAccount(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False, unique=True)
-    balance = db.Column(db.Float, default=0.0)
-    total_deposited = db.Column(db.Float, default=0.0)
-    total_withdrawn = db.Column(db.Float, default=0.0)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'user_id': self.user_id,
-            'balance': self.balance,
-            'total_deposited': self.total_deposited,
-            'total_withdrawn': self.total_withdrawn,
-            'created_at': self.created_at.isoformat(),
-            'updated_at': self.updated_at.isoformat()
-        }
-
-class Transaction(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    transaction_type = db.Column(db.String(20), nullable=False)  # 'deposit', 'withdrawal', 'stock_purchase', 'stock_sale'
-    amount = db.Column(db.Float, nullable=False)
-    symbol = db.Column(db.String(10), nullable=True)  # For stock transactions
-    quantity = db.Column(db.Integer, nullable=True)  # For stock transactions
-    price_per_share = db.Column(db.Float, nullable=True)  # For stock transactions
-    stripe_payment_intent_id = db.Column(db.String(255), nullable=True)
-    status = db.Column(db.String(20), default='pending')  # 'pending', 'completed', 'failed'
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'user_id': self.user_id,
-            'transaction_type': self.transaction_type,
-            'amount': self.amount,
-            'symbol': self.symbol,
-            'quantity': self.quantity,
-            'price_per_share': self.price_per_share,
-            'stripe_payment_intent_id': self.stripe_payment_intent_id,
-            'status': self.status,
-            'created_at': self.created_at.isoformat()
+            'added_date': self.added_date.isoformat(),
+            'notes': self.notes
         }
