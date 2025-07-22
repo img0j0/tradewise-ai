@@ -507,6 +507,14 @@ def create_smart_alert():
         symbol = data.get('symbol', '').upper()
         alert_configs = data.get('alert_configs', [])
         
+        # Handle single alert creation
+        if not alert_configs and 'condition' in data and 'target_value' in data:
+            alert_configs = [{
+                'condition': data['condition'],
+                'value': float(data['target_value']),
+                'title': f"{symbol} {data['condition']} alert"
+            }]
+        
         if not symbol or not alert_configs:
             return jsonify({'success': False, 'error': 'Symbol and alert configurations required'}), 400
         
