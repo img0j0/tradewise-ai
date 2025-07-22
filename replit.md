@@ -23,6 +23,7 @@ TradeWise AI is a sophisticated stock analysis platform that provides AI-powered
 - **Premium Tier Architecture**: Designed and implemented $10/month premium subscription tier with institutional-grade features including AI portfolio optimization, unlimited smart alerts, market scanner, DCF calculator, 10-year historical data, real-time market data, global markets access, and earnings predictions
 - **Premium Feature Development**: Created comprehensive premium features module with portfolio risk analysis, diversification scoring, AI market scanning, and earnings prediction engine
 - **Subscription Model**: Added User model enhancements for subscription tracking, premium access control decorators, and demo upgrade functionality for testing
+- **Account Interface Cleanup**: Removed redundant upgrade button from account overview page since premium upgrade is now integrated into main tools dropdown menu
 
 ## User Preferences
 
