@@ -71,19 +71,23 @@ with app.app_context():
     # Register blueprints after database setup
     from routes import main_bp
     from premium_routes import premium_bp
+    from comprehensive_endpoints import comprehensive_bp
     
     app.register_blueprint(main_bp)
     app.register_blueprint(premium_bp)
+    app.register_blueprint(comprehensive_bp)
     
     # Global error handlers for professional error pages
     @app.errorhandler(404)
     def page_not_found(error):
         """Custom 404 error page"""
+        from flask import render_template
         return render_template('error_404.html'), 404
 
     @app.errorhandler(500)
     def internal_server_error(error):
         """Custom 500 error page"""
+        from flask import render_template
         db.session.rollback()
         return render_template('error_500.html'), 500
 

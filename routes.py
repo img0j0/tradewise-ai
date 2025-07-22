@@ -7,6 +7,8 @@ from models import User, StockAnalysis, WatchlistItem
 from ai_insights import AIInsightsEngine
 from data_service import DataService
 from stock_search import StockSearchService
+from preference_engine import preference_engine
+from realtime_data_engine import realtime_engine
 import yfinance as yf
 import logging
 import json
@@ -174,7 +176,14 @@ def stock_analysis_api():
         
         # Get comprehensive AI analysis insights
         ai_engine = AIInsightsEngine()
-        insights = ai_engine.get_insights(query.upper(), stock_data)
+        base_insights = ai_engine.get_insights(query.upper(), stock_data)
+        
+        # Apply user preferences to personalize analysis
+        insights = preference_engine.get_personalized_analysis(query.upper(), base_insights)
+        
+        # Format data according to user display preferences
+        user_preferences = preference_engine.get_user_preferences()
+        stock_data = preference_engine.format_display_data(stock_data, user_preferences)
         
         # Save analysis to history for tracking and comparison
         save_analysis_to_history(query.upper(), stock_data, insights)
@@ -803,6 +812,138 @@ def get_performance_analytics():
             'success': False,
             'error': 'Performance analytics temporarily unavailable'
         }), 500
+
+@main_bp.route('/api/preferences', methods=['GET', 'POST'])
+def user_preferences():
+    """Get or update user preferences"""
+    try:
+        if request.method == 'GET':
+            preferences = preference_engine.get_user_preferences()
+            return jsonify({
+                'success': True,
+                'preferences': preferences
+            })
+        
+        elif request.method == 'POST':
+            data = request.get_json()
+            preferences = data.get('preferences', {})
+            
+            # Validate preference values
+            valid_risk_levels = ['conservative', 'moderate', 'aggressive']
+            valid_time_horizons = ['short', 'medium', 'long']
+            valid_currencies = ['USD', 'EUR', 'GBP']
+            
+            if preferences.get('risk_tolerance') not in valid_risk_levels:
+                return jsonify({'error': 'Invalid risk tolerance level'}), 400
+                
+            if preferences.get('time_horizon') not in valid_time_horizons:
+                return jsonify({'error': 'Invalid time horizon'}), 400
+                
+            if preferences.get('display_currency') not in valid_currencies:
+                return jsonify({'error': 'Invalid currency'}), 400
+            
+            # Save preferences
+            success = preference_engine.save_user_preferences(preferences)
+            
+            if success:
+                return jsonify({
+                    'success': True,
+                    'message': 'Preferences updated successfully'
+                })
+            else:
+                return jsonify({'error': 'Failed to save preferences'}), 500
+                
+    except Exception as e:
+        logger.error(f'Error handling preferences: {e}')
+        return jsonify({'error': 'Preference operation failed'}), 500
+
+@main_bp.route('/api/market/overview')
+def market_overview():
+    """Get real-time market overview"""
+    try:
+        overview = realtime_engine.get_market_overview()
+        if overview:
+            return jsonify({
+                'success': True,
+                'data': overview
+            })
+        else:
+            return jsonify({'error': 'Failed to fetch market data'}), 500
+    except Exception as e:
+        logger.error(f'Error fetching market overview: {e}')
+        return jsonify({'error': 'Market overview failed'}), 500
+
+@main_bp.route('/api/market/movers')
+def market_movers():
+    """Get real-time market movers"""
+    try:
+        movers = realtime_engine.get_market_movers()
+        if movers:
+            return jsonify({
+                'success': True,
+                'data': movers
+            })
+        else:
+            return jsonify({'error': 'Failed to fetch movers data'}), 500
+    except Exception as e:
+        logger.error(f'Error fetching market movers: {e}')
+        return jsonify({'error': 'Market movers failed'}), 500
+
+@main_bp.route('/api/market/sectors')
+def sector_performance():
+    """Get real-time sector performance"""
+    try:
+        sectors = realtime_engine.get_sector_performance()
+        if sectors:
+            return jsonify({
+                'success': True,
+                'data': sectors
+            })
+        else:
+            return jsonify({'error': 'Failed to fetch sector data'}), 500
+    except Exception as e:
+        logger.error(f'Error fetching sector performance: {e}')
+        return jsonify({'error': 'Sector performance failed'}), 500
+
+@main_bp.route('/api/realtime/subscribe', methods=['POST'])
+def subscribe_realtime():
+    """Subscribe to real-time data for a symbol"""
+    try:
+        data = request.get_json()
+        symbol = data.get('symbol', '').upper()
+        
+        if not symbol:
+            return jsonify({'error': 'Symbol required'}), 400
+        
+        realtime_engine.subscribe_to_symbol(symbol)
+        return jsonify({
+            'success': True,
+            'message': f'Subscribed to {symbol}',
+            'symbol': symbol
+        })
+    except Exception as e:
+        logger.error(f'Error subscribing to real-time data: {e}')
+        return jsonify({'error': 'Subscription failed'}), 500
+
+@main_bp.route('/api/realtime/unsubscribe', methods=['POST'])
+def unsubscribe_realtime():
+    """Unsubscribe from real-time data for a symbol"""
+    try:
+        data = request.get_json()
+        symbol = data.get('symbol', '').upper()
+        
+        if not symbol:
+            return jsonify({'error': 'Symbol required'}), 400
+        
+        realtime_engine.unsubscribe_from_symbol(symbol)
+        return jsonify({
+            'success': True,
+            'message': f'Unsubscribed from {symbol}',
+            'symbol': symbol
+        })
+    except Exception as e:
+        logger.error(f'Error unsubscribing from real-time data: {e}')
+        return jsonify({'error': 'Unsubscribe failed'}), 500
 
 @main_bp.route('/api/alerts/active')
 def get_active_alerts():
