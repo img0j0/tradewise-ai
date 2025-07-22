@@ -2115,9 +2115,14 @@
                             <div style="opacity: 0.7; margin-bottom: 10px; font-size: 0.9rem;">${stock.name}</div>
                             <div style="font-size: 1.3rem; font-weight: 700; color: ${changeColor}; margin-bottom: 5px;">$${stock.price.toFixed(2)}</div>
                             <div style="font-size: 0.9rem; color: ${changeColor};">${changeSymbol}${stock.change_percent.toFixed(2)}%</div>
-                            <button onclick="searchStock('${stock.symbol}')" style="width: 100%; margin-top: 15px; padding: 8px; background: rgba(139, 92, 246, 0.2); border: 1px solid rgba(139, 92, 246, 0.5); color: #8b5cf6; border-radius: 8px; cursor: pointer;">
-                                Analyze
-                            </button>
+                            <div style="display: flex; gap: 8px; margin-top: 15px;">
+                                <button onclick="searchStock('${stock.symbol}')" style="flex: 1; padding: 8px; background: rgba(139, 92, 246, 0.2); border: 1px solid rgba(139, 92, 246, 0.5); color: #8b5cf6; border-radius: 8px; cursor: pointer;">
+                                    🔍 Analyze
+                                </button>
+                                <button onclick="removeFromWatchlist('${stock.symbol}')" style="flex: 1; padding: 8px; background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.3); color: #ef4444; border-radius: 8px; cursor: pointer;">
+                                    🗑️ Remove
+                                </button>
+                            </div>
                         </div>
                     `;
                 });
