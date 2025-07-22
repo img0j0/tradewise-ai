@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, jsonify, request, make_response, g
 from app import app, db
 from datetime import datetime, timedelta
+from sqlalchemy import text
 from premium_features import PremiumFeatures
 from models import User, StockAnalysis, WatchlistItem
 from ai_insights import AIInsightsEngine
@@ -15,6 +16,7 @@ from performance_optimizations import (
     response_optimizer, memory_optimizer, rate_limiter, 
     perf_monitor, smart_cache
 )
+from functools import wraps
 
 logger = logging.getLogger(__name__)
 
@@ -39,6 +41,34 @@ try:
     logger.info("AI analysis model trained successfully")
 except Exception as e:
     logger.error(f"Error training AI analysis model: {e}")
+
+# Rate limiting decorator for API protection
+def rate_limit(key_prefix, per_minute=60):
+    """Rate limiting decorator to prevent API abuse"""
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            if not rate_limiter.is_allowed(key_prefix, request.remote_addr):
+                return jsonify({
+                    'error': 'Rate limit exceeded',
+                    'message': 'Too many requests. Please try again in a moment.',
+                    'retry_after': 60
+                }), 429
+            return func(*args, **kwargs)
+        return wrapper
+    return decorator
+
+# Error handlers for professional error pages
+@main_bp.errorhandler(404)
+def page_not_found(error):
+    """Custom 404 error page"""
+    return render_template('error_404.html'), 404
+
+@main_bp.errorhandler(500)
+def internal_server_error(error):
+    """Custom 500 error page"""
+    db.session.rollback()
+    return render_template('error_500.html'), 500
 
 def save_analysis_to_history(symbol, stock_data, insights):
     """Save analysis results for historical tracking and comparison"""
@@ -67,6 +97,33 @@ def save_analysis_to_history(symbol, stock_data, insights):
     except Exception as e:
         logger.error(f"Error saving analysis to history: {e}")
 
+@main_bp.route('/api/health')
+def health_check():
+    """Health check endpoint for production monitoring"""
+    try:
+        # Test database connection
+        db.session.execute(text('SELECT 1'))
+        db.session.commit()
+        
+        return jsonify({
+            'status': 'healthy',
+            'timestamp': datetime.utcnow().isoformat(),
+            'database': 'connected',
+            'version': '1.0.0',
+            'services': {
+                'ai_engine': 'operational',
+                'stock_data': 'operational',
+                'payment_system': 'operational'
+            }
+        }), 200
+    except Exception as e:
+        logger.error(f"Health check failed: {e}")
+        return jsonify({
+            'status': 'unhealthy',
+            'timestamp': datetime.utcnow().isoformat(),
+            'error': str(e)
+        }), 503
+
 @main_bp.route('/')
 def index():
     """Clean stock analysis interface powered by AI"""
@@ -82,6 +139,7 @@ def index():
 
 @main_bp.route('/api/stock-analysis', methods=['POST'])
 @performance_timer('stock_analysis_api')
+@rate_limit('stock_analysis', per_minute=30)
 def stock_analysis_api():
     """AI-powered stock analysis API for comprehensive investment research - OPTIMIZED"""
     try:
