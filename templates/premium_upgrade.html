@@ -188,7 +188,7 @@
         }
         
         .back-btn {
-            position: absolute;
+            position: fixed;
             top: 2rem;
             left: 2rem;
             background: rgba(255, 255, 255, 0.2);
@@ -199,6 +199,8 @@
             text-decoration: none;
             backdrop-filter: blur(10px);
             transition: all 0.3s ease;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
         
         .back-btn:hover {
@@ -218,6 +220,13 @@
             
             .price {
                 font-size: 2rem;
+            }
+            
+            .back-btn {
+                top: 1rem;
+                left: 1rem;
+                padding: 0.4rem 0.8rem;
+                font-size: 0.9rem;
             }
         }
     </style>
