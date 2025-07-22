@@ -54,7 +54,9 @@ class SimplePersonalization:
     
     def get_user_strategy(self):
         """Get user's selected investment strategy"""
-        return session.get('investment_strategy', 'growth_investor')
+        strategy = session.get('investment_strategy', 'growth_investor')
+        logger.info(f"Retrieved user strategy from session: {strategy}")
+        return strategy
     
     def set_user_strategy(self, strategy_key):
         """Set user's investment strategy"""
@@ -63,9 +65,11 @@ class SimplePersonalization:
             session.permanent = True
             # Force session modification flag
             session.modified = True
-            logger.info(f"User strategy set to: {strategy_key}")
+            logger.info(f"User strategy set to: {strategy_key} (session: {session.get('investment_strategy')})")
             return True
-        return False
+        else:
+            logger.warning(f"Invalid strategy key: {strategy_key}")
+            return False
     
     def get_available_strategies(self):
         """Get all available investment strategies for UI"""

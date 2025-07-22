@@ -140,6 +140,15 @@ def index():
         logger.error(f"Error loading analysis interface: {e}")
         return jsonify({'error': 'Analysis interface loading error'}), 500
 
+@main_bp.route('/strategy-demo')
+def strategy_demo():
+    """Demo page for investment strategy personalization"""
+    try:
+        return render_template('strategy_selector.html')
+    except Exception as e:
+        logger.error(f"Error loading strategy demo: {e}")
+        return jsonify({'error': 'Strategy demo page error'}), 500
+
 @main_bp.route('/api/stock-analysis', methods=['POST'])
 @performance_timer('stock_analysis_api')
 @rate_limit('stock_analysis', per_minute=30)
