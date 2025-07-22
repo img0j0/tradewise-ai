@@ -48,9 +48,6 @@ class PaymentProcessor:
                 mode='subscription',
                 success_url=f'{self.domain}/premium/success?session_id={{CHECKOUT_SESSION_ID}}',
                 cancel_url=f'{self.domain}/premium/upgrade?canceled=true',
-                automatic_tax={'enabled': True},
-                billing_address_collection='required',
-                customer_creation='always',
                 metadata={
                     'subscription_type': 'premium',
                     'features': 'ai_portfolio_optimizer,market_scanner,dcf_calculator,earnings_predictor,unlimited_alerts'

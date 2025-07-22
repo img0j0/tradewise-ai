@@ -1,4 +1,4 @@
-from flask import render_template, jsonify, request, make_response, g
+from flask import Blueprint, render_template, jsonify, request, make_response, g
 from app import app, db
 from datetime import datetime, timedelta
 from premium_features import PremiumFeatures
@@ -22,6 +22,9 @@ logger = logging.getLogger(__name__)
 data_service = DataService()
 ai_engine = AIInsightsEngine()
 stock_search_service = StockSearchService()
+
+# Create main blueprint
+main_bp = Blueprint('main', __name__)
 
 # Initialize performance optimizations
 init_performance_optimizations(app)
@@ -64,7 +67,7 @@ def save_analysis_to_history(symbol, stock_data, insights):
     except Exception as e:
         logger.error(f"Error saving analysis to history: {e}")
 
-@app.route('/')
+@main_bp.route('/')
 def index():
     """Clean stock analysis interface powered by AI"""
     try:
@@ -77,7 +80,7 @@ def index():
         logger.error(f"Error loading analysis interface: {e}")
         return jsonify({'error': 'Analysis interface loading error'}), 500
 
-@app.route('/api/stock-analysis', methods=['POST'])
+@main_bp.route('/api/stock-analysis', methods=['POST'])
 @performance_timer('stock_analysis_api')
 def stock_analysis_api():
     """AI-powered stock analysis API for comprehensive investment research - OPTIMIZED"""
@@ -180,7 +183,7 @@ def stock_analysis_api():
             'analysis': f'Unable to analyze {request.args.get("query", "stock")} - analysis service temporarily unavailable'
         }), 500
 
-@app.route('/api/analysis-history/<symbol>')
+@main_bp.route('/api/analysis-history/<symbol>')
 def get_analysis_history(symbol):
     """Get historical analysis data for a stock"""
     try:
@@ -208,7 +211,7 @@ def get_analysis_history(symbol):
         logger.error(f'Error getting analysis history for {symbol}: {e}')
         return jsonify({'success': False, 'error': str(e)}), 500
 
-@app.route('/api/watchlist/add', methods=['POST'])
+@main_bp.route('/api/watchlist/add', methods=['POST'])
 @performance_timer('watchlist_add')
 def add_to_analysis_watchlist():
     """Add stock to analysis watchlist for tracking - OPTIMIZED"""
@@ -243,7 +246,7 @@ def add_to_analysis_watchlist():
         logger.error(f'Error adding to analysis watchlist: {e}')
         return jsonify({'success': False, 'error': str(e)}), 500
 
-@app.route('/api/watchlist')
+@main_bp.route('/api/watchlist')
 def get_watchlist():
     """Get watchlist with current data and AI insights"""
     try:
@@ -252,7 +255,7 @@ def get_watchlist():
         logger.error(f'Error in watchlist endpoint: {e}')
         return jsonify({'success': False, 'error': str(e)}), 500
 
-@app.route('/api/analysis-watchlist')
+@main_bp.route('/api/analysis-watchlist')
 @performance_timer('analysis_watchlist_get')
 def get_analysis_watchlist():
     """Get analysis watchlist with current data and latest analysis results - OPTIMIZED with caching"""
@@ -359,7 +362,7 @@ def get_analysis_watchlist():
         logger.error(f'Error getting analysis watchlist: {e}')
         return jsonify({'success': False, 'error': str(e)}), 500
 
-@app.route('/api/portfolio')
+@main_bp.route('/api/portfolio')
 def get_portfolio():
     """Get portfolio data with AI performance insights"""
     try:
@@ -423,7 +426,7 @@ def get_portfolio():
         logger.error(f'Error getting portfolio: {e}')
         return jsonify({'success': False, 'error': str(e)}), 500
 
-@app.route('/api/watchlist/remove', methods=['POST'])
+@main_bp.route('/api/watchlist/remove', methods=['POST'])
 def remove_from_watchlist():
     """Remove stock from watchlist"""
     try:
@@ -449,7 +452,7 @@ def remove_from_watchlist():
         logger.error(f'Error removing from watchlist: {e}')
         return jsonify({'success': False, 'error': str(e)}), 500
 
-@app.route('/api/alerts/suggestions/<symbol>')
+@main_bp.route('/api/alerts/suggestions/<symbol>')
 def get_alert_suggestions(symbol):
     """Get smart alert suggestions for a stock symbol"""
     try:
@@ -517,7 +520,7 @@ def get_alert_suggestions(symbol):
         logger.error(f'Error getting alert suggestions for {symbol}: {e}')
         return jsonify({'success': False, 'error': str(e)}), 500
 
-@app.route('/api/alerts/create', methods=['POST'])
+@main_bp.route('/api/alerts/create', methods=['POST'])
 def create_alert():
     """Create a new price or technical alert for a stock"""
     try:
@@ -552,7 +555,7 @@ def create_alert():
         logger.error(f'Error creating alert: {e}')
         return jsonify({'success': False, 'error': str(e)}), 500
 
-@app.route('/api/alerts/create-smart', methods=['POST'])
+@main_bp.route('/api/alerts/create-smart', methods=['POST'])
 def create_smart_alert():
     """Create smart alerts from AI suggestions"""
     try:
@@ -633,7 +636,7 @@ def create_smart_alert():
 created_alerts = []
 deleted_demo_alerts = set()  # Track deleted demo alert IDs
 
-@app.route('/api/market-intelligence')
+@main_bp.route('/api/market-intelligence')
 def get_market_intelligence():
     """Get AI-powered market intelligence and insights"""
     try:
@@ -686,7 +689,7 @@ def get_market_intelligence():
             'error': 'Market intelligence temporarily unavailable'
         }), 500
 
-@app.route('/api/performance-analytics')
+@main_bp.route('/api/performance-analytics')
 def get_performance_analytics():
     """Get AI-powered performance analytics"""
     try:
@@ -743,7 +746,7 @@ def get_performance_analytics():
             'error': 'Performance analytics temporarily unavailable'
         }), 500
 
-@app.route('/api/alerts/active')
+@main_bp.route('/api/alerts/active')
 def get_active_alerts():
     """Get all active alerts for the user"""
     try:
@@ -896,7 +899,7 @@ def get_active_alerts():
         logger.error(f'Error getting active alerts: {e}')
         return jsonify({'success': False, 'error': str(e)}), 500
 
-@app.route('/api/alerts/<alert_id>/delete', methods=['DELETE'])
+@main_bp.route('/api/alerts/<alert_id>/delete', methods=['DELETE'])
 def delete_alert(alert_id):
     """Delete a specific alert"""
     try:
@@ -928,12 +931,12 @@ def delete_alert(alert_id):
         return jsonify({'success': False, 'error': str(e)}), 500
 
 # Premium Routes
-@app.route('/premium/upgrade')
+@main_bp.route('/premium/upgrade')
 def premium_upgrade():
     """Premium upgrade page"""
     return render_template('premium_upgrade.html')
 
-@app.route('/premium/api/subscription/demo-upgrade', methods=['POST'])
+@main_bp.route('/premium/api/subscription/demo-upgrade', methods=['POST'])
 def demo_upgrade():
     """Demo upgrade for testing (in production, integrate with Stripe)"""
     try:
@@ -952,7 +955,7 @@ def demo_upgrade():
     except Exception as e:
         return jsonify({'success': False, 'error': 'Upgrade failed'}), 500
 
-@app.route('/premium/api/portfolio/optimization')
+@main_bp.route('/premium/api/portfolio/optimization')
 def portfolio_optimization():
     """Premium API: Portfolio optimization suggestions"""
     try:
@@ -969,7 +972,7 @@ def portfolio_optimization():
     except Exception as e:
         return jsonify({'success': False, 'error': 'Portfolio optimization failed'}), 500
 
-@app.route('/premium/api/market/scanner')  
+@main_bp.route('/premium/api/market/scanner')  
 def ai_market_scanner():
     """Premium API: AI Market Scanner"""
     try:
@@ -984,7 +987,7 @@ def ai_market_scanner():
         return jsonify({'success': False, 'error': 'Market scanner failed'}), 500
 
 # Performance monitoring and optimization endpoints
-@app.route('/api/performance/metrics')
+@main_bp.route('/api/performance/metrics')
 @performance_timer('performance_metrics')
 def performance_metrics():
     """Get comprehensive performance statistics for TradeWise AI"""
@@ -1018,7 +1021,7 @@ def performance_metrics():
         logger.error(f'Error getting performance stats: {e}')
         return jsonify({'error': str(e)}), 500
 
-@app.route('/api/performance/clear-cache')
+@main_bp.route('/api/performance/clear-cache')
 def clear_performance_cache():
     """Clear application cache for testing performance improvements"""
     try:

@@ -62,7 +62,18 @@ def load_user(user_id):
     from models import User
     return User.query.get(int(user_id))
 
-# Don't import at module level to avoid circular imports
+# Register blueprints
+with app.app_context():
+    # Make sure to import the models here or their tables won't be created
+    import models  # noqa: F401
+    db.create_all()
+    
+    # Register blueprints after database setup
+    from routes import main_bp
+    from premium_routes import premium_bp
+    
+    app.register_blueprint(main_bp)
+    app.register_blueprint(premium_bp)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
