@@ -1,4 +1,4 @@
-from flask import render_template, jsonify, request, make_response
+from flask import render_template, jsonify, request, make_response, g
 from app import app, db
 from datetime import datetime, timedelta
 from premium_features import PremiumFeatures
@@ -9,14 +9,22 @@ from stock_search import StockSearchService
 import yfinance as yf
 import logging
 import json
-from datetime import datetime
+import time
+from performance_optimizations import (
+    init_performance_optimizations, performance_timer, 
+    response_optimizer, memory_optimizer, rate_limiter, 
+    perf_monitor, smart_cache
+)
 
 logger = logging.getLogger(__name__)
 
-# Initialize core services only
+# Initialize core services and performance optimizations
 data_service = DataService()
 ai_engine = AIInsightsEngine()
 stock_search_service = StockSearchService()
+
+# Initialize performance optimizations
+init_performance_optimizations(app)
 
 # Simple demo watchlist for stock analysis tracking
 demo_watchlist = set(['AAPL', 'TSLA', 'GOOGL', 'MSFT', 'NVDA'])
@@ -70,20 +78,32 @@ def index():
         return jsonify({'error': 'Analysis interface loading error'}), 500
 
 @app.route('/api/stock-analysis', methods=['POST'])
+@performance_timer('stock_analysis_api')
 def stock_analysis_api():
-    """AI-powered stock analysis API for comprehensive investment research"""
+    """AI-powered stock analysis API for comprehensive investment research - OPTIMIZED"""
     try:
+        # Rate limiting
+        if not rate_limiter.is_allowed('stock_data', request.remote_addr):
+            return jsonify({'success': False, 'error': 'Rate limit exceeded. Please try again later.'}), 429
+        
         data = request.get_json()
         query = data.get('query', '').strip()
         
         if not query:
             return jsonify({'error': 'Query parameter required'}), 400
         
-        # Use existing stock search service for real-time data
-        stock_service = StockSearchService()
+        # Try cached data first for better performance
+        symbol = query.upper()
+        cached_stock_data = None
+        if smart_cache:
+            cached_stock_data = smart_cache.get_stock_data(symbol, use_cache=True)
         
-        # Get real-time stock data
-        stock_data = stock_service.search_stock(query)
+        if cached_stock_data:
+            stock_data = cached_stock_data
+        else:
+            # Use existing stock search service for real-time data
+            stock_service = StockSearchService()
+            stock_data = stock_service.search_stock(query)
         
         if not stock_data:
             return jsonify({
@@ -98,7 +118,7 @@ def stock_analysis_api():
         # Save analysis to history for tracking and comparison
         save_analysis_to_history(query.upper(), stock_data, insights)
         
-        # Build comprehensive analysis response
+        # Build comprehensive analysis response with optimizations
         response = {
             'success': True,
             'symbol': stock_data.get('symbol', query.upper()),
@@ -108,7 +128,7 @@ def stock_analysis_api():
             'change_percent': float(stock_data.get('price_change_percent', 0)),
             'market_cap': float(stock_data.get('market_cap', 0)) if stock_data.get('market_cap') else 0,
             'pe_ratio': stock_data.get('pe_ratio'),
-            'data_source': 'Yahoo Finance (Real-time)',
+            'data_source': 'Yahoo Finance (Real-time - Cached)' if cached_stock_data else 'Yahoo Finance (Real-time)',
             
             # AI Analysis Results
             'recommendation': insights.get('recommendation', 'HOLD'),
@@ -146,8 +166,11 @@ def stock_analysis_api():
             ]
         }
         
+        # Optimize response size for better performance
+        optimized_response = response_optimizer.compress_response(response)
+        
         logger.info(f"Stock analysis successful for {query}: {response['symbol']} at ${response['price']} - {response['recommendation']}")
-        return jsonify(response)
+        return jsonify(optimized_response)
         
     except Exception as e:
         logger.error(f'Error in stock_analysis_api: {e}')
@@ -186,9 +209,13 @@ def get_analysis_history(symbol):
         return jsonify({'success': False, 'error': str(e)}), 500
 
 @app.route('/api/watchlist/add', methods=['POST'])
+@performance_timer('watchlist_add')
 def add_to_analysis_watchlist():
-    """Add stock to analysis watchlist for tracking"""
+    """Add stock to analysis watchlist for tracking - OPTIMIZED"""
     try:
+        # Rate limiting
+        if not rate_limiter.is_allowed('alerts', request.remote_addr):
+            return jsonify({'success': False, 'error': 'Rate limit exceeded'}), 429
         data = request.get_json()
         symbol = data.get('symbol', '').upper()
         notes = data.get('notes', '')
@@ -226,14 +253,32 @@ def get_watchlist():
         return jsonify({'success': False, 'error': str(e)}), 500
 
 @app.route('/api/analysis-watchlist')
+@performance_timer('analysis_watchlist_get')
 def get_analysis_watchlist():
-    """Get analysis watchlist with current data and latest analysis results"""
+    """Get analysis watchlist with current data and latest analysis results - OPTIMIZED with caching"""
     try:
+        # Use cached watchlist data for better performance
+        cache_key = 'analysis_watchlist_data'
+        cached_data = None
+        
+        if smart_cache:
+            cached_data = smart_cache.cache.get(cache_key)
+        
+        if cached_data:
+            return jsonify(cached_data)
+        
+        # Fetch fresh data if not cached
         watchlist_data = []
         
         for symbol in demo_watchlist:
             try:
-                stock_data = stock_search_service.search_stock(symbol)
+                # Use cached stock data if available
+                stock_data = None
+                if smart_cache:
+                    stock_data = smart_cache.get_stock_data(symbol, use_cache=True)
+                
+                if not stock_data:
+                    stock_data = stock_search_service.search_stock(symbol)
                 latest_analysis = StockAnalysis.query.filter_by(symbol=symbol).order_by(StockAnalysis.analysis_date.desc()).first()
                 
                 if stock_data:
@@ -298,10 +343,17 @@ def get_analysis_watchlist():
             except Exception as e:
                 logger.error(f'Error getting analysis data for {symbol}: {e}')
         
-        return jsonify({
-            'success': True,
-            'watchlist': watchlist_data
-        })
+        # Optimize and cache the response
+        response_data = {'success': True, 'watchlist': watchlist_data}
+        
+        # Cache for 2 minutes
+        if smart_cache:
+            smart_cache.cache.set(cache_key, response_data, timeout=120)
+        
+        # Optimize response for mobile
+        optimized_response = response_optimizer.compress_response(response_data)
+        
+        return jsonify(optimized_response)
         
     except Exception as e:
         logger.error(f'Error getting analysis watchlist: {e}')
@@ -930,6 +982,52 @@ def ai_market_scanner():
         
     except Exception as e:
         return jsonify({'success': False, 'error': 'Market scanner failed'}), 500
+
+# Performance monitoring and optimization endpoints
+@app.route('/api/performance/metrics')
+@performance_timer('performance_metrics')
+def performance_metrics():
+    """Get comprehensive performance statistics for TradeWise AI"""
+    try:
+        stats = {
+            'avg_response_time': f"{perf_monitor.get_avg_response_time():.3f}s",
+            'performance_breakdown': perf_monitor.get_performance_stats(),
+            'optimization_status': {
+                'smart_caching': smart_cache is not None,
+                'response_compression': True,
+                'rate_limiting': True,
+                'memory_optimization': True,
+                'batch_operations': True
+            },
+            'system_metrics': {
+                'total_requests': len(perf_monitor.request_times),
+                'cache_enabled': 'Yes' if smart_cache else 'No',
+                'optimization_level': 'High Performance',
+                'platform_status': 'Optimized'
+            },
+            'performance_features': [
+                '⚡ Smart API Caching (5-min stock data cache)',
+                '🗜️ Response Compression for large datasets',
+                '🛡️ Rate limiting protection',
+                '💾 Memory-optimized data structures',
+                '📊 Real-time performance monitoring'
+            ]
+        }
+        return jsonify(stats)
+    except Exception as e:
+        logger.error(f'Error getting performance stats: {e}')
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/performance/clear-cache')
+def clear_performance_cache():
+    """Clear application cache for testing performance improvements"""
+    try:
+        if smart_cache:
+            smart_cache.cache.clear()
+        return jsonify({'success': True, 'message': 'Performance cache cleared successfully'})
+    except Exception as e:
+        logger.error(f'Error clearing cache: {e}')
+        return jsonify({'success': False, 'error': str(e)}), 500
 
 # Create database tables
 with app.app_context():
