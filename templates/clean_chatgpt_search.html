@@ -1073,7 +1073,10 @@
             document.addEventListener('click', function(e) {
                 if (!e.target.closest('.search-box')) {
                     hideSmartSuggestions();
-                    hideQuickActions();
+                    // Only hide quick actions if not clicking analysis overlay or tools
+                    if (!e.target.closest('.analysis-overlay') && !e.target.closest('.tools-menu')) {
+                        hideQuickActions();
+                    }
                 }
             });
         }
@@ -1145,6 +1148,17 @@
         
         function hideQuickActions() {
             document.getElementById('quickActions').classList.remove('show');
+        }
+        
+        // Function to ensure quick actions are shown when appropriate
+        function ensureQuickActionsVisible() {
+            const overlay = document.getElementById('analysis-overlay');
+            const isOverlayVisible = overlay && overlay.style.display === 'flex';
+            
+            // Only show quick actions if no overlay is currently visible
+            if (!isOverlayVisible) {
+                showQuickActions();
+            }
         }
         
         function updateMarketStatus() {
@@ -1427,6 +1441,11 @@
         
         function closeAnalysis() {
             document.getElementById('analysis-overlay').style.display = 'none';
+            document.body.style.overflow = 'auto';
+            // Show quick actions when returning to main page
+            setTimeout(() => {
+                showQuickActions();
+            }, 300);
         }
         
         function showLoading() {
