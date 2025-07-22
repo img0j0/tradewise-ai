@@ -313,6 +313,17 @@
             text-transform: uppercase;
         }
         
+        .dropdown-section-header {
+            color: #ffd700;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin: 10px 0 5px 0;
+            padding: 0 15px;
+            opacity: 0.9;
+            letter-spacing: 0.5px;
+        }
+        
         .tool-btn {
             width: 50px;
             height: 50px;
@@ -953,6 +964,7 @@
                     🛠️
                 </button>
                 <div class="dropdown-menu" id="toolsDropdown">
+                    <!-- Essential Tools -->
                     <div class="dropdown-item" onclick="showPortfolio()">
                         <span class="icon">📊</span>
                         <span>My Portfolio</span>
@@ -963,40 +975,53 @@
                     </div>
                     <div class="dropdown-item" onclick="openPriceAlerts()">
                         <span class="icon">🔔</span>
-                        <span>Price Alerts</span>
+                        <span>Smart Alerts</span>
                     </div>
-                    <div class="dropdown-item" onclick="openMarketNews()">
-                        <span class="icon">📰</span>
-                        <span>Market News</span>
-                    </div>
-                    <div class="dropdown-item" onclick="openPerformance()">
-                        <span class="icon">📈</span>
-                        <span>Performance Analysis</span>
-                    </div>
-                    <div style="border-top: 1px solid rgba(255,215,0,0.3); margin: 8px 0;"></div>
+                    
+                    <!-- Premium AI Tools Section -->
+                    <div class="dropdown-section-header">Premium AI Tools</div>
                     <div class="dropdown-item premium-feature" onclick="openAIPortfolioOptimizer()">
                         <span class="icon">🚀</span>
                         <span>AI Portfolio Optimizer</span>
-                        <span class="premium-badge">PREMIUM</span>
+                        <span class="premium-badge">PRO</span>
                     </div>
                     <div class="dropdown-item premium-feature" onclick="openMarketScanner()">
-                        <span class="icon">📊</span>
-                        <span>AI Market Scanner</span>
-                        <span class="premium-badge">PREMIUM</span>
+                        <span class="icon">📡</span>
+                        <span>Market Scanner</span>
+                        <span class="premium-badge">PRO</span>
                     </div>
                     <div class="dropdown-item premium-feature" onclick="openDCFCalculator()">
                         <span class="icon">💰</span>
                         <span>DCF Calculator</span>
-                        <span class="premium-badge">PREMIUM</span>
+                        <span class="premium-badge">PRO</span>
                     </div>
-                    <div class="dropdown-item premium-feature" onclick="openEarningsPredictor()">
-                        <span class="icon">🎯</span>
-                        <span>Earnings Predictor</span>
-                        <span class="premium-badge">PREMIUM</span>
+                    
+                    <!-- More Tools (Collapsible) -->
+                    <div class="dropdown-item" onclick="toggleMoreTools()" style="background: rgba(255,255,255,0.03); border: 1px dashed rgba(255,255,255,0.15); margin: 5px 0;">
+                        <span class="icon">⋯</span>
+                        <span>More Tools</span>
+                        <span id="more-tools-arrow" style="margin-left: auto; transition: transform 0.2s; font-size: 0.8rem;">▼</span>
                     </div>
-                    <div class="dropdown-item" onclick="openAccount()">
-                        <span class="icon">👤</span>
-                        <span>Account Settings</span>
+                    
+                    <!-- Collapsible Section -->
+                    <div id="more-tools-section" style="display: none; margin-left: 10px; border-left: 1px solid rgba(255,255,255,0.1); padding-left: 10px;">
+                        <div class="dropdown-item" onclick="openMarketNews()">
+                            <span class="icon">📰</span>
+                            <span>Market News</span>
+                        </div>
+                        <div class="dropdown-item" onclick="openPerformance()">
+                            <span class="icon">📈</span>
+                            <span>Performance Analysis</span>
+                        </div>
+                        <div class="dropdown-item premium-feature" onclick="openEarningsPredictor()">
+                            <span class="icon">🎯</span>
+                            <span>Earnings Predictor</span>
+                            <span class="premium-badge">PRO</span>
+                        </div>
+                        <div class="dropdown-item" onclick="openAccount()">
+                            <span class="icon">👤</span>
+                            <span>Account Settings</span>
+                        </div>
                     </div>
                     <div style="border-top: 1px solid rgba(255,215,0,0.3); margin: 8px 0;"></div>
                     <div class="dropdown-item" onclick="window.location.href='/premium/upgrade'" style="background: linear-gradient(45deg, rgba(255, 215, 0, 0.1), rgba(255, 237, 74, 0.1)); border: 1px solid rgba(255, 215, 0, 0.2);">
@@ -4481,6 +4506,22 @@
             `;
             
             document.getElementById('analysis-results').innerHTML = content;
+        }
+        
+        // More tools toggle functionality
+        function toggleMoreTools() {
+            const moreToolsSection = document.getElementById('more-tools-section');
+            const arrow = document.getElementById('more-tools-arrow');
+            
+            if (moreToolsSection.style.display === 'none') {
+                moreToolsSection.style.display = 'block';
+                arrow.style.transform = 'rotate(180deg)';
+                arrow.textContent = '▲';
+            } else {
+                moreToolsSection.style.display = 'none';
+                arrow.style.transform = 'rotate(0deg)';
+                arrow.textContent = '▼';
+            }
         }
     </script>
     
