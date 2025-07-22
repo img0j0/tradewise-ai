@@ -6,6 +6,7 @@ Handles premium subscription and premium-only features
 from flask import Blueprint, request, jsonify, render_template, session, redirect, url_for
 from premium_features import PremiumFeatures, premium_required
 from models import User, db
+from payment_processor import payment_processor
 import logging
 import os
 from datetime import datetime, timedelta
@@ -17,7 +18,65 @@ premium_bp = Blueprint('premium', __name__, url_prefix='/premium')
 @premium_bp.route('/upgrade')
 def upgrade_page():
     """Premium upgrade page"""
-    return render_template('premium_upgrade.html')
+    canceled = request.args.get('canceled') == 'true'
+    return render_template('premium_upgrade.html', payment_canceled=canceled)
+
+@premium_bp.route('/purchase', methods=['POST'])
+def create_checkout_session():
+    """Create Stripe checkout session for premium subscription"""
+    try:
+        result = payment_processor.create_premium_subscription()
+        
+        if result['success']:
+            return jsonify({
+                'success': True,
+                'checkout_url': result['checkout_url']
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'error': result['error']
+            }), 400
+            
+    except Exception as e:
+        logging.error(f"Checkout session creation error: {str(e)}")
+        return jsonify({
+            'success': False,
+            'error': 'Payment processing error. Please try again.'
+        }), 500
+
+@premium_bp.route('/success')
+def payment_success():
+    """Handle successful payment"""
+    session_id = request.args.get('session_id')
+    
+    if not session_id:
+        return redirect(url_for('premium.upgrade_page'))
+    
+    # Verify the payment session
+    result = payment_processor.verify_session(session_id)
+    
+    if result['success']:
+        # TODO: Update user's subscription status in database
+        # user_id = session.get('user_id')
+        # if user_id:
+        #     user = User.query.get(user_id)
+        #     if user:
+        #         user.is_premium = True
+        #         user.stripe_customer_id = result['customer_id']
+        #         user.stripe_subscription_id = result['subscription_id']
+        #         db.session.commit()
+        
+        return render_template('payment_success.html', 
+                             customer_email=result.get('customer_email'),
+                             subscription_id=result.get('subscription_id'))
+    else:
+        return redirect(url_for('premium.upgrade_page', error='payment_verification_failed'))
+
+@premium_bp.route('/cancel')
+def payment_cancel():
+    """Handle canceled payment"""
+    return redirect(url_for('premium.upgrade_page', canceled='true'))
 
 @premium_bp.route('/api/portfolio/optimization')
 @premium_required
