@@ -1195,6 +1195,161 @@
             }
         }
         
+        // Portfolio Viewer Function
+        async function showPortfolio() {
+            try {
+                // Show loading state
+                showToolOverlay('My Portfolio', `
+                    <div style="text-align: center; padding: 40px;">
+                        <div class="spinner" style="margin: 0 auto 20px;"></div>
+                        <div>Loading your portfolio...</div>
+                    </div>
+                `);
+                
+                // Fetch portfolio data
+                const response = await fetch('/api/portfolio', {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    cache: 'no-cache'
+                });
+                
+                const data = await response.json();
+                
+                if (data.success && data.portfolio) {
+                    displayPortfolio(data.portfolio);
+                } else {
+                    showPortfolioError();
+                }
+            } catch (error) {
+                console.error('Error loading portfolio:', error);
+                showPortfolioError();
+            }
+        }
+        
+        function displayPortfolio(portfolio) {
+            const totalChange = portfolio.day_change;
+            const changePercent = portfolio.day_change_percent;
+            const changeColor = totalChange >= 0 ? '#10b981' : '#ef4444';
+            const changeSign = totalChange >= 0 ? '+' : '';
+            
+            let portfolioHTML = `
+                <div style="padding: 20px; max-height: 80vh; overflow-y: auto;">
+                    <h3 style="margin-bottom: 25px; text-align: center;">📊 My Portfolio</h3>
+                    
+                    <!-- Portfolio Summary -->
+                    <div style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(6, 182, 212, 0.1)); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 15px; padding: 20px; margin-bottom: 25px; text-align: center;">
+                        <div style="font-size: 2rem; font-weight: bold; color: #8b5cf6; margin-bottom: 10px;">
+                            $${portfolio.total_value.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}
+                        </div>
+                        <div style="font-size: 1.1rem; color: ${changeColor}; font-weight: 600;">
+                            ${changeSign}$${Math.abs(totalChange).toFixed(2)} (${changeSign}${changePercent.toFixed(2)}%) Today
+                        </div>
+                    </div>
+                    
+                    <!-- Performance Metrics -->
+                    <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; padding: 15px; margin-bottom: 25px;">
+                        <div style="font-weight: 600; margin-bottom: 15px; color: #8b5cf6;">📈 Performance Metrics</div>
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
+                            <div style="text-align: center;">
+                                <div style="font-size: 1.2rem; font-weight: bold; color: #10b981;">${portfolio.performance_metrics.total_return}%</div>
+                                <div style="opacity: 0.7; font-size: 0.9rem;">Total Return</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 1.2rem; font-weight: bold; color: #06b6d4;">${portfolio.performance_metrics.sharpe_ratio}</div>
+                                <div style="opacity: 0.7; font-size: 0.9rem;">Sharpe Ratio</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 1.2rem; font-weight: bold; color: #8b5cf6;">${portfolio.performance_metrics.beta}</div>
+                                <div style="opacity: 0.7; font-size: 0.9rem;">Beta</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 1.2rem; font-weight: bold; color: #f59e0b;">${portfolio.performance_metrics.alpha}%</div>
+                                <div style="opacity: 0.7; font-size: 0.9rem;">Alpha</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Holdings -->
+                    <div style="font-weight: 600; margin-bottom: 15px; color: #8b5cf6;">💼 Holdings (${portfolio.holdings.length})</div>
+            `;
+            
+            // Add each holding
+            portfolio.holdings.forEach(holding => {
+                const gainLoss = holding.unrealized_gain;
+                const gainLossPercent = holding.unrealized_gain_percent;
+                const gainColor = gainLoss >= 0 ? '#10b981' : '#ef4444';
+                const gainSign = gainLoss >= 0 ? '+' : '';
+                
+                const recColor = holding.ai_recommendation === 'BUY' ? '#10b981' : 
+                                holding.ai_recommendation === 'SELL' ? '#ef4444' : '#06b6d4';
+                
+                portfolioHTML += `
+                    <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 15px; margin-bottom: 15px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                            <div>
+                                <div style="font-weight: bold; font-size: 1.1rem;">${holding.symbol}</div>
+                                <div style="opacity: 0.8; font-size: 0.9rem;">${holding.name}</div>
+                                <div style="opacity: 0.6; font-size: 0.85rem;">${holding.shares} shares @ $${holding.cost_basis}</div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-weight: bold; font-size: 1.1rem;">$${holding.current_price}</div>
+                                <div style="font-size: 0.9rem; color: ${gainColor};">
+                                    ${gainSign}$${Math.abs(gainLoss).toFixed(2)} (${gainSign}${gainLossPercent.toFixed(2)}%)
+                                </div>
+                            </div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <span style="background: ${recColor}; color: white; padding: 4px 8px; border-radius: 6px; font-size: 0.8rem; font-weight: 600;">
+                                    ${holding.ai_recommendation}
+                                </span>
+                                <span style="margin-left: 10px; opacity: 0.7; font-size: 0.85rem;">
+                                    ${holding.ai_confidence}% Confidence
+                                </span>
+                            </div>
+                            <div style="font-weight: 600; color: #8b5cf6;">
+                                $${holding.market_value.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            portfolioHTML += `
+                    <div style="display: flex; gap: 10px; margin-top: 25px;">
+                        <button onclick="showPortfolio()" style="flex: 1; padding: 12px; background: rgba(139, 92, 246, 0.2); border: 1px solid rgba(139, 92, 246, 0.5); color: #8b5cf6; border-radius: 10px; cursor: pointer; font-weight: 600;">
+                            🔄 Refresh
+                        </button>
+                        <button onclick="closeAnalysis()" style="flex: 1; padding: 12px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 10px; cursor: pointer; font-weight: 600;">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            showToolOverlay('My Portfolio', portfolioHTML);
+        }
+        
+        function showPortfolioError() {
+            showToolOverlay('My Portfolio', `
+                <div style="text-align: center; padding: 40px;">
+                    <div style="color: #ef4444; margin-bottom: 20px; font-size: 1.2rem;">⚠️ Unable to Load Portfolio</div>
+                    <div style="opacity: 0.8; margin-bottom: 25px;">Check your connection and try again</div>
+                    <div style="display: flex; gap: 10px; justify-content: center;">
+                        <button onclick="showPortfolio()" style="padding: 10px 20px; background: linear-gradient(45deg, #8b5cf6, #06b6d4); color: white; border: none; border-radius: 10px; cursor: pointer;">
+                            Try Again
+                        </button>
+                        <button onclick="closeAnalysis()" style="padding: 10px 20px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 10px; cursor: pointer;">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            `);
+        }
+        
         // Separate async function for API call
         async function createAlertWithAPI() {
             try {

@@ -214,6 +214,15 @@ def add_to_analysis_watchlist():
         logger.error(f'Error adding to analysis watchlist: {e}')
         return jsonify({'success': False, 'error': str(e)}), 500
 
+@app.route('/api/watchlist')
+def get_watchlist():
+    """Get watchlist with current data and AI insights"""
+    try:
+        return get_analysis_watchlist()
+    except Exception as e:
+        logger.error(f'Error in watchlist endpoint: {e}')
+        return jsonify({'success': False, 'error': str(e)}), 500
+
 @app.route('/api/analysis-watchlist')
 def get_analysis_watchlist():
     """Get analysis watchlist with current data and latest analysis results"""
@@ -294,6 +303,96 @@ def get_analysis_watchlist():
         
     except Exception as e:
         logger.error(f'Error getting analysis watchlist: {e}')
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/portfolio')
+def get_portfolio():
+    """Get portfolio data with AI performance insights"""
+    try:
+        # Demo portfolio data with AI insights
+        portfolio_data = {
+            'total_value': 125750.45,
+            'day_change': 1250.32,
+            'day_change_percent': 1.01,
+            'holdings': [
+                {
+                    'symbol': 'AAPL',
+                    'name': 'Apple Inc.',
+                    'shares': 50,
+                    'current_price': 212.48,
+                    'cost_basis': 180.25,
+                    'market_value': 10624.00,
+                    'unrealized_gain': 1611.50,
+                    'unrealized_gain_percent': 17.89,
+                    'ai_recommendation': 'HOLD',
+                    'ai_confidence': 85
+                },
+                {
+                    'symbol': 'TSLA', 
+                    'name': 'Tesla, Inc.',
+                    'shares': 25,
+                    'current_price': 445.67,
+                    'cost_basis': 380.00,
+                    'market_value': 11141.75,
+                    'unrealized_gain': 1641.75,
+                    'unrealized_gain_percent': 17.27,
+                    'ai_recommendation': 'BUY',
+                    'ai_confidence': 78
+                },
+                {
+                    'symbol': 'NVDA',
+                    'name': 'NVIDIA Corporation',
+                    'shares': 75,
+                    'current_price': 171.38,
+                    'cost_basis': 145.20,
+                    'market_value': 12853.50,
+                    'unrealized_gain': 1963.50,
+                    'unrealized_gain_percent': 18.03,
+                    'ai_recommendation': 'HOLD',
+                    'ai_confidence': 92
+                }
+            ],
+            'performance_metrics': {
+                'total_return': 15.2,
+                'sharpe_ratio': 1.34,
+                'beta': 0.98,
+                'alpha': 2.1
+            }
+        }
+        
+        return jsonify({
+            'success': True,
+            'portfolio': portfolio_data
+        })
+        
+    except Exception as e:
+        logger.error(f'Error getting portfolio: {e}')
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/watchlist/remove', methods=['POST'])
+def remove_from_watchlist():
+    """Remove stock from watchlist"""
+    try:
+        data = request.get_json()
+        symbol = data.get('symbol', '').upper()
+        
+        if not symbol:
+            return jsonify({'success': False, 'error': 'Symbol required'}), 400
+            
+        # Remove from demo watchlist
+        demo_watchlist.discard(symbol)
+        
+        # Remove from database
+        WatchlistItem.query.filter_by(symbol=symbol).delete()
+        db.session.commit()
+        
+        return jsonify({
+            'success': True,
+            'message': f'{symbol} removed from watchlist'
+        })
+        
+    except Exception as e:
+        logger.error(f'Error removing from watchlist: {e}')
         return jsonify({'success': False, 'error': str(e)}), 500
 
 @app.route('/api/alerts/suggestions/<symbol>')
