@@ -12,6 +12,13 @@ class User(UserMixin, db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     last_login = db.Column(db.DateTime)
     
+    # Premium subscription fields
+    subscription_tier = db.Column(db.String(20), default='free')  # 'free', 'premium'
+    subscription_start = db.Column(db.DateTime)
+    subscription_end = db.Column(db.DateTime)
+    subscription_status = db.Column(db.String(20), default='inactive')  # 'active', 'inactive', 'cancelled'
+    stripe_customer_id = db.Column(db.String(100))  # For payment processing
+    
     # Analysis preferences
     preferred_sectors = db.Column(db.Text)  # JSON string of preferred sectors
     analysis_settings = db.Column(db.Text)  # JSON string of user analysis preferences
@@ -31,8 +38,20 @@ class User(UserMixin, db.Model):
             'username': self.username,
             'email': self.email,
             'created_at': self.created_at.isoformat() if self.created_at else None,
-            'last_login': self.last_login.isoformat() if self.last_login else None
+            'last_login': self.last_login.isoformat() if self.last_login else None,
+            'subscription_tier': self.subscription_tier,
+            'is_premium': self.subscription_tier == 'premium' and self.subscription_status == 'active'
         }
+        
+    def is_premium_active(self):
+        """Check if user has active premium subscription"""
+        if self.subscription_tier != 'premium':
+            return False
+        if self.subscription_status != 'active':
+            return False
+        if self.subscription_end and self.subscription_end < datetime.utcnow():
+            return False
+        return True
 
 class StockAnalysis(db.Model):
     """Store historical stock analysis results for comparison and tracking"""

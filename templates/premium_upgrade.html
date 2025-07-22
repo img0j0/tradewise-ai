@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upgrade to TradeWise AI Premium</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        
+        .premium-container {
+            padding: 2rem 1rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .hero-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 3rem 2rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .hero-section h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #ffd700, #ffed4a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .pricing-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border: 2px solid #ffd700;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+        
+        .pricing-card:hover {
+            transform: translateY(-10px);
+        }
+        
+        .pricing-card::before {
+            content: "PREMIUM";
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: linear-gradient(45deg, #ffd700, #ffed4a);
+            color: #333;
+            padding: 5px 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            transform: rotate(45deg);
+            transform-origin: center;
+        }
+        
+        .price-section {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .price {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+        
+        .price-note {
+            color: #666;
+            font-size: 1rem;
+        }
+        
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .feature-list li {
+            padding: 0.8rem 0;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .feature-icon {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            font-size: 1rem;
+        }
+        
+        .feature-text {
+            flex: 1;
+        }
+        
+        .feature-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.3rem;
+        }
+        
+        .feature-desc {
+            color: #666;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        
+        .upgrade-btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            width: 100%;
+            margin-top: 2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .upgrade-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .comparison-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-top: 3rem;
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .comparison-table {
+            width: 100%;
+            margin-top: 1.5rem;
+        }
+        
+        .comparison-table th,
+        .comparison-table td {
+            padding: 1rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .comparison-table th {
+            background: rgba(255, 255, 255, 0.1);
+            font-weight: 600;
+        }
+        
+        .check-icon {
+            color: #4ade80;
+            font-size: 1.2rem;
+        }
+        
+        .x-icon {
+            color: #ef4444;
+            font-size: 1.2rem;
+        }
+        
+        .back-btn {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            text-decoration: none;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+            text-decoration: none;
+        }
+        
+        @media (max-width: 768px) {
+            .hero-section h1 {
+                font-size: 2rem;
+            }
+            
+            .pricing-card {
+                padding: 1.5rem;
+            }
+            
+            .price {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="/" class="back-btn">
+        <i class="fas fa-arrow-left"></i> Back to TradeWise AI
+    </a>
+
+    <div class="premium-container">
+        <!-- Hero Section -->
+        <div class="hero-section">
+            <h1>TradeWise AI Premium</h1>
+            <p style="font-size: 1.3rem; margin-bottom: 2rem; opacity: 0.9;">
+                Transform your investment strategy with institutional-grade AI analysis
+            </p>
+            <div style="display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap;">
+                <div style="text-align: center;">
+                    <div style="font-size: 2rem; font-weight: bold; color: #ffd700;">10,000+</div>
+                    <div style="opacity: 0.8;">Global Stocks Analyzed</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 2rem; font-weight: bold; color: #ffd700;">95%</div>
+                    <div style="opacity: 0.8;">Prediction Accuracy</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 2rem; font-weight: bold; color: #ffd700;">24/7</div>
+                    <div style="opacity: 0.8;">Market Monitoring</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pricing Card -->
+        <div class="row justify-content-center">
+            <div class="col-lg-6 col-md-8">
+                <div class="pricing-card">
+                    <div class="price-section">
+                        <div class="price">$10<span style="font-size: 1.5rem; color: #666;">/month</span></div>
+                        <div class="price-note">7-day free trial • Cancel anytime</div>
+                    </div>
+
+                    <ul class="feature-list">
+                        <li>
+                            <div class="feature-icon">🚀</div>
+                            <div class="feature-text">
+                                <div class="feature-title">AI Portfolio Optimization</div>
+                                <div class="feature-desc">Monthly AI-recommended portfolio adjustments with risk analysis</div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="feature-icon">🔔</div>
+                            <div class="feature-text">
+                                <div class="feature-title">Unlimited Smart Alerts</div>
+                                <div class="feature-desc">Real-time alerts for price, volume, and technical indicators</div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="feature-icon">📊</div>
+                            <div class="feature-text">
+                                <div class="feature-title">AI Market Scanner</div>
+                                <div class="feature-desc">Daily AI-curated opportunities and breakout candidates</div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="feature-icon">💰</div>
+                            <div class="feature-text">
+                                <div class="feature-title">DCF Calculator & Valuation</div>
+                                <div class="feature-desc">Automated discounted cash flow models and fair value analysis</div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="feature-icon">📈</div>
+                            <div class="feature-text">
+                                <div class="feature-title">10-Year Historical Data</div>
+                                <div class="feature-desc">Extended historical analysis and backtesting capabilities</div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="feature-icon">⚡</div>
+                            <div class="feature-text">
+                                <div class="feature-title">Real-Time Market Data</div>
+                                <div class="feature-desc">Live data vs 15-minute delay, pre/after market data</div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="feature-icon">🌍</div>
+                            <div class="feature-text">
+                                <div class="feature-title">Global Markets Access</div>
+                                <div class="feature-desc">International stocks and cryptocurrency analysis</div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="feature-icon">🎯</div>
+                            <div class="feature-text">
+                                <div class="feature-title">Earnings Predictions</div>
+                                <div class="feature-desc">AI-powered earnings forecasts with confidence scores</div>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <button class="upgrade-btn" onclick="upgradeSubscription()">
+                        Start 7-Day Free Trial
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Comparison Section -->
+        <div class="comparison-section">
+            <h3 style="text-align: center; margin-bottom: 1rem;">Free vs Premium Comparison</h3>
+            <div style="overflow-x: auto;">
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Feature</th>
+                            <th>Free</th>
+                            <th>Premium</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Basic Stock Analysis</td>
+                            <td><i class="fas fa-check check-icon"></i></td>
+                            <td><i class="fas fa-check check-icon"></i></td>
+                        </tr>
+                        <tr>
+                            <td>Smart Alerts</td>
+                            <td>3 alerts</td>
+                            <td>Unlimited</td>
+                        </tr>
+                        <tr>
+                            <td>Historical Data</td>
+                            <td>1 year</td>
+                            <td>10 years</td>
+                        </tr>
+                        <tr>
+                            <td>Market Data Delay</td>
+                            <td>15 minutes</td>
+                            <td>Real-time</td>
+                        </tr>
+                        <tr>
+                            <td>AI Portfolio Optimization</td>
+                            <td><i class="fas fa-times x-icon"></i></td>
+                            <td><i class="fas fa-check check-icon"></i></td>
+                        </tr>
+                        <tr>
+                            <td>DCF Calculator</td>
+                            <td><i class="fas fa-times x-icon"></i></td>
+                            <td><i class="fas fa-check check-icon"></i></td>
+                        </tr>
+                        <tr>
+                            <td>Global Markets</td>
+                            <td><i class="fas fa-times x-icon"></i></td>
+                            <td><i class="fas fa-check check-icon"></i></td>
+                        </tr>
+                        <tr>
+                            <td>Earnings Predictions</td>
+                            <td><i class="fas fa-times x-icon"></i></td>
+                            <td><i class="fas fa-check check-icon"></i></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        async function upgradeSubscription() {
+            try {
+                const button = document.querySelector('.upgrade-btn');
+                button.innerHTML = 'Processing...';
+                button.disabled = true;
+
+                // In production, integrate with Stripe
+                // For demo purposes, using our demo endpoint
+                const response = await fetch('/premium/api/subscription/demo-upgrade', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert('🎉 ' + data.message);
+                    window.location.href = '/';
+                } else {
+                    alert('Error: ' + data.error);
+                    button.innerHTML = 'Start 7-Day Free Trial';
+                    button.disabled = false;
+                }
+            } catch (error) {
+                console.error('Upgrade error:', error);
+                alert('Upgrade failed. Please try again.');
+                button.innerHTML = 'Start 7-Day Free Trial';
+                button.disabled = false;
+            }
+        }
+
+        // Add some interactive effects
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animate feature list on scroll
+            const features = document.querySelectorAll('.feature-list li');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry, index) => {
+                    if (entry.isIntersecting) {
+                        setTimeout(() => {
+                            entry.target.style.opacity = '1';
+                            entry.target.style.transform = 'translateX(0)';
+                        }, index * 100);
+                    }
+                });
+            });
+
+            features.forEach(feature => {
+                feature.style.opacity = '0';
+                feature.style.transform = 'translateX(-20px)';
+                feature.style.transition = 'all 0.6s ease';
+                observer.observe(feature);
+            });
+        });
+    </script>
+</body>
+</html>

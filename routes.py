@@ -1,5 +1,7 @@
 from flask import render_template, jsonify, request, make_response
 from app import app, db
+from datetime import datetime, timedelta
+from premium_features import PremiumFeatures
 from models import User, StockAnalysis, WatchlistItem
 from ai_insights import AIInsightsEngine
 from data_service import DataService
@@ -872,6 +874,62 @@ def delete_alert(alert_id):
     except Exception as e:
         logger.error(f'Error deleting alert {alert_id}: {e}')
         return jsonify({'success': False, 'error': str(e)}), 500
+
+# Premium Routes
+@app.route('/premium/upgrade')
+def premium_upgrade():
+    """Premium upgrade page"""
+    return render_template('premium_upgrade.html')
+
+@app.route('/premium/api/subscription/demo-upgrade', methods=['POST'])
+def demo_upgrade():
+    """Demo upgrade for testing (in production, integrate with Stripe)"""
+    try:
+        # For demo purposes, we'll just return success
+        # In production, this would create/update user subscription via Stripe
+        return jsonify({
+            'success': True,
+            'message': 'Premium activated! Welcome to TradeWise AI Premium.',
+            'subscription': {
+                'tier': 'premium',
+                'status': 'active',
+                'end_date': (datetime.utcnow() + timedelta(days=30)).isoformat()
+            }
+        })
+        
+    except Exception as e:
+        return jsonify({'success': False, 'error': 'Upgrade failed'}), 500
+
+@app.route('/premium/api/portfolio/optimization')
+def portfolio_optimization():
+    """Premium API: Portfolio optimization suggestions"""
+    try:
+        # Get portfolio symbols from request
+        portfolio_symbols = request.args.get('symbols', 'AAPL,GOOGL,MSFT').split(',')
+        
+        optimization_data = PremiumFeatures.get_portfolio_optimization_suggestions(portfolio_symbols)
+        
+        return jsonify({
+            'success': True,
+            'optimization': optimization_data
+        })
+        
+    except Exception as e:
+        return jsonify({'success': False, 'error': 'Portfolio optimization failed'}), 500
+
+@app.route('/premium/api/market/scanner')  
+def ai_market_scanner():
+    """Premium API: AI Market Scanner"""
+    try:
+        scanner_data = PremiumFeatures.get_ai_market_scanner()
+        
+        return jsonify({
+            'success': True,
+            'scanner': scanner_data
+        })
+        
+    except Exception as e:
+        return jsonify({'success': False, 'error': 'Market scanner failed'}), 500
 
 # Create database tables
 with app.app_context():
