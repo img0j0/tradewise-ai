@@ -1196,11 +1196,10 @@
                 
                 if (data.success) {
                     console.log(`${symbol} removed successfully, refreshing watchlist...`);
-                    // Show success message briefly
-                    alert(`${symbol} removed from watchlist successfully!`);
-                    // Force refresh watchlist immediately
-                    showWatchlist();
+                    // Force refresh watchlist immediately without showing alert
+                    await showWatchlist();
                 } else {
+                    console.error('Remove failed:', data);
                     alert(data.error || 'Failed to remove from watchlist');
                 }
             } catch (error) {
@@ -2088,7 +2087,7 @@
                 const data = await response.json();
                 
                 if (data.success) {
-                    displayWatchlist(data.stocks);
+                    displayWatchlist(data.watchlist || data.stocks);
                 } else {
                     showWatchlistError();
                 }
