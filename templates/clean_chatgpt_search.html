@@ -248,80 +248,206 @@
             transform: scale(1.05);
         }
         
+        /* Enhanced Dropdown Menu */
         .dropdown-menu {
             position: absolute;
             top: 60px;
             right: 0;
-            background: rgba(26, 26, 46, 0.95);
+            background: rgba(26, 26, 46, 0.98);
             backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            padding: 10px;
-            min-width: 200px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            padding: 15px;
+            min-width: 300px;
+            max-width: 400px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05);
             opacity: 0;
             visibility: hidden;
-            transform: translateY(-10px);
-            transition: all 0.3s ease;
+            transform: translateY(-15px) scale(0.95);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             z-index: 10000;
+            max-height: 80vh;
+            overflow-y: auto;
         }
         
         .dropdown-menu.show {
             opacity: 1;
             visibility: visible;
-            transform: translateY(0);
+            transform: translateY(0) scale(1);
         }
         
+        /* Custom Scrollbar */
+        .dropdown-menu::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .dropdown-menu::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 3px;
+        }
+        
+        .dropdown-menu::-webkit-scrollbar-thumb {
+            background: rgba(139, 92, 246, 0.5);
+            border-radius: 3px;
+        }
+        
+        /* Enhanced Dropdown Sections */
+        .dropdown-section {
+            margin-bottom: 8px;
+        }
+        
+        .dropdown-section-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin: 12px 0 8px 0;
+            padding: 8px 15px;
+            border-radius: 6px;
+            letter-spacing: 0.5px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .dropdown-section-header .section-icon {
+            font-size: 0.9rem;
+        }
+        
+        /* Premium Section Header */
+        .premium-header {
+            background: linear-gradient(45deg, rgba(255, 215, 0, 0.1), rgba(139, 92, 246, 0.1));
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            color: #ffd700;
+        }
+        
+        .premium-badge-header {
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            color: #000;
+            padding: 2px 6px;
+            border-radius: 8px;
+            font-size: 9px;
+            font-weight: bold;
+            margin-left: auto;
+        }
+        
+        /* Enhanced Dropdown Items */
         .dropdown-item {
             display: flex;
             align-items: center;
             gap: 12px;
             padding: 12px 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 10px;
+            margin: 3px 0;
+            position: relative;
+            overflow: hidden;
             color: white;
             text-decoration: none;
-            border-radius: 10px;
-            transition: all 0.2s ease;
-            cursor: pointer;
-            font-size: 0.9rem;
         }
         
         .dropdown-item:hover {
-            background: rgba(139, 92, 246, 0.2);
+            background: rgba(139, 92, 246, 0.15);
+            transform: translateX(3px);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.2);
             color: white;
             text-decoration: none;
         }
         
         .dropdown-item .icon {
             font-size: 1.1rem;
-            width: 20px;
-            text-align: center;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            flex-shrink: 0;
+            transition: all 0.3s ease;
         }
         
+        .dropdown-item:hover .icon {
+            background: rgba(139, 92, 246, 0.3);
+            transform: scale(1.1);
+        }
+        
+        /* Item Content Layout */
+        .item-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        
+        .item-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: white;
+        }
+        
+        .item-description {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.2;
+        }
+        
+        /* Premium Features */
         .premium-feature {
             position: relative;
-            opacity: 0.8;
+            background: linear-gradient(45deg, rgba(255, 215, 0, 0.05), rgba(139, 92, 246, 0.05));
+            border: 1px solid rgba(255, 215, 0, 0.1);
+        }
+        
+        .premium-feature:hover {
+            background: linear-gradient(45deg, rgba(255, 215, 0, 0.1), rgba(139, 92, 246, 0.1));
+            border-color: rgba(255, 215, 0, 0.2);
         }
         
         .premium-badge {
             background: linear-gradient(45deg, #ffd700, #ffed4e);
             color: #000;
-            padding: 2px 6px;
-            border-radius: 10px;
+            padding: 4px 8px;
+            border-radius: 12px;
             font-size: 10px;
             font-weight: bold;
-            margin-left: auto;
             text-transform: uppercase;
+            box-shadow: 0 2px 4px rgba(255, 215, 0, 0.3);
         }
         
-        .dropdown-section-header {
-            color: #ffd700;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            margin: 10px 0 5px 0;
-            padding: 0 15px;
-            opacity: 0.9;
-            letter-spacing: 0.5px;
+        /* Upgrade Item */
+        .upgrade-item {
+            background: linear-gradient(45deg, rgba(255, 215, 0, 0.1), rgba(255, 237, 74, 0.1));
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            margin: 8px 0;
+        }
+        
+        .upgrade-item:hover {
+            background: linear-gradient(45deg, rgba(255, 215, 0, 0.2), rgba(255, 237, 74, 0.2));
+            border-color: rgba(255, 215, 0, 0.5);
+        }
+        
+        .upgrade-icon {
+            background: linear-gradient(45deg, #ffd700, #ffed4e) !important;
+            color: #000 !important;
+        }
+        
+        .upgrade-price {
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            color: #000;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+        
+        /* Dividers */
+        .dropdown-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            margin: 12px 0;
         }
         
         .tool-btn {
@@ -964,78 +1090,127 @@
                     🛠️
                 </button>
                 <div class="dropdown-menu" id="toolsDropdown">
-                    <!-- Essential Tools -->
-                    <div class="dropdown-item" onclick="showPortfolio()">
-                        <span class="icon">📊</span>
-                        <span>My Portfolio</span>
-                    </div>
-                    <div class="dropdown-item" onclick="showWatchlist()">
-                        <span class="icon">⭐</span>
-                        <span>My Watchlist</span>
-                    </div>
-                    <div class="dropdown-item" onclick="openPriceAlerts()">
-                        <span class="icon">🔔</span>
-                        <span>Smart Alerts</span>
-                    </div>
-                    
-                    <!-- Premium AI Tools Section -->
-                    <div class="dropdown-section-header">Premium AI Tools</div>
-                    <div class="dropdown-item premium-feature" onclick="openAIPortfolioOptimizer()">
-                        <span class="icon">🚀</span>
-                        <span>AI Portfolio Optimizer</span>
-                        <span class="premium-badge">PRO</span>
-                    </div>
-                    <div class="dropdown-item premium-feature" onclick="openMarketScanner()">
-                        <span class="icon">📡</span>
-                        <span>Market Scanner</span>
-                        <span class="premium-badge">PRO</span>
-                    </div>
-                    <div class="dropdown-item premium-feature" onclick="openDCFCalculator()">
-                        <span class="icon">💰</span>
-                        <span>DCF Calculator</span>
-                        <span class="premium-badge">PRO</span>
-                    </div>
-                    
-                    <!-- More Tools (Collapsible) -->
-                    <div class="dropdown-item" onclick="toggleMoreTools()" style="background: rgba(255,255,255,0.03); border: 1px dashed rgba(255,255,255,0.15); margin: 5px 0;">
-                        <span class="icon">⋯</span>
-                        <span>More Tools</span>
-                        <span id="more-tools-arrow" style="margin-left: auto; transition: transform 0.2s; font-size: 0.8rem;">▼</span>
-                    </div>
-                    
-                    <!-- Collapsible Section -->
-                    <div id="more-tools-section" style="display: none; margin-left: 10px; border-left: 1px solid rgba(255,255,255,0.1); padding-left: 10px;">
+                    <!-- Free Tools Section -->
+                    <div class="dropdown-section">
+                        <div class="dropdown-section-header">
+                            <span class="section-icon">🆓</span>
+                            <span>Free Tools</span>
+                        </div>
+                        <div class="dropdown-item" onclick="showPortfolio()">
+                            <span class="icon">📊</span>
+                            <div class="item-content">
+                                <span class="item-title">My Portfolio</span>
+                                <span class="item-description">Track your investments</span>
+                            </div>
+                        </div>
+                        <div class="dropdown-item" onclick="showWatchlist()">
+                            <span class="icon">⭐</span>
+                            <div class="item-content">
+                                <span class="item-title">My Watchlist</span>
+                                <span class="item-description">Save stocks to monitor</span>
+                            </div>
+                        </div>
+                        <div class="dropdown-item" onclick="openPriceAlerts()">
+                            <span class="icon">🔔</span>
+                            <div class="item-content">
+                                <span class="item-title">Smart Alerts</span>
+                                <span class="item-description">Price notifications</span>
+                            </div>
+                        </div>
                         <div class="dropdown-item" onclick="openMarketNews()">
                             <span class="icon">📰</span>
-                            <span>Market News</span>
+                            <div class="item-content">
+                                <span class="item-title">Market News</span>
+                                <span class="item-description">Latest market updates</span>
+                            </div>
                         </div>
-                        <div class="dropdown-item" onclick="openPerformance()">
-                            <span class="icon">📈</span>
-                            <span>Performance Analysis</span>
+                    </div>
+                    
+                    <!-- Premium Tools Section -->
+                    <div class="dropdown-section premium-section">
+                        <div class="dropdown-section-header premium-header">
+                            <span class="section-icon">✨</span>
+                            <span>AI Trading Copilot</span>
+                            <span class="premium-badge-header">PRO</span>
+                        </div>
+                        <div class="dropdown-item premium-feature" onclick="openAIPortfolioOptimizer()">
+                            <span class="icon">🚀</span>
+                            <div class="item-content">
+                                <span class="item-title">AI Portfolio Optimizer</span>
+                                <span class="item-description">ML-powered portfolio analysis</span>
+                            </div>
+                            <span class="premium-badge">PRO</span>
+                        </div>
+                        <div class="dropdown-item premium-feature" onclick="openMarketScanner()">
+                            <span class="icon">📡</span>
+                            <div class="item-content">
+                                <span class="item-title">Market Scanner</span>
+                                <span class="item-description">Real-time opportunity finder</span>
+                            </div>
+                            <span class="premium-badge">PRO</span>
+                        </div>
+                        <div class="dropdown-item premium-feature" onclick="openDCFCalculator()">
+                            <span class="icon">💰</span>
+                            <div class="item-content">
+                                <span class="item-title">DCF Calculator</span>
+                                <span class="item-description">Professional valuation tool</span>
+                            </div>
+                            <span class="premium-badge">PRO</span>
                         </div>
                         <div class="dropdown-item premium-feature" onclick="openEarningsPredictor()">
                             <span class="icon">🎯</span>
-                            <span>Earnings Predictor</span>
+                            <div class="item-content">
+                                <span class="item-title">Earnings Predictor</span>
+                                <span class="item-description">AI-powered earnings forecast</span>
+                            </div>
                             <span class="premium-badge">PRO</span>
                         </div>
+                    </div>
+                    
+                    <!-- Account & Settings -->
+                    <div class="dropdown-section">
+                        <div class="dropdown-divider"></div>
                         <div class="dropdown-item" onclick="openAccount()">
                             <span class="icon">👤</span>
-                            <span>Account Settings</span>
+                            <div class="item-content">
+                                <span class="item-title">Account Settings</span>
+                                <span class="item-description">Manage your profile</span>
+                            </div>
                         </div>
-                    </div>
-                    <div style="border-top: 1px solid rgba(255,215,0,0.3); margin: 8px 0;"></div>
-                    <div class="dropdown-item" onclick="window.location.href='/premium/upgrade'" style="background: linear-gradient(45deg, rgba(255, 215, 0, 0.1), rgba(255, 237, 74, 0.1)); border: 1px solid rgba(255, 215, 0, 0.2);">
-                        <span class="icon">👑</span>
-                        <span>Upgrade to Premium - $10/month</span>
-                    </div>
-                    <div style="border-top: 1px solid rgba(255,255,255,0.1); margin: 8px 0; padding-top: 8px;">
+                        <div class="dropdown-item" onclick="openPerformance()">
+                            <span class="icon">📈</span>
+                            <div class="item-content">
+                                <span class="item-title">Performance Analytics</span>
+                                <span class="item-description">View your trading stats</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Upgrade Button -->
+                        <div class="dropdown-divider"></div>
+                        <div class="dropdown-item upgrade-item" onclick="window.location.href='/premium/upgrade'">
+                            <span class="icon upgrade-icon">⚡</span>
+                            <div class="item-content">
+                                <span class="item-title">Upgrade to Premium</span>
+                                <span class="item-description">Unlock AI Trading Copilot</span>
+                            </div>
+                            <span class="upgrade-price">$10/mo</span>
+                        </div>
+                        
+                        <!-- Auth Actions -->
+                        <div class="dropdown-divider"></div>
                         <div class="dropdown-item" onclick="window.location.href='/login'">
                             <span class="icon">🔐</span>
-                            <span>Sign In</span>
+                            <div class="item-content">
+                                <span class="item-title">Sign In</span>
+                                <span class="item-description">Access your account</span>
+                            </div>
                         </div>
                         <div class="dropdown-item" onclick="handleLogout()">
                             <span class="icon">🚪</span>
-                            <span>Sign Out</span>
+                            <div class="item-content">
+                                <span class="item-title">Sign Out</span>
+                                <span class="item-description">Leave current session</span>
+                            </div>
                         </div>
                     </div>
                 </div>
