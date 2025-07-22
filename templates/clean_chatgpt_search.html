@@ -1176,6 +1176,13 @@
         
         async function removeFromWatchlist(symbol) {
             try {
+                // Show confirmation dialog
+                if (!confirm(`Remove ${symbol} from your watchlist?`)) {
+                    return;
+                }
+                
+                console.log(`Removing ${symbol} from watchlist...`);
+                
                 const response = await fetch('/api/watchlist/remove', {
                     method: 'POST',
                     headers: {
@@ -1185,16 +1192,20 @@
                 });
                 
                 const data = await response.json();
+                console.log('Remove response:', data);
                 
                 if (data.success) {
-                    // Refresh the watchlist
-                    showWatchlist();
+                    console.log(`${symbol} removed successfully, refreshing watchlist...`);
+                    // Add small delay before refresh to prevent conflicts
+                    setTimeout(() => {
+                        showWatchlist();
+                    }, 100);
                 } else {
                     alert(data.error || 'Failed to remove from watchlist');
                 }
             } catch (error) {
                 console.error('Error removing from watchlist:', error);
-                alert('Error removing from watchlist');
+                alert('Error removing from watchlist: ' + error.message);
             }
         }
         
