@@ -350,6 +350,16 @@ function generatePreferenceIndicatorDisplay(stockData) {
         explanations.push(`Analysis personalized using ${strategy.name}: ${strategy.description}`);
     }
     
+    // Strategy impact indicator
+    if (impact && impact.changed) {
+        indicators.push(`
+            <div class="preference-chip" style="background: #10b98120; border: 1px solid #10b98160; color: #10b981">
+                🔄 Modified by Strategy
+            </div>
+        `);
+        explanations.push(`Strategy changed recommendation from ${impact.original_recommendation} (${impact.original_confidence}%)`);
+    }
+    
     // Risk tolerance indicator
     if (prefs.risk_tolerance) {
         const riskIcons = { 'conservative': '🛡️', 'moderate': '⚖️', 'aggressive': '🚀' };

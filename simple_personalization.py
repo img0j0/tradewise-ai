@@ -61,6 +61,8 @@ class SimplePersonalization:
         if strategy_key in self.strategies:
             session['investment_strategy'] = strategy_key
             session.permanent = True
+            # Force session modification flag
+            session.modified = True
             logger.info(f"User strategy set to: {strategy_key}")
             return True
         return False
