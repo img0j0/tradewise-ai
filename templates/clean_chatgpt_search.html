@@ -1015,13 +1015,13 @@
                 `);
                 
                 // Fetch watchlist data
-                const response = await fetch('/api/watchlist', {
+                const response = await fetch('/api/watchlist?' + new Date().getTime(), {
                     method: 'GET',
                     headers: {
                         'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    },
-                    cache: 'no-cache'
+                        'Content-Type': 'application/json',
+                        'Cache-Control': 'no-cache'
+                    }
                 });
                 
                 const data = await response.json();
@@ -1196,10 +1196,10 @@
                 
                 if (data.success) {
                     console.log(`${symbol} removed successfully, refreshing watchlist...`);
-                    // Add small delay before refresh to prevent conflicts
-                    setTimeout(() => {
-                        showWatchlist();
-                    }, 100);
+                    // Show success message briefly
+                    alert(`${symbol} removed from watchlist successfully!`);
+                    // Force refresh watchlist immediately
+                    showWatchlist();
                 } else {
                     alert(data.error || 'Failed to remove from watchlist');
                 }
@@ -2082,7 +2082,9 @@
                     </div>
                 `);
 
-                const response = await fetch('/api/watchlist');
+                const response = await fetch('/api/watchlist?' + new Date().getTime(), {
+                    headers: { 'Cache-Control': 'no-cache' }
+                });
                 const data = await response.json();
                 
                 if (data.success) {

@@ -265,7 +265,7 @@ def get_analysis_watchlist():
                             'change': float(stock_data.get('price_change', 0)),
                             'change_percent': day_change,
                             'latest_recommendation': latest_analysis.recommendation if latest_analysis else None,
-                            'latest_confidence': latest_analysis.confidence if latest_analysis else None,
+                            'latest_confidence': latest_analysis.confidence_score if latest_analysis else None,
                             'ai_insights': {
                                 'market_cap': f"${market_cap / 1e9:.1f}B" if market_cap > 1e9 else f"${market_cap / 1e6:.0f}M",
                                 'volume_ratio': f"{volume / avg_volume:.1f}x" if avg_volume > 0 else "N/A",
