@@ -1022,7 +1022,6 @@ def create_checkout_session():
             mode='subscription',
             success_url=f'{domain}/payment/success',
             cancel_url=f'{domain}/premium/upgrade',
-            automatic_tax={'enabled': True},
         )
         
         return jsonify({'checkout_url': checkout_session.url})
