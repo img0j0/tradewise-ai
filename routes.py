@@ -250,7 +250,7 @@ def get_analysis_watchlist():
                             loss = (-delta.where(delta < 0, 0)).rolling(window=14).mean()
                             rs = gain / loss
                             rsi = 100 - (100 / (1 + rs))
-                            current_rsi = float(rsi.iloc[-1]) if hasattr(rsi, 'iloc') and len(rsi) > 0 else 50.0
+                            current_rsi = float(rsi.iloc[-1]) if hasattr(rsi, 'iloc') and hasattr(rsi, 'empty') and not rsi.empty else 50.0
                         else:
                             current_rsi = 50.0
                         
@@ -729,7 +729,7 @@ def get_active_alerts():
                         loss = (-delta.where(delta < 0, 0)).rolling(window=14).mean()
                         rs = gain / loss
                         rsi = 100 - (100 / (1 + rs))
-                        current_rsi = float(rsi.iloc[-1]) if hasattr(rsi, 'iloc') and len(rsi) > 0 else 50.0
+                        current_rsi = float(rsi.iloc[-1]) if hasattr(rsi, 'iloc') and hasattr(rsi, 'empty') and not rsi.empty else 50.0
                     else:
                         current_rsi = 50.0
                     
@@ -808,7 +808,7 @@ def get_active_alerts():
                     loss = (-delta.where(delta < 0, 0)).rolling(window=14).mean()
                     rs = gain / loss
                     rsi = 100 - (100 / (1 + rs))
-                    current_rsi = float(rsi.iloc[-1]) if hasattr(rsi, 'iloc') and len(rsi) > 0 else 50.0
+                    current_rsi = float(rsi.iloc[-1]) if hasattr(rsi, 'iloc') and hasattr(rsi, 'empty') and not rsi.empty else 50.0
                 else:
                     current_rsi = 50.0
                 

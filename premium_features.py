@@ -62,7 +62,7 @@ class PremiumFeatures:
                     if not hist.empty:
                         portfolio_data[symbol] = {
                             'returns': hist['Close'].pct_change().dropna(),
-                            'price': hist['Close'][-1],
+                            'price': hist['Close'].iloc[-1],
                             'sector': info.get('sector', 'Unknown'),
                             'industry': info.get('industry', 'Unknown'),
                             'market_cap': info.get('marketCap', 0)
@@ -226,8 +226,8 @@ class PremiumFeatures:
                     if hist.empty:
                         continue
                     
-                    current_price = hist['Close'][-1]
-                    month_change = ((current_price - hist['Close'][0]) / hist['Close'][0]) * 100
+                    current_price = hist['Close'].iloc[-1]
+                    month_change = ((current_price - hist['Close'].iloc[0]) / hist['Close'].iloc[0]) * 100
                     
                     # Calculate RSI
                     rsi = PremiumFeatures._calculate_rsi(hist['Close'])
@@ -257,8 +257,8 @@ class PremiumFeatures:
                         signals.append("Recent Dip")
                     
                     # Strong rebound
-                    if hist['Close'][-1] > hist['Close'][-5]:
-                        week_change = ((hist['Close'][-1] - hist['Close'][-5]) / hist['Close'][-5]) * 100
+                    if hist['Close'].iloc[-1] > hist['Close'].iloc[-5]:
+                        week_change = ((hist['Close'].iloc[-1] - hist['Close'].iloc[-5]) / hist['Close'].iloc[-5]) * 100
                         if week_change > 3:
                             opportunity_score += 3
                             signals.append("Rebound Signal")
