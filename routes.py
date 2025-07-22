@@ -930,6 +930,58 @@ def delete_alert(alert_id):
         logger.error(f'Error deleting alert {alert_id}: {e}')
         return jsonify({'success': False, 'error': str(e)}), 500
 
+# Account Settings Routes
+@main_bp.route('/account/settings')
+@main_bp.route('/settings')
+def account_settings():
+    """Account settings page"""
+    return render_template('account_settings.html')
+
+@main_bp.route('/api/account/profile', methods=['GET'])
+def get_account_profile():
+    """Get user profile data for account settings"""
+    try:
+        # Demo profile data - in production this would come from user database
+        profile_data = {
+            'success': True,
+            'profile': {
+                'username': 'Demo User',
+                'email': 'demo@tradewise.ai',
+                'member_since': '2024-01-15',
+                'subscription_tier': 'Free',
+                'total_analyses': 47,
+                'favorite_stocks': ['AAPL', 'GOOGL', 'TSLA'],
+                'alert_count': 3,
+                'portfolio_value': '$125,430.50'
+            },
+            'preferences': {
+                'email_notifications': True,
+                'price_alerts': True,
+                'market_updates': False,
+                'theme': 'dark'
+            }
+        }
+        return jsonify(profile_data)
+    except Exception as e:
+        logger.error(f"Error getting account profile: {e}")
+        return jsonify({'success': False, 'error': 'Failed to load profile'}), 500
+
+@main_bp.route('/api/account/profile', methods=['PUT'])
+def update_account_profile():
+    """Update user profile data"""
+    try:
+        data = request.get_json()
+        # In production, this would update the user database
+        logger.info(f"Profile update requested: {data}")
+        
+        return jsonify({
+            'success': True,
+            'message': 'Profile updated successfully'
+        })
+    except Exception as e:
+        logger.error(f"Error updating account profile: {e}")
+        return jsonify({'success': False, 'error': 'Failed to update profile'}), 500
+
 # Premium Routes
 @main_bp.route('/premium/upgrade')
 def premium_upgrade():
