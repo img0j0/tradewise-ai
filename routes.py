@@ -985,8 +985,8 @@ def update_account_profile():
 # Premium Routes
 @main_bp.route('/premium/upgrade')
 def premium_upgrade():
-    """Premium upgrade page"""
-    return render_template('premium_upgrade.html')
+    """Premium upgrade page with AI Trading Copilot demos"""
+    return render_template('premium_upgrade_new.html')
 
 @main_bp.route('/premium/api/subscription/demo-upgrade', methods=['POST'])
 def demo_upgrade():
