@@ -891,6 +891,22 @@
                         <div class="metric-label">P/E Ratio</div>
                         <div class="metric-value">${data.pe_ratio ? data.pe_ratio.toFixed(1) : 'N/A'}</div>
                     </div>
+                    <div class="metric-item">
+                        <div class="metric-label">Volume Ratio</div>
+                        <div class="metric-value">${data.volume_ratio ? data.volume_ratio.toFixed(1) + 'x' : 'N/A'}</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-label">RSI</div>
+                        <div class="metric-value" style="color: ${data.rsi < 30 ? '#ef4444' : data.rsi > 70 ? '#f59e0b' : '#10b981'}">${data.rsi ? data.rsi.toFixed(1) : 'N/A'}</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-label">Day Change</div>
+                        <div class="metric-value" style="color: ${data.day_change > 0 ? '#10b981' : data.day_change < 0 ? '#ef4444' : '#6b7280'}">${data.day_change ? (data.day_change > 0 ? '+' : '') + data.day_change.toFixed(2) + '%' : 'N/A'}</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-label">52W Range</div>
+                        <div class="metric-value">${data.week_52_low ? '$' + data.week_52_low.toFixed(2) + '-$' + data.week_52_high.toFixed(2) : 'N/A'}</div>
+                    </div>
                 </div>
                 
                 <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);">
@@ -1042,6 +1058,32 @@
                     const changeColor = change >= 0 ? '#10b981' : '#ef4444';
                     const changeIcon = change >= 0 ? '📈' : '📉';
                     
+                    // AI insights for watchlist item
+                    let aiInsightsHTML = '';
+                    if (stock.ai_insights) {
+                        const insights = stock.ai_insights;
+                        aiInsightsHTML = `
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap: 8px; margin: 12px 0; padding: 10px; background: rgba(255,255,255,0.03); border-radius: 8px;">
+                                <div style="text-align: center;">
+                                    <div style="opacity: 0.6; font-size: 0.7rem; margin-bottom: 2px;">RSI</div>
+                                    <div style="font-weight: 600; font-size: 0.8rem; color: ${parseFloat(insights.rsi || '50') < 30 ? '#ef4444' : parseFloat(insights.rsi || '50') > 70 ? '#f59e0b' : '#10b981'};">${insights.rsi || 'N/A'}</div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="opacity: 0.6; font-size: 0.7rem; margin-bottom: 2px;">Volume</div>
+                                    <div style="font-weight: 600; font-size: 0.8rem;">${insights.volume_ratio || 'N/A'}</div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="opacity: 0.6; font-size: 0.7rem; margin-bottom: 2px;">Trend</div>
+                                    <div style="font-weight: 600; font-size: 0.8rem; color: ${insights.trend_signal === 'Bullish' ? '#10b981' : insights.trend_signal === 'Bearish' ? '#ef4444' : '#6b7280'};">${insights.trend_signal || 'Neutral'}</div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="opacity: 0.6; font-size: 0.7rem; margin-bottom: 2px;">Cap</div>
+                                    <div style="font-weight: 600; font-size: 0.8rem;">${insights.market_cap || 'N/A'}</div>
+                                </div>
+                            </div>
+                        `;
+                    }
+
                     watchlistHTML += `
                         <div style="background: rgba(255,255,255,0.05); border-radius: 15px; padding: 20px; border-left: 4px solid ${changeColor};">
                             <div style="display: flex; justify-content: between; align-items: center;">
@@ -1051,11 +1093,20 @@
                                         <div style="background: ${changeColor}20; color: ${changeColor}; padding: 4px 8px; border-radius: 12px; font-size: 0.8rem; font-weight: 600;">
                                             ${changeIcon} ${stock.change_percent >= 0 ? '+' : ''}${stock.change_percent.toFixed(2)}%
                                         </div>
+                                        ${stock.latest_recommendation ? `
+                                            <div style="background: rgba(139, 92, 246, 0.2); color: #8b5cf6; padding: 4px 8px; border-radius: 12px; font-size: 0.7rem; font-weight: 600; margin-left: 8px;">
+                                                AI: ${stock.latest_recommendation}
+                                            </div>
+                                        ` : ''}
                                     </div>
                                     <div style="font-size: 0.9rem; opacity: 0.8; margin-bottom: 8px;">${stock.name || stock.symbol}</div>
+                                    ${aiInsightsHTML}
                                     <div style="display: flex; justify-content: space-between; align-items: center;">
                                         <div>
                                             <div style="font-size: 1.3rem; font-weight: 700; color: white;">$${stock.price.toFixed(2)}</div>
+                                            ${stock.latest_confidence ? `
+                                                <div style="font-size: 0.8rem; opacity: 0.7;">Confidence: ${stock.latest_confidence}%</div>
+                                            ` : ''}
                                         </div>
                                         <div style="display: flex; gap: 8px;">
                                             <button onclick="searchStock('${stock.symbol}')" style="padding: 8px 12px; background: rgba(139, 92, 246, 0.2); border: 1px solid rgba(139, 92, 246, 0.3); color: #8b5cf6; border-radius: 8px; cursor: pointer; font-size: 0.85rem;">
@@ -2139,10 +2190,102 @@
             showToolOverlay('Market News', newsHTML);
         }
 
+        async function openMarketNews() {
+            try {
+                showToolOverlay('Market Intelligence', `
+                    <div class="loading-state">
+                        <div class="spinner"></div>
+                        <div>Loading AI-powered market intelligence...</div>
+                    </div>
+                `);
+                
+                // Fetch enhanced market news with AI analysis
+                const response = await fetch('/api/market-intelligence', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    displayMarketIntelligence(data);
+                } else {
+                    throw new Error('Failed to load market data');
+                }
+            } catch (error) {
+                console.error('Market intelligence error:', error);
+                showMarketNewsError();
+            }
+        }
+
+        function displayMarketIntelligence(data) {
+            const marketHTML = `
+                <div style="padding: 20px; max-height: 80vh; overflow-y: auto;">
+                    <h3 style="margin-bottom: 25px; text-align: center;">📊 AI Market Intelligence</h3>
+                    
+                    <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 15px; padding: 20px; margin-bottom: 25px;">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; text-align: center;">
+                            <div>
+                                <div style="opacity: 0.7; font-size: 0.9rem; margin-bottom: 5px;">Market Sentiment</div>
+                                <div style="font-weight: 600; font-size: 1.2rem; color: ${data.sentiment === 'Bullish' ? '#10b981' : data.sentiment === 'Bearish' ? '#ef4444' : '#f59e0b'};">
+                                    ${data.sentiment || 'Neutral'}
+                                </div>
+                            </div>
+                            <div>
+                                <div style="opacity: 0.7; font-size: 0.9rem; margin-bottom: 5px;">VIX Fear Index</div>
+                                <div style="font-weight: 600; font-size: 1.2rem; color: ${(data.vix || 20) > 30 ? '#ef4444' : (data.vix || 20) < 20 ? '#10b981' : '#f59e0b'};">
+                                    ${data.vix || '20.5'}
+                                </div>
+                            </div>
+                            <div>
+                                <div style="opacity: 0.7; font-size: 0.9rem; margin-bottom: 5px;">AI Confidence</div>
+                                <div style="font-weight: 600; font-size: 1.2rem; color: #8b5cf6;">
+                                    ${data.ai_confidence || '75'}%
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="display: grid; gap: 15px;">
+                        ${(data.insights || []).map(insight => `
+                            <div style="background: rgba(255,255,255,0.05); border-radius: 12px; padding: 20px; border-left: 4px solid ${insight.type === 'bullish' ? '#10b981' : insight.type === 'bearish' ? '#ef4444' : '#f59e0b'};">
+                                <div style="display: flex; align-items: center; margin-bottom: 12px;">
+                                    <div style="font-weight: 600; font-size: 1.1rem;">${insight.title}</div>
+                                    <div style="background: ${insight.type === 'bullish' ? 'rgba(16, 185, 129, 0.2)' : insight.type === 'bearish' ? 'rgba(239, 68, 68, 0.2)' : 'rgba(245, 158, 11, 0.2)'}; color: ${insight.type === 'bullish' ? '#10b981' : insight.type === 'bearish' ? '#ef4444' : '#f59e0b'}; padding: 4px 8px; border-radius: 12px; font-size: 0.8rem; margin-left: 10px;">
+                                        ${insight.type.toUpperCase()}
+                                    </div>
+                                </div>
+                                <div style="color: rgba(255,255,255,0.8); margin-bottom: 12px;">${insight.description}</div>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 10px; padding: 10px; background: rgba(255,255,255,0.03); border-radius: 8px;">
+                                    <div style="text-align: center;">
+                                        <div style="opacity: 0.6; font-size: 0.7rem;">Impact</div>
+                                        <div style="font-weight: 600; font-size: 0.8rem;">${insight.impact || 'Medium'}</div>
+                                    </div>
+                                    <div style="text-align: center;">
+                                        <div style="opacity: 0.6; font-size: 0.7rem;">Timeframe</div>
+                                        <div style="font-weight: 600; font-size: 0.8rem;">${insight.timeframe || '1-2 weeks'}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    
+                    <div style="text-align: center; margin-top: 25px;">
+                        <button onclick="closeAnalysis()" style="padding: 12px 24px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 10px; cursor: pointer;">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            showToolOverlay('AI Market Intelligence', marketHTML);
+        }
+
         function showMarketNewsError() {
-            showToolOverlay('Market News', `
+            showToolOverlay('Market Intelligence', `
                 <div style="text-align: center; padding: 40px;">
-                    <div style="color: #ef4444; margin-bottom: 20px; font-size: 1.2rem;">⚠️ Unable to Load News</div>
+                    <div style="color: #ef4444; margin-bottom: 20px; font-size: 1.2rem;">⚠️ Unable to Load Intelligence</div>
                     <div style="opacity: 0.8; margin-bottom: 25px;">Check your connection and try again</div>
                     <div style="display: flex; gap: 10px; justify-content: center;">
                         <button onclick="openMarketNews()" style="padding: 10px 20px; background: linear-gradient(45deg, #8b5cf6, #06b6d4); color: white; border: none; border-radius: 10px; cursor: pointer;">
