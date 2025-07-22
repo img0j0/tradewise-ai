@@ -326,18 +326,29 @@ async function getAIAnalysis(symbol) {
     }
 }
 
-// Generate preference indicator display for analysis results
+// Generate strategy indicator display for analysis results
 function generatePreferenceIndicatorDisplay(stockData) {
-    // Check if we have preference data
-    if (!stockData.analysis || !stockData.analysis.preferences_applied) {
-        return ''; // No preferences to display
-    }
+    // Check if we have strategy data
+    const analysis = stockData.analysis || {};
+    const strategy = analysis.strategy_applied;
+    const impact = analysis.strategy_impact;
     
-    const prefs = stockData.analysis.preferences_applied;
-    const analysis = stockData.analysis;
+    if (!strategy && !impact) {
+        return ''; // No personalization to display
+    }
     
     const indicators = [];
     const explanations = [];
+    
+    // Strategy indicator
+    if (strategy) {
+        indicators.push(`
+            <div class="preference-chip" style="background: #3b82f620; border: 1px solid #3b82f660; color: #3b82f6">
+                ${strategy.icon} ${strategy.name}
+            </div>
+        `);
+        explanations.push(`Analysis personalized using ${strategy.name}: ${strategy.description}`);
+    }
     
     // Risk tolerance indicator
     if (prefs.risk_tolerance) {

@@ -8,6 +8,7 @@ from ai_insights import AIInsightsEngine
 from data_service import DataService
 from stock_search import StockSearchService
 from preference_engine import preference_engine
+from simple_personalization import simple_personalization
 from realtime_data_engine import realtime_engine
 import yfinance as yf
 import logging
@@ -178,8 +179,8 @@ def stock_analysis_api():
         ai_engine = AIInsightsEngine()
         base_insights = ai_engine.get_insights(query.upper(), stock_data)
         
-        # Apply user preferences to personalize analysis
-        insights = preference_engine.get_personalized_analysis(query.upper(), base_insights)
+        # Apply simple strategy-based personalization
+        insights = simple_personalization.personalize_analysis(query.upper(), base_insights)
         
         # Format data according to user display preferences
         user_preferences = preference_engine.get_user_preferences()
@@ -861,6 +862,44 @@ def user_preferences():
     except Exception as e:
         logger.error(f'Error handling preferences: {e}')
         return jsonify({'error': 'Preference operation failed'}), 500
+
+@main_bp.route('/api/investment-strategy', methods=['GET', 'POST'])
+def investment_strategy():
+    """Get or set user's investment strategy for personalized analysis"""
+    try:
+        if request.method == 'GET':
+            # Return current strategy and available options
+            current_strategy = simple_personalization.get_user_strategy()
+            strategies = simple_personalization.get_available_strategies()
+            
+            return jsonify({
+                'success': True,
+                'current_strategy': current_strategy,
+                'available_strategies': strategies
+            })
+        
+        elif request.method == 'POST':
+            # Set new investment strategy
+            data = request.get_json()
+            strategy_key = data.get('strategy')
+            
+            if not strategy_key:
+                return jsonify({'error': 'Strategy key required'}), 400
+            
+            success = simple_personalization.set_user_strategy(strategy_key)
+            
+            if success:
+                return jsonify({
+                    'success': True,
+                    'message': 'Investment strategy updated successfully',
+                    'strategy': strategy_key
+                })
+            else:
+                return jsonify({'error': 'Invalid strategy'}), 400
+                
+    except Exception as e:
+        logger.error(f'Error handling investment strategy: {e}')
+        return jsonify({'error': 'Strategy operation failed'}), 500
 
 @main_bp.route('/api/market/overview')
 def market_overview():
