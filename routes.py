@@ -4,6 +4,7 @@ from models import User, StockAnalysis, WatchlistItem
 from ai_insights import AIInsightsEngine
 from data_service import DataService
 from stock_search import StockSearchService
+import yfinance as yf
 import logging
 import json
 from datetime import datetime
@@ -151,7 +152,7 @@ def stock_analysis_api():
         return jsonify({
             'error': 'Analysis failed',
             'message': 'Unable to retrieve analysis data. Please try again.',
-            'analysis': f'Unable to analyze {query} - analysis service temporarily unavailable'
+            'analysis': f'Unable to analyze {request.args.get("query", "stock")} - analysis service temporarily unavailable'
         }), 500
 
 @app.route('/api/analysis-history/<symbol>')
@@ -226,40 +227,53 @@ def get_analysis_watchlist():
                 
                 if stock_data:
                     # Get enhanced AI insights for watchlist
-                    ticker = yf.Ticker(symbol)
-                    info = ticker.info
-                    hist = ticker.history(period="5d")
-                    
-                    # Calculate technical indicators
-                    if len(hist) >= 14:
-                        delta = hist['Close'].diff()
-                        gain = (delta.where(delta > 0, 0)).rolling(window=14).mean()
-                        loss = (-delta.where(delta < 0, 0)).rolling(window=14).mean()
-                        rs = gain / loss
-                        rsi = 100 - (100 / (1 + rs))
-                        current_rsi = rsi.iloc[-1] if hasattr(rsi, 'iloc') and len(rsi) > 0 else 50
-                    else:
-                        current_rsi = 50
-                    
-                    # Market data
-                    market_cap = info.get('marketCap', 0)
-                    volume = info.get('volume', 0)
-                    avg_volume = info.get('averageVolume', 1)
-                    day_change = float(stock_data.get('price_change_percent', 0))
-                    
-                    item = {
-                        'symbol': symbol,
-                        'name': stock_data.get('name', symbol),
-                        'price': float(stock_data.get('current_price', 0)),
-                        'change': float(stock_data.get('price_change', 0)),
-                        'change_percent': day_change,
-                        'ai_insights': {
-                            'market_cap': f"${market_cap / 1e9:.1f}B" if market_cap > 1e9 else f"${market_cap / 1e6:.0f}M",
-                            'volume_ratio': f"{volume / avg_volume:.1f}x" if avg_volume > 0 else "N/A",
-                            'rsi': f"{current_rsi:.1f}",
-                            'trend_signal': "Bullish" if day_change > 1 else "Bearish" if day_change < -1 else "Neutral"
+                    try:
+                        ticker = yf.Ticker(symbol)
+                        info = ticker.info
+                        hist = ticker.history(period="5d")
+                        
+                        # Calculate technical indicators
+                        if len(hist) >= 14 and 'Close' in hist.columns:
+                            delta = hist['Close'].diff()
+                            gain = (delta.where(delta > 0, 0)).rolling(window=14).mean()
+                            loss = (-delta.where(delta < 0, 0)).rolling(window=14).mean()
+                            rs = gain / loss
+                            rsi = 100 - (100 / (1 + rs))
+                            current_rsi = float(rsi.iloc[-1]) if hasattr(rsi, 'iloc') and not rsi.empty else 50.0
+                        else:
+                            current_rsi = 50.0
+                        
+                        # Market data
+                        market_cap = info.get('marketCap', 0)
+                        volume = info.get('volume', 0)
+                        avg_volume = info.get('averageVolume', 1)
+                        day_change = float(stock_data.get('price_change_percent', 0))
+                        
+                        item = {
+                            'symbol': symbol,
+                            'name': stock_data.get('name', symbol),
+                            'price': float(stock_data.get('current_price', 0)),
+                            'change': float(stock_data.get('price_change', 0)),
+                            'change_percent': day_change,
+                            'latest_recommendation': latest_analysis.recommendation if latest_analysis else None,
+                            'latest_confidence': latest_analysis.confidence if latest_analysis else None,
+                            'ai_insights': {
+                                'market_cap': f"${market_cap / 1e9:.1f}B" if market_cap > 1e9 else f"${market_cap / 1e6:.0f}M",
+                                'volume_ratio': f"{volume / avg_volume:.1f}x" if avg_volume > 0 else "N/A",
+                                'rsi': f"{current_rsi:.1f}",
+                                'trend_signal': "Bullish" if day_change > 1 else "Bearish" if day_change < -1 else "Neutral"
+                            }
                         }
-                    }
+                    except Exception as e:
+                        logger.error(f'Error getting AI insights for {symbol}: {e}')
+                        # Fallback to basic item without AI insights
+                        item = {
+                            'symbol': symbol,
+                            'name': stock_data.get('name', symbol),
+                            'price': float(stock_data.get('current_price', 0)),
+                            'change': float(stock_data.get('price_change', 0)),
+                            'change_percent': float(stock_data.get('price_change_percent', 0))
+                        }
                     
                     # Add latest analysis if available
                     if latest_analysis:
@@ -598,16 +612,16 @@ def get_active_alerts():
                     day_change = info.get('regularMarketChangePercent', 0)
                     
                     # Calculate technical indicators
-                    if len(hist) >= 14:
+                    if len(hist) >= 14 and 'Close' in hist.columns:
                         # Simple RSI calculation
                         delta = hist['Close'].diff()
                         gain = (delta.where(delta > 0, 0)).rolling(window=14).mean()
                         loss = (-delta.where(delta < 0, 0)).rolling(window=14).mean()
                         rs = gain / loss
                         rsi = 100 - (100 / (1 + rs))
-                        current_rsi = rsi.iloc[-1] if hasattr(rsi, 'iloc') and len(rsi) > 0 else 50
+                        current_rsi = float(rsi.iloc[-1]) if hasattr(rsi, 'iloc') and not rsi.empty else 50.0
                     else:
-                        current_rsi = 50
+                        current_rsi = 50.0
                     
                     # Calculate current value and enhanced descriptions based on alert type
                     if config['type'] == 'price_target':
@@ -678,15 +692,15 @@ def get_active_alerts():
                 market_cap = info.get('marketCap', 0)
                 
                 # Calculate RSI
-                if len(hist) >= 14:
+                if len(hist) >= 14 and 'Close' in hist.columns:
                     delta = hist['Close'].diff()
                     gain = (delta.where(delta > 0, 0)).rolling(window=14).mean()
                     loss = (-delta.where(delta < 0, 0)).rolling(window=14).mean()
                     rs = gain / loss
                     rsi = 100 - (100 / (1 + rs))
-                    current_rsi = rsi.iloc[-1] if hasattr(rsi, 'iloc') and len(rsi) > 0 else 50
+                    current_rsi = float(rsi.iloc[-1]) if hasattr(rsi, 'iloc') and not rsi.empty else 50.0
                 else:
-                    current_rsi = 50
+                    current_rsi = 50.0
                 
                 updated_alert = alert.copy()
                 if alert['condition'] in ['above', 'below']:
