@@ -543,7 +543,8 @@ def create_smart_alert():
                 info = ticker.info
                 current_price = info.get('currentPrice', info.get('regularMarketPrice', 0))
                 current_value = current_price if condition in ['above', 'below'] else 0
-            except:
+            except Exception as e:
+                logger.warning(f'Could not get market data for {symbol}: {e}')
                 current_value = 0
             
             alert_details = {
