@@ -431,26 +431,100 @@
         
         /* Additional mobile touch improvements */
         @media (max-width: 480px) {
+            .settings-container {
+                padding: 80px 10px 40px 10px;
+                max-width: 100%;
+            }
+            
             .settings-header {
-                margin-bottom: 30px;
+                margin-bottom: 25px;
+                padding: 0 5px;
+            }
+            
+            .settings-header h1 {
+                font-size: 1.6rem;
+            }
+            
+            .settings-header p {
+                font-size: 0.9rem;
+                padding: 0 5px;
+            }
+            
+            .settings-sidebar {
+                padding: 12px 8px;
+                margin: 0 -5px 15px -5px;
+            }
+            
+            .settings-nav {
+                gap: 6px;
+                padding: 3px 0;
             }
             
             .settings-nav a {
                 padding: 10px 12px;
                 font-size: 0.85rem;
-                min-width: 100px;
+                min-width: 95px;
+                border-radius: 8px;
             }
             
             .settings-nav i {
-                font-size: 14px;
+                font-size: 13px;
+            }
+            
+            .settings-content {
+                padding: 18px 12px;
+                margin: 0 -5px;
             }
             
             .section-title {
                 font-size: 1.2rem;
+                margin-bottom: 18px;
             }
             
             .form-label {
                 font-size: 0.95rem;
+            }
+            
+            .form-group {
+                margin-bottom: 18px;
+            }
+            
+            .stat-card {
+                padding: 12px;
+            }
+            
+            .back-button {
+                top: 12px;
+                left: 12px;
+                width: 40px;
+                height: 40px;
+                font-size: 16px;
+            }
+        }
+        
+        /* Ultra-narrow mobile screens (iPhone SE, etc) */
+        @media (max-width: 375px) {
+            .settings-container {
+                padding: 75px 8px 35px 8px;
+            }
+            
+            .settings-sidebar {
+                padding: 10px 6px;
+                margin: 0 -3px 12px -3px;
+            }
+            
+            .settings-content {
+                padding: 15px 10px;
+                margin: 0 -3px;
+            }
+            
+            .settings-nav a {
+                padding: 9px 10px;
+                font-size: 0.8rem;
+                min-width: 85px;
+            }
+            
+            .settings-nav gap: 4px;
             }
         }
             
