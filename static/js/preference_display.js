@@ -22,40 +22,10 @@ async function loadGlobalPreferences() {
     }
 }
 
-// Add preference status indicator to the search interface
+// Add preference status indicator to the search interface (removed - too intrusive)
 function addPreferenceStatusIndicator() {
-    if (!globalUserPreferences) return;
-    
-    const searchContainer = document.querySelector('.search-container');
-    if (searchContainer && !document.getElementById('preference-indicator')) {
-        const indicator = document.createElement('div');
-        indicator.id = 'preference-indicator';
-        indicator.innerHTML = `
-            <div class="preference-status-bar">
-                <i class="fas fa-user-cog"></i>
-                <span>AI personalized for ${globalUserPreferences.risk_tolerance} risk, ${globalUserPreferences.time_horizon}-term focus</span>
-                <button class="preference-toggle" onclick="togglePreferenceDetails()">
-                    <i class="fas fa-info-circle"></i>
-                </button>
-            </div>
-        `;
-        
-        indicator.style.cssText = `
-            position: fixed;
-            top: 70px;
-            right: 20px;
-            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-            color: white;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            z-index: 1000;
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-            animation: slideInRight 0.3s ease-out;
-        `;
-        
-        document.body.appendChild(indicator);
-    }
+    // Removed intrusive main screen indicator - preferences shown only in analysis results
+    console.log('Preference status loaded silently - no main screen indicator');
 }
 
 // Generate preference indicator for analysis results

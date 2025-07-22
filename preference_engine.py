@@ -45,21 +45,55 @@ class PreferenceEngine:
                 except json.JSONDecodeError:
                     logger.error(f"Invalid JSON in user {user_id} analysis_settings")
         
+        # Check session for anonymous users
+        from flask import session
+        if 'user_preferences' in session:
+            try:
+                session_prefs = session['user_preferences']
+                merged = self.default_preferences.copy()
+                merged.update(session_prefs)
+                return merged
+            except Exception as e:
+                logger.error(f"Error loading session preferences: {e}")
+        
         return self.default_preferences.copy()
     
     def save_user_preferences(self, preferences, user_id=None):
-        """Save user preferences to database"""
-        if not user_id and current_user and current_user.is_authenticated:
-            user_id = current_user.id
+        """Save user preferences to database or session"""
+        try:
+            if not user_id and current_user and current_user.is_authenticated:
+                user_id = current_user.id
             
-        if user_id:
-            user = User.query.get(user_id)
-            if user:
-                user.analysis_settings = json.dumps(preferences)
-                user.preferred_sectors = json.dumps(preferences.get('preferred_sectors', []))
-                from app import db
-                db.session.commit()
+            if user_id:
+                user = User.query.get(user_id)
+                if user:
+                    # Merge with existing preferences to avoid losing data
+                    existing_prefs = self.get_user_preferences(user_id)
+                    existing_prefs.update(preferences)
+                    
+                    # Save to database
+                    user.analysis_settings = json.dumps(existing_prefs)
+                    user.preferred_sectors = json.dumps(existing_prefs.get('preferred_sectors', []))
+                    from app import db
+                    db.session.commit()
+                    logger.info(f"Preferences saved to database for user {user_id}")
+                    return True
+            else:
+                # For anonymous users, save to session
+                from flask import session
+                existing_prefs = session.get('user_preferences', self.default_preferences.copy())
+                existing_prefs.update(preferences)
+                session['user_preferences'] = existing_prefs
+                session.permanent = True
+                logger.info("Preferences saved to session for anonymous user")
                 return True
+                
+        except Exception as e:
+            logger.error(f"Error saving user preferences: {e}")
+            if user_id:
+                from app import db
+                db.session.rollback()
+            
         return False
     
     def apply_risk_tolerance(self, analysis_result, risk_tolerance):
