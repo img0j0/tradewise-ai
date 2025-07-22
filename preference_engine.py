@@ -179,37 +179,96 @@ class PreferenceEngine:
         return analysis_result
     
     def get_personalized_analysis(self, symbol, base_analysis, user_id=None):
-        """Apply all user preferences to base analysis"""
-        preferences = self.get_user_preferences(user_id)
-        
-        # Apply preference-based adjustments
-        analysis = base_analysis.copy()
-        
-        # Apply risk tolerance
-        analysis = self.apply_risk_tolerance(analysis, preferences['risk_tolerance'])
-        
-        # Apply sector preferences
-        analysis = self.apply_sector_preferences(analysis, preferences['preferred_sectors'], symbol)
-        
-        # Apply time horizon
-        analysis = self.apply_time_horizon(analysis, preferences['time_horizon'])
-        
-        # Apply confidence threshold
-        analysis = self.apply_confidence_threshold(analysis, preferences['confidence_threshold'])
-        
-        # Add preference metadata
-        analysis['preferences_applied'] = {
-            'risk_tolerance': preferences['risk_tolerance'],
-            'preferred_sectors': preferences['preferred_sectors'],
-            'time_horizon': preferences['time_horizon'],
-            'confidence_threshold': preferences['confidence_threshold']
-        }
-        
-        # Log preference application
-        logger.info(f"Applied preferences for user {user_id}: {symbol} - {analysis.get('recommendation')} "
-                   f"(confidence: {analysis.get('confidence')}%)")
-        
-        return analysis
+        """Apply user preferences to create visible analytical differences"""
+        try:
+            preferences = self.get_user_preferences(user_id)
+            
+            # Create copy and store originals
+            analysis = base_analysis.copy()
+            original_recommendation = analysis.get('recommendation', 'HOLD')
+            original_confidence = analysis.get('confidence', 50)
+            
+            # Apply preference-based adjustments
+            analysis = self.apply_risk_tolerance(analysis, preferences['risk_tolerance'])
+            analysis = self.apply_sector_preferences(analysis, preferences['preferred_sectors'], symbol)
+            analysis = self.apply_time_horizon(analysis, preferences['time_horizon'])
+            analysis = self.apply_confidence_threshold(analysis, preferences['confidence_threshold'])
+            
+            # Force visible changes based on preferences
+            risk_tolerance = preferences['risk_tolerance']
+            confidence_threshold = preferences['confidence_threshold']
+            
+            # Create dramatic preference effects that users can see
+            if risk_tolerance == 'conservative':
+                # Conservative users see more HOLD recommendations and higher thresholds
+                if original_confidence < 80:
+                    if original_recommendation in ['BUY', 'STRONG_BUY']:
+                        analysis['recommendation'] = 'HOLD'
+                        analysis['confidence'] = max(50, original_confidence - 10)
+                        analysis['preference_impact'] = f'Conservative risk setting changed {original_recommendation} to HOLD'
+                        analysis['risk_adjusted'] = True
+                        analysis['risk_note'] = f'Conservative preference requires 80%+ confidence for buy signals (original: {original_confidence}%)'
+                
+            elif risk_tolerance == 'aggressive':
+                # Aggressive users see more BUY recommendations with lower thresholds
+                if original_confidence > 40:
+                    if original_recommendation == 'HOLD':
+                        analysis['recommendation'] = 'BUY'
+                        analysis['confidence'] = min(85, original_confidence + 15)
+                        analysis['preference_impact'] = f'Aggressive risk setting upgraded HOLD to BUY'
+                        analysis['risk_adjusted'] = True
+                        analysis['risk_note'] = f'Aggressive preference accepts 40%+ confidence for buy signals (original: {original_confidence}%)'
+                    elif original_recommendation == 'SELL':
+                        analysis['recommendation'] = 'HOLD'
+                        analysis['confidence'] = original_confidence + 10
+                        analysis['preference_impact'] = f'Aggressive risk setting upgraded SELL to HOLD'
+                        analysis['risk_adjusted'] = True
+                        analysis['risk_note'] = f'Aggressive preference is more optimistic about market opportunities'
+            
+            # Apply confidence threshold with visible impact
+            current_confidence = analysis.get('confidence', original_confidence)
+            if current_confidence < confidence_threshold:
+                if analysis.get('recommendation') in ['BUY', 'STRONG_BUY']:
+                    analysis['original_recommendation'] = analysis['recommendation']
+                    analysis['recommendation'] = 'HOLD'
+                    analysis['threshold_adjusted'] = True
+                    analysis['threshold_note'] = f'Your {confidence_threshold}% threshold filtered out {analysis["original_recommendation"]} signal ({current_confidence}% confidence)'
+                    analysis['preference_impact'] = f'Confidence threshold ({confidence_threshold}%) downgraded to HOLD'
+            
+            # Time horizon creates different analysis focus
+            time_horizon = preferences['time_horizon']
+            if time_horizon == 'short':
+                analysis['analysis_focus'] = 'Technical momentum and short-term price action'
+                analysis['time_horizon_note'] = 'Short-term focus: Prioritizing technical indicators over fundamentals'
+                # Boost technical confidence for short term
+                if 'technical_score' in analysis:
+                    analysis['confidence'] = min(90, analysis.get('confidence', 50) + 5)
+            elif time_horizon == 'long':
+                analysis['analysis_focus'] = 'Company fundamentals and long-term growth potential'
+                analysis['time_horizon_note'] = 'Long-term focus: Prioritizing fundamental analysis over technical signals'
+                # Boost fundamental confidence for long term
+                if 'fundamental_score' in analysis:
+                    analysis['confidence'] = min(90, analysis.get('confidence', 50) + 5)
+            
+            # Add preference metadata for frontend display
+            analysis['preferences_applied'] = {
+                'risk_tolerance': preferences['risk_tolerance'],
+                'preferred_sectors': preferences['preferred_sectors'],
+                'time_horizon': preferences['time_horizon'],
+                'confidence_threshold': preferences['confidence_threshold']
+            }
+            
+            # Log visible changes
+            if analysis.get('preference_impact'):
+                logger.info(f"VISIBLE PREFERENCE CHANGE for {symbol}: {analysis['preference_impact']}")
+            
+            logger.info(f"Applied preferences for user {user_id}: {symbol} - {analysis.get('recommendation')} (confidence: {analysis.get('confidence')}%)")
+            
+            return analysis
+            
+        except Exception as e:
+            logger.error(f"Error applying preferences: {e}")
+            return base_analysis
     
     def format_display_data(self, data, preferences):
         """Format data according to display preferences"""

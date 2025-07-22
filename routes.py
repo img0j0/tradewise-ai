@@ -847,11 +847,15 @@ def user_preferences():
             success = preference_engine.save_user_preferences(preferences)
             
             if success:
+                # Log the save for debugging
+                logger.info(f"Successfully saved preferences: {preferences}")
                 return jsonify({
                     'success': True,
-                    'message': 'Preferences updated successfully'
+                    'message': 'Preferences updated successfully',
+                    'saved_preferences': preference_engine.get_user_preferences()
                 })
             else:
+                logger.error(f"Failed to save preferences: {preferences}")
                 return jsonify({'error': 'Failed to save preferences'}), 500
                 
     except Exception as e:
