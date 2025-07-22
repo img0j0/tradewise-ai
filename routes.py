@@ -188,7 +188,7 @@ def stock_analysis_api():
         # Save analysis to history for tracking and comparison
         save_analysis_to_history(query.upper(), stock_data, insights)
         
-        # Build comprehensive analysis response with optimizations
+        # Build comprehensive analysis response with personalization data
         response = {
             'success': True,
             'symbol': stock_data.get('symbol', query.upper()),
@@ -200,7 +200,8 @@ def stock_analysis_api():
             'pe_ratio': stock_data.get('pe_ratio'),
             'data_source': 'Yahoo Finance (Real-time - Cached)' if cached_stock_data else 'Yahoo Finance (Real-time)',
             
-            # AI Analysis Results
+            # AI Analysis Results - Include ALL insights data
+            'analysis': insights,  # Full analysis object with preferences
             'recommendation': insights.get('recommendation', 'HOLD'),
             'confidence': int(insights.get('confidence', 50)),
             'investment_thesis': insights.get('analysis', 'Analysis not available'),

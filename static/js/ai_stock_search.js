@@ -326,6 +326,109 @@ async function getAIAnalysis(symbol) {
     }
 }
 
+// Generate preference indicator display for analysis results
+function generatePreferenceIndicatorDisplay(stockData) {
+    // Check if we have preference data
+    if (!stockData.analysis || !stockData.analysis.preferences_applied) {
+        return ''; // No preferences to display
+    }
+    
+    const prefs = stockData.analysis.preferences_applied;
+    const analysis = stockData.analysis;
+    
+    const indicators = [];
+    const explanations = [];
+    
+    // Risk tolerance indicator
+    if (prefs.risk_tolerance) {
+        const riskIcons = { 'conservative': '🛡️', 'moderate': '⚖️', 'aggressive': '🚀' };
+        const riskColors = { 'conservative': '#10b981', 'moderate': '#3b82f6', 'aggressive': '#ef4444' };
+        indicators.push(`
+            <div class="preference-chip" style="background: ${riskColors[prefs.risk_tolerance]}20; border: 1px solid ${riskColors[prefs.risk_tolerance]}60; color: ${riskColors[prefs.risk_tolerance]}">
+                ${riskIcons[prefs.risk_tolerance]} ${prefs.risk_tolerance.charAt(0).toUpperCase() + prefs.risk_tolerance.slice(1)} Risk
+            </div>
+        `);
+        explanations.push(`Analysis uses ${prefs.risk_tolerance} risk tolerance with ${prefs.confidence_threshold || 70}% confidence threshold`);
+    }
+    
+    // Time horizon indicator
+    if (prefs.time_horizon && analysis.time_horizon_note) {
+        const horizonIcons = { 'short': '⚡', 'medium': '📈', 'long': '🌱' };
+        indicators.push(`
+            <div class="preference-chip" style="background: #8b5cf620; border: 1px solid #8b5cf660; color: #8b5cf6">
+                ${horizonIcons[prefs.time_horizon]} ${prefs.time_horizon.charAt(0).toUpperCase() + prefs.time_horizon.slice(1)}-term Focus
+            </div>
+        `);
+        explanations.push(analysis.time_horizon_note);
+    }
+    
+    // Sector preference boost
+    if (analysis.sector_boost && analysis.sector_note) {
+        indicators.push(`
+            <div class="preference-chip" style="background: #f59e0b20; border: 1px solid #f59e0b60; color: #f59e0b">
+                ⭐ Preferred Sector
+            </div>
+        `);
+        explanations.push(analysis.sector_note);
+    }
+    
+    // Risk adjustment indicator
+    if (analysis.risk_adjusted && analysis.risk_note) {
+        indicators.push(`
+            <div class="preference-chip" style="background: #06b6d420; border: 1px solid #06b6d460; color: #06b6d4">
+                🔍 Risk Adjusted
+            </div>
+        `);
+        explanations.push(analysis.risk_note);
+    }
+    
+    if (indicators.length === 0) {
+        return ''; // Nothing personalized to show
+    }
+    
+    return `
+        <div class="personalization-section">
+            <div class="personalization-header">
+                <h6><i class="fas fa-user-cog"></i> Personalized for You</h6>
+                <button class="info-toggle" onclick="togglePersonalizationDetails()" title="Learn how your preferences affect this analysis">
+                    <i class="fas fa-info-circle"></i>
+                </button>
+            </div>
+            <div class="preference-chips-container">
+                ${indicators.join('')}
+            </div>
+            <div class="personalization-details" id="personalization-details" style="display: none;">
+                <div class="personalization-explanation">
+                    <strong>How Your Preferences Modified This Analysis:</strong>
+                    <ul>
+                        ${explanations.map(exp => `<li>${exp}</li>`).join('')}
+                    </ul>
+                </div>
+                <div class="personalization-actions">
+                    <button onclick="window.open('/settings', '_blank')" class="btn-adjust-preferences">
+                        <i class="fas fa-cog"></i> Adjust Preferences
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// Toggle personalization details
+function togglePersonalizationDetails() {
+    const details = document.getElementById('personalization-details');
+    if (details) {
+        const isHidden = details.style.display === 'none';
+        details.style.display = isHidden ? 'block' : 'none';
+        
+        // Update toggle button
+        const toggle = document.querySelector('.info-toggle i');
+        if (toggle) {
+            toggle.className = isHidden ? 'fas fa-times' : 'fas fa-info-circle';
+        }
+    }
+}
+
 // Display comprehensive stock analysis results
 function displayComprehensiveStockAnalysis(stockData) {
     currentAnalyzedStock = stockData;
@@ -344,6 +447,24 @@ function displayComprehensiveStockAnalysis(stockData) {
     
     // Clear any existing results first
     hideOldResults();
+    
+    // Log preference data for debugging and display
+    if (stockData.analysis && stockData.analysis.preferences_applied) {
+        console.log('🎯 PREFERENCES DETECTED:', stockData.analysis.preferences_applied);
+        // Store preference data for display functions
+        window.currentPreferenceData = {
+            applied: stockData.analysis.preferences_applied,
+            risk_adjusted: stockData.analysis.risk_adjusted,
+            sector_boost: stockData.analysis.sector_boost,
+            threshold_adjusted: stockData.analysis.threshold_adjusted,
+            risk_note: stockData.analysis.risk_note,
+            sector_note: stockData.analysis.sector_note,
+            time_horizon_note: stockData.analysis.time_horizon_note
+        };
+    } else {
+        console.log('⚠️ NO PREFERENCES DETECTED IN RESPONSE');
+        window.currentPreferenceData = null;
+    }
     
     // Build comprehensive analysis results using our enhanced API data
     const resultsContainer = document.getElementById('ai-analysis-results');
@@ -489,6 +610,9 @@ function buildComprehensiveAnalysisHTML(stockData) {
                                 <h5><i class="fas fa-lightbulb"></i> Investment Thesis</h5>
                                 <p>${stockData.investment_thesis || stockData.ai_reasoning || 'AI analysis indicates market conditions and technical factors support current recommendation.'}</p>
                             </div>
+                            
+                            <!-- Preference Personalization Indicators -->
+                            ${generatePreferenceIndicatorDisplay(stockData)}
                             
                             <!-- Key Insights -->
                             <div class="key-insights">

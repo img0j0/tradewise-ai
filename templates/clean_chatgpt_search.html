@@ -14,6 +14,8 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/first_impression.css') }}">
     <!-- Professional Input Validation -->
     <script src="{{ url_for('static', filename='js/input_validation.js') }}" defer></script>
+    <!-- Preference Display Enhancement -->
+    <script src="{{ url_for('static', filename='js/preference_display.js') }}" defer></script>
     
     <style>
         /* Clean Robot Mascot - Properly Aligned */
@@ -921,6 +923,101 @@
         .suggestion-price {
             font-weight: 600;
             font-size: 0.9rem;
+        }
+        
+        /* Personalization Indicators */
+        .personalization-section {
+            background: rgba(59, 130, 246, 0.05);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 15px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .personalization-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .personalization-header h6 {
+            color: #3b82f6;
+            margin: 0;
+            font-weight: 600;
+        }
+        
+        .info-toggle {
+            background: none;
+            border: none;
+            color: #3b82f6;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 50%;
+            transition: background 0.2s;
+        }
+        
+        .info-toggle:hover {
+            background: rgba(59, 130, 246, 0.1);
+        }
+        
+        .preference-chips-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        
+        .preference-chip {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+        
+        .preference-chip:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .personalization-details {
+            border-top: 1px solid rgba(59, 130, 246, 0.2);
+            padding-top: 12px;
+            margin-top: 12px;
+        }
+        
+        .personalization-explanation {
+            margin-bottom: 12px;
+        }
+        
+        .personalization-explanation ul {
+            margin: 8px 0 0 0;
+            padding-left: 20px;
+        }
+        
+        .personalization-explanation li {
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .btn-adjust-preferences {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-adjust-preferences:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
         }
         
         /* Quick Actions Panel */
