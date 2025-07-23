@@ -273,11 +273,11 @@ def stock_analysis_api():
             'price_change_percent': float(stock_data.get('price_change_percent', 0)),
             'market_cap': float(stock_data.get('market_cap', 0)) if stock_data.get('market_cap') else 0,
             'pe_ratio': stock_data.get('pe_ratio'),
-            'data_source': 'Yahoo Finance (Real-time - Cached)' if cached_stock_data else 'Yahoo Finance (Real-time)',
+            'data_source': 'Yahoo Finance (Real-time)',
             
             # Enhanced AI Analysis Results
             'analysis': insights,  # Full analysis object with strategy personalization
-            'enhanced_analysis': enhanced_analysis if enhanced_analysis else {},  # Comprehensive enhanced insights
+            'enhanced_analysis': {},  # Comprehensive enhanced insights
             'recommendation': insights.get('recommendation', 'HOLD'),
             'confidence': int(insights.get('confidence', 50)),
             'investment_thesis': insights.get('analysis', 'Analysis not available'),
@@ -414,8 +414,6 @@ def get_watchlist():
 def get_analysis_watchlist():
     """Get analysis watchlist with current data and latest analysis results - OPTIMIZED with caching"""
     try:
-        # Get fresh watchlist data
-        
         # Get fresh watchlist data
         watchlist_data = []
         
