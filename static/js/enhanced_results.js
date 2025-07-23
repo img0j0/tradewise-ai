@@ -54,72 +54,136 @@ function generateEnhancedAnalysisHTML(data) {
     
     return `
         <div class="enhanced-analysis-container">
-            <!-- Stock Header -->
-            <div class="stock-header-enhanced">
-                <div class="stock-title-section">
-                    <div class="stock-symbol-large">${data.symbol}</div>
-                    <div class="stock-company-name">${data.company_name}</div>
-                    <div class="stock-sector">${enhanced.sector || 'Technology'}</div>
-                </div>
-                <div class="stock-price-section">
-                    <div class="current-price">$${(parseFloat(data.current_price) || 0).toFixed(2)}</div>
-                    <div class="price-change ${changeClass}">
-                        ${priceChange >= 0 ? '+' : ''}${(priceChange || 0).toFixed(2)} 
-                        (${priceChangePercent >= 0 ? '+' : ''}${(priceChangePercent || 0).toFixed(2)}%)
+            <!-- Stock Header with Professional Layout -->
+            <div class="row mb-4">
+                <div class="col-md-8">
+                    <div class="d-flex align-items-center mb-3">
+                        <h2 class="mb-0 me-3">${data.symbol}</h2>
+                        <span class="badge bg-primary fs-6">${enhanced.enhanced_metrics?.market_position?.sector || 'Technology'}</span>
                     </div>
-                    <div class="market-cap">Market Cap: $${formatNumber(data.market_cap)}</div>
+                    <h5 class="text-muted mb-2">${data.company_name}</h5>
+                    <div class="d-flex align-items-center">
+                        <span class="me-3"><i class="fas fa-building"></i> ${enhanced.enhanced_metrics?.market_position?.exchange || 'NASDAQ'}</span>
+                        <span><i class="fas fa-globe"></i> ${enhanced.enhanced_metrics?.market_position?.country || 'United States'}</span>
+                    </div>
+                </div>
+                <div class="col-md-4 text-end">
+                    <div class="price-display-large">
+                        <div class="current-price-big">$${(parseFloat(data.current_price) || 0).toFixed(2)}</div>
+                        <div class="price-change-big ${changeClass}">
+                            ${priceChange >= 0 ? '+' : ''}${(priceChange || 0).toFixed(2)} 
+                            (${priceChangePercent >= 0 ? '+' : ''}${(priceChangePercent || 0).toFixed(2)}%)
+                        </div>
+                        <div class="market-cap-display">Market Cap: $${formatNumber(data.market_cap)}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Recommendation Section -->
+            <div class="ai-recommendation-section">
+                <div class="recommendation-header">
+                    <div>
+                        <span class="recommendation-badge-large bg-${getRecommendationColor(analysis.recommendation)}">
+                            ${analysis.recommendation || 'HOLD'}
+                        </span>
+                    </div>
+                    <div class="confidence-display">
+                        <div class="confidence-score-large">${analysis.confidence || 50}%</div>
+                        <div class="confidence-label">AI Confidence</div>
+                    </div>
+                </div>
+                <div class="strategy-explanation">
+                    <strong>${strategy.icon || '🚀'} ${strategy.name || 'Growth Investor'} Strategy Applied:</strong><br>
+                    ${strategy.explanation || analysis.ai_reasoning || 'AI analysis suggests maintaining current position while monitoring market developments.'}
                 </div>
             </div>
 
             <!-- Strategy Impact Display -->
-            ${strategy.name ? `
-            <div class="strategy-impact-display">
-                <div class="strategy-badge">
-                    <span>${strategy.emoji || '📈'}</span>
-                    <span>${strategy.name}</span>
+            ${strategy.changed ? `
+            <div class="strategy-impact-section">
+                <div class="strategy-badge-large">
+                    ${strategy.icon || '📈'} Strategy Impact Applied
                 </div>
-                <div class="strategy-change-indicator">
-                    <span class="change-label">Strategy Impact:</span> 
-                    ${strategy.before_recommendation || 'HOLD'} (${strategy.before_confidence || 50}%) 
-                    → ${strategy.after_recommendation || 'BUY'} (${strategy.after_confidence || 80}%)
+                <div class="strategy-explanation">
+                    ${strategy.explanation || 'Investment strategy modified this analysis based on your preferences.'}
+                    <br><strong>Original:</strong> ${strategy.original_recommendation || 'HOLD'} (${strategy.original_confidence || 45}%)
+                    → <strong>Adjusted:</strong> ${analysis.recommendation} (${analysis.confidence}%)
                 </div>
             </div>
             ` : ''}
 
-            <!-- Quick Metrics Grid -->
-            <div class="quick-metrics-grid">
+            <!-- Key Metrics Grid -->
+            <div class="metrics-grid">
                 <div class="metric-card">
-                    <div class="metric-icon">🎯</div>
-                    <div class="metric-label">AI Recommendation</div>
-                    <div class="metric-value ${(data.recommendation || 'HOLD').toLowerCase()}-recommendation">
-                        ${data.recommendation || 'HOLD'}
-                    </div>
-                    <div class="metric-subtitle">${data.confidence || 50}% Confidence</div>
-                </div>
-                
-                <div class="metric-card">
-                    <div class="metric-icon">⚠️</div>
-                    <div class="metric-label">Risk Level</div>
-                    <div class="metric-value ${(data.risk_level || 'Medium').toLowerCase()}-risk">
-                        ${data.risk_level || 'Medium'}
-                    </div>
-                    <div class="metric-subtitle">Risk Assessment</div>
-                </div>
-                
-                <div class="metric-card">
-                    <div class="metric-icon">📊</div>
                     <div class="metric-label">Technical Score</div>
-                    <div class="metric-value">${data.technical_score || 50}/100</div>
-                    <div class="metric-subtitle">Technical Analysis</div>
+                    <div class="metric-value">${analysis.technical_score || 50}/100</div>
+                    <div class="metric-description">Technical Analysis Rating</div>
                 </div>
                 
                 <div class="metric-card">
-                    <div class="metric-icon">💰</div>
                     <div class="metric-label">Fundamental Score</div>
-                    <div class="metric-value">${data.fundamental_score || 50}/100</div>
-                    <div class="metric-subtitle">Financial Health</div>
+                    <div class="metric-value">${analysis.fundamental_score || 50}/100</div>
+                    <div class="metric-description">Financial Health Rating</div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-label">Risk Level</div>
+                    <div class="metric-value">${analysis.risk_level || 'MEDIUM'}</div>
+                    <div class="metric-description">Investment Risk Assessment</div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-label">Market Sentiment</div>
+                    <div class="metric-value">${analysis.market_sentiment || 'NEUTRAL'}</div>
+                    <div class="metric-description">Current Market Mood</div>
                 </div>
             </div>
+
+            <!-- Analysis Text Sections -->
+            <div class="analysis-text-section">
+                <div class="analysis-text-header">
+                    <i class="fas fa-lightbulb"></i>
+                    Investment Thesis
+                </div>
+                <div class="analysis-text-content">
+                    ${analysis.investment_thesis || 'Comprehensive analysis suggests monitoring current market conditions and position sizing based on risk tolerance.'}
+                </div>
+            </div>
+
+            <div class="analysis-text-section">
+                <div class="analysis-text-header">
+                    <i class="fas fa-brain"></i>
+                    AI Reasoning
+                </div>
+                <div class="analysis-text-content">
+                    ${analysis.ai_reasoning || 'AI confidence assessment based on technical and fundamental analysis indicates current positioning strategy.'}
+                </div>
+            </div>
+
+            <!-- Technical Indicators Section -->
+            ${enhanced.technical_analysis ? `
+            <div class="technical-indicators">
+                <h4><i class="fas fa-chart-line"></i> Technical Analysis</h4>
+                <div class="technical-grid">
+                    <div class="technical-item">
+                        <div class="technical-label">Overall Rating</div>
+                        <div class="technical-value">${enhanced.technical_analysis.overall_technical_rating || 'N/A'}</div>
+                    </div>
+                    <div class="technical-item">
+                        <div class="technical-label">RSI (14)</div>
+                        <div class="technical-value">${enhanced.technical_analysis.rsi?.current || 'N/A'}</div>
+                    </div>
+                    <div class="technical-item">
+                        <div class="technical-label">MACD Signal</div>
+                        <div class="technical-value">${enhanced.technical_analysis.macd?.trend || 'N/A'}</div>
+                    </div>
+                    <div class="technical-item">
+                        <div class="technical-label">20-Day MA</div>
+                        <div class="technical-value">$${enhanced.technical_analysis.moving_averages?.ma_20?.toFixed(2) || 'N/A'}</div>
+                    </div>
+                </div>
+            </div>
+            ` : ''}
 
             <!-- Enhanced Analysis Insights -->
             <div class="analysis-insights-section">
@@ -526,8 +590,19 @@ function setAlert(symbol) {
     alert(`Price alert for ${symbol} - This feature will set up price alerts and technical signal notifications.`);
 }
 
+// Helper function for recommendation colors
+function getRecommendationColor(recommendation) {
+    switch(recommendation?.toUpperCase()) {
+        case 'BUY': case 'STRONG BUY': return 'success';
+        case 'SELL': case 'STRONG SELL': return 'danger';
+        case 'HOLD': return 'warning';
+        default: return 'secondary';
+    }
+}
+
 // Make functions globally available
 window.displayEnhancedAnalysis = displayEnhancedAnalysis;
+window.getRecommendationColor = getRecommendationColor;
 window.addToWatchlist = addToWatchlist;
 window.getDetailedAnalysis = getDetailedAnalysis;
 window.comparePeers = comparePeers;
