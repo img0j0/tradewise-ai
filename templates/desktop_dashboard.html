@@ -322,7 +322,7 @@
                 console.log('Desktop: API response received:', data);
                 
                 if (data.success || data.symbol) {
-                    displayResults(data);
+                    displayDesktopResults(data);
                 } else {
                     console.error('Desktop: API returned error:', data.error);
                     alert('Analysis failed: ' + (data.error || 'Unknown error'));
@@ -334,7 +334,7 @@
         }
         
         // Desktop-optimized displayResults function with enhanced data handling
-        function displayResults(data) {
+        function displayDesktopResults(data) {
             console.log('Desktop: Displaying comprehensive results', data);
             
             if (!data || (!data.success && !data.symbol)) {
@@ -414,7 +414,8 @@
                 console.log('Desktop results display completed successfully');
                 
             } catch (error) {
-                console.error('Error in desktop displayResults:', error);
+                console.error('Error in desktop displayDesktopResults:', error);
+                console.error('Error details:', error.message, error.stack);
                 // Show error state
                 document.getElementById('analysisMode').textContent = 'Analysis Error';
                 document.getElementById('analysisMode').className = 'badge bg-danger ms-2';

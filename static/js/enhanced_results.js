@@ -6,11 +6,14 @@ function displayEnhancedAnalysis(stockData) {
     console.log('Stock data:', stockData);
     
     try {
-        // Create enhanced analysis container
-        const container = document.getElementById('ai-analysis-results');
+        // Try desktop container first, then fallback
+        let container = document.getElementById('mainAnalysisContainer');
         if (!container) {
-            console.error('Analysis results container not found');
-            throw new Error('ai-analysis-results container not found in DOM');
+            container = document.getElementById('ai-analysis-results');
+        }
+        if (!container) {
+            console.error('No analysis results container found');
+            throw new Error('No analysis results container found in DOM');
         }
         
         // Clear existing content

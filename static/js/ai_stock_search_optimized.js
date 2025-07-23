@@ -139,7 +139,14 @@ async function performSearch() {
         console.log('API response:', data);
         
         if (data.success) {
-            displayResults(data);
+            // Check if enhanced display is available, use it, otherwise use basic display
+            if (typeof displayEnhancedAnalysis === 'function') {
+                console.log('Using enhanced display system');
+                displayEnhancedAnalysis(data);
+            } else {
+                console.log('Using basic display system');
+                displayResults(data);
+            }
         } else {
             showError('Analysis failed: ' + (data.message || 'Unknown error'));
         }
