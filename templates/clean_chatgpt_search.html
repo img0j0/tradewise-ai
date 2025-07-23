@@ -1830,79 +1830,95 @@
         }
         
         function displayResults(data) {
-            // Store current stock data for buy modal
-            currentStock = data;
+            console.log('💡 DISPLAYRESULTS: Received data structure:', data);
             
-            const changeClass = data.change >= 0 ? '#10b981' : '#ef4444';
-            const changeSymbol = data.change >= 0 ? '+' : '';
+            // Handle both direct data and nested analysis structure
+            const stockData = data.analysis || data;
+            const stockInfo = data.stock_info || data;
+            
+            console.log('💡 DISPLAYRESULTS: Extracted stockData:', stockData);
+            console.log('💡 DISPLAYRESULTS: Extracted stockInfo:', stockInfo);
+            
+            // Store current stock data for buy modal
+            currentStock = stockData;
+            
+            // Safe access to price change data with fallbacks
+            const price = stockInfo.current_price || stockInfo.price || 0;
+            const change = stockInfo.price_change || stockInfo.change || 0;
+            const changePercent = stockInfo.price_change_percent || stockInfo.change_percent || 0;
+            
+            console.log('💡 DISPLAYRESULTS: Price data - price:', price, 'change:', change, 'changePercent:', changePercent);
+            
+            const changeClass = change >= 0 ? '#10b981' : '#ef4444';
+            const changeSymbol = change >= 0 ? '+' : '';
             
             document.getElementById('analysis-results').innerHTML = `
                 <div class="stock-header">
                     <div>
-                        <div class="stock-name">${data.name} (${data.symbol})</div>
-                        <div style="opacity: 0.7; margin-top: 5px;">Live Market Data • ${data.data_source}</div>
+                        <div class="stock-name">${stockInfo.company_name || stockInfo.name || stockData.symbol || 'Unknown'} (${stockData.symbol || stockInfo.symbol || 'N/A'})</div>
+                        <div style="opacity: 0.7; margin-top: 5px;">Live Market Data • ${stockInfo.data_source || 'Yahoo Finance'}</div>
                     </div>
                     <div class="stock-price">
-                        <div class="price" style="color: ${changeClass};">$${data.price.toFixed(2)}</div>
+                        <div class="price" style="color: ${changeClass};">$${typeof price === 'number' ? price.toFixed(2) : '0.00'}</div>
                         <div class="change" style="color: ${changeClass};">
-                            ${changeSymbol}$${Math.abs(data.change).toFixed(2)} (${changeSymbol}${data.change_percent.toFixed(2)}%)
+                            ${changeSymbol}$${typeof change === 'number' ? Math.abs(change).toFixed(2) : '0.00'} (${changeSymbol}${typeof changePercent === 'number' ? changePercent.toFixed(2) : '0.00'}%)
                         </div>
                     </div>
                 </div>
                 
                 <div class="ai-analysis">
                     <div class="analysis-header">
-                        <div class="analysis-badge">${data.recommendation}</div>
+                        <div class="analysis-badge">${stockData.recommendation || 'HOLD'}</div>
                         <div class="confidence-bar">
-                            <div class="confidence-fill" style="width: ${data.confidence}%"></div>
+                            <div class="confidence-fill" style="width: ${stockData.confidence || 50}%"></div>
                         </div>
-                        <div style="margin-left: 15px; font-weight: 600;">${data.confidence}% Confidence</div>
+                        <div style="margin-left: 15px; font-weight: 600;">${stockData.confidence || 50}% Confidence</div>
                     </div>
                     <div style="font-size: 1.1rem; line-height: 1.6;">
-                        ${data.investment_thesis}
+                        ${stockData.investment_thesis || 'Analysis in progress...'}
                     </div>
                 </div>
                 
                 <div class="metrics-grid">
                     <div class="metric-item">
                         <div class="metric-label">Market Sentiment</div>
-                        <div class="metric-value">${data.market_sentiment}</div>
+                        <div class="metric-value">${stockData.market_sentiment || 'NEUTRAL'}</div>
                     </div>
                     <div class="metric-item">
                         <div class="metric-label">Risk Level</div>
-                        <div class="metric-value">${data.risk_level}</div>
+                        <div class="metric-value">${stockData.risk_level || 'MEDIUM'}</div>
                     </div>
                     <div class="metric-item">
                         <div class="metric-label">Fundamental Score</div>
-                        <div class="metric-value">${data.fundamental_score}/100</div>
+                        <div class="metric-value">${stockData.fundamental_score || 0}/100</div>
                     </div>
                     <div class="metric-item">
                         <div class="metric-label">Technical Score</div>
-                        <div class="metric-value">${data.technical_score}/100</div>
+                        <div class="metric-value">${stockData.technical_score || 0}/100</div>
                     </div>
                     <div class="metric-item">
                         <div class="metric-label">Market Cap</div>
-                        <div class="metric-value">$${(data.market_cap / 1e9).toFixed(1)}B</div>
+                        <div class="metric-value">${stockInfo.market_cap ? '$' + (stockInfo.market_cap / 1e9).toFixed(1) + 'B' : 'N/A'}</div>
                     </div>
                     <div class="metric-item">
                         <div class="metric-label">P/E Ratio</div>
-                        <div class="metric-value">${data.pe_ratio ? data.pe_ratio.toFixed(1) : 'N/A'}</div>
+                        <div class="metric-value">${stockInfo.pe_ratio ? stockInfo.pe_ratio.toFixed(1) : 'N/A'}</div>
                     </div>
                     <div class="metric-item">
                         <div class="metric-label">Volume Ratio</div>
-                        <div class="metric-value">${data.volume_ratio ? data.volume_ratio.toFixed(1) + 'x' : 'N/A'}</div>
+                        <div class="metric-value">${stockInfo.volume_ratio ? stockInfo.volume_ratio.toFixed(1) + 'x' : 'N/A'}</div>
                     </div>
                     <div class="metric-item">
                         <div class="metric-label">RSI</div>
-                        <div class="metric-value" style="color: ${data.rsi < 30 ? '#ef4444' : data.rsi > 70 ? '#f59e0b' : '#10b981'}">${data.rsi ? data.rsi.toFixed(1) : 'N/A'}</div>
+                        <div class="metric-value" style="color: ${stockInfo.rsi < 30 ? '#ef4444' : stockInfo.rsi > 70 ? '#f59e0b' : '#10b981'}">${stockInfo.rsi ? stockInfo.rsi.toFixed(1) : 'N/A'}</div>
                     </div>
                     <div class="metric-item">
                         <div class="metric-label">Day Change</div>
-                        <div class="metric-value" style="color: ${data.day_change > 0 ? '#10b981' : data.day_change < 0 ? '#ef4444' : '#6b7280'}">${data.day_change ? (data.day_change > 0 ? '+' : '') + data.day_change.toFixed(2) + '%' : 'N/A'}</div>
+                        <div class="metric-value" style="color: ${changePercent > 0 ? '#10b981' : changePercent < 0 ? '#ef4444' : '#6b7280'}">${changePercent ? (changePercent > 0 ? '+' : '') + changePercent.toFixed(2) + '%' : 'N/A'}</div>
                     </div>
                     <div class="metric-item">
                         <div class="metric-label">52W Range</div>
-                        <div class="metric-value">${data.week_52_low ? '$' + data.week_52_low.toFixed(2) + '-$' + data.week_52_high.toFixed(2) : 'N/A'}</div>
+                        <div class="metric-value">${stockInfo.week_52_low ? '$' + stockInfo.week_52_low.toFixed(2) + '-$' + stockInfo.week_52_high.toFixed(2) : 'N/A'}</div>
                     </div>
                 </div>
                 
