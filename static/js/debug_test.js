@@ -88,8 +88,11 @@ function debugSearchError() {
         
         // If this is the search error we're looking for
         if (args[0] === 'Search error:' && args[1] && typeof args[1] === 'object') {
-            console.log('🎯 FOUND THE SEARCH ERROR!');
+            console.log('🎯 FOUND THE SEARCH ERROR FROM DEBUG_TEST.JS!');
             console.log('Error object:', args[1]);
+            console.log('Error type:', args[1]?.constructor?.name);
+            console.log('Error message:', args[1]?.message);
+            console.log('Error stack:', args[1]?.stack);
             console.log('Error message:', args[1].message || 'No message');
             console.log('Error stack:', args[1].stack || 'No stack');
         }

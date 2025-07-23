@@ -1753,6 +1753,17 @@
                 return;
             }
             
+            // Call the main search function from ai_stock_search.js if available
+            if (typeof searchStockAI === 'function') {
+                console.log('🔍 Using enhanced searchStockAI function');
+                hideSmartSuggestions?.();
+                hideQuickActions?.();
+                searchStockAI(query);
+                return;
+            }
+            
+            // Fallback to inline search if ai_stock_search.js not loaded
+            console.log('🔄 Using fallback inline search');
             showAnalysisOverlay();
             showLoading();
             
@@ -1768,6 +1779,7 @@
                 const data = await response.json();
                 
                 if (data.success) {
+                    console.log('✅ Fallback search successful:', data);
                     showNotification('Analysis Complete', `Generated insights for ${query.toUpperCase()}`, 'success');
                     displayResults(data);
                 } else {
@@ -1775,7 +1787,10 @@
                 }
                 
             } catch (error) {
-                console.error('Search error:', error);
+                console.error('🔴 FALLBACK SEARCH ERROR:', error);
+                console.error('🔴 Error type:', error.constructor?.name || 'Unknown');
+                console.error('🔴 Error message:', error.message || 'No message available');
+                console.error('🔴 Error stack:', error.stack || 'No stack trace available');
                 showNotification('Analysis Error', error.message, 'error');
                 showError(error.message);
             }
@@ -4818,6 +4833,8 @@
     </script>
     <!-- Enhanced Results Display -->
     <script src="{{ url_for('static', filename='js/enhanced_results.js') }}" defer></script>
+    <!-- Main AI Stock Search -->
+    <script src="{{ url_for('static', filename='js/ai_stock_search.js') }}" defer></script>
     <!-- Debug Test Functions -->
     <script src="{{ url_for('static', filename='js/debug_test.js') }}" defer></script>
 </body>
