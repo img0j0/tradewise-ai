@@ -256,10 +256,18 @@ async function searchStockAI() {
             existingContainer.innerHTML = ''; // Clear any basic card content
         }
         
-        // ONLY call the enhanced display function
-        displayComprehensiveStockAnalysis(stockData);
+        // ENHANCED AI ANALYSIS DISPLAY
+        console.log('=== ENHANCED ANALYSIS DISPLAY ===');
         
-        console.log('=== ENHANCED DISPLAY FUNCTION CALLED ===');
+        // Check if enhanced analysis is available and use enhanced display
+        if (stockData.enhanced_analysis && typeof displayEnhancedAnalysis === 'function') {
+            displayEnhancedAnalysis(stockData);
+            console.log('Enhanced analysis display used');
+        } else {
+            // Fallback to comprehensive display
+            displayComprehensiveStockAnalysis(stockData);
+            console.log('Standard comprehensive display used');
+        }
         
     } catch (error) {
         console.error('Error searching stock:', error);

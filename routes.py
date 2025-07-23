@@ -188,6 +188,16 @@ def stock_analysis_api():
         ai_engine = AIInsightsEngine()
         base_insights = ai_engine.get_insights(query.upper(), stock_data)
         
+        # Get enhanced AI analysis (with error handling)
+        enhanced_analysis = None
+        try:
+            from enhanced_ai_analyzer import EnhancedAIAnalyzer
+            enhanced_analyzer = EnhancedAIAnalyzer()
+            enhanced_analysis = enhanced_analyzer.get_enhanced_analysis(query.upper())
+        except Exception as e:
+            logger.error(f"Enhanced analysis failed for {query}: {e}")
+            enhanced_analysis = None
+        
         # Apply simple strategy-based personalization
         insights = simple_personalization.personalize_analysis(query.upper(), base_insights)
         
@@ -198,20 +208,21 @@ def stock_analysis_api():
         # Save analysis to history for tracking and comparison
         save_analysis_to_history(query.upper(), stock_data, insights)
         
-        # Build comprehensive analysis response with personalization data
+        # Build comprehensive analysis response with enhanced insights
         response = {
             'success': True,
             'symbol': stock_data.get('symbol', query.upper()),
-            'name': stock_data.get('name', 'Unknown Company'),
-            'price': float(stock_data.get('current_price', 0)) if stock_data.get('current_price') else 0,
-            'change': float(stock_data.get('price_change', 0)),
-            'change_percent': float(stock_data.get('price_change_percent', 0)),
+            'company_name': stock_data.get('name', 'Unknown Company'),
+            'current_price': float(stock_data.get('current_price', 0)) if stock_data.get('current_price') else 0,
+            'price_change': float(stock_data.get('price_change', 0)),
+            'price_change_percent': float(stock_data.get('price_change_percent', 0)),
             'market_cap': float(stock_data.get('market_cap', 0)) if stock_data.get('market_cap') else 0,
             'pe_ratio': stock_data.get('pe_ratio'),
             'data_source': 'Yahoo Finance (Real-time - Cached)' if cached_stock_data else 'Yahoo Finance (Real-time)',
             
-            # AI Analysis Results - Include ALL insights data
-            'analysis': insights,  # Full analysis object with preferences
+            # Enhanced AI Analysis Results
+            'analysis': insights,  # Full analysis object with strategy personalization
+            'enhanced_analysis': enhanced_analysis if enhanced_analysis else {},  # Comprehensive enhanced insights
             'recommendation': insights.get('recommendation', 'HOLD'),
             'confidence': int(insights.get('confidence', 50)),
             'investment_thesis': insights.get('analysis', 'Analysis not available'),
