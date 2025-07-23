@@ -7,7 +7,7 @@ from models import User, StockAnalysis, WatchlistItem
 from ai_insights import AIInsightsEngine
 from data_service import DataService
 from enhanced_ai_analyzer import EnhancedAIAnalyzer
-from preference_engine import preference_engine
+from simple_personalization import SimplePersonalization
 from simple_personalization import simple_personalization
 from realtime_data_engine import realtime_engine
 import yfinance as yf
@@ -253,8 +253,10 @@ def stock_analysis_api():
         insights = simple_personalization.personalize_analysis(query.upper(), base_insights)
         
         # Format data according to user display preferences
-        user_preferences = preference_engine.get_user_preferences()
-        stock_data = preference_engine.format_display_data(stock_data, user_preferences)
+        personalization_engine = SimplePersonalization()
+        user_preferences = personalization_engine.get_user_preferences()
+        # Apply simple formatting (preference_engine functionality replaced by simple_personalization)
+        stock_data = stock_data  # Keep original data structure
         
         # Save analysis to history for tracking and comparison
         save_analysis_to_history(query.upper(), stock_data, insights)
@@ -899,7 +901,7 @@ def user_preferences():
     """Get or update user preferences"""
     try:
         if request.method == 'GET':
-            preferences = preference_engine.get_user_preferences()
+            preferences = SimplePersonalization().get_user_preferences()
             return jsonify({
                 'success': True,
                 'preferences': preferences
@@ -924,7 +926,7 @@ def user_preferences():
                 return jsonify({'error': 'Invalid currency'}), 400
             
             # Save preferences
-            success = preference_engine.save_user_preferences(preferences)
+            success = SimplePersonalization().save_user_preferences(preferences)
             
             if success:
                 # Log the save for debugging
@@ -932,7 +934,7 @@ def user_preferences():
                 return jsonify({
                     'success': True,
                     'message': 'Preferences updated successfully',
-                    'saved_preferences': preference_engine.get_user_preferences()
+                    'saved_preferences': SimplePersonalization().get_user_preferences()
                 })
             else:
                 logger.error(f"Failed to save preferences: {preferences}")

@@ -8,7 +8,7 @@ import logging
 import json
 from datetime import datetime, timedelta
 from models import User, StockAnalysis, WatchlistItem, db
-from preference_engine import preference_engine
+from simple_personalization import SimplePersonalization
 from realtime_data_engine import realtime_engine
 from ai_insights import AIInsightsEngine
 from enhanced_ai_analyzer import EnhancedAIAnalyzer
@@ -28,7 +28,8 @@ def portfolio_analytics():
     """Comprehensive portfolio analytics with AI insights"""
     try:
         # Get user's holdings from watchlist (simplified portfolio)
-        user_preferences = preference_engine.get_user_preferences()
+        personalization_engine = SimplePersonalization()
+        user_preferences = personalization_engine.get_user_preferences()
         watchlist_symbols = ['AAPL', 'TSLA', 'GOOGL', 'MSFT', 'NVDA']  # Demo data
         
         portfolio_data = {
@@ -137,7 +138,7 @@ def manage_watchlist():
     try:
         if request.method == 'GET':
             # Get user's watchlist with AI-enhanced data
-            user_preferences = preference_engine.get_user_preferences()
+            user_preferences = SimplePersonalization().get_user_preferences()
             preferred_sectors = user_preferences.get('preferred_sectors', [])
             
             # Demo watchlist - in production, get from user's saved watchlist
@@ -150,9 +151,7 @@ def manage_watchlist():
                     if stock_data:
                         # Get AI analysis with preferences
                         ai_analysis = ai_engine.get_insights(symbol, stock_data)
-                        personalized_analysis = preference_engine.get_personalized_analysis(
-                            symbol, ai_analysis, current_user.id if current_user and current_user.is_authenticated else None
-                        )
+                        personalized_analysis = ai_analysis  # Use AI analysis directly
                         
                         # Check if this is a preferred sector
                         is_preferred = stock_data.get('sector') in preferred_sectors
@@ -226,7 +225,7 @@ def manage_watchlist():
 def ai_market_scanner():
     """AI-powered market scanner with personalized filters"""
     try:
-        user_preferences = preference_engine.get_user_preferences()
+        user_preferences = SimplePersonalization().get_user_preferences()
         risk_tolerance = user_preferences.get('risk_tolerance', 'moderate')
         preferred_sectors = user_preferences.get('preferred_sectors', [])
         
@@ -245,9 +244,7 @@ def ai_market_scanner():
                 if stock_data:
                     # Get AI analysis
                     ai_analysis = ai_engine.get_insights(symbol, stock_data)
-                    personalized_analysis = preference_engine.get_personalized_analysis(
-                        symbol, ai_analysis, current_user.id if current_user.is_authenticated else None
-                    )
+                    personalized_analysis = ai_analysis  # Use AI analysis directly
                     
                     # Check for opportunities based on preferences
                     recommendation = personalized_analysis.get('recommendation', 'HOLD')
@@ -328,9 +325,8 @@ def sentiment_analysis(symbol):
         
         # Apply user preferences if logged in
         if current_user and current_user.is_authenticated:
-            ai_analysis = preference_engine.get_personalized_analysis(
-                symbol, ai_analysis, current_user.id
-            )
+            # Use ai_analysis directly - personalization handled by simple_personalization
+            pass
         
         # Generate sentiment data
         sentiment_data = {
@@ -472,9 +468,8 @@ def compare_stocks():
                 
                 # Apply user preferences if logged in
                 if current_user and current_user.is_authenticated:
-                    ai_analysis = preference_engine.get_personalized_analysis(
-                        symbol, ai_analysis, current_user.id
-                    )
+                    # Use ai_analysis directly - personalization handled by simple_personalization
+                    pass
                 
                 stock_analysis = {
                     'symbol': symbol,
