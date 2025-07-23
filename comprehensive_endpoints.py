@@ -11,7 +11,7 @@ from models import User, StockAnalysis, WatchlistItem, db
 from preference_engine import preference_engine
 from realtime_data_engine import realtime_engine
 from ai_insights import AIInsightsEngine
-from stock_search import StockSearchService
+from enhanced_ai_analyzer import EnhancedAIAnalyzer
 import yfinance as yf
 
 logger = logging.getLogger(__name__)
@@ -21,7 +21,7 @@ comprehensive_bp = Blueprint('comprehensive', __name__)
 
 # Initialize services
 ai_engine = AIInsightsEngine()
-stock_service = StockSearchService()
+enhanced_analyzer = EnhancedAIAnalyzer()
 
 @comprehensive_bp.route('/api/portfolio/analytics')
 def portfolio_analytics():
@@ -46,7 +46,13 @@ def portfolio_analytics():
         for symbol in watchlist_symbols:
             try:
                 # Get current stock data
-                stock_data = stock_service.search_stock(symbol)
+                analysis_result = enhanced_analyzer.get_enhanced_analysis(symbol)
+                stock_data = {
+                    'current_price': analysis_result.get('current_price', 0),
+                    'price_change_percent': analysis_result.get('price_change_percent', 0),
+                    'name': analysis_result.get('company_name', symbol),
+                    'sector': 'Technology'  # Default sector for demo
+                } if analysis_result.get('success') else None
                 if stock_data:
                     # Simulate holding data
                     shares = 10  # Demo shares
@@ -140,7 +146,7 @@ def manage_watchlist():
             
             for symbol in watchlist_symbols:
                 try:
-                    stock_data = stock_service.search_stock(symbol)
+                    stock_data = enhanced_analyzer.get_enhanced_analysis(symbol)
                     if stock_data:
                         # Get AI analysis with preferences
                         ai_analysis = ai_engine.get_insights(symbol, stock_data)
@@ -186,7 +192,7 @@ def manage_watchlist():
                 return jsonify({'error': 'Symbol required'}), 400
             
             # Validate symbol exists
-            stock_data = stock_service.search_stock(symbol)
+            stock_data = enhanced_analyzer.get_enhanced_analysis(symbol)
             if not stock_data:
                 return jsonify({'error': 'Invalid stock symbol'}), 400
             
@@ -235,7 +241,7 @@ def ai_market_scanner():
         
         for symbol in scan_symbols:
             try:
-                stock_data = stock_service.search_stock(symbol)
+                stock_data = enhanced_analyzer.get_enhanced_analysis(symbol)
                 if stock_data:
                     # Get AI analysis
                     ai_analysis = ai_engine.get_insights(symbol, stock_data)
@@ -313,7 +319,7 @@ def sentiment_analysis(symbol):
         symbol = symbol.upper()
         
         # Get stock data
-        stock_data = stock_service.search_stock(symbol)
+        stock_data = enhanced_analyzer.get_enhanced_analysis(symbol)
         if not stock_data:
             return jsonify({'error': 'Stock not found'}), 404
         
@@ -460,7 +466,7 @@ def compare_stocks():
         
         # Get analysis for each stock
         for symbol in symbols:
-            stock_data = stock_service.search_stock(symbol)
+            stock_data = enhanced_analyzer.get_enhanced_analysis(symbol)
             if stock_data:
                 ai_analysis = ai_engine.get_insights(symbol, stock_data)
                 

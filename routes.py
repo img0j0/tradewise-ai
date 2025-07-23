@@ -6,7 +6,7 @@ from premium_features import PremiumFeatures
 from models import User, StockAnalysis, WatchlistItem
 from ai_insights import AIInsightsEngine
 from data_service import DataService
-from stock_search import StockSearchService
+from enhanced_ai_analyzer import EnhancedAIAnalyzer
 from preference_engine import preference_engine
 from simple_personalization import simple_personalization
 from realtime_data_engine import realtime_engine
@@ -26,7 +26,7 @@ logger = logging.getLogger(__name__)
 # Initialize core services and performance optimizations
 data_service = DataService()
 ai_engine = AIInsightsEngine()
-stock_search_service = StockSearchService()
+enhanced_analyzer = EnhancedAIAnalyzer()
 
 # Create main blueprint
 main_bp = Blueprint('main', __name__)
@@ -393,7 +393,15 @@ def get_analysis_watchlist():
                     stock_data = smart_cache.get_stock_data(symbol, use_cache=True)
                 
                 if not stock_data:
-                    stock_data = stock_search_service.search_stock(symbol)
+                    # Use enhanced analyzer for stock data
+                    analysis_result = enhanced_analyzer.get_enhanced_analysis(symbol)
+                    if analysis_result.get('success'):
+                        stock_data = {
+                            'current_price': analysis_result.get('current_price'),
+                            'price_change': analysis_result.get('price_change'),
+                            'price_change_percent': analysis_result.get('price_change_percent'),
+                            'name': analysis_result.get('company_name')
+                        }
                 latest_analysis = StockAnalysis.query.filter_by(symbol=symbol).order_by(StockAnalysis.analysis_date.desc()).first()
                 
                 if stock_data:
@@ -570,12 +578,12 @@ def get_alert_suggestions(symbol):
     try:
         symbol = symbol.upper()
         
-        # Get current stock data for alert suggestions
-        stock_data = stock_search_service.search_stock(symbol)
-        if not stock_data:
+        # Get current stock data for alert suggestions using enhanced analyzer
+        analysis_result = enhanced_analyzer.get_enhanced_analysis(symbol)
+        if not analysis_result.get('success'):
             return jsonify({'success': False, 'error': 'Stock not found'}), 404
             
-        current_price = float(stock_data.get('current_price', 0))
+        current_price = float(analysis_result.get('current_price', 0))
         
         # Generate intelligent alert suggestions based on current price and analysis
         suggestions = [
