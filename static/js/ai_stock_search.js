@@ -221,16 +221,29 @@ function quickSearch(symbol) {
 async function searchStockAI() {
     console.log('🔍 Using enhanced searchStockAI function');
     console.log('searchStockAI called');
-    const searchInput = document.getElementById('search-input'); // Fixed ID to match template
+    
+    // Try multiple ways to get the search input
+    let searchInput = document.getElementById('search-input');
+    if (!searchInput) {
+        console.log('🔍 search-input not found, trying alternative selectors...');
+        searchInput = document.querySelector('#search-input') || 
+                     document.querySelector('input[type="text"]') || 
+                     document.querySelector('.search-input') ||
+                     document.querySelector('[placeholder*="stock"]');
+    }
     
     if (!searchInput) {
-        console.error('Search input element not found');
+        console.error('🚨 Search input element not found with any selector');
+        alert('Search input not found. Please refresh the page.');
         return;
     }
     
-    const symbol = searchInput.value.trim().toUpperCase();
+    console.log('🔍 Found search input element:', searchInput);
+    console.log('🔍 Input value before trim:', JSON.stringify(searchInput.value));
     
-    console.log('Search symbol:', symbol);
+    const symbol = (searchInput.value || '').trim().toUpperCase();
+    
+    console.log('🔍 Search symbol after processing:', JSON.stringify(symbol));
     
     if (!symbol) {
         alert('Please enter a stock symbol or company name');

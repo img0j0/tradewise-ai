@@ -1736,23 +1736,53 @@
             `;
         }
         
-        // Clean, minimal search implementation
-        document.getElementById('search-input').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                performSearchAction();
-            }
-        });
+        // Clean, minimal search implementation with enhanced debugging
+        const searchInputElement = document.getElementById('search-input');
+        const searchButtonElement = document.getElementById('search-btn');
         
-        document.getElementById('search-btn').addEventListener('click', performSearchAction);
+        console.log('🔧 Template Debug - Search Input Element:', searchInputElement);
+        console.log('🔧 Template Debug - Search Button Element:', searchButtonElement);
+        
+        if (searchInputElement) {
+            searchInputElement.addEventListener('keypress', function(e) {
+                console.log('🔧 Template Debug - Keypress detected:', e.key, 'Value:', this.value);
+                if (e.key === 'Enter') {
+                    performSearchAction();
+                }
+            });
+        }
+        
+        if (searchButtonElement) {
+            searchButtonElement.addEventListener('click', function(e) {
+                console.log('🔧 Template Debug - Button click detected');
+                performSearchAction();
+            });
+        }
         
         async function performSearchAction() {
+            console.log('🔧 performSearchAction called');
             const input = document.getElementById('search-input');
-            const query = input.value.trim();
+            console.log('🔧 Input element found:', !!input);
+            console.log('🔧 Input element:', input);
+            
+            if (!input) {
+                console.error('🚨 Template: Search input element not found');
+                alert('Search input not found. Please refresh the page.');
+                return;
+            }
+            
+            const query = input.value ? input.value.trim() : '';
+            console.log('🔧 Input value:', JSON.stringify(input.value));
+            console.log('🔧 Query after trim:', JSON.stringify(query));
             
             if (!query) {
                 alert('Please enter a stock symbol');
                 return;
             }
+            
+            // Ensure the input value is set before calling external function
+            input.value = query;
+            console.log('🔧 Input value confirmed:', JSON.stringify(input.value));
             
             // Call the main search function from ai_stock_search.js if available
             if (typeof searchStockAI === 'function') {
