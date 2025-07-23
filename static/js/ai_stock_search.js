@@ -355,13 +355,20 @@ async function searchStockAI(inputSymbol = null) {
                 // Show basic analysis if enhanced fails
                 console.log('🔄 Switching to basic analysis fallback...');
                 showBasicAnalysis(stockData);
+                }
+            } else {
+                console.error('❌ Enhanced display function not loaded - function type:', typeof displayEnhancedAnalysis);
+                console.log('🔄 Using basic analysis fallback...');
+                showBasicAnalysis(stockData);
             }
-        } else {
-            console.error('❌ Enhanced display function not loaded - function type:', typeof displayEnhancedAnalysis);
-            console.log('🔄 Using basic analysis fallback...');
-            showBasicAnalysis(stockData);
         }
         
+    } catch (error) {
+        console.error('❌ Stock analysis error:', error);
+        alert('Stock analysis failed: ' + error.message);
+    }
+}
+
 // Basic analysis fallback function
 function showBasicAnalysis(stockData) {
     const container = document.getElementById('ai-analysis-results');
