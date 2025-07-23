@@ -309,21 +309,34 @@ async function searchStockAI(inputSymbol = null) {
             }
         }
         
-        // Always use enhanced analysis display (it handles all cases)
-        console.log('=== USING ENHANCED ANALYSIS DISPLAY ===');
-        console.log('Enhanced analysis available:', !!stockData.enhanced_analysis);
-        console.log('Display function available:', typeof displayEnhancedAnalysis === 'function');
+        // Check if we're in desktop mode and use appropriate display
+        const isDesktopMode = document.querySelector('.desktop-main-layout') !== null;
+        console.log('=== DISPLAY MODE DETECTION ===');
+        console.log('Desktop mode detected:', isDesktopMode);
         
-        if (typeof displayEnhancedAnalysis === 'function') {
-            try {
-                console.log('⚡ About to call displayEnhancedAnalysis with data:', {
-                    symbol: stockData.symbol,
-                    success: stockData.success,
-                    hasEnhancedAnalysis: !!stockData.enhanced_analysis
-                });
-                displayEnhancedAnalysis(stockData);
-                console.log('✅ Enhanced analysis display successful');
-            } catch (displayError) {
+        if (isDesktopMode) {
+            // Use desktop display function directly
+            console.log('Using desktop displayResults function');
+            if (typeof displayResults === 'function') {
+                try {
+                    displayResults(stockData);
+                    console.log('✅ Desktop display successful');
+                } catch (displayError) {
+                    console.error('❌ Desktop display error:', displayError);
+                    showBasicAnalysis(stockData);
+                }
+            } else {
+                console.error('displayResults function not available');
+                showBasicAnalysis(stockData);
+            }
+        } else {
+            // Use enhanced analysis display for mobile
+            console.log('Using enhanced analysis display for mobile');
+            if (typeof displayEnhancedAnalysis === 'function') {
+                try {
+                    displayEnhancedAnalysis(stockData);
+                    console.log('✅ Enhanced analysis display successful');
+                } catch (displayError) {
                 console.error('❌ ENHANCED DISPLAY ERROR DETECTED:', displayError);
                 console.error('❌ Error type:', displayError.constructor?.name || 'Unknown');
                 console.error('❌ Error message:', displayError.message || 'No message');

@@ -342,66 +342,83 @@
                 return;
             }
             
-            // Extract symbol and company name
-            const symbol = data.symbol || 'Unknown';
-            const companyName = data.company_name || data.enhanced_analysis?.company_name || symbol;
-            
-            // Update main content title with company info
-            document.getElementById('mainContentTitle').innerHTML = `
-                <span>${companyName}</span>
-                <small class="text-muted ms-2">${symbol}</small>
-            `;
-            
-            // Extract pricing data with fallbacks
-            const currentPrice = data.current_price || data.enhanced_analysis?.current_price || 0;
-            const priceChange = data.price_change || data.enhanced_analysis?.price_change || 0;
-            const priceChangePercent = data.price_change_percent || data.enhanced_analysis?.price_change_percent || 0;
-            
-            // Extract analysis data
-            const analysis = data.analysis || data;
-            const confidence = analysis.confidence || 0;
-            const recommendation = analysis.recommendation || 'N/A';
-            
-            // Update metrics grid with real data
-            document.getElementById('currentPrice').textContent = `$${currentPrice.toFixed(2)}`;
-            document.getElementById('priceChange').innerHTML = `
-                <span class="${priceChange >= 0 ? 'text-success' : 'text-danger'}">
-                    ${priceChange >= 0 ? '+' : ''}$${priceChange.toFixed(2)} 
-                    (${priceChange >= 0 ? '+' : ''}${priceChangePercent.toFixed(2)}%)
-                </span>
-            `;
-            document.getElementById('aiConfidence').textContent = `${confidence}%`;
-            document.getElementById('aiRecommendation').innerHTML = `
-                <span class="badge bg-${getRecommendationColor(recommendation)}">${recommendation}</span>
-            `;
-            
-            // Update detailed metrics table with enhanced data
-            const enhanced = data.enhanced_analysis || {};
-            const financials = enhanced.enhanced_metrics?.financial_strength || {};
-            
-            document.getElementById('peRatio').textContent = financials.pe_ratio ? 
-                financials.pe_ratio.toFixed(2) : (data.pe_ratio ? data.pe_ratio.toFixed(2) : '--');
-            
-            const marketCap = data.market_cap || enhanced.market_cap || 0;
-            document.getElementById('marketCap').textContent = marketCap ? 
-                `$${(marketCap / 1e9).toFixed(2)}B` : '--';
-            
-            // Add 52-week range if available
-            const momentum = enhanced.enhanced_metrics?.momentum;
-            if (momentum) {
-                document.getElementById('weekRange').textContent = 
-                    `${momentum['1_year'] >= 0 ? '+' : ''}${momentum['1_year'].toFixed(2)}%`;
+            try {
+                // Extract symbol and company name
+                const symbol = data.symbol || 'Unknown';
+                const companyName = data.company_name || data.enhanced_analysis?.company_name || symbol;
+                
+                console.log('Processing data for:', symbol, companyName);
+                
+                // Update main content title with company info
+                document.getElementById('mainContentTitle').innerHTML = `
+                    <span>${companyName}</span>
+                    <small class="text-muted ms-2">${symbol}</small>
+                `;
+                
+                // Extract pricing data with safe parsing
+                const currentPrice = parseFloat(data.current_price) || parseFloat(data.enhanced_analysis?.current_price) || 0;
+                const priceChange = parseFloat(data.price_change) || parseFloat(data.enhanced_analysis?.price_change) || 0;
+                const priceChangePercent = parseFloat(data.price_change_percent) || parseFloat(data.enhanced_analysis?.price_change_percent) || 0;
+                
+                console.log('Price data:', { currentPrice, priceChange, priceChangePercent });
+                
+                // Extract analysis data
+                const analysis = data.analysis || data;
+                const confidence = parseFloat(analysis.confidence) || 0;
+                const recommendation = analysis.recommendation || 'N/A';
+                
+                // Update metrics grid with real data
+                document.getElementById('currentPrice').textContent = `$${currentPrice.toFixed(2)}`;
+                document.getElementById('priceChange').innerHTML = `
+                    <span class="${priceChange >= 0 ? 'text-success' : 'text-danger'}">
+                        ${priceChange >= 0 ? '+' : ''}$${priceChange.toFixed(2)} 
+                        (${priceChange >= 0 ? '+' : ''}${priceChangePercent.toFixed(2)}%)
+                    </span>
+                `;
+                document.getElementById('aiConfidence').textContent = `${confidence}%`;
+                document.getElementById('aiRecommendation').innerHTML = `
+                    <span class="badge bg-${getRecommendationColor(recommendation)}">${recommendation}</span>
+                `;
+                
+                // Update detailed metrics table with enhanced data
+                const enhanced = data.enhanced_analysis || {};
+                const financials = enhanced.enhanced_metrics?.financial_strength || {};
+                
+                const peRatio = parseFloat(financials.pe_ratio) || parseFloat(data.pe_ratio) || null;
+                document.getElementById('peRatio').textContent = peRatio ? peRatio.toFixed(2) : '--';
+                
+                const marketCap = parseFloat(data.market_cap) || parseFloat(enhanced.market_cap) || 0;
+                document.getElementById('marketCap').textContent = marketCap ? 
+                    `$${(marketCap / 1e9).toFixed(2)}B` : '--';
+                
+                // Add 52-week range if available
+                const momentum = enhanced.enhanced_metrics?.momentum;
+                if (momentum && momentum['1_year'] !== undefined) {
+                    const yearChange = parseFloat(momentum['1_year']) || 0;
+                    document.getElementById('weekRange').textContent = 
+                        `${yearChange >= 0 ? '+' : ''}${yearChange.toFixed(2)}%`;
+                } else {
+                    document.getElementById('weekRange').textContent = '--';
+                }
+                
+                // Update table assessment badges
+                updateTableAssessments(analysis, enhanced);
+                
+                // Show successful analysis status
+                document.getElementById('analysisMode').textContent = 'AI Analysis Complete';
+                document.getElementById('analysisMode').className = 'badge bg-success ms-2';
+                
+                // Update chart if available
+                updateDesktopChart(enhanced);
+                
+                console.log('Desktop results display completed successfully');
+                
+            } catch (error) {
+                console.error('Error in desktop displayResults:', error);
+                // Show error state
+                document.getElementById('analysisMode').textContent = 'Analysis Error';
+                document.getElementById('analysisMode').className = 'badge bg-danger ms-2';
             }
-            
-            // Update table assessment badges
-            updateTableAssessments(analysis, enhanced);
-            
-            // Show successful analysis status
-            document.getElementById('analysisMode').textContent = 'AI Analysis Complete';
-            document.getElementById('analysisMode').className = 'badge bg-success ms-2';
-            
-            // Update chart if available
-            updateDesktopChart(enhanced);
         }
         
         function getRecommendationColor(recommendation) {
