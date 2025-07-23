@@ -56,13 +56,14 @@
 
         <!-- Left Sidebar - Search & Navigation -->
         <aside class="desktop-sidebar">
-            <div class="desktop-search-container">
+            <div class="desktop-search-container google-search-box">
                 <input type="text" 
                        class="desktop-search-input" 
-                       id="desktopStockSearch"
+                       id="search-input"
                        placeholder="Search stocks, companies, or tickers..."
                        autocomplete="off">
-                <div class="desktop-search-suggestions" id="searchSuggestions"></div>
+                <div class="desktop-search-suggestions" id="search-suggestions"></div>
+                <button class="btn btn-primary submit-btn" style="display:none;" onclick="searchStockAI()">Search</button>
             </div>
             
             <div class="mb-4">
@@ -269,46 +270,65 @@
         });
         
         function initializeDesktopInterface() {
-            // Setup search with enhanced autocomplete
-            const searchInput = document.getElementById('desktopStockSearch');
-            searchInput.addEventListener('input', handleDesktopSearch);
-            searchInput.addEventListener('keydown', handleSearchKeydown);
-            
             // Initialize chart
             initializeChart();
             
             // Load strategy from session
             loadInvestmentStrategy();
-        }
-        
-        function handleDesktopSearch(event) {
-            const query = event.target.value.trim();
-            if (query.length >= 2) {
-                showSearchSuggestions(query);
-            } else {
-                hideSearchSuggestions();
-            }
-        }
-        
-        function handleSearchKeydown(event) {
-            if (event.key === 'Enter') {
-                event.preventDefault();
-                const query = event.target.value.trim();
-                if (query) {
-                    analyzeStock(query);
-                    hideSearchSuggestions();
-                }
-            }
+            
+            // The search functionality is now handled by ai_stock_search.js
+            console.log('Desktop interface initialized, search handled by ai_stock_search.js');
         }
         
         function analyzeStock(symbol) {
             document.getElementById('mainContentTitle').textContent = `Analyzing ${symbol.toUpperCase()}`;
             
-            // Call the existing search function but display in desktop layout
-            performSearchAction(symbol);
+            // Set the search input value
+            const searchInput = document.getElementById('search-input');
+            if (searchInput) {
+                searchInput.value = symbol;
+            }
+            
+            // Call the existing search function
+            searchStockAI();
             
             // Update URL for bookmarking
             window.history.pushState({symbol: symbol}, '', `?symbol=${symbol}`);
+        }
+        
+        // Override the original displayResults function to work with desktop layout
+        function displayResults(data) {
+            console.log('Desktop: Displaying results', data);
+            
+            // Update main content title
+            const symbol = data.symbol || data.analysis?.symbol || 'Unknown';
+            document.getElementById('mainContentTitle').textContent = `Analysis: ${symbol}`;
+            
+            // Update metrics grid
+            const currentPrice = typeof data.current_price === 'number' ? data.current_price.toFixed(2) : 
+                                 typeof data.analysis?.current_price === 'number' ? data.analysis.current_price.toFixed(2) : '--';
+            const priceChange = typeof data.price_change === 'number' ? data.price_change.toFixed(2) : 
+                               typeof data.analysis?.price_change === 'number' ? data.analysis.price_change.toFixed(2) : '--';
+            const confidence = data.confidence || data.analysis?.confidence || '--';
+            const recommendation = data.recommendation || data.analysis?.recommendation || '--';
+            
+            document.getElementById('currentPrice').textContent = `$${currentPrice}`;
+            document.getElementById('priceChange').textContent = priceChange;
+            document.getElementById('aiConfidence').textContent = `${confidence}%`;
+            document.getElementById('aiRecommendation').textContent = recommendation;
+            
+            // Update detailed metrics table
+            const peRatio = data.pe_ratio || data.analysis?.pe_ratio || '--';
+            const marketCap = data.market_cap || data.analysis?.market_cap || '--';
+            
+            document.getElementById('peRatio').textContent = peRatio;
+            document.getElementById('marketCap').textContent = typeof marketCap === 'number' ? 
+                (marketCap / 1e9).toFixed(2) + 'B' : marketCap;
+            document.getElementById('weekRange').textContent = '--'; // Placeholder for 52-week range
+            
+            // Show analysis mode as active
+            document.getElementById('analysisMode').textContent = 'AI Analysis Complete';
+            document.getElementById('analysisMode').className = 'badge bg-success ms-2';
         }
         
         function initializeChart() {
@@ -363,13 +383,46 @@
             item.className = 'desktop-watchlist-item';
             item.innerHTML = `
                 <strong>${symbol}</strong>
-                <span class="text-muted">Loading...</span>
+                <span class="text-muted">--</span>
                 <span class="text-success">--</span>
                 <button class="btn btn-sm btn-outline-primary" onclick="analyzeStock('${symbol}')">
                     Analyze
                 </button>
             `;
             container.appendChild(item);
+            
+            // Load real data for this watchlist item
+            loadWatchlistData(symbol, item);
+        }
+        
+        function loadWatchlistData(symbol, itemElement) {
+            // Make API call to get current stock data
+            fetch('/api/stock-analysis', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ query: symbol })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const price = data.current_price ? `$${data.current_price.toFixed(2)}` : '--';
+                    const change = data.price_change ? `${data.price_change >= 0 ? '+' : ''}${data.price_change.toFixed(2)}` : '--';
+                    const changeClass = data.price_change >= 0 ? 'text-success' : 'text-danger';
+                    
+                    const spans = itemElement.querySelectorAll('span');
+                    if (spans.length >= 2) {
+                        spans[0].textContent = price;
+                        spans[0].className = 'fw-bold';
+                        spans[1].textContent = change;
+                        spans[1].className = changeClass;
+                    }
+                }
+            })
+            .catch(error => {
+                console.log('Error loading watchlist data for', symbol, error);
+            });
         }
         
         function startRealTimeUpdates() {
@@ -397,10 +450,30 @@
         // Placeholder functions for desktop features
         function refreshAllData() { console.log('Refreshing all data...'); }
         function openSettings() { console.log('Opening settings...'); }
-        function showMarketOverview() { console.log('Showing market overview...'); }
-        function showSectorAnalysis() { console.log('Showing sector analysis...'); }
-        function showTopMovers() { console.log('Showing top movers...'); }
-        function showEarningsCalendar() { console.log('Showing earnings calendar...'); }
+        function showMarketOverview() { 
+            document.getElementById('mainContentTitle').textContent = 'Market Overview';
+            document.getElementById('analysisMode').textContent = 'Live Market Data';
+            document.getElementById('analysisMode').className = 'badge bg-info ms-2';
+            // TODO: Implement market overview display
+        }
+        function showSectorAnalysis() { 
+            document.getElementById('mainContentTitle').textContent = 'Sector Analysis';
+            document.getElementById('analysisMode').textContent = 'Sector Performance';
+            document.getElementById('analysisMode').className = 'badge bg-warning ms-2';
+            // TODO: Implement sector analysis display
+        }
+        function showTopMovers() { 
+            document.getElementById('mainContentTitle').textContent = 'Top Market Movers';
+            document.getElementById('analysisMode').textContent = 'Top Gainers/Losers';
+            document.getElementById('analysisMode').className = 'badge bg-success ms-2';
+            // TODO: Implement top movers display
+        }
+        function showEarningsCalendar() { 
+            document.getElementById('mainContentTitle').textContent = 'Earnings Calendar';
+            document.getElementById('analysisMode').textContent = 'Upcoming Earnings';
+            document.getElementById('analysisMode').className = 'badge bg-primary ms-2';
+            // TODO: Implement earnings calendar display
+        }
         function openAIScanner() { console.log('Opening AI scanner...'); }
         function openPortfolioAnalyzer() { console.log('Opening portfolio analyzer...'); }
         function openRiskAnalyzer() { console.log('Opening risk analyzer...'); }
