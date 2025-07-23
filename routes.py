@@ -197,9 +197,20 @@ def stock_analysis_api():
         if cached_stock_data:
             stock_data = cached_stock_data
         else:
-            # Use existing stock search service for real-time data
-            stock_service = StockSearchService()
-            stock_data = stock_service.search_stock(query)
+            # Use enhanced analyzer for real-time data
+            analysis_result = enhanced_analyzer.get_enhanced_analysis(query)
+            if analysis_result.get('enhanced_analysis'):
+                enhanced_data = analysis_result['enhanced_analysis']
+                stock_data = {
+                    'current_price': enhanced_data.get('current_price', 0),
+                    'price_change': enhanced_data.get('current_price', 0) - enhanced_data.get('current_price', 0) * 0.99,  # Basic calc
+                    'price_change_percent': enhanced_data.get('momentum', {}).get('1_month', 0),
+                    'name': enhanced_data.get('company_name', query),
+                    'market_cap': enhanced_data.get('market_cap_value', 0),
+                    'pe_ratio': enhanced_data.get('enhanced_metrics', {}).get('financial_strength', {}).get('pe_ratio', 0)
+                }
+            else:
+                stock_data = None
         
         if not stock_data:
             return jsonify({
