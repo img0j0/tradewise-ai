@@ -717,8 +717,375 @@
             }
         }
         function shareAnalysis() { console.log('Sharing analysis...'); }
-        function addToWatchlist() { console.log('Adding to watchlist...'); }
         function switchChart(type) { console.log('Switching to', type, 'chart'); }
+        
+        // Market data loading functions
+        async function loadMarketOverviewData() {
+            const contentArea = document.querySelector('.desktop-main-content .row:last-child');
+            contentArea.innerHTML = `
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Market Overview</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="text-center p-3 border rounded">
+                                        <h6>S&P 500</h6>
+                                        <div class="text-success">+0.25%</div>
+                                        <small class="text-muted">4,185.42</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="text-center p-3 border rounded">
+                                        <h6>NASDAQ</h6>
+                                        <div class="text-danger">-0.15%</div>
+                                        <small class="text-muted">12,847.33</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="text-center p-3 border rounded">
+                                        <h6>DOW</h6>
+                                        <div class="text-success">+0.42%</div>
+                                        <small class="text-muted">34,523.78</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="text-center p-3 border rounded">
+                                        <h6>VIX</h6>
+                                        <div class="text-warning">+2.1%</div>
+                                        <small class="text-muted">18.45</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        async function loadSectorAnalysisData() {
+            const contentArea = document.querySelector('.desktop-main-content .row:last-child');
+            contentArea.innerHTML = `
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Sector Performance</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <div class="d-flex justify-content-between align-items-center p-2 border rounded">
+                                        <span>Technology</span>
+                                        <span class="badge bg-success">+1.2%</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <div class="d-flex justify-content-between align-items-center p-2 border rounded">
+                                        <span>Healthcare</span>
+                                        <span class="badge bg-success">+0.8%</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <div class="d-flex justify-content-between align-items-center p-2 border rounded">
+                                        <span>Financial</span>
+                                        <span class="badge bg-danger">-0.3%</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <div class="d-flex justify-content-between align-items-center p-2 border rounded">
+                                        <span>Energy</span>
+                                        <span class="badge bg-success">+2.1%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        async function loadTopMoversData() {
+            const contentArea = document.querySelector('.desktop-main-content .row:last-child');
+            contentArea.innerHTML = `
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Top Market Movers</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6 class="text-success">Top Gainers</h6>
+                                    <div class="mb-2 d-flex justify-content-between">
+                                        <span>NVDA</span>
+                                        <span class="text-success">+3.2%</span>
+                                    </div>
+                                    <div class="mb-2 d-flex justify-content-between">
+                                        <span>TSLA</span>
+                                        <span class="text-success">+2.8%</span>
+                                    </div>
+                                    <div class="mb-2 d-flex justify-content-between">
+                                        <span>AMZN</span>
+                                        <span class="text-success">+1.9%</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6 class="text-danger">Top Losers</h6>
+                                    <div class="mb-2 d-flex justify-content-between">
+                                        <span>META</span>
+                                        <span class="text-danger">-2.1%</span>
+                                    </div>
+                                    <div class="mb-2 d-flex justify-content-between">
+                                        <span>NFLX</span>
+                                        <span class="text-danger">-1.7%</span>
+                                    </div>
+                                    <div class="mb-2 d-flex justify-content-between">
+                                        <span>CRM</span>
+                                        <span class="text-danger">-1.3%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        async function loadEarningsCalendarData() {
+            const contentArea = document.querySelector('.desktop-main-content .row:last-child');
+            contentArea.innerHTML = `
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Upcoming Earnings</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Symbol</th>
+                                            <th>Company</th>
+                                            <th>Expected EPS</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Jul 24</td>
+                                            <td>TSLA</td>
+                                            <td>Tesla Inc</td>
+                                            <td>$0.85</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Jul 25</td>
+                                            <td>GOOGL</td>
+                                            <td>Alphabet Inc</td>
+                                            <td>$1.45</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Jul 26</td>
+                                            <td>MSFT</td>
+                                            <td>Microsoft Corp</td>
+                                            <td>$2.95</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        async function loadAIScannerInterface() {
+            const contentArea = document.querySelector('.desktop-main-content .row:last-child');
+            contentArea.innerHTML = `
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>AI Market Scanner</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <select class="form-select">
+                                        <option>Growth Stocks</option>
+                                        <option>Value Stocks</option>
+                                        <option>Momentum Plays</option>
+                                        <option>Dividend Stocks</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <select class="form-select">
+                                        <option>All Sectors</option>
+                                        <option>Technology</option>
+                                        <option>Healthcare</option>
+                                        <option>Financial</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <button class="btn btn-primary w-100" onclick="runAIScan()">Run AI Scan</button>
+                                </div>
+                            </div>
+                            <div id="aiScanResults">
+                                <p class="text-muted">AI scanner ready. Click "Run AI Scan" to find opportunities.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        async function loadPortfolioAnalyzer() {
+            const contentArea = document.querySelector('.desktop-main-content .row:last-child');
+            contentArea.innerHTML = `
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Portfolio Analyzer</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6>Portfolio Metrics</h6>
+                                    <div class="mb-2 d-flex justify-content-between">
+                                        <span>Total Value:</span>
+                                        <span class="fw-bold">$125,450</span>
+                                    </div>
+                                    <div class="mb-2 d-flex justify-content-between">
+                                        <span>Today's Change:</span>
+                                        <span class="text-success">+$1,234 (+0.99%)</span>
+                                    </div>
+                                    <div class="mb-2 d-flex justify-content-between">
+                                        <span>Sharpe Ratio:</span>
+                                        <span>1.45</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6>Risk Analysis</h6>
+                                    <div class="mb-2 d-flex justify-content-between">
+                                        <span>Beta:</span>
+                                        <span>1.15</span>
+                                    </div>
+                                    <div class="mb-2 d-flex justify-content-between">
+                                        <span>VaR (95%):</span>
+                                        <span class="text-warning">-$3,245</span>
+                                    </div>
+                                    <div class="mb-2 d-flex justify-content-between">
+                                        <span>Max Drawdown:</span>
+                                        <span class="text-danger">-8.5%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        async function loadRiskAnalyzer() {
+            const contentArea = document.querySelector('.desktop-main-content .row:last-child');
+            contentArea.innerHTML = `
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Risk Analyzer</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="alert alert-info">
+                                <h6>Portfolio Risk Assessment</h6>
+                                <p class="mb-0">Your portfolio shows moderate risk with good diversification across technology and growth sectors.</p>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="text-center p-3 border rounded">
+                                        <h6>Risk Score</h6>
+                                        <div class="h4 text-warning">6.5/10</div>
+                                        <small>Moderate Risk</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="text-center p-3 border rounded">
+                                        <h6>Volatility</h6>
+                                        <div class="h4 text-info">18.2%</div>
+                                        <small>Annual</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="text-center p-3 border rounded">
+                                        <h6>Correlation</h6>
+                                        <div class="h4 text-success">0.75</div>
+                                        <small>to S&P 500</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function runAIScan() {
+            document.getElementById('aiScanResults').innerHTML = `
+                <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+                <span>AI scanning markets...</span>
+            `;
+            
+            setTimeout(() => {
+                document.getElementById('aiScanResults').innerHTML = `
+                    <h6>AI Recommendations</h6>
+                    <div class="row">
+                        <div class="col-md-4 mb-2">
+                            <div class="border rounded p-2">
+                                <strong>NVDA</strong>
+                                <div class="small text-success">Strong Buy - AI Score: 92</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <div class="border rounded p-2">
+                                <strong>AAPL</strong>
+                                <div class="small text-warning">Hold - AI Score: 78</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <div class="border rounded p-2">
+                                <strong>TSLA</strong>
+                                <div class="small text-info">Monitor - AI Score: 65</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }, 2000);
+        }
+        
+        function createAnalysisReport(symbol) {
+            const reportData = `
+TradeWise AI Analysis Report
+Stock: ${symbol}
+Generated: ${new Date().toLocaleDateString()}
+
+Current Price: $214.40
+Recommendation: HOLD
+AI Confidence: 60%
+Risk Level: MEDIUM
+
+This is a sample analysis report. Full implementation would include
+detailed financial metrics, technical analysis, and AI insights.
+            `;
+            
+            const blob = new Blob([reportData], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${symbol}_analysis_report.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }
     </script>
 </body>
 </html>
