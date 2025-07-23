@@ -160,13 +160,25 @@ def stock_analysis_api():
             return jsonify({'success': False, 'error': 'Rate limit exceeded. Please try again later.'}), 429
         
         data = request.get_json()
-        query = data.get('query', '').strip()
+        original_query = data.get('query', '').strip()
         
-        if not query:
+        if not original_query:
             return jsonify({'error': 'Query parameter required'}), 400
         
+        # Normalize symbol (maps company names to proper symbols)
+        from symbol_mapper import normalize_symbol, validate_symbol
+        query = normalize_symbol(original_query)
+        
+        # Validate symbol format
+        if not validate_symbol(query):
+            return jsonify({
+                'error': f'Invalid symbol: {original_query}',
+                'suggestion': 'Please use a valid stock symbol (e.g., AAPL, MSFT, GOOGL)',
+                'success': False
+            }), 400
+        
         # Try cached data first for better performance
-        symbol = query.upper()
+        symbol = query
         cached_stock_data = None
         if smart_cache:
             cached_stock_data = smart_cache.get_stock_data(symbol, use_cache=True)

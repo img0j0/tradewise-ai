@@ -233,8 +233,8 @@ async function searchStockAI() {
         const stockData = await searchStockData(symbol);
         console.log('Stock data received:', stockData);
         
-        if (!stockData) {
-            throw new Error('Stock not found');
+        if (!stockData || !stockData.success) {
+            throw new Error(stockData?.error || 'Stock analysis failed - please check the symbol and try again');
         }
 
         // FORCE DISPLAY: Only use the enhanced ChatGPT-style overlay
@@ -320,9 +320,19 @@ async function searchStockData(symbol) {
         const data = await response.json();
         console.log('Comprehensive stock data received:', data);
         console.log('Search results:', [data]);
+        
+        // Validate response has required data
+        if (!data.success) {
+            throw new Error(data.error || 'Analysis failed');
+        }
+        
         return data;
     } catch (error) {
         console.error('Search error:', error);
+        // Better error message for debugging
+        if (error.message) {
+            console.error('Error details:', error.message);
+        }
         return null;
     }
 }
