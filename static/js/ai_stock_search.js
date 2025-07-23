@@ -266,16 +266,26 @@ async function searchStockAI() {
         
         if (typeof displayEnhancedAnalysis === 'function') {
             try {
+                console.log('⚡ About to call displayEnhancedAnalysis with data:', {
+                    symbol: stockData.symbol,
+                    success: stockData.success,
+                    hasEnhancedAnalysis: !!stockData.enhanced_analysis
+                });
                 displayEnhancedAnalysis(stockData);
                 console.log('✅ Enhanced analysis display successful');
             } catch (displayError) {
-                console.error('Enhanced display error:', displayError);
+                console.error('❌ Enhanced display error detected:', displayError);
+                console.error('❌ Error type:', displayError.constructor.name);
+                console.error('❌ Error message:', displayError.message || 'No message');
+                console.error('❌ Error stack:', displayError.stack || 'No stack');
+                
                 // Show basic analysis if enhanced fails
+                console.log('🔄 Switching to basic analysis fallback...');
                 showBasicAnalysis(stockData);
             }
         } else {
-            console.error('Enhanced display function not loaded');
-            // Fallback to basic display if enhanced function not available
+            console.error('❌ Enhanced display function not loaded - function type:', typeof displayEnhancedAnalysis);
+            console.log('🔄 Using basic analysis fallback...');
             showBasicAnalysis(stockData);
         }
         
@@ -305,9 +315,11 @@ function showBasicAnalysis(stockData) {
 }
         
     } catch (error) {
-        console.error('Search error:', error);
-        console.error('Error stack:', error.stack);
-        console.error('Error message:', error.message);
+        console.error('🚨 MAIN SEARCH ERROR CAUGHT:', error);
+        console.error('🚨 Error type:', error.constructor?.name || 'Unknown');
+        console.error('🚨 Error message:', error.message || 'No message available');
+        console.error('🚨 Error stack:', error.stack || 'No stack trace available');
+        console.error('🚨 Full error object:', JSON.stringify(error, Object.getOwnPropertyNames(error)));
         
         // Show detailed error information for debugging
         const container = document.getElementById('ai-analysis-results');
