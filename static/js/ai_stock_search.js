@@ -393,32 +393,6 @@ function showBasicAnalysis(stockData) {
     container.style.display = 'block';
     console.log('Basic analysis displayed');
 }
-        
-        // Show detailed error information for debugging
-        const container = document.getElementById('ai-analysis-results');
-        if (container) {
-            container.innerHTML = `
-                <div style="text-align: center; padding: 40px; color: #ef4444; background: white; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
-                    <div style="font-size: 2rem; margin-bottom: 15px;">🔧</div>
-                    <h3>Analysis Error Detected</h3>
-                    <p style="margin: 15px 0; color: #6b7280;">Error: ${error.message || 'Unknown error occurred'}</p>
-                    <div style="background: #f9fafb; padding: 15px; border-radius: 8px; margin: 15px 0; color: #374151; font-size: 0.9rem;">
-                        <strong>Debug Info:</strong><br>
-                        Enhanced display function available: ${typeof displayEnhancedAnalysis === 'function'}<br>
-                        Container available: ${document.getElementById('ai-analysis-results') !== null}<br>
-                        Error type: ${error.constructor.name}
-                    </div>
-                    <button onclick="location.reload()" style="padding: 10px 20px; background: #8b5cf6; color: white; border: none; border-radius: 8px; margin-top: 15px; cursor: pointer;">
-                        Try Again
-                    </button>
-                </div>
-            `;
-            container.style.display = 'block';
-        } else {
-            console.error('ai-analysis-results container not found in DOM');
-        }
-    }
-}
 
 // Search stock data from backend using comprehensive API
 async function searchStockData(symbol) {
