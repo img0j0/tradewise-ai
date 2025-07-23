@@ -152,7 +152,7 @@ def strategy_demo():
         logger.error(f"Error loading strategy demo: {e}")
         return jsonify({'error': 'Strategy demo page error'}), 500
 
-@main_bp.route('/api/stock-analysis', methods=['POST'])
+@main_bp.route('/api/stock-analysis', methods=['GET', 'POST'])
 @performance_timer('stock_analysis_api')
 @rate_limit('stock_analysis', per_minute=30)
 def stock_analysis_api():
@@ -162,8 +162,12 @@ def stock_analysis_api():
         if not rate_limiter.is_allowed('stock_data', request.remote_addr):
             return jsonify({'success': False, 'error': 'Rate limit exceeded. Please try again later.'}), 429
         
-        data = request.get_json()
-        original_query = data.get('query', '').strip()
+        # Support both GET and POST requests
+        if request.method == 'GET':
+            original_query = request.args.get('query', '').strip()
+        else:
+            data = request.get_json()
+            original_query = data.get('query', '').strip() if data else ''
         
         if not original_query:
             return jsonify({'error': 'Query parameter required'}), 400
@@ -344,11 +348,9 @@ def stock_analysis_api():
             }
         }
         
-        # Optimize response size for better performance
-        optimized_response = response_optimizer.compress_response(response)
-        
+        # Return response directly (skip optimization for debugging)
         logger.info(f"Stock analysis successful for {query}: {response['symbol']} at ${response['current_price']} - {response['recommendation']}")
-        return jsonify(optimized_response)
+        return jsonify(response)
         
     except Exception as e:
         logger.error(f'Error in stock_analysis_api: {e}')
