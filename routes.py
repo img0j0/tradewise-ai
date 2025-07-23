@@ -165,17 +165,28 @@ def stock_analysis_api():
         if not original_query:
             return jsonify({'error': 'Query parameter required'}), 400
         
-        # Normalize symbol (maps company names to proper symbols)
-        from symbol_mapper import normalize_symbol, validate_symbol
+        # Comprehensive symbol mapping with fallback search
+        from symbol_mapper import normalize_symbol, validate_symbol, create_comprehensive_fallback_search
         query = normalize_symbol(original_query)
         
-        # Validate symbol format
+        # If symbol mapping didn't work, try comprehensive fallback search
+        if query == original_query.upper().strip() and len(query) > 6:
+            fallback_query = create_comprehensive_fallback_search(original_query)
+            if fallback_query:
+                query = fallback_query
+        
+        # Enhanced validation with fallback support
         if not validate_symbol(query):
-            return jsonify({
-                'error': f'Invalid symbol: {original_query}',
-                'suggestion': 'Please use a valid stock symbol (e.g., AAPL, MSFT, GOOGL)',
-                'success': False
-            }), 400
+            # Try one more fallback attempt before giving up
+            fallback_query = create_comprehensive_fallback_search(original_query)
+            if fallback_query and validate_symbol(fallback_query):
+                query = fallback_query
+            else:
+                return jsonify({
+                    'error': f'Invalid symbol: {original_query}',
+                    'suggestion': 'Please use a valid stock symbol (e.g., AAPL, MSFT, GOOGL) or company name (e.g., Apple, Microsoft, Google)',
+                    'success': False
+                }), 400
         
         # Try cached data first for better performance
         symbol = query

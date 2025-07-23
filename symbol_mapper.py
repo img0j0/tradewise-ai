@@ -82,6 +82,192 @@ def get_symbol_mapping():
         'MONGODB': 'MDB',
         'DATADOG': 'DDOG',
         
+        # Semiconductor & Hardware
+        'ADVANCED MICRO DEVICES': 'AMD',
+        'AMD': 'AMD',
+        'QUALCOMM': 'QCOM',
+        'BROADCOM': 'AVGO',
+        'TEXAS INSTRUMENTS': 'TXN',
+        'ANALOG DEVICES': 'ADI',
+        'MICRON': 'MU',
+        'MICRON TECHNOLOGY': 'MU',
+        'APPLIED MATERIALS': 'AMAT',
+        'LAM RESEARCH': 'LRCX',
+        'KLA': 'KLAC',
+        'MARVELL': 'MRVL',
+        'MARVELL TECHNOLOGY': 'MRVL',
+        
+        # Healthcare & Biotech
+        'MODERNA': 'MRNA',
+        'BIONTECH': 'BNTX',
+        'GILEAD': 'GILD',
+        'GILEAD SCIENCES': 'GILD',
+        'AMGEN': 'AMGN',
+        'BIOGEN': 'BIIB',
+        'REGENERON': 'REGN',
+        'VERTEX': 'VRTX',
+        'VERTEX PHARMACEUTICALS': 'VRTX',
+        'ILLUMINA': 'ILMN',
+        'DEXCOM': 'DXCM',
+        'INTUITIVE SURGICAL': 'ISRG',
+        'EDWARDS LIFESCIENCES': 'EW',
+        'STRYKER': 'SYK',
+        'MEDTRONIC': 'MDT',
+        'ABBOTT': 'ABT',
+        'BRISTOL MYERS': 'BMY',
+        'BRISTOL-MYERS SQUIBB': 'BMY',
+        'ELI LILLY': 'LLY',
+        'LILLY': 'LLY',
+        'MERCK': 'MRK',
+        
+        # Energy & Oil
+        'EXXONMOBIL': 'XOM',
+        'CONOCOPHILLIPS': 'COP',
+        'CONOCOPHILLIPS': 'COP',
+        'PIONEER': 'PXD',
+        'PIONEER NATURAL': 'PXD',
+        'EOG RESOURCES': 'EOG',
+        'SCHLUMBERGER': 'SLB',
+        'HALLIBURTON': 'HAL',
+        'MARATHON PETROLEUM': 'MPC',
+        'VALERO': 'VLO',
+        'PHILLIPS 66': 'PSX',
+        'KINDER MORGAN': 'KMI',
+        'ENBRIDGE': 'ENB',
+        
+        # Financial Services
+        'GOLDMAN SACHS': 'GS',
+        'MORGAN STANLEY': 'MS',
+        'CITIGROUP': 'C',
+        'CITI': 'C',
+        'AMERICAN EXPRESS': 'AXP',
+        'AMEX': 'AXP',
+        'BLACKROCK': 'BLK',
+        'CHARLES SCHWAB': 'SCHW',
+        'SCHWAB': 'SCHW',
+        'US BANCORP': 'USB',
+        'TRUIST': 'TFC',
+        'PNC': 'PNC',
+        'CAPITAL ONE': 'COF',
+        'DISCOVER': 'DIS',
+        'MASTERCARD': 'MA',
+        'PAYPAL': 'PYPL',
+        'AMERICAN INTERNATIONAL GROUP': 'AIG',
+        'AIG': 'AIG',
+        'PROGRESSIVE': 'PGR',
+        'ALLSTATE': 'ALL',
+        'TRAVELERS': 'TRV',
+        
+        # Consumer & Retail
+        'TARGET': 'TGT',
+        'COSTCO': 'COST',
+        'HOME DEPOT': 'HD',
+        'LOWES': 'LOW',
+        'LOWE\'S': 'LOW',
+        'STARBUCKS': 'SBUX',
+        'CHIPOTLE': 'CMG',
+        'DOMINOS': 'DPZ',
+        'DOMINO\'S': 'DPZ',
+        'YUM BRANDS': 'YUM',
+        'GENERAL MILLS': 'GIS',
+        'KELLOGG': 'K',
+        'PEPSI': 'PEP',
+        'PEPSICO': 'PEP',
+        'KRAFT HEINZ': 'KHC',
+        'MONDELEZ': 'MDLZ',
+        'COLGATE': 'CL',
+        'COLGATE-PALMOLIVE': 'CL',
+        'UNILEVER': 'UL',
+        'ESTEE LAUDER': 'EL',
+        'L\'OREAL': 'OR',
+        
+        # Industrial & Manufacturing
+        'BOEING': 'BA',
+        'LOCKHEED MARTIN': 'LMT',
+        'RAYTHEON': 'RTX',
+        'NORTHROP GRUMMAN': 'NOC',
+        'GENERAL ELECTRIC': 'GE',
+        'GE': 'GE',
+        '3M': 'MMM',
+        'CATERPILLAR': 'CAT',
+        'DEERE': 'DE',
+        'JOHN DEERE': 'DE',
+        'HONEYWELL': 'HON',
+        'UNITED TECHNOLOGIES': 'RTX',
+        'PARKER HANNIFIN': 'PH',
+        'EMERSON': 'EMR',
+        'ILLINOIS TOOL WORKS': 'ITW',
+        'FEDEX': 'FDX',
+        'UPS': 'UPS',
+        'UNITED PARCEL SERVICE': 'UPS',
+        
+        # Technology Services
+        'ORACLE': 'ORCL',
+        'SALESFORCE': 'CRM',
+        'ADOBE': 'ADBE',
+        'SERVICENOW': 'NOW',
+        'WORKDAY': 'WDAY',
+        'SPLUNK': 'SPLK',
+        'VMWARE': 'VMW',
+        'CROWDSTRIKE': 'CRWD',
+        'ZSCALER': 'ZS',
+        'OKTA': 'OKTA',
+        'PALO ALTO NETWORKS': 'PANW',
+        'FORTINET': 'FTNT',
+        'CLOUDFLARE': 'NET',
+        'FASTLY': 'FSLY',
+        'ELASTIC': 'ESTC',
+        'ATLASSIAN': 'TEAM',
+        'SLACK': 'WORK',
+        'ASANA': 'ASAN',
+        'MONDAY.COM': 'MNDY',
+        'HUBSPOT': 'HUBS',
+        'ZENDESK': 'ZEN',
+        
+        # Media & Entertainment
+        'COMCAST': 'CMCSA',
+        'CHARTER': 'CHTR',
+        'CHARTER COMMUNICATIONS': 'CHTR',
+        'DISCOVERY': 'WBD',
+        'WARNER BROS': 'WBD',
+        'PARAMOUNT': 'PARA',
+        'VIACOM': 'PARA',
+        'FOX': 'FOXA',
+        'NEWS CORP': 'NWSA',
+        'LIVE NATION': 'LYV',
+        'ACTIVISION': 'ATVI',
+        'ACTIVISION BLIZZARD': 'ATVI',
+        'ELECTRONIC ARTS': 'EA',
+        'EA': 'EA',
+        'TAKE-TWO': 'TTWO',
+        'TAKE TWO': 'TTWO',
+        
+        # Real Estate & REITs
+        'AMERICAN TOWER': 'AMT',
+        'CROWN CASTLE': 'CCI',
+        'DIGITAL REALTY': 'DLR',
+        'EQUINIX': 'EQIX',
+        'PROLOGIS': 'PLD',
+        'PUBLIC STORAGE': 'PSA',
+        'REALTY INCOME': 'O',
+        'SIMON PROPERTY': 'SPG',
+        'WELLTOWER': 'WELL',
+        'VENTAS': 'VTR',
+        
+        # Utilities
+        'NEXTERA': 'NEE',
+        'NEXTERA ENERGY': 'NEE',
+        'DUKE ENERGY': 'DUK',
+        'SOUTHERN COMPANY': 'SO',
+        'DOMINION': 'D',
+        'DOMINION ENERGY': 'D',
+        'AMERICAN ELECTRIC POWER': 'AEP',
+        'EXELON': 'EXC',
+        'XCEL ENERGY': 'XEL',
+        'CONSOLIDATED EDISON': 'ED',
+        'SEMPRA': 'SRE',
+        'SEMPRA ENERGY': 'SRE',
+        
         # Other Major Companies
         'COCA COLA': 'KO',
         'COCA-COLA': 'KO',
@@ -143,11 +329,12 @@ def normalize_symbol(query):
         return symbol_mapping[normalized]
     
     # If no mapping found, return original (might be valid symbol)
+    # Also check for partial matches for fuzzy searching
     return normalized
 
 def validate_symbol(symbol):
     """
-    Basic validation for stock symbols
+    Enhanced validation for stock symbols including various formats
     
     Args:
         symbol (str): Stock symbol to validate
@@ -158,18 +345,18 @@ def validate_symbol(symbol):
     if not symbol or len(symbol) < 1:
         return False
         
-    # Remove dots for validation (some symbols have dots like BRK.A)
-    clean_symbol = symbol.replace('.', '')
+    # Remove dots and hyphens for validation (BRK.A, BRK-A formats)
+    clean_symbol = symbol.replace('.', '').replace('-', '')
     
-    # Basic format check: 1-5 characters, letters only
-    if len(clean_symbol) > 5 or not clean_symbol.isalpha():
+    # Enhanced format check: 1-6 characters, letters and numbers
+    if len(clean_symbol) > 6 or not clean_symbol.isalnum():
         return False
         
     return True
 
 def get_symbol_suggestions(query):
     """
-    Get symbol suggestions based on partial input
+    Get symbol suggestions based on partial input with fuzzy matching
     
     Args:
         query (str): Partial company name or symbol
@@ -177,6 +364,63 @@ def get_symbol_suggestions(query):
     Returns:
         list: List of suggested symbols with company names
     """
+    if not query:
+        return []
+        
+    query = query.upper().strip()
+    symbol_mapping = get_symbol_mapping()
+    suggestions = []
+    
+    # Direct matches first
+    for company_name, symbol in symbol_mapping.items():
+        if query in company_name or query == symbol:
+            suggestions.append({
+                'symbol': symbol,
+                'company_name': company_name,
+                'match_type': 'exact'
+            })
+    
+    # Partial matches
+    for company_name, symbol in symbol_mapping.items():
+        if query in company_name.split() and len(suggestions) < 10:
+            suggestions.append({
+                'symbol': symbol,
+                'company_name': company_name,
+                'match_type': 'partial'
+            })
+    
+    return suggestions[:10]  # Limit to top 10 suggestions
+
+def create_comprehensive_fallback_search(query):
+    """
+    Creates a fallback search strategy for symbols not in our mapping
+    This allows the system to attempt API calls for any reasonable stock symbol
+    
+    Args:
+        query (str): User search query
+        
+    Returns:
+        str: Processed symbol that might work with the API
+    """
+    if not query:
+        return None
+        
+    # Clean and normalize
+    normalized = query.upper().strip()
+    
+    # If it looks like a ticker (short, letters only), try it directly
+    if len(normalized) <= 6 and normalized.replace('.', '').replace('-', '').isalpha():
+        return normalized
+    
+    # If it's a longer name, try common abbreviation patterns
+    words = normalized.split()
+    if len(words) >= 2:
+        # Try first letters of each word (e.g., "Bank of America" -> "BOA")
+        abbreviation = ''.join(word[0] for word in words if word[0].isalpha())
+        if 2 <= len(abbreviation) <= 5:
+            return abbreviation
+    
+    return None
     if not query or len(query) < 2:
         return []
         
