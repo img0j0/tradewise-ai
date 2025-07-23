@@ -281,19 +281,56 @@
         }
         
         function analyzeStock(symbol) {
+            console.log('Desktop analyzeStock called with:', symbol);
             document.getElementById('mainContentTitle').textContent = `Analyzing ${symbol.toUpperCase()}`;
             
             // Set the search input value
             const searchInput = document.getElementById('search-input');
             if (searchInput) {
                 searchInput.value = symbol;
+                console.log('Set search input to:', symbol);
             }
             
-            // Call the existing search function
-            searchStockAI();
+            // Call the AI search function with the symbol directly
+            if (typeof searchStockAI === 'function') {
+                console.log('Calling searchStockAI from analyzeStock');
+                searchStockAI(symbol);
+            } else {
+                console.log('searchStockAI not available, using direct API call');
+                performDirectAPICall(symbol);
+            }
             
             // Update URL for bookmarking
             window.history.pushState({symbol: symbol}, '', `?symbol=${symbol}`);
+        }
+        
+        // Direct API call function for desktop interface
+        async function performDirectAPICall(symbol) {
+            console.log('Desktop: Direct API call for symbol:', symbol);
+            try {
+                const response = await fetch('/api/stock-analysis', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query: symbol })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                console.log('Desktop: API response received:', data);
+                
+                if (data.success || data.symbol) {
+                    displayResults(data);
+                } else {
+                    console.error('Desktop: API returned error:', data.error);
+                    alert('Analysis failed: ' + (data.error || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Desktop: API call failed:', error);
+                alert('Failed to analyze stock. Please try again.');
+            }
         }
         
         // Desktop-optimized displayResults function with enhanced data handling
