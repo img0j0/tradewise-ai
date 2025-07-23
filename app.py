@@ -38,12 +38,8 @@ app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
 # initialize the app with the extension
 db.init_app(app)
 
-# Initialize WebSocket support
-try:
-    from websocket_service import init_websocket
-    socketio = init_websocket(app)
-except ImportError:
-    socketio = None
+# Websocket service removed - focusing on competitive features
+socketio = None
 
 # Initialize caching for better performance
 cache = Cache(app, config={'CACHE_TYPE': 'simple'})
@@ -71,11 +67,11 @@ with app.app_context():
     # Register blueprints after database setup
     from routes import main_bp
     from premium_routes import premium_bp
-    from comprehensive_endpoints import comprehensive_bp
+    # Comprehensive endpoints removed - focusing on competitive features
     
     app.register_blueprint(main_bp)
     app.register_blueprint(premium_bp)
-    app.register_blueprint(comprehensive_bp)
+    # Comprehensive blueprint removed - streamlined for competitive focus
     
     # Global error handlers for professional error pages
     @app.errorhandler(404)

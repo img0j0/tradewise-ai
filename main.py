@@ -1,9 +1,3 @@
-from app import app
+from app import app  # noqa: F401
 
-# Import models and routes after app is created
-import models
-import routes
-from api_endpoints_enhanced import enhanced_bp
-
-# Register enhanced features blueprint
-app.register_blueprint(enhanced_bp)
+# Streamlined for competitive focus - enhanced endpoints removed
