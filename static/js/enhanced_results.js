@@ -21,7 +21,12 @@ function displayEnhancedAnalysis(stockData) {
         container.innerHTML = enhancedHTML;
         
         // Initialize interactive elements
-        initializeEnhancedFeatures();
+        try {
+            initializeEnhancedFeatures();
+        } catch (initError) {
+            console.warn('Enhanced features initialization failed:', initError);
+            // Continue without interactive features
+        }
         
         // Show the container
         container.style.display = 'block';
@@ -524,5 +529,7 @@ window.comparePeers = comparePeers;
 window.exportAnalysis = exportAnalysis;
 window.shareAnalysis = shareAnalysis;
 window.setAlert = setAlert;
+
+// The initializeEnhancedFeatures function is already defined above
 
 console.log('Enhanced results display module loaded');
