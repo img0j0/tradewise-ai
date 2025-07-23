@@ -1786,11 +1786,11 @@
             
             // Call the main search function from ai_stock_search.js if available
             if (typeof searchStockAI === 'function') {
-                console.log('🔍 Using enhanced searchStockAI function');
+                console.log('🔍 Using enhanced searchStockAI function - passing query directly');
                 hideSmartSuggestions?.();
                 hideQuickActions?.();
-                // searchStockAI reads from search-input directly, don't pass parameter
-                searchStockAI();
+                // Pass the query directly to ensure it's captured
+                searchStockAI(query);
                 return;
             }
             

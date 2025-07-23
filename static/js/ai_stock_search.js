@@ -203,7 +203,7 @@ function selectSuggestion(suggestion) {
     if (searchInput) {
         searchInput.value = suggestion.symbol;
         hideSuggestions();
-        searchStockAI();
+        searchStockAI(suggestion.symbol);
     }
 }
 
@@ -213,37 +213,47 @@ function quickSearch(symbol) {
     if (searchInput) {
         searchInput.value = symbol;
         hideSuggestions();
-        searchStockAI();
+        searchStockAI(symbol);
     }
 }
 
-// Main AI stock search function
-async function searchStockAI() {
+// Main AI stock search function - completely rewritten for reliability
+async function searchStockAI(inputSymbol = null) {
     console.log('🔍 Using enhanced searchStockAI function');
-    console.log('searchStockAI called');
+    console.log('searchStockAI called with inputSymbol:', inputSymbol);
     
-    // Try multiple ways to get the search input
-    let searchInput = document.getElementById('search-input');
-    if (!searchInput) {
-        console.log('🔍 search-input not found, trying alternative selectors...');
-        searchInput = document.querySelector('#search-input') || 
-                     document.querySelector('input[type="text"]') || 
-                     document.querySelector('.search-input') ||
-                     document.querySelector('[placeholder*="stock"]');
+    let symbol = inputSymbol;
+    
+    // If no symbol provided, try to get from input
+    if (!symbol) {
+        // Try multiple ways to get the search input
+        let searchInput = document.getElementById('search-input');
+        if (!searchInput) {
+            console.log('🔍 search-input not found, trying alternative selectors...');
+            searchInput = document.querySelector('#search-input') || 
+                         document.querySelector('input[type="text"]') || 
+                         document.querySelector('.search-input') ||
+                         document.querySelector('[placeholder*="stock"]');
+        }
+        
+        if (!searchInput) {
+            console.error('🚨 Search input element not found with any selector');
+            // Try to prompt user for input as fallback
+            symbol = prompt('Please enter a stock symbol (e.g., AAPL, TSLA, NVDA):');
+            if (!symbol) {
+                alert('No stock symbol provided.');
+                return;
+            }
+        } else {
+            console.log('🔍 Found search input element:', searchInput);
+            console.log('🔍 Input value before trim:', JSON.stringify(searchInput.value));
+            symbol = (searchInput.value || '').trim();
+        }
     }
     
-    if (!searchInput) {
-        console.error('🚨 Search input element not found with any selector');
-        alert('Search input not found. Please refresh the page.');
-        return;
-    }
-    
-    console.log('🔍 Found search input element:', searchInput);
-    console.log('🔍 Input value before trim:', JSON.stringify(searchInput.value));
-    
-    const symbol = (searchInput.value || '').trim().toUpperCase();
-    
-    console.log('🔍 Search symbol after processing:', JSON.stringify(symbol));
+    // Clean and validate symbol
+    symbol = symbol.toUpperCase().trim();
+    console.log('🔍 Final search symbol:', JSON.stringify(symbol));
     
     if (!symbol) {
         alert('Please enter a stock symbol or company name');
