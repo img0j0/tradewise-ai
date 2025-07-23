@@ -165,12 +165,17 @@ function showLoadingState() {
 }
 
 function displayResults(data) {
+    console.log('displayResults called with:', data);
     const container = document.getElementById('mainAnalysisContainer');
-    if (!container) return;
+    if (!container) {
+        console.error('mainAnalysisContainer not found');
+        return;
+    }
 
-    // Extract data safely
-    const analysis = data.analysis || {};
-    const stockInfo = data.stock_info || data;
+    try {
+        // Extract data safely
+        const analysis = data.analysis || {};
+        const stockInfo = data.stock_info || data;
     
     const price = typeof stockInfo.current_price === 'number' ? stockInfo.current_price.toFixed(2) : '0.00';
     const change = typeof stockInfo.price_change === 'number' ? stockInfo.price_change.toFixed(2) : '0.00';
@@ -231,6 +236,12 @@ function displayResults(data) {
             </div>
         </div>
     `;
+    
+    console.log('displayResults completed successfully');
+    } catch (error) {
+        console.error('Error in displayResults:', error);
+        showError('Failed to display analysis results: ' + error.message);
+    }
 }
 
 function getRecommendationColor(recommendation) {
