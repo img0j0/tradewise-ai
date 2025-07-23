@@ -274,10 +274,20 @@ async function searchStockAI() {
                 displayEnhancedAnalysis(stockData);
                 console.log('✅ Enhanced analysis display successful');
             } catch (displayError) {
-                console.error('❌ Enhanced display error detected:', displayError);
-                console.error('❌ Error type:', displayError.constructor.name);
+                console.error('❌ ENHANCED DISPLAY ERROR DETECTED:', displayError);
+                console.error('❌ Error type:', displayError.constructor?.name || 'Unknown');
                 console.error('❌ Error message:', displayError.message || 'No message');
                 console.error('❌ Error stack:', displayError.stack || 'No stack');
+                console.error('❌ Full error object:', JSON.stringify(displayError, Object.getOwnPropertyNames(displayError)));
+                
+                // Check if this is the toFixed error
+                if (displayError.message && displayError.message.includes('toFixed')) {
+                    console.error('🔢 CONFIRMED: This is the toFixed error we are hunting!');
+                    console.error('🔢 Examining stockData for undefined values:');
+                    console.error('🔢 - current_price type:', typeof stockData.current_price, 'value:', stockData.current_price);
+                    console.error('🔢 - price_change type:', typeof stockData.price_change, 'value:', stockData.price_change);
+                    console.error('🔢 - price_change_percent type:', typeof stockData.price_change_percent, 'value:', stockData.price_change_percent);
+                }
                 
                 // Show basic analysis if enhanced fails
                 console.log('🔄 Switching to basic analysis fallback...');
@@ -370,7 +380,14 @@ async function searchStockData(symbol) {
         }
         
         const data = await response.json();
-        console.log('Comprehensive stock data received:', data);
+        console.log('🔍 COMPREHENSIVE STOCK DATA RECEIVED:', data);
+        console.log('🔍 Data structure check:');
+        console.log('🔍 - success:', data.success);
+        console.log('🔍 - current_price:', data.current_price);
+        console.log('🔍 - price_change:', data.price_change);
+        console.log('🔍 - price_change_percent:', data.price_change_percent);
+        console.log('🔍 - company_name:', data.company_name);
+        console.log('🔍 - symbol:', data.symbol);
         console.log('Search results:', [data]);
         
         // Validate response has required data
@@ -391,6 +408,8 @@ async function searchStockData(symbol) {
             console.error('🌐 Network fetch error detected');
         } else if (error.name === 'SyntaxError') {
             console.error('📝 JSON parsing error detected');
+        } else if (error.message && error.message.includes('toFixed')) {
+            console.error('🔢 toFixed error detected - undefined value passed to number formatting');
         }
         
         return null;
