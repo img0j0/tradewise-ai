@@ -259,38 +259,78 @@ async function searchStockAI() {
         // ENHANCED AI ANALYSIS DISPLAY
         console.log('=== ENHANCED ANALYSIS DISPLAY ===');
         
-        // Check if enhanced analysis is available and use enhanced display
-        if (stockData.enhanced_analysis && typeof displayEnhancedAnalysis === 'function') {
-            displayEnhancedAnalysis(stockData);
-            console.log('Enhanced analysis display used');
-        } else {
-            // Fallback - use enhanced display anyway (function exists)
-            console.log('Enhanced analysis not detected, using enhanced display as fallback');
-            if (typeof displayEnhancedAnalysis === 'function') {
+        // Always use enhanced analysis display (it handles all cases)
+        console.log('=== USING ENHANCED ANALYSIS DISPLAY ===');
+        console.log('Enhanced analysis available:', !!stockData.enhanced_analysis);
+        console.log('Display function available:', typeof displayEnhancedAnalysis === 'function');
+        
+        if (typeof displayEnhancedAnalysis === 'function') {
+            try {
                 displayEnhancedAnalysis(stockData);
-                console.log('Enhanced display used as fallback');
-            } else {
-                console.error('No display function available');
-                throw new Error('Display function not available');
+                console.log('✅ Enhanced analysis display successful');
+            } catch (displayError) {
+                console.error('Enhanced display error:', displayError);
+                // Show basic analysis if enhanced fails
+                showBasicAnalysis(stockData);
             }
+        } else {
+            console.error('Enhanced display function not loaded');
+            // Fallback to basic display if enhanced function not available
+            showBasicAnalysis(stockData);
         }
+        
+// Basic analysis fallback function
+function showBasicAnalysis(stockData) {
+    const container = document.getElementById('ai-analysis-results');
+    if (!container) return;
+    
+    container.innerHTML = `
+        <div style="padding: 30px; text-align: center; background: white; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+            <h2>${stockData.company_name || stockData.symbol}</h2>
+            <div style="font-size: 2rem; font-weight: bold; color: #1f2937; margin: 20px 0;">
+                $${parseFloat(stockData.current_price || 0).toFixed(2)}
+            </div>
+            <div style="background: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                <div style="font-weight: bold; margin-bottom: 10px;">AI Recommendation</div>
+                <div style="font-size: 1.5rem; color: #059669;">${stockData.recommendation || 'HOLD'}</div>
+                <div style="color: #6b7280; margin-top: 5px;">${stockData.confidence || 50}% Confidence</div>
+            </div>
+            <div style="color: #6b7280; font-size: 0.9rem;">
+                Basic analysis mode - Enhanced features loading...
+            </div>
+        </div>
+    `;
+    container.style.display = 'block';
+    console.log('Basic analysis displayed');
+}
         
     } catch (error) {
         console.error('Search error:', error);
-        // Show user-friendly error message
+        console.error('Error stack:', error.stack);
+        console.error('Error message:', error.message);
+        
+        // Show detailed error information for debugging
         const container = document.getElementById('ai-analysis-results');
         if (container) {
             container.innerHTML = `
-                <div style="text-align: center; padding: 40px; color: #ef4444;">
-                    <div style="font-size: 2rem; margin-bottom: 15px;">⚠️</div>
-                    <h3>Analysis Error</h3>
-                    <p>Unable to retrieve stock analysis. Please try a different symbol or check your connection.</p>
+                <div style="text-align: center; padding: 40px; color: #ef4444; background: white; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+                    <div style="font-size: 2rem; margin-bottom: 15px;">🔧</div>
+                    <h3>Analysis Error Detected</h3>
+                    <p style="margin: 15px 0; color: #6b7280;">Error: ${error.message || 'Unknown error occurred'}</p>
+                    <div style="background: #f9fafb; padding: 15px; border-radius: 8px; margin: 15px 0; color: #374151; font-size: 0.9rem;">
+                        <strong>Debug Info:</strong><br>
+                        Enhanced display function available: ${typeof displayEnhancedAnalysis === 'function'}<br>
+                        Container available: ${document.getElementById('ai-analysis-results') !== null}<br>
+                        Error type: ${error.constructor.name}
+                    </div>
                     <button onclick="location.reload()" style="padding: 10px 20px; background: #8b5cf6; color: white; border: none; border-radius: 8px; margin-top: 15px; cursor: pointer;">
                         Try Again
                     </button>
                 </div>
             `;
             container.style.display = 'block';
+        } else {
+            console.error('ai-analysis-results container not found in DOM');
         }
     }
 }

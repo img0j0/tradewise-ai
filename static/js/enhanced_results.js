@@ -5,27 +5,33 @@ function displayEnhancedAnalysis(stockData) {
     console.log('=== ENHANCED ANALYSIS DISPLAY ===');
     console.log('Stock data:', stockData);
     
-    // Create enhanced analysis container
-    const container = document.getElementById('ai-analysis-results');
-    if (!container) {
-        console.error('Analysis results container not found');
-        return;
+    try {
+        // Create enhanced analysis container
+        const container = document.getElementById('ai-analysis-results');
+        if (!container) {
+            console.error('Analysis results container not found');
+            throw new Error('ai-analysis-results container not found in DOM');
+        }
+        
+        // Clear existing content
+        container.innerHTML = '';
+        
+        // Build enhanced analysis HTML
+        const enhancedHTML = generateEnhancedAnalysisHTML(stockData);
+        container.innerHTML = enhancedHTML;
+        
+        // Initialize interactive elements
+        initializeEnhancedFeatures();
+        
+        // Show the container
+        container.style.display = 'block';
+        
+        console.log('✅ Enhanced analysis displayed successfully');
+        
+    } catch (error) {
+        console.error('❌ Enhanced analysis display error:', error);
+        throw error; // Re-throw to be caught by calling function
     }
-    
-    // Clear existing content
-    container.innerHTML = '';
-    
-    // Build enhanced analysis HTML
-    const enhancedHTML = generateEnhancedAnalysisHTML(stockData);
-    container.innerHTML = enhancedHTML;
-    
-    // Initialize interactive elements
-    initializeEnhancedFeatures();
-    
-    // Show the container
-    container.style.display = 'block';
-    
-    console.log('Enhanced analysis displayed successfully');
 }
 
 function generateEnhancedAnalysisHTML(data) {
