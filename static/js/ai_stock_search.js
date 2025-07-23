@@ -394,13 +394,6 @@ function showBasicAnalysis(stockData) {
     console.log('Basic analysis displayed');
 }
         
-    } catch (error) {
-        console.error('🚨 MAIN SEARCH ERROR CAUGHT:', error);
-        console.error('🚨 Error type:', error.constructor?.name || 'Unknown');
-        console.error('🚨 Error message:', error.message || 'No message available');
-        console.error('🚨 Error stack:', error.stack || 'No stack trace available');
-        console.error('🚨 Full error object:', JSON.stringify(error, Object.getOwnPropertyNames(error)));
-        
         // Show detailed error information for debugging
         const container = document.getElementById('ai-analysis-results');
         if (container) {
