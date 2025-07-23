@@ -189,6 +189,19 @@ TradeWise AI is a sophisticated stock analysis platform that provides AI-powered
 
 Preferred communication style: Simple, everyday language.
 
+## Market Positioning Strategy
+
+Based on comprehensive market research (July 2025), TradeWise AI addresses five critical market gaps:
+
+1. **Professional Tools for Everyone**: Bridge between free basic tools and expensive professional platforms ($49+/month)
+2. **AI Transparency**: Explainable AI with clear reasoning vs. "black box" competitors  
+3. **Event-Driven Intelligence**: Real-time market event detection for retail investors
+4. **Education-First Platform**: Learning integrated with analysis vs. separate education/trading tools
+5. **Honest Performance Claims**: Realistic expectations vs. unrealistic "95% accuracy" marketing
+
+**Primary Target**: Serious retail investors (ages 25-45, $50K-$150K income, $10K-$500K portfolios)
+**Value Proposition**: "Professional Analysis, Personal Price" - institutional-grade insights with retail-friendly pricing and education
+
 ## System Architecture
 
 ### Frontend Architecture
