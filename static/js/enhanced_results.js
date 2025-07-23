@@ -43,6 +43,11 @@ function displayEnhancedAnalysis(stockData) {
 }
 
 function generateEnhancedAnalysisHTML(data) {
+    console.log('=== GENERATING NEW COMPETITIVE FEATURES UI ===');
+    console.log('Enhanced Explanation Data:', data.enhanced_explanation);
+    console.log('Smart Alerts Data:', data.smart_alerts);
+    console.log('Educational Insights Data:', data.educational_insights);
+    
     const enhanced = data.enhanced_analysis || {};
     const analysis = data.analysis || {};
     const strategy = analysis.strategy_applied || {};
@@ -185,6 +190,15 @@ function generateEnhancedAnalysisHTML(data) {
             </div>
             ` : ''}
 
+            <!-- COMPETITIVE FEATURE #1: Enhanced AI Explanations -->
+            ${generateEnhancedAIExplanations(data)}
+            
+            <!-- COMPETITIVE FEATURE #2: Smart Event Detection -->
+            ${generateSmartEventAlerts(data)}
+            
+            <!-- COMPETITIVE FEATURE #3: Educational Insights -->
+            ${generateEducationalInsights(data)}
+            
             <!-- Enhanced Analysis Insights -->
             <div class="analysis-insights-section">
                 <h3><i class="fas fa-brain"></i> AI Investment Analysis</h3>
@@ -616,5 +630,211 @@ window.shareAnalysis = shareAnalysis;
 window.setAlert = setAlert;
 
 // The initializeEnhancedFeatures function is already defined above
+
+// COMPETITIVE FEATURE #1: Enhanced AI Explanations
+function generateEnhancedAIExplanations(data) {
+    const explanation = data.enhanced_explanation;
+    if (!explanation) {
+        return `
+            <div class="competitive-feature-section ai-explanations" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 15px; margin: 20px 0;">
+                <div class="feature-header" style="margin-bottom: 20px;">
+                    <h3 style="margin: 0; color: white;"><i class="fas fa-microscope"></i> Enhanced AI Explanations</h3>
+                    <span class="competitive-badge" style="background: rgba(255,255,255,0.2); padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; margin-left: 15px;">TRANSPARENCY ADVANTAGE</span>
+                </div>
+                <div class="feature-content">
+                    <div class="explanation-card" style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 10px;">
+                        <div class="explanation-title" style="font-size: 1.2rem; font-weight: bold; margin-bottom: 15px;">Complete AI Reasoning Transparency</div>
+                        <div class="explanation-text" style="margin-bottom: 20px; line-height: 1.6;">
+                            Our AI provides detailed explanations for every recommendation, showing exactly why each decision was made. 
+                            Unlike black-box competitors, you can see the complete reasoning process.
+                        </div>
+                        <div class="explanation-demo">
+                            <div class="demo-label" style="font-weight: bold; margin-bottom: 10px;">Example Reasoning:</div>
+                            <ul class="reasoning-list" style="margin: 0; padding-left: 20px;">
+                                <li>Technical indicators show strong upward momentum (80% confidence)</li>
+                                <li>Fundamental analysis reveals solid revenue growth (70% confidence)</li>
+                                <li>Growth Investor strategy boosts overall confidence by 15%</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    
+    return `
+        <div class="competitive-feature-section ai-explanations" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 15px; margin: 20px 0;">
+            <div class="feature-header" style="margin-bottom: 20px;">
+                <h3 style="margin: 0; color: white;"><i class="fas fa-microscope"></i> Enhanced AI Explanations</h3>
+                <span class="competitive-badge" style="background: rgba(255,255,255,0.2); padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; margin-left: 15px;">TRANSPARENCY ADVANTAGE</span>
+            </div>
+            <div class="feature-content">
+                <div class="explanation-card" style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 10px;">
+                    <div class="explanation-title" style="font-size: 1.2rem; font-weight: bold; margin-bottom: 15px;">${explanation.summary || 'Detailed AI Reasoning'}</div>
+                    <div class="confidence-breakdown" style="margin-bottom: 20px;">
+                        <div class="confidence-header" style="font-weight: bold; margin-bottom: 10px;">Confidence Breakdown:</div>
+                        <div class="confidence-items" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
+                            <div class="confidence-item" style="display: flex; justify-content: space-between; background: rgba(255,255,255,0.1); padding: 8px 12px; border-radius: 5px;">
+                                <span class="conf-label">Technical Analysis:</span>
+                                <span class="conf-value" style="font-weight: bold;">${explanation.confidence_breakdown?.technical_analysis || 70}%</span>
+                            </div>
+                            <div class="confidence-item" style="display: flex; justify-content: space-between; background: rgba(255,255,255,0.1); padding: 8px 12px; border-radius: 5px;">
+                                <span class="conf-label">Fundamental Analysis:</span>
+                                <span class="conf-value" style="font-weight: bold;">${explanation.confidence_breakdown?.fundamental_analysis || 60}%</span>
+                            </div>
+                            <div class="confidence-item" style="display: flex; justify-content: space-between; background: rgba(255,255,255,0.1); padding: 8px 12px; border-radius: 5px;">
+                                <span class="conf-label">Market Sentiment:</span>
+                                <span class="conf-value" style="font-weight: bold;">${explanation.confidence_breakdown?.market_sentiment || 65}%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="key-factors">
+                        <div class="factors-header" style="font-weight: bold; margin-bottom: 10px;">Key Decision Factors:</div>
+                        <ul class="factors-list" style="margin: 0; padding-left: 20px;">
+                            ${explanation.key_factors?.map(factor => `<li>${factor}</li>`).join('') || '<li>AI analysis in progress</li>'}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// COMPETITIVE FEATURE #2: Smart Event Detection
+function generateSmartEventAlerts(data) {
+    const alerts = data.smart_alerts;
+    if (!alerts) {
+        return `
+            <div class="competitive-feature-section smart-alerts" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 30px; border-radius: 15px; margin: 20px 0;">
+                <div class="feature-header" style="margin-bottom: 20px;">
+                    <h3 style="margin: 0; color: white;"><i class="fas fa-radar"></i> Smart Event Detection</h3>
+                    <span class="competitive-badge" style="background: rgba(255,255,255,0.2); padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; margin-left: 15px;">EARLY WARNING SYSTEM</span>
+                </div>
+                <div class="feature-content">
+                    <div class="alert-card" style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 10px;">
+                        <div class="alert-title" style="font-size: 1.2rem; font-weight: bold; margin-bottom: 15px;">Institutional-Level Event Detection</div>
+                        <div class="alert-text" style="margin-bottom: 20px; line-height: 1.6;">
+                            Get warned about market-moving events before they impact prices. Our system monitors earnings, 
+                            Fed meetings, sector rotation, and unusual trading patterns.
+                        </div>
+                        <div class="alert-demo">
+                            <div class="demo-label" style="font-weight: bold; margin-bottom: 10px;">Sample Alerts:</div>
+                            <div class="alert-item high" style="display: flex; align-items: center; margin-bottom: 8px; background: rgba(255,255,255,0.1); padding: 10px; border-radius: 5px;">
+                                <i class="fas fa-exclamation-triangle" style="margin-right: 10px; color: #ffeb3b;"></i>
+                                <span>AAPL earnings in 2 days - historically 5% volatility</span>
+                            </div>
+                            <div class="alert-item medium" style="display: flex; align-items: center; background: rgba(255,255,255,0.1); padding: 10px; border-radius: 5px;">
+                                <i class="fas fa-info-circle" style="margin-right: 10px; color: #2196f3;"></i>
+                                <span>Fed meeting next week may affect interest-sensitive stocks</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    
+    return `
+        <div class="competitive-feature-section smart-alerts" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 30px; border-radius: 15px; margin: 20px 0;">
+            <div class="feature-header" style="margin-bottom: 20px;">
+                <h3 style="margin: 0; color: white;"><i class="fas fa-radar"></i> Smart Event Detection</h3>
+                <span class="competitive-badge" style="background: rgba(255,255,255,0.2); padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; margin-left: 15px;">EARLY WARNING SYSTEM</span>
+            </div>
+            <div class="feature-content">
+                <div class="alert-card" style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 10px;">
+                    <div class="alerts-summary" style="margin-bottom: 20px; text-align: center;">
+                        <span class="alert-count" style="font-size: 2rem; font-weight: bold; margin-right: 20px;">${alerts.summary?.total_events || 0}</span> events detected
+                        <span class="high-impact-count" style="font-size: 1.5rem; font-weight: bold; color: #ffeb3b;">${alerts.summary?.high_impact_events || 0}</span> high impact
+                    </div>
+                    <div class="immediate-alerts" style="margin-bottom: 20px;">
+                        <div class="alerts-header" style="font-weight: bold; margin-bottom: 10px;">Immediate Alerts:</div>
+                        <div class="alerts-list">
+                            ${alerts.immediate_alerts?.map(alert => `
+                                <div class="alert-item ${alert.urgency?.toLowerCase()}" style="display: flex; align-items: center; margin-bottom: 8px; background: rgba(255,255,255,0.1); padding: 10px; border-radius: 5px;">
+                                    <i class="fas fa-exclamation-triangle" style="margin-right: 10px; color: #ffeb3b;"></i>
+                                    <span class="alert-text">${alert.title}: ${alert.description}</span>
+                                    <span class="alert-impact" style="margin-left: auto; font-weight: bold;">${alert.potential_impact}</span>
+                                </div>
+                            `).join('') || '<div class="alert-item" style="padding: 10px; background: rgba(255,255,255,0.1); border-radius: 5px;">No immediate alerts</div>'}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// COMPETITIVE FEATURE #3: Educational Insights
+function generateEducationalInsights(data) {
+    const education = data.educational_insights;
+    if (!education) {
+        return `
+            <div class="competitive-feature-section educational-insights" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; padding: 30px; border-radius: 15px; margin: 20px 0;">
+                <div class="feature-header" style="margin-bottom: 20px;">
+                    <h3 style="margin: 0; color: white;"><i class="fas fa-graduation-cap"></i> Educational Insights</h3>
+                    <span class="competitive-badge" style="background: rgba(255,255,255,0.2); padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; margin-left: 15px;">LEARNING INTEGRATION</span>
+                </div>
+                <div class="feature-content">
+                    <div class="education-card" style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 10px;">
+                        <div class="education-title" style="font-size: 1.2rem; font-weight: bold; margin-bottom: 15px;">Learn While You Invest</div>
+                        <div class="education-text" style="margin-bottom: 20px; line-height: 1.6;">
+                            Every analysis comes with educational content to build your investment expertise. 
+                            Unlike separate education platforms, learning is integrated into real analysis.
+                        </div>
+                        <div class="education-demo">
+                            <div class="demo-label" style="font-weight: bold; margin-bottom: 10px;">Sample Learning Points:</div>
+                            <div class="learning-item" style="margin-bottom: 15px; background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px;">
+                                <div class="concept" style="font-weight: bold; margin-bottom: 5px;">P/E Ratio</div>
+                                <div class="explanation">Price-to-Earnings shows how much investors pay per dollar of earnings</div>
+                            </div>
+                            <div class="learning-item" style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px;">
+                                <div class="concept" style="font-weight: bold; margin-bottom: 5px;">Market Cap</div>
+                                <div class="explanation">Total company value = Share Price × Shares Outstanding</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    
+    return `
+        <div class="competitive-feature-section educational-insights" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; padding: 30px; border-radius: 15px; margin: 20px 0;">
+            <div class="feature-header" style="margin-bottom: 20px;">
+                <h3 style="margin: 0; color: white;"><i class="fas fa-graduation-cap"></i> Educational Insights</h3>
+                <span class="competitive-badge" style="background: rgba(255,255,255,0.2); padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; margin-left: 15px;">LEARNING INTEGRATION</span>
+            </div>
+            <div class="feature-content">
+                <div class="education-card" style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 10px;">
+                    <div class="learning-points" style="margin-bottom: 20px;">
+                        <div class="learning-header" style="font-weight: bold; margin-bottom: 10px;">Key Learning Points:</div>
+                        <div class="learning-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px;">
+                            ${education.key_learning_points?.map(point => `
+                                <div class="learning-item" style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px;">
+                                    <div class="concept" style="font-weight: bold; margin-bottom: 5px;">${point.concept}</div>
+                                    <div class="explanation" style="margin-bottom: 8px;">${point.explanation}</div>
+                                    <div class="why-matters" style="font-size: 0.9rem; opacity: 0.9; margin-bottom: 5px;">Why it matters: ${point.why_it_matters}</div>
+                                    <div class="practical-tip" style="font-size: 0.9rem; font-style: italic;">Tip: ${point.practical_tip}</div>
+                                </div>
+                            `).join('') || '<div class="learning-item" style="padding: 15px; background: rgba(255,255,255,0.1); border-radius: 8px;">Educational content loading...</div>'}
+                        </div>
+                    </div>
+                    <div class="investment-lessons">
+                        <div class="lessons-header" style="font-weight: bold; margin-bottom: 10px;">Investment Lessons:</div>
+                        <div class="lessons-list" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 10px;">
+                            ${education.investment_lessons?.map(lesson => `
+                                <div class="lesson-item" style="background: rgba(255,255,255,0.1); padding: 10px; border-radius: 5px;">
+                                    <div class="lesson-title" style="font-weight: bold; margin-bottom: 5px; font-size: 0.9rem;">${lesson.lesson}</div>
+                                    <div class="lesson-example" style="font-size: 0.8rem; margin-bottom: 3px;">${lesson.example}</div>
+                                    <div class="lesson-practice" style="font-size: 0.8rem; font-style: italic;">${lesson.best_practice}</div>
+                                </div>
+                            `).join('') || '<div class="lesson-item" style="padding: 10px; background: rgba(255,255,255,0.1); border-radius: 5px;">Lessons loading...</div>'}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
 
 console.log('Enhanced results display module loaded');
