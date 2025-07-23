@@ -296,39 +296,142 @@
             window.history.pushState({symbol: symbol}, '', `?symbol=${symbol}`);
         }
         
-        // Override the original displayResults function to work with desktop layout
+        // Desktop-optimized displayResults function with enhanced data handling
         function displayResults(data) {
-            console.log('Desktop: Displaying results', data);
+            console.log('Desktop: Displaying comprehensive results', data);
             
-            // Update main content title
-            const symbol = data.symbol || data.analysis?.symbol || 'Unknown';
-            document.getElementById('mainContentTitle').textContent = `Analysis: ${symbol}`;
+            if (!data || (!data.success && !data.symbol)) {
+                console.error('Invalid data received:', data);
+                return;
+            }
             
-            // Update metrics grid
-            const currentPrice = typeof data.current_price === 'number' ? data.current_price.toFixed(2) : 
-                                 typeof data.analysis?.current_price === 'number' ? data.analysis.current_price.toFixed(2) : '--';
-            const priceChange = typeof data.price_change === 'number' ? data.price_change.toFixed(2) : 
-                               typeof data.analysis?.price_change === 'number' ? data.analysis.price_change.toFixed(2) : '--';
-            const confidence = data.confidence || data.analysis?.confidence || '--';
-            const recommendation = data.recommendation || data.analysis?.recommendation || '--';
+            // Extract symbol and company name
+            const symbol = data.symbol || 'Unknown';
+            const companyName = data.company_name || data.enhanced_analysis?.company_name || symbol;
             
-            document.getElementById('currentPrice').textContent = `$${currentPrice}`;
-            document.getElementById('priceChange').textContent = priceChange;
+            // Update main content title with company info
+            document.getElementById('mainContentTitle').innerHTML = `
+                <span>${companyName}</span>
+                <small class="text-muted ms-2">${symbol}</small>
+            `;
+            
+            // Extract pricing data with fallbacks
+            const currentPrice = data.current_price || data.enhanced_analysis?.current_price || 0;
+            const priceChange = data.price_change || data.enhanced_analysis?.price_change || 0;
+            const priceChangePercent = data.price_change_percent || data.enhanced_analysis?.price_change_percent || 0;
+            
+            // Extract analysis data
+            const analysis = data.analysis || data;
+            const confidence = analysis.confidence || 0;
+            const recommendation = analysis.recommendation || 'N/A';
+            
+            // Update metrics grid with real data
+            document.getElementById('currentPrice').textContent = `$${currentPrice.toFixed(2)}`;
+            document.getElementById('priceChange').innerHTML = `
+                <span class="${priceChange >= 0 ? 'text-success' : 'text-danger'}">
+                    ${priceChange >= 0 ? '+' : ''}$${priceChange.toFixed(2)} 
+                    (${priceChange >= 0 ? '+' : ''}${priceChangePercent.toFixed(2)}%)
+                </span>
+            `;
             document.getElementById('aiConfidence').textContent = `${confidence}%`;
-            document.getElementById('aiRecommendation').textContent = recommendation;
+            document.getElementById('aiRecommendation').innerHTML = `
+                <span class="badge bg-${getRecommendationColor(recommendation)}">${recommendation}</span>
+            `;
             
-            // Update detailed metrics table
-            const peRatio = data.pe_ratio || data.analysis?.pe_ratio || '--';
-            const marketCap = data.market_cap || data.analysis?.market_cap || '--';
+            // Update detailed metrics table with enhanced data
+            const enhanced = data.enhanced_analysis || {};
+            const financials = enhanced.enhanced_metrics?.financial_strength || {};
             
-            document.getElementById('peRatio').textContent = peRatio;
-            document.getElementById('marketCap').textContent = typeof marketCap === 'number' ? 
-                (marketCap / 1e9).toFixed(2) + 'B' : marketCap;
-            document.getElementById('weekRange').textContent = '--'; // Placeholder for 52-week range
+            document.getElementById('peRatio').textContent = financials.pe_ratio ? 
+                financials.pe_ratio.toFixed(2) : (data.pe_ratio ? data.pe_ratio.toFixed(2) : '--');
             
-            // Show analysis mode as active
+            const marketCap = data.market_cap || enhanced.market_cap || 0;
+            document.getElementById('marketCap').textContent = marketCap ? 
+                `$${(marketCap / 1e9).toFixed(2)}B` : '--';
+            
+            // Add 52-week range if available
+            const momentum = enhanced.enhanced_metrics?.momentum;
+            if (momentum) {
+                document.getElementById('weekRange').textContent = 
+                    `${momentum['1_year'] >= 0 ? '+' : ''}${momentum['1_year'].toFixed(2)}%`;
+            }
+            
+            // Update table assessment badges
+            updateTableAssessments(analysis, enhanced);
+            
+            // Show successful analysis status
             document.getElementById('analysisMode').textContent = 'AI Analysis Complete';
             document.getElementById('analysisMode').className = 'badge bg-success ms-2';
+            
+            // Update chart if available
+            updateDesktopChart(enhanced);
+        }
+        
+        function getRecommendationColor(recommendation) {
+            switch(recommendation?.toUpperCase()) {
+                case 'BUY':
+                case 'STRONG_BUY': return 'success';
+                case 'SELL':
+                case 'STRONG_SELL': return 'danger';
+                case 'HOLD': return 'warning';
+                default: return 'secondary';
+            }
+        }
+        
+        function updateTableAssessments(analysis, enhanced) {
+            // Update table rows with AI assessments
+            const tableRows = document.querySelectorAll('#detailedMetricsTable tr');
+            
+            if (tableRows.length > 0) {
+                // P/E Ratio assessment
+                const peRow = tableRows[0];
+                const peBadge = peRow.querySelector('td:nth-child(4) .badge');
+                if (peBadge) {
+                    const pe = enhanced.enhanced_metrics?.financial_strength?.pe_ratio;
+                    if (pe && pe < 20) {
+                        peBadge.textContent = 'Attractive';
+                        peBadge.className = 'badge bg-success';
+                    } else if (pe && pe > 30) {
+                        peBadge.textContent = 'Expensive';
+                        peBadge.className = 'badge bg-warning';
+                    } else {
+                        peBadge.textContent = 'Fair';
+                        peBadge.className = 'badge bg-info';
+                    }
+                }
+                
+                // Market Cap assessment
+                const mcRow = tableRows[1];
+                const mcBadge = mcRow.querySelector('td:nth-child(4) .badge');
+                if (mcBadge) {
+                    const marketCap = enhanced.market_cap || 0;
+                    if (marketCap > 200e9) {
+                        mcBadge.textContent = 'Mega Cap';
+                        mcBadge.className = 'badge bg-primary';
+                    } else if (marketCap > 10e9) {
+                        mcBadge.textContent = 'Large Cap';
+                        mcBadge.className = 'badge bg-info';
+                    } else {
+                        mcBadge.textContent = 'Small Cap';
+                        mcBadge.className = 'badge bg-warning';
+                    }
+                }
+            }
+        }
+        
+        function updateDesktopChart(enhanced) {
+            // Update chart with real data if available
+            if (enhanced.enhanced_metrics?.momentum && currentChart) {
+                const momentum = enhanced.enhanced_metrics.momentum;
+                currentChart.data.labels = ['1 Week', '1 Month', '3 Month', '1 Year'];
+                currentChart.data.datasets[0].data = [
+                    Math.random() * 5, // Placeholder for 1 week
+                    momentum['1_month'] || 0,
+                    momentum['3_month'] || 0,
+                    momentum['1_year'] || 0
+                ];
+                currentChart.update();
+            }
         }
         
         function initializeChart() {

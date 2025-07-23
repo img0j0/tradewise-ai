@@ -324,12 +324,39 @@
     }
 }
 
-/* Hide mobile-specific elements on desktop */
-@media (min-width: 1024px) {
-    .mobile-only,
-    .mobile-nav,
-    .mobile-search,
-    .mobile-header {
-        display: none !important;
+/* Desktop-only platform - no mobile support */
+.mobile-only,
+.mobile-nav,
+.mobile-search,
+.mobile-header,
+.mobile-analysis-container {
+    display: none !important;
+}
+
+/* Enhanced desktop-specific optimizations */
+@media (min-width: 1600px) {
+    .desktop-main-layout {
+        grid-template-columns: 380px 1fr 420px;
+        gap: 30px;
+    }
+    
+    .desktop-metric-value {
+        font-size: 3rem;
+    }
+    
+    .desktop-analysis-grid {
+        grid-template-columns: repeat(6, 1fr);
+    }
+}
+
+@media (min-width: 2560px) {
+    .desktop-main-layout {
+        grid-template-columns: 450px 1fr 500px;
+        gap: 40px;
+        padding: 40px;
+    }
+    
+    .desktop-metric-value {
+        font-size: 3.5rem;
     }
 }

@@ -129,30 +129,7 @@ def health_check():
 
 @main_bp.route('/')
 def index():
-    """Desktop/mobile adaptive stock analysis interface powered by AI"""
-    try:
-        # Detect if user is on desktop or mobile
-        user_agent = request.headers.get('User-Agent', '').lower()
-        is_mobile = any(mobile in user_agent for mobile in ['mobile', 'android', 'iphone', 'ipad'])
-        
-        # Serve desktop-optimized interface for desktop users
-        if not is_mobile and 'mobile=true' not in request.args:
-            template = 'desktop_dashboard.html'
-        else:
-            template = 'clean_chatgpt_search.html'
-            
-        response = make_response(render_template(template))
-        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
-        response.headers['Pragma'] = 'no-cache'
-        response.headers['Expires'] = '0'
-        return response
-    except Exception as e:
-        logger.error(f"Error loading analysis interface: {e}")
-        return jsonify({'error': 'Analysis interface loading error'}), 500
-
-@main_bp.route('/desktop')
-def desktop_dashboard():
-    """Force desktop interface regardless of device"""
+    """Desktop-focused professional stock analysis platform"""
     try:
         response = make_response(render_template('desktop_dashboard.html'))
         response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
@@ -160,8 +137,8 @@ def desktop_dashboard():
         response.headers['Expires'] = '0'
         return response
     except Exception as e:
-        logger.error(f"Error loading desktop dashboard: {e}")
-        return jsonify({'error': 'Desktop dashboard loading error'}), 500
+        logger.error(f"Error loading desktop interface: {e}")
+        return jsonify({'error': 'Desktop interface loading error'}), 500
 
 @main_bp.route('/strategy-demo')
 def strategy_demo():
