@@ -97,7 +97,10 @@ function performIntelligentSearchWithSymbol(symbol) {
             }
         })
         .catch(error => {
-            console.error('TradeWise AI: Search error:', error);
+            console.error('🏢 TRADEWISE AI SEARCH ERROR:', error);
+            console.error('🏢 Error type:', error.constructor?.name || 'Unknown');
+            console.error('🏢 Error message:', error.message || 'No message available');
+            console.error('🏢 Full error object:', JSON.stringify(error, Object.getOwnPropertyNames(error)));
             showErrorMessage(`Error searching for ${symbol}: ${error.message}`);
         });
 }

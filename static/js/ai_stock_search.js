@@ -380,11 +380,19 @@ async function searchStockData(symbol) {
         
         return data;
     } catch (error) {
-        console.error('Search error:', error);
-        // Better error message for debugging
-        if (error.message) {
-            console.error('Error details:', error.message);
+        console.error('🔍 SEARCH DATA ERROR FOUND:', error);
+        console.error('🔍 Error type:', error.constructor?.name || 'Unknown');
+        console.error('🔍 Error message:', error.message || 'No message available');
+        console.error('🔍 Error stack:', error.stack || 'No stack trace available');
+        console.error('🔍 Full error object:', JSON.stringify(error, Object.getOwnPropertyNames(error)));
+        
+        // Check if this is a network error or parsing error
+        if (error.name === 'TypeError' && error.message.includes('fetch')) {
+            console.error('🌐 Network fetch error detected');
+        } else if (error.name === 'SyntaxError') {
+            console.error('📝 JSON parsing error detected');
         }
+        
         return null;
     }
 }
