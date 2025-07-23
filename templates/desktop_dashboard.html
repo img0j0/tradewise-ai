@@ -14,8 +14,9 @@
     <!-- Chart.js for advanced visualizations -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
-    <!-- Custom CSS -->
+    <!-- Bloomberg Terminal Professional CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bloomberg_ui.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/desktop_optimization.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/ai_results.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/enhanced_analysis.css') }}">
@@ -28,31 +29,31 @@
 </head>
 <body class="dark-theme">
     <div class="desktop-main-layout">
-        <!-- Desktop Header -->
-        <header class="desktop-header">
+        <!-- Bloomberg Terminal Professional Header -->
+        <header class="desktop-header bloomberg-header">
             <div class="d-flex align-items-center">
-                <h2 class="mb-0 text-primary">
-                    <i class="fas fa-robot me-2"></i>
+                <h1 class="mb-0 bloomberg-title">
+                    <i class="fas fa-chart-line me-2" style="color: #667eea;"></i>
                     TradeWise AI
-                </h2>
-                <span class="professional-badge">Bloomberg for Everyone</span>
-                <span class="desktop-live-indicator ms-3">
-                    <span class="desktop-live-dot"></span>
-                    Live Market Data
+                </h1>
+                <span class="bloomberg-badge ms-3">Bloomberg for Everyone</span>
+                <span class="terminal-live-indicator ms-3">
+                    <span class="live-pulse"></span>
+                    Live Terminal
                 </span>
             </div>
             
             <div class="d-flex align-items-center gap-3">
-                <select class="form-select form-select-sm" id="investmentStrategy">
+                <select class="form-select terminal-select" id="investmentStrategy">
                     <option value="growth_investor">🚀 Growth Investor</option>
                     <option value="value_investor">💎 Value Investor</option>
                     <option value="dividend_investor">💰 Dividend Investor</option>
                     <option value="momentum_trader">⚡ Momentum Trader</option>
                 </select>
                 
-                <button class="desktop-action-button" onclick="refreshAllData()">
+                <button class="btn btn-outline-primary terminal-button" onclick="refreshAllData()">
                     <i class="fas fa-sync-alt me-1"></i>
-                    Refresh Data
+                    Refresh Terminal
                 </button>
                 
                 <button class="desktop-action-button secondary" onclick="openSettings()">

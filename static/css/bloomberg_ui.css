@@ -1,0 +1,435 @@
+/* Bloomberg Terminal Professional UI Components */
+
+/* Bloomberg Terminal Header Styles */
+.bloomberg-header {
+    background: linear-gradient(135deg, var(--terminal-bg) 0%, var(--terminal-secondary) 100%);
+    border-bottom: 3px solid var(--terminal-border);
+    padding: 1rem 1.5rem;
+    backdrop-filter: blur(16px);
+    box-shadow: 0 6px 30px rgba(0, 0, 0, 0.4);
+    position: relative;
+}
+
+.bloomberg-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--gradient-primary);
+    z-index: 1;
+}
+
+.bloomberg-title {
+    font-family: var(--font-primary);
+    font-weight: 800;
+    font-size: 1.75rem;
+    color: var(--text-bright);
+    letter-spacing: -0.02em;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.bloomberg-badge {
+    background: linear-gradient(135deg, #ff6c00, #ff8533);
+    color: white;
+    font-family: var(--font-primary);
+    font-weight: 700;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    box-shadow: 0 3px 10px rgba(255, 108, 0, 0.3);
+}
+
+.terminal-live-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--success-color);
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.live-pulse {
+    width: 8px;
+    height: 8px;
+    background: var(--success-color);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+    box-shadow: 0 0 10px var(--success-color);
+}
+
+@keyframes pulse {
+    0%, 100% { 
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% { 
+        opacity: 0.5;
+        transform: scale(1.2);
+    }
+}
+
+/* Professional Navigation Styles */
+.navbar {
+    background: linear-gradient(135deg, var(--terminal-bg) 0%, var(--terminal-secondary) 100%);
+    border-bottom: 2px solid var(--terminal-border);
+    padding: 0.75rem 0;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.navbar-brand {
+    font-family: var(--font-primary);
+    font-weight: 800;
+    font-size: 1.5rem;
+    color: var(--text-bright) !important;
+    letter-spacing: -0.02em;
+}
+
+.nav-link {
+    font-family: var(--font-primary);
+    font-weight: 500;
+    color: var(--text-secondary) !important;
+    transition: all 0.2s ease;
+    padding: 0.5rem 1rem !important;
+    border-radius: 8px;
+}
+
+.nav-link:hover {
+    color: var(--text-bright) !important;
+    background: rgba(102, 126, 234, 0.1);
+}
+
+/* Professional Search Interface */
+.search-container {
+    background: linear-gradient(145deg, var(--terminal-secondary), var(--terminal-accent));
+    border: 2px solid var(--terminal-border);
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    position: relative;
+    overflow: hidden;
+}
+
+.search-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--gradient-primary);
+    z-index: 1;
+}
+
+.search-input {
+    background: var(--terminal-bg);
+    border: 2px solid var(--terminal-border);
+    border-radius: 12px;
+    color: var(--text-primary);
+    font-family: var(--font-primary);
+    font-size: 1.1rem;
+    font-weight: 500;
+    padding: 1rem 1.5rem;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.search-input:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    outline: none;
+}
+
+.search-input::placeholder {
+    color: var(--text-muted);
+    font-weight: 400;
+}
+
+/* Professional Button Styles */
+.btn-primary {
+    background: var(--gradient-primary);
+    border: none;
+    border-radius: 12px;
+    color: white;
+    font-family: var(--font-primary);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    padding: 0.75rem 1.5rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+}
+
+.btn-outline-primary {
+    background: transparent;
+    border: 2px solid #667eea;
+    border-radius: 12px;
+    color: #667eea;
+    font-family: var(--font-primary);
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-primary:hover {
+    background: var(--gradient-primary);
+    border-color: #667eea;
+    color: white;
+    transform: translateY(-2px);
+}
+
+/* Professional Dropdown Styles */
+.dropdown-menu {
+    background: var(--terminal-secondary);
+    border: 2px solid var(--terminal-border);
+    border-radius: 16px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+    padding: 1rem;
+    backdrop-filter: blur(12px);
+}
+
+.dropdown-item {
+    color: var(--text-secondary);
+    font-family: var(--font-primary);
+    font-weight: 500;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.dropdown-item:hover {
+    background: rgba(102, 126, 234, 0.1);
+    color: var(--text-bright);
+}
+
+/* Professional Forms */
+.form-control, .form-select {
+    background: var(--terminal-bg);
+    border: 2px solid var(--terminal-border);
+    border-radius: 12px;
+    color: var(--text-primary);
+    font-family: var(--font-primary);
+    font-weight: 500;
+    padding: 0.75rem 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus, .form-select:focus {
+    background: var(--terminal-bg);
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    color: var(--text-primary);
+}
+
+.terminal-select {
+    background: var(--terminal-secondary);
+    border: 2px solid var(--terminal-border);
+    color: var(--text-bright);
+    font-weight: 600;
+    min-width: 180px;
+}
+
+.terminal-button {
+    background: transparent;
+    border: 2px solid #667eea;
+    color: #667eea;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    padding: 0.6rem 1.2rem;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.terminal-button:hover {
+    background: var(--gradient-primary);
+    border-color: #667eea;
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.form-label {
+    color: var(--text-secondary);
+    font-family: var(--font-primary);
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+}
+
+/* Professional Tables */
+.table {
+    color: var(--text-primary);
+    font-family: var(--font-primary);
+}
+
+.table th {
+    background: var(--terminal-accent);
+    border-color: var(--terminal-border);
+    color: var(--text-bright);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 0.85rem;
+    padding: 1rem;
+}
+
+.table td {
+    border-color: var(--terminal-border);
+    padding: 1rem;
+    vertical-align: middle;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background: rgba(102, 126, 234, 0.03);
+}
+
+/* Professional Badges */
+.badge {
+    font-family: var(--font-primary);
+    font-weight: 600;
+    font-size: 0.75rem;
+    letter-spacing: 0.02em;
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+}
+
+.badge.bg-success {
+    background: var(--gradient-success) !important;
+}
+
+.badge.bg-warning {
+    background: var(--gradient-warning) !important;
+}
+
+.badge.bg-danger {
+    background: var(--gradient-danger) !important;
+}
+
+/* Professional Alerts */
+.alert {
+    border: 2px solid;
+    border-radius: 12px;
+    font-family: var(--font-primary);
+    font-weight: 500;
+    padding: 1rem 1.5rem;
+}
+
+.alert-success {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.05));
+    border-color: var(--success-color);
+    color: var(--success-light);
+}
+
+.alert-warning {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(217, 119, 6, 0.05));
+    border-color: var(--warning-color);
+    color: var(--warning-light);
+}
+
+.alert-danger {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.05));
+    border-color: var(--danger-color);
+    color: var(--danger-light);
+}
+
+/* Professional Typography Enhancements */
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-primary);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--text-bright);
+}
+
+h1 { font-size: 2.5rem; }
+h2 { font-size: 2rem; }
+h3 { font-size: 1.5rem; }
+h4 { font-size: 1.25rem; }
+h5 { font-size: 1.1rem; }
+h6 { font-size: 1rem; }
+
+.lead {
+    font-family: var(--font-primary);
+    font-weight: 400;
+    font-size: 1.25rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+}
+
+/* Professional Code Styles */
+code, pre {
+    background: var(--terminal-bg);
+    border: 1px solid var(--terminal-border);
+    border-radius: 8px;
+    color: var(--text-bright);
+    font-family: var(--font-mono);
+}
+
+/* Professional Loading States */
+.spinner-border {
+    color: #667eea;
+}
+
+.placeholder {
+    background: linear-gradient(90deg, var(--terminal-accent), var(--terminal-border), var(--terminal-accent));
+    background-size: 200% 100%;
+    animation: placeholder-wave 1.5s ease-in-out infinite;
+}
+
+@keyframes placeholder-wave {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+/* Professional Utilities */
+.text-primary { color: #667eea !important; }
+.text-success { color: var(--success-color) !important; }
+.text-warning { color: var(--warning-color) !important; }
+.text-danger { color: var(--danger-color) !important; }
+.text-info { color: var(--info-color) !important; }
+
+.bg-primary { background: var(--gradient-primary) !important; }
+.bg-success { background: var(--gradient-success) !important; }
+.bg-warning { background: var(--gradient-warning) !important; }
+.bg-danger { background: var(--gradient-danger) !important; }
+
+/* Professional Animation Classes */
+.fade-in {
+    animation: fadeIn 0.6s ease-out;
+}
+
+.slide-up {
+    animation: slideUp 0.6s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { 
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to { 
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

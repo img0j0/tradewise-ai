@@ -1,18 +1,23 @@
-/* Custom CSS for Trading Analytics Platform */
+/* Bloomberg Terminal Inspired Professional Design System */
 
 :root {
-    /* Consistent AI-powered color palette */
-    /* Primary colors - Cool blues and purples for main UI */
-    --primary-color: #60a5fa;  /* Sky blue for primary actions */
-    --primary-dark: #3b82f6;   /* Blue for hover states */
-    --primary-light: #93c5fd;  /* Light blue for highlights */
+    /* Bloomberg Terminal Color Palette */
+    --terminal-bg: #0a0e13;
+    --terminal-secondary: #1a202c;
+    --terminal-accent: #2d3748;
+    --terminal-border: #4a5568;
+    --terminal-text-primary: #f7fafc;
+    --terminal-text-secondary: #e2e8f0;
+    --terminal-text-muted: #a0aec0;
     
-    /* Secondary colors - Purple tones for accents */
-    --secondary-color: #8b5cf6; /* Purple for secondary elements */
-    --secondary-dark: #7c3aed;  /* Dark purple */
-    --secondary-light: #a78bfa; /* Light purple */
+    /* Bloomberg Brand Colors */
+    --bloomberg-orange: #ff6c00;
+    --bloomberg-blue: #0052cc;
+    --bloomberg-success: #10b981;
+    --bloomberg-warning: #f59e0b;
+    --bloomberg-danger: #ef4444;
     
-    /* Status indicators - Clear and consistent */
+    /* Professional Status Colors */
     --success-color: #10b981;   /* Green for positive/buy signals */
     --success-dark: #059669;    /* Dark green */
     --success-light: #34d399;   /* Light green */
@@ -29,42 +34,40 @@
     --info-dark: #0891b2;       /* Dark cyan */
     --info-light: #22d3ee;      /* Light cyan */
     
-    /* Dark theme backgrounds */
-    --dark-bg: #0a0a0a;         /* Main background - very dark */
-    --card-bg-dark: #18181b;    /* Card background - slightly lighter */
-    --card-bg-hover: #27272a;   /* Card hover state */
-    --light-bg: #ffffff;        /* For light theme */
-    --card-bg-light: #f8f9fa;   /* Light theme cards */
+    /* Professional Backgrounds */
+    --dark-bg: var(--terminal-bg);
+    --card-bg-dark: var(--terminal-secondary);
+    --card-bg-hover: var(--terminal-accent);
+    --light-bg: #ffffff;
+    --card-bg-light: #f8f9fa;
     
-    /* Border colors */
-    --border-color: #27272a;    /* Main border color */
-    --border-light: #3f3f46;    /* Lighter borders */
-    --border-accent: rgba(96, 165, 250, 0.2); /* Accent borders */
+    /* Professional Borders */
+    --border-color: var(--terminal-border);
+    --border-light: #718096;
+    --border-accent: rgba(102, 126, 234, 0.3);
     
-    /* Text colors - Clear hierarchy */
-    --text-primary: #f4f4f5;    /* Main text - almost white */
-    --text-secondary: #a1a1aa;  /* Secondary text - gray */
-    --text-muted: #71717a;      /* Muted text - darker gray */
-    --text-bright: #ffffff;     /* Bright emphasis text */
+    /* Professional Text Hierarchy */
+    --text-primary: var(--terminal-text-primary);
+    --text-secondary: var(--terminal-text-secondary);
+    --text-muted: var(--terminal-text-muted);
+    --text-bright: #ffffff;
     
-    /* Accent colors for special elements */
-    --accent-purple: #8b5cf6;   /* Purple accent */
-    --accent-blue: #60a5fa;     /* Blue accent */
-    --accent-cyan: #06b6d4;     /* Cyan accent */
-    --accent-green: #10b981;    /* Green accent */
-    
-    /* Gradient definitions using consistent colors */
-    --gradient-primary: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-color) 100%);
+    /* Professional Gradients */
+    --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     --gradient-success: linear-gradient(135deg, var(--success-dark) 0%, var(--success-color) 100%);
     --gradient-danger: linear-gradient(135deg, var(--danger-dark) 0%, var(--danger-color) 100%);
     --gradient-warning: linear-gradient(135deg, var(--warning-dark) 0%, var(--warning-color) 100%);
-    --gradient-dark: linear-gradient(135deg, #18181b 0%, #0a0a0a 100%);
+    --gradient-dark: linear-gradient(135deg, var(--terminal-secondary) 0%, var(--terminal-bg) 100%);
     
-    /* Glow effects with consistent colors */
-    --glow-primary: 0 0 30px rgba(96, 165, 250, 0.5);
-    --glow-success: 0 0 30px rgba(16, 185, 129, 0.5);
-    --glow-warning: 0 0 30px rgba(245, 158, 11, 0.5);
-    --glow-danger: 0 0 30px rgba(239, 68, 68, 0.5);
+    /* Professional Typography */
+    --font-primary: 'Inter', 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-mono: 'SF Mono', 'Monaco', 'Cascadia Code', monospace;
+    
+    /* Professional Glow Effects */
+    --glow-primary: 0 0 20px rgba(102, 126, 234, 0.3);
+    --glow-success: 0 0 20px rgba(16, 185, 129, 0.3);
+    --glow-warning: 0 0 20px rgba(245, 158, 11, 0.3);
+    --glow-danger: 0 0 20px rgba(239, 68, 68, 0.3);
 }
 
 /* Light theme variables */
@@ -78,17 +81,40 @@ body.light-theme {
     --text-secondary: #6c757d;
 }
 
-/* Base styles */
+/* Bloomberg Terminal Inspired Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 body {
-    background: var(--dark-bg);
-    background-image: 
-        radial-gradient(ellipse at top left, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
-        radial-gradient(ellipse at bottom right, rgba(99, 102, 241, 0.1) 0%, transparent 50%);
+    background: linear-gradient(145deg, var(--terminal-bg) 0%, var(--terminal-secondary) 100%);
+    background-attachment: fixed;
     color: var(--text-primary);
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    font-family: var(--font-primary);
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    line-height: 1.6;
+    transition: all 0.3s ease;
     min-height: 100vh;
     position: relative;
+    overflow-x: hidden;
+}
+
+/* Bloomberg Terminal Grid Background */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        radial-gradient(circle at 25% 25%, rgba(102, 126, 234, 0.03) 0%, transparent 50%),
+        radial-gradient(circle at 75% 75%, rgba(118, 75, 162, 0.03) 0%, transparent 50%);
+    z-index: -1;
+    pointer-events: none;
 }
 
 /* Animated background particles */
@@ -110,19 +136,18 @@ body::before {
     min-height: 100px;
 }
 
-/* Card styles - Glassmorphism & Modern Effects */
+/* Bloomberg Terminal Card Styles */
 .card {
-    background: rgba(15, 23, 42, 0.6);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(139, 92, 246, 0.1);
+    background: linear-gradient(145deg, var(--terminal-secondary), var(--terminal-bg));
+    border: 2px solid var(--terminal-border);
     border-radius: 16px;
     box-shadow: 
-        0 0 40px rgba(139, 92, 246, 0.05),
-        0 8px 32px rgba(0, 0, 0, 0.3);
+        0 8px 32px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     overflow: hidden;
     position: relative;
+    backdrop-filter: blur(8px);
 }
 
 .card::before {
