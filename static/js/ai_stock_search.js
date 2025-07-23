@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function initializeGoogleSearch() {
-    const searchInput = document.getElementById('stock-search-input');
+    const searchInput = document.getElementById('search-input'); // Fixed ID to match template
     const searchBtn = document.querySelector('.submit-btn');
     const suggestionsContainer = document.getElementById('search-suggestions');
     
@@ -196,24 +196,35 @@ function updateSuggestionSelection() {
 }
 
 function selectSuggestion(suggestion) {
-    const searchInput = document.getElementById('stock-search-input');
-    searchInput.value = suggestion.symbol;
-    hideSuggestions();
-    searchStockAI();
+    const searchInput = document.getElementById('search-input'); // Fixed ID
+    if (searchInput) {
+        searchInput.value = suggestion.symbol;
+        hideSuggestions();
+        searchStockAI();
+    }
 }
 
 // Quick search function for popular stocks
 function quickSearch(symbol) {
-    const searchInput = document.getElementById('stock-search-input');
-    searchInput.value = symbol;
-    hideSuggestions();
-    searchStockAI();
+    const searchInput = document.getElementById('search-input'); // Fixed ID
+    if (searchInput) {
+        searchInput.value = symbol;
+        hideSuggestions();
+        searchStockAI();
+    }
 }
 
 // Main AI stock search function
 async function searchStockAI() {
+    console.log('🔍 Using enhanced searchStockAI function');
     console.log('searchStockAI called');
-    const searchInput = document.getElementById('stock-search-input');
+    const searchInput = document.getElementById('search-input'); // Fixed ID to match template
+    
+    if (!searchInput) {
+        console.error('Search input element not found');
+        return;
+    }
+    
     const symbol = searchInput.value.trim().toUpperCase();
     
     console.log('Search symbol:', symbol);
@@ -1008,8 +1019,11 @@ function getRiskBadgeClass(riskLevel) {
 
 function showNewSearch() {
     document.getElementById('ai-analysis-results').style.display = 'none';
-    document.getElementById('stock-search-input').value = '';
-    document.getElementById('stock-search-input').focus();
+    const searchInput = document.getElementById('search-input'); // Fixed ID
+    if (searchInput) {
+        searchInput.value = '';
+        searchInput.focus();
+    }
 }
 
 function addToWatchlist(symbol) {
@@ -1021,10 +1035,12 @@ function addToWatchlist(symbol) {
 
 // Global function for enhanced suggestion selection
 function selectEnhancedSuggestion(suggestion) {
-    const searchInput = document.getElementById('stock-search-input');
-    searchInput.value = suggestion.symbol;
-    hideSuggestions();
-    searchStockAI();
+    const searchInput = document.getElementById('search-input'); // Fixed ID
+    if (searchInput) {
+        searchInput.value = suggestion.symbol;
+        hideSuggestions();
+        searchStockAI();
+    }
 }
 
 // Global function for theme search
@@ -1185,9 +1201,11 @@ function displayThemeAnalysis(themeData) {
 
 // Search stock by symbol
 function searchStockSymbol(symbol) {
-    const searchInput = document.getElementById('stock-search-input');
-    searchInput.value = symbol;
-    searchStockAI();
+    const searchInput = document.getElementById('search-input'); // Fixed ID
+    if (searchInput) {
+        searchInput.value = symbol;
+        searchStockAI();
+    }
 }
 
 // Enhanced autocomplete will be initialized by ai_autocomplete_enhanced.js
@@ -1213,9 +1231,11 @@ function showNewSearch() {
     resultsContainer.style.display = 'none';
     
     // Clear search input and focus
-    const searchInput = document.getElementById('stock-search-input');
-    searchInput.value = '';
-    searchInput.focus();
+    const searchInput = document.getElementById('search-input'); // Fixed ID
+    if (searchInput) {
+        searchInput.value = '';
+        searchInput.focus();
+    }
     
     // Show popular suggestions if autocomplete is available
     if (window.aiAutocomplete) {
@@ -1373,11 +1393,11 @@ function showError(message) {
 
 // Quick search function for popular stocks
 function quickSearch(symbol) {
-    const input = document.getElementById('stock-search-input');
+    const input = document.getElementById('search-input'); // Fixed ID
     if (input) {
         input.value = symbol;
+        searchStockAI();
     }
-    searchStockAI();
 }
 
 // Alternative function name for compatibility
