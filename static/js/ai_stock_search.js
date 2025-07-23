@@ -270,8 +270,22 @@ async function searchStockAI() {
         }
         
     } catch (error) {
-        console.error('Error searching stock:', error);
-        alert('Error: ' + (error.message || 'Stock not found. Please try a different symbol.'));
+        console.error('Search error:', error);
+        // Show user-friendly error message
+        const container = document.getElementById('ai-analysis-results');
+        if (container) {
+            container.innerHTML = `
+                <div style="text-align: center; padding: 40px; color: #ef4444;">
+                    <div style="font-size: 2rem; margin-bottom: 15px;">⚠️</div>
+                    <h3>Analysis Error</h3>
+                    <p>Unable to retrieve stock analysis. Please try a different symbol or check your connection.</p>
+                    <button onclick="location.reload()" style="padding: 10px 20px; background: #8b5cf6; color: white; border: none; border-radius: 8px; margin-top: 15px; cursor: pointer;">
+                        Try Again
+                    </button>
+                </div>
+            `;
+            container.style.display = 'block';
+        }
     }
 }
 
@@ -279,7 +293,7 @@ async function searchStockAI() {
 async function searchStockData(symbol) {
     try {
         console.log(`Fetching comprehensive stock data for: ${symbol}`);
-        const response = await fetch('/api/stock-search', {
+        const response = await fetch('/api/stock-analysis', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -302,7 +316,7 @@ async function searchStockData(symbol) {
         console.log('Search results:', [data]);
         return data;
     } catch (error) {
-        console.error('Error fetching stock data:', error);
+        console.error('Search error:', error);
         return null;
     }
 }
