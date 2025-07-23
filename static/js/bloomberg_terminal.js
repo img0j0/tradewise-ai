@@ -69,10 +69,11 @@ class BloombergTerminal {
     safeUpdate(componentId, updateFunction) {
         try {
             const component = this.terminalComponents.get(componentId);
-            if (component && component.style !== null) {
+            if (component && component.parentNode && typeof component.style === 'object') {
                 updateFunction();
             } else {
-                console.warn(`⚠ Component ${componentId} not available for update`);
+                // Silently skip update if component not ready
+                return;
             }
         } catch (error) {
             console.error(`❌ Error updating ${componentId}:`, error);
@@ -203,56 +204,63 @@ class BloombergTerminal {
 
     initializeBloombergChart() {
         const chartCanvas = this.terminalComponents.get('mainChart');
-        if (!chartCanvas) return;
+        if (!chartCanvas || typeof Chart === 'undefined') {
+            console.warn('Chart.js not available or canvas not found');
+            return;
+        }
 
-        // Professional chart configuration
-        const ctx = chartCanvas.getContext('2d');
-        
-        // Mock data for demonstration
-        const chartData = {
-            labels: ['9:30', '10:00', '10:30', '11:00', '11:30', '12:00'],
-            datasets: [{
-                label: 'Price',
-                data: [214.20, 214.85, 213.95, 214.40, 215.10, 214.40],
-                borderColor: '#667eea',
-                backgroundColor: 'rgba(102, 126, 234, 0.1)',
-                borderWidth: 2,
-                fill: true,
-                tension: 0.4
-            }]
-        };
+        try {
+            // Professional chart configuration
+            const ctx = chartCanvas.getContext('2d');
+            
+            // Mock data for demonstration
+            const chartData = {
+                labels: ['9:30', '10:00', '10:30', '11:00', '11:30', '12:00'],
+                datasets: [{
+                    label: 'Price',
+                    data: [214.20, 214.85, 213.95, 214.40, 215.10, 214.40],
+                    borderColor: '#667eea',
+                    backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.4
+                }]
+            };
 
-        new Chart(ctx, {
-            type: 'line',
-            data: chartData,
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: false
-                    }
-                },
-                scales: {
-                    x: {
-                        grid: {
-                            color: 'rgba(255, 255, 255, 0.1)'
-                        },
-                        ticks: {
-                            color: '#a0aec0'
+            new Chart(ctx, {
+                type: 'line',
+                data: chartData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
                         }
                     },
-                    y: {
-                        grid: {
-                            color: 'rgba(255, 255, 255, 0.1)'
+                    scales: {
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: '#a0aec0'
+                            }
                         },
-                        ticks: {
-                            color: '#a0aec0'
+                        y: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: '#a0aec0'
+                            }
                         }
                     }
                 }
-            }
-        });
+            });
+        } catch (error) {
+            console.error('Error initializing Bloomberg chart:', error);
+        }
     }
 
     initializeKeyboardShortcuts() {

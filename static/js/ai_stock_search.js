@@ -50,7 +50,7 @@ function initializeGoogleSearch() {
     
     // Click outside to close suggestions
     document.addEventListener('click', function(e) {
-        if (!e.target.closest('.google-search-box')) {
+        if (!e.target.closest('.search-container')) {
             hideSuggestions();
         }
     });
