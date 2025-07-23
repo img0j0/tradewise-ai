@@ -1781,7 +1781,6 @@
                 
                 if (data.success) {
                     console.log('✅ Fallback search successful:', data);
-                    showNotification('Analysis Complete', `Generated insights for ${query.toUpperCase()}`, 'success');
                     displayResults(data);
                 } else {
                     throw new Error(data.error || 'Search failed');
