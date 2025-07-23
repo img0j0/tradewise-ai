@@ -1381,8 +1381,8 @@
         let templateSearchTimeout = null; // Renamed to avoid conflict with ai_stock_search.js
         let notificationId = 0;
         
-        // Popular stocks for smart suggestions
-        const popularStocks = [
+        // Popular stocks for smart suggestions (renamed to avoid conflict with ai_stock_search.js)
+        const templatePopularStocks = [
             { symbol: 'AAPL', name: 'Apple Inc.', price: '$212.48', icon: '🍎' },
             { symbol: 'GOOGL', name: 'Alphabet Inc.', price: '$190.10', icon: '🔍' },
             { symbol: 'TSLA', name: 'Tesla, Inc.', price: '$185.06', icon: '🚗' },
@@ -1433,7 +1433,7 @@
             
             if (!query) {
                 // Show popular stocks when no query
-                let html = popularStocks.map(stock => `
+                let html = templatePopularStocks.map(stock => `
                     <div class="suggestion-item" onclick="selectSuggestion('${stock.symbol}')">
                         <div class="suggestion-main">
                             <span class="suggestion-icon">${stock.icon}</span>
@@ -1450,7 +1450,7 @@
                 suggestionsDiv.classList.add('show');
             } else {
                 // Filter suggestions based on query
-                const filtered = popularStocks.filter(stock => 
+                const filtered = templatePopularStocks.filter(stock => 
                     stock.symbol.toLowerCase().includes(query.toLowerCase()) ||
                     stock.name.toLowerCase().includes(query.toLowerCase())
                 );
