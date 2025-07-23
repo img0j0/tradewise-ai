@@ -1759,7 +1759,8 @@
                 console.log('🔍 Using enhanced searchStockAI function');
                 hideSmartSuggestions?.();
                 hideQuickActions?.();
-                searchStockAI(query);
+                // searchStockAI reads from search-input directly, don't pass parameter
+                searchStockAI();
                 return;
             }
             
