@@ -197,19 +197,38 @@ def stock_analysis_api():
         if cached_stock_data:
             stock_data = cached_stock_data
         else:
-            # Use enhanced analyzer for real-time data
-            analysis_result = enhanced_analyzer.get_enhanced_analysis(query)
-            if analysis_result.get('enhanced_analysis'):
-                enhanced_data = analysis_result['enhanced_analysis']
-                stock_data = {
-                    'current_price': enhanced_data.get('current_price', 0),
-                    'price_change': enhanced_data.get('current_price', 0) - enhanced_data.get('current_price', 0) * 0.99,  # Basic calc
-                    'price_change_percent': enhanced_data.get('momentum', {}).get('1_month', 0),
-                    'name': enhanced_data.get('company_name', query),
-                    'market_cap': enhanced_data.get('market_cap_value', 0),
-                    'pe_ratio': enhanced_data.get('enhanced_metrics', {}).get('financial_strength', {}).get('pe_ratio', 0)
-                }
-            else:
+            # Use yfinance directly for reliable data
+            import yfinance as yf
+            try:
+                ticker = yf.Ticker(query)
+                info = ticker.info
+                hist = ticker.history(period="1d")
+                
+                if info and info.get('symbol'):
+                    current_price = info.get('currentPrice') or info.get('regularMarketPrice') or info.get('price')
+                    if not current_price and not hist.empty:
+                        current_price = hist['Close'].iloc[-1]
+                    
+                    prev_close = info.get('previousClose') or info.get('regularMarketPreviousClose')
+                    if not prev_close and len(hist) > 1:
+                        prev_close = hist['Close'].iloc[-2]
+                    
+                    price_change = current_price - prev_close if current_price and prev_close else 0
+                    price_change_percent = (price_change / prev_close * 100) if prev_close else 0
+                    
+                    stock_data = {
+                        'current_price': float(current_price) if current_price else 0,
+                        'price_change': float(price_change),
+                        'price_change_percent': float(price_change_percent),
+                        'name': info.get('longName') or info.get('shortName') or query,
+                        'market_cap': info.get('marketCap', 0),
+                        'pe_ratio': info.get('trailingPE', 0),
+                        'symbol': query.upper()
+                    }
+                else:
+                    stock_data = None
+            except Exception as e:
+                logger.error(f"Error fetching stock data for {query}: {e}")
                 stock_data = None
         
         if not stock_data:
@@ -222,11 +241,9 @@ def stock_analysis_api():
         ai_engine = AIInsightsEngine()
         base_insights = ai_engine.get_insights(query.upper(), stock_data)
         
-        # Get enhanced AI analysis (with error handling)
+        # Initialize enhanced analyzer at the top level
         enhanced_analysis = None
         try:
-            from enhanced_ai_analyzer import EnhancedAIAnalyzer
-            enhanced_analyzer = EnhancedAIAnalyzer()
             enhanced_analysis = enhanced_analyzer.get_enhanced_analysis(query.upper())
         except Exception as e:
             logger.error(f"Enhanced analysis failed for {query}: {e}")
