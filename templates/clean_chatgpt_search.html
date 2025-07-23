@@ -1378,7 +1378,7 @@
     <script>
         // Global variables
         let currentStock = null;
-        let searchTimeout = null;
+        let templateSearchTimeout = null; // Renamed to avoid conflict with ai_stock_search.js
         let notificationId = 0;
         
         // Popular stocks for smart suggestions
@@ -1403,8 +1403,8 @@
             const searchInput = document.getElementById('search-input');
             
             searchInput.addEventListener('input', function() {
-                clearTimeout(searchTimeout);
-                searchTimeout = setTimeout(() => {
+                clearTimeout(templateSearchTimeout);
+                templateSearchTimeout = setTimeout(() => {
                     showSmartSuggestions(this.value);
                 }, 300);
             });
