@@ -386,6 +386,14 @@
             }, 100);
         }
         
+        function loadInvestmentStrategy() {
+            // Load strategy from session - placeholder for future implementation
+            const strategySelect = document.getElementById('investmentStrategy');
+            if (strategySelect) {
+                strategySelect.value = 'growth_investor'; // Default strategy
+            }
+        }
+        
         // Placeholder functions for desktop features
         function refreshAllData() { console.log('Refreshing all data...'); }
         function openSettings() { console.log('Opening settings...'); }
