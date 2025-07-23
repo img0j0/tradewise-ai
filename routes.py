@@ -7,6 +7,9 @@ from models import User, StockAnalysis, WatchlistItem
 from ai_insights import AIInsightsEngine
 from data_service import DataService
 from enhanced_ai_analyzer import EnhancedAIAnalyzer
+from enhanced_ai_explanations import get_enhanced_explanation
+from smart_event_alerts import get_smart_alerts
+from educational_insights import get_educational_insights
 from simple_personalization import SimplePersonalization
 from simple_personalization import simple_personalization
 from realtime_data_engine import realtime_engine
@@ -261,6 +264,24 @@ def stock_analysis_api():
         # Save analysis to history for tracking and comparison
         save_analysis_to_history(query.upper(), stock_data, insights)
         
+        # Generate enhanced AI features
+        enhanced_explanation = None
+        smart_alerts = None
+        educational_content = None
+        
+        try:
+            # Enhanced AI Explanations - our transparency advantage
+            enhanced_explanation = get_enhanced_explanation(stock_data, insights)
+            
+            # Smart Event Alerts - early warning system
+            smart_alerts = get_smart_alerts(query.upper(), stock_data)
+            
+            # Educational Insights - learning integrated with analysis
+            educational_content = get_educational_insights(stock_data, insights)
+            
+        except Exception as e:
+            logger.error(f"Error generating enhanced features for {query}: {e}")
+        
         # Build comprehensive analysis response with enhanced insights
         response = {
             'success': True,
@@ -308,7 +329,19 @@ def stock_analysis_api():
                 {'action': 'getHistoricalAnalysis("' + query.upper() + '")', 'text': 'View Analysis History'},
                 {'action': 'getDetailedAnalysis("' + query.upper() + '")', 'text': 'Deep Dive Analysis'},
                 {'action': 'comparePeers("' + query.upper() + '")', 'text': 'Compare with Competitors'}
-            ]
+            ],
+            
+            # NEW COMPETITIVE FEATURES - Our Market Differentiators
+            'enhanced_explanation': enhanced_explanation,  # Detailed AI reasoning transparency
+            'smart_alerts': smart_alerts,  # Early warning event detection
+            'educational_insights': educational_content,  # Learning integrated with analysis
+            
+            # Feature availability indicators
+            'features_enabled': {
+                'enhanced_explanations': enhanced_explanation is not None,
+                'smart_alerts': smart_alerts is not None,
+                'educational_insights': educational_content is not None
+            }
         }
         
         # Optimize response size for better performance
