@@ -261,7 +261,7 @@ def stock_analysis_api():
         # Optimize response size for better performance
         optimized_response = response_optimizer.compress_response(response)
         
-        logger.info(f"Stock analysis successful for {query}: {response['symbol']} at ${response['price']} - {response['recommendation']}")
+        logger.info(f"Stock analysis successful for {query}: {response['symbol']} at ${response['current_price']} - {response['recommendation']}")
         return jsonify(optimized_response)
         
     except Exception as e:
