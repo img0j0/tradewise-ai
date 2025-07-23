@@ -44,9 +44,9 @@ function generateEnhancedAnalysisHTML(data) {
     const analysis = data.analysis || {};
     const strategy = analysis.strategy_applied || {};
     
-    // Calculate change indicator
-    const priceChange = parseFloat(data.price_change || 0);
-    const priceChangePercent = parseFloat(data.price_change_percent || 0);
+    // Calculate change indicator with safe parsing
+    const priceChange = isNaN(parseFloat(data.price_change)) ? 0 : parseFloat(data.price_change);
+    const priceChangePercent = isNaN(parseFloat(data.price_change_percent)) ? 0 : parseFloat(data.price_change_percent);
     const changeClass = priceChange >= 0 ? 'positive' : 'negative';
     
     return `
@@ -59,10 +59,10 @@ function generateEnhancedAnalysisHTML(data) {
                     <div class="stock-sector">${enhanced.sector || 'Technology'}</div>
                 </div>
                 <div class="stock-price-section">
-                    <div class="current-price">$${parseFloat(data.current_price || 0).toFixed(2)}</div>
+                    <div class="current-price">$${(parseFloat(data.current_price) || 0).toFixed(2)}</div>
                     <div class="price-change ${changeClass}">
-                        ${priceChange >= 0 ? '+' : ''}${priceChange.toFixed(2)} 
-                        (${priceChangePercent >= 0 ? '+' : ''}${priceChangePercent.toFixed(2)}%)
+                        ${priceChange >= 0 ? '+' : ''}${(priceChange || 0).toFixed(2)} 
+                        (${priceChangePercent >= 0 ? '+' : ''}${(priceChangePercent || 0).toFixed(2)}%)
                     </div>
                     <div class="market-cap">Market Cap: $${formatNumber(data.market_cap)}</div>
                 </div>
@@ -468,19 +468,21 @@ function initializeEnhancedFeatures() {
 }
 
 function formatNumber(num) {
-    if (!num || num === 0) return '0';
+    // Safe number formatting with null/undefined checks
+    const numValue = parseFloat(num);
+    if (isNaN(numValue) || numValue === 0) return '0';
     
-    if (num >= 1e12) {
-        return (num / 1e12).toFixed(1) + 'T';
-    } else if (num >= 1e9) {
-        return (num / 1e9).toFixed(1) + 'B';
-    } else if (num >= 1e6) {
-        return (num / 1e6).toFixed(1) + 'M';
-    } else if (num >= 1e3) {
-        return (num / 1e3).toFixed(1) + 'K';
+    if (numValue >= 1e12) {
+        return (numValue / 1e12).toFixed(1) + 'T';
+    } else if (numValue >= 1e9) {
+        return (numValue / 1e9).toFixed(1) + 'B';
+    } else if (numValue >= 1e6) {
+        return (numValue / 1e6).toFixed(1) + 'M';
+    } else if (numValue >= 1e3) {
+        return (numValue / 1e3).toFixed(1) + 'K';
     }
     
-    return num.toString();
+    return numValue.toString();
 }
 
 // Action button handlers

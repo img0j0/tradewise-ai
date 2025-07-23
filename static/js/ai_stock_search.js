@@ -298,7 +298,7 @@ function showBasicAnalysis(stockData) {
         <div style="padding: 30px; text-align: center; background: white; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
             <h2>${stockData.company_name || stockData.symbol}</h2>
             <div style="font-size: 2rem; font-weight: bold; color: #1f2937; margin: 20px 0;">
-                $${parseFloat(stockData.current_price || 0).toFixed(2)}
+                $${(parseFloat(stockData.current_price) || 0).toFixed(2)}
             </div>
             <div style="background: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0;">
                 <div style="font-weight: bold; margin-bottom: 10px;">AI Recommendation</div>
