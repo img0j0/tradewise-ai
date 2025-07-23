@@ -239,10 +239,8 @@ def stock_analysis_api():
         insights = simple_personalization.personalize_analysis(query.upper(), base_insights)
         
         # Format data according to user display preferences
-        personalization_engine = SimplePersonalization()
-        user_preferences = personalization_engine.get_user_preferences()
-        # Apply simple formatting (preference_engine functionality replaced by simple_personalization)
-        stock_data = stock_data  # Keep original data structure
+        # Simple personalization already applied above
+        # Keep original data structure for competitive features
         
         # Save analysis to history for tracking and comparison
         save_analysis_to_history(query.upper(), stock_data, insights)
@@ -436,9 +434,10 @@ def get_analysis_watchlist():
                     stock_data = {
                         'current_price': current_price,
                         'price_change': price_change,
-                            'price_change_percent': analysis_result.get('price_change_percent'),
-                            'name': analysis_result.get('company_name')
-                        }
+                        'price_change_percent': (price_change / prev_close * 100) if prev_close else 0,
+                        'name': info.get('longName') or symbol,
+                        'symbol': symbol
+                    }
                 latest_analysis = StockAnalysis.query.filter_by(symbol=symbol).order_by(StockAnalysis.analysis_date.desc()).first()
                 
                 if stock_data:
@@ -506,14 +505,7 @@ def get_analysis_watchlist():
         # Optimize and cache the response
         response_data = {'success': True, 'watchlist': watchlist_data}
         
-        # Cache for 2 minutes
-        if smart_cache:
-            smart_cache.cache.set(cache_key, response_data, timeout=120)
-        
-        # Optimize response for mobile
-        optimized_response = response_optimizer.compress_response(response_data)
-        
-        return jsonify(optimized_response)
+        return jsonify(response_data)
         
     except Exception as e:
         logger.error(f'Error getting analysis watchlist: {e}')
@@ -616,8 +608,15 @@ def get_alert_suggestions(symbol):
         symbol = symbol.upper()
         
         # Get current stock data for alert suggestions using enhanced analyzer
-        analysis_result = enhanced_analyzer.get_enhanced_analysis(symbol)
-        if not analysis_result.get('success'):
+        # Get basic stock data for export
+        import yfinance as yf
+        ticker = yf.Ticker(symbol)
+        info = ticker.info
+        analysis_result = {
+            'current_price': info.get('currentPrice') or info.get('regularMarketPrice', 0),
+            'company_name': info.get('longName') or symbol
+        }
+        if not analysis_result.get('current_price'):
             return jsonify({'success': False, 'error': 'Stock not found'}), 404
             
         current_price = float(analysis_result.get('current_price', 0))
@@ -908,7 +907,7 @@ def user_preferences():
     """Get or update user preferences"""
     try:
         if request.method == 'GET':
-            preferences = SimplePersonalization().get_user_preferences()
+            preferences = simple_personalization.get_user_preferences()
             return jsonify({
                 'success': True,
                 'preferences': preferences
@@ -933,7 +932,7 @@ def user_preferences():
                 return jsonify({'error': 'Invalid currency'}), 400
             
             # Save preferences
-            success = SimplePersonalization().save_user_preferences(preferences)
+            success = simple_personalization.save_user_preferences(preferences)
             
             if success:
                 # Log the save for debugging
@@ -941,7 +940,7 @@ def user_preferences():
                 return jsonify({
                     'success': True,
                     'message': 'Preferences updated successfully',
-                    'saved_preferences': SimplePersonalization().get_user_preferences()
+                    'saved_preferences': simple_personalization.get_user_preferences()
                 })
             else:
                 logger.error(f"Failed to save preferences: {preferences}")
@@ -1452,11 +1451,10 @@ def performance_metrics():
 def clear_performance_cache():
     """Clear application cache for testing performance improvements"""
     try:
-        if smart_cache:
-            smart_cache.cache.clear()
-        return jsonify({'success': True, 'message': 'Performance cache cleared successfully'})
+        # Cache clearing not needed in streamlined version
+        return jsonify({'success': True, 'message': 'Cache operations not applicable in streamlined version'})
     except Exception as e:
-        logger.error(f'Error clearing cache: {e}')
+        logger.error(f'Error in cache operation: {e}')
         return jsonify({'success': False, 'error': str(e)}), 500
 
 # Create database tables
