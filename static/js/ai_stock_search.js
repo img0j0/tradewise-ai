@@ -110,9 +110,12 @@ function handleSearchKeydown(e) {
 }
 
 function handleSearchFocus() {
-    const query = document.getElementById('stock-search-input').value.trim();
-    if (query.length > 0) {
-        showSuggestions(query);
+    const searchInput = document.getElementById('search-input'); // Fixed ID
+    if (searchInput) {
+        const query = searchInput.value.trim();
+        if (query.length > 0) {
+            showSuggestions(query);
+        }
     }
 }
 
@@ -1342,7 +1345,7 @@ function showSearchError(message) {
                     <i class="fas fa-exclamation-triangle text-white mb-3" style="font-size: 3rem;"></i>
                     <h4 class="text-white mb-2">Search Error</h4>
                     <p class="text-white mb-3">${message}</p>
-                    <button class="btn btn-light" onclick="hideSuggestions(); document.getElementById('stock-search-input').focus();">
+                    <button class="btn btn-light" onclick="hideSuggestions(); document.getElementById('search-input').focus();">
                         Try Again
                     </button>
                 </div>
