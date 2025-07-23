@@ -51,7 +51,7 @@
                     <option value="momentum_trader">⚡ Momentum Trader</option>
                 </select>
                 
-                <button class="btn btn-outline-primary terminal-button" onclick="refreshAllData()">
+                <button class="btn btn-outline-primary terminal-button" onclick="window.bloombergTerminal.refreshAllData()">
                     <i class="fas fa-sync-alt me-1"></i>
                     Refresh Terminal
                 </button>
@@ -262,7 +262,8 @@
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
-    <!-- Enhanced Desktop JavaScript -->
+    <!-- Bloomberg Terminal Professional JavaScript -->
+    <script src="{{ url_for('static', filename='js/bloomberg_terminal.js') }}"></script>
     <script src="{{ url_for('static', filename='js/competitive_features.js') }}"></script>
     <script src="{{ url_for('static', filename='js/ai_stock_search_optimized.js') }}"></script>
     <script src="{{ url_for('static', filename='js/enhanced_results.js') }}"></script>
@@ -272,22 +273,38 @@
         let currentChart = null;
         let watchlistData = [];
         
-        // Initialize desktop interface
+        // Bloomberg Terminal will auto-initialize via bloomberg_terminal.js
+        // Additional desktop-specific initialization
         document.addEventListener('DOMContentLoaded', function() {
-            initializeDesktopInterface();
-            loadWatchlist();
-            startRealTimeUpdates();
+            console.log('Desktop dashboard enhancements loading...');
+            setTimeout(() => {
+                initializeDesktopEnhancements();
+            }, 500); // Wait for terminal to initialize
         });
         
-        function initializeDesktopInterface() {
-            // Initialize chart
-            initializeChart();
-            
-            // Load strategy from session
+        function initializeDesktopEnhancements() {
+            // Load strategy from session safely
             loadInvestmentStrategy();
             
-            // The search functionality is now handled by ai_stock_search.js
-            console.log('Desktop interface initialized, search handled by ai_stock_search.js');
+            // Initialize additional desktop features
+            initializeDesktopShortcuts();
+            
+            console.log('✅ Desktop enhancements initialized');
+        }
+        
+        function initializeDesktopShortcuts() {
+            // Additional keyboard shortcuts specific to desktop
+            document.addEventListener('keydown', (e) => {
+                // Alt + 1-5 for quick stock analysis
+                if (e.altKey && e.key >= '1' && e.key <= '5') {
+                    e.preventDefault();
+                    const stocks = ['AAPL', 'TSLA', 'NVDA', 'GOOGL', 'MSFT'];
+                    const index = parseInt(e.key) - 1;
+                    if (stocks[index]) {
+                        analyzeStock(stocks[index]);
+                    }
+                }
+            });
         }
         
         function analyzeStock(symbol) {
@@ -594,13 +611,8 @@
         }
         
         function loadWatchlist() {
-            const symbols = ['AAPL', 'GOOGL', 'MSFT', 'TSLA', 'NVDA'];
-            const container = document.getElementById('watchlistContainer');
-            container.innerHTML = ''; // Clear existing items
-            
-            symbols.forEach(symbol => {
-                addWatchlistItem(symbol);
-            });
+            // Initial load handled by bloomberg_terminal.js
+            console.log('Watchlist loading delegated to Bloomberg Terminal');
         }
         
         function addToWatchlist() {
