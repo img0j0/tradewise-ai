@@ -1369,6 +1369,7 @@
     <!-- Clean ChatGPT-Style Overlay -->
     <div id="analysis-overlay" class="analysis-overlay">
         <div class="analysis-content">
+            <div class="close-btn" onclick="closeAnalysisOverlay()" style="position: absolute; top: 20px; right: 25px; width: 40px; height: 40px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: white; font-size: 18px; z-index: 1000;">×</div>
             <div id="analysis-results">
                 <!-- Results will be populated here -->
             </div>
@@ -1570,6 +1571,27 @@
                 setTimeout(() => {
                     notification.remove();
                 }, 300);
+            }
+        }
+        
+        // Analysis overlay control functions
+        function showAnalysisOverlay() {
+            console.log('🔧 showAnalysisOverlay called');
+            const overlay = document.getElementById('analysis-overlay');
+            if (overlay) {
+                overlay.style.display = 'flex';
+                console.log('✅ Analysis overlay shown');
+            } else {
+                console.error('❌ Analysis overlay element not found');
+            }
+        }
+        
+        function closeAnalysisOverlay() {
+            console.log('🔧 closeAnalysisOverlay called');
+            const overlay = document.getElementById('analysis-overlay');
+            if (overlay) {
+                overlay.style.display = 'none';
+                console.log('✅ Analysis overlay hidden');
             }
         }
         

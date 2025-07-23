@@ -296,6 +296,19 @@ async function searchStockAI(inputSymbol = null) {
         // ENHANCED AI ANALYSIS DISPLAY
         console.log('=== ENHANCED ANALYSIS DISPLAY ===');
         
+        // First, ensure the overlay is visible
+        console.log('🔧 Making sure analysis overlay is visible');
+        if (typeof showAnalysisOverlay === 'function') {
+            showAnalysisOverlay();
+        } else {
+            // Fallback to direct DOM manipulation
+            const overlay = document.getElementById('analysis-overlay');
+            if (overlay) {
+                overlay.style.display = 'flex';
+                console.log('✅ Analysis overlay shown via fallback');
+            }
+        }
+        
         // Always use enhanced analysis display (it handles all cases)
         console.log('=== USING ENHANCED ANALYSIS DISPLAY ===');
         console.log('Enhanced analysis available:', !!stockData.enhanced_analysis);
