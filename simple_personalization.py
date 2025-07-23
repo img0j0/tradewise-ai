@@ -58,6 +58,15 @@ class SimplePersonalization:
         logger.info(f"Retrieved user strategy from session: {strategy}")
         return strategy
     
+    def get_user_preferences(self):
+        """Get user preferences - compatibility method for replaced preference_engine"""
+        return {
+            'investment_strategy': self.get_user_strategy(),
+            'risk_tolerance': 'moderate',
+            'preferred_sectors': [],
+            'analysis_depth': 'detailed'
+        }
+    
     def set_user_strategy(self, strategy_key):
         """Set user's investment strategy"""
         if strategy_key in self.strategies:

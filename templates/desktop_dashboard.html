@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TradeWise AI - Professional Desktop Platform</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Chart.js for advanced visualizations -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/desktop_optimization.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/ai_results.css') }}">
+</head>
+<body class="dark-theme">
+    <div class="desktop-main-layout">
+        <!-- Desktop Header -->
+        <header class="desktop-header">
+            <div class="d-flex align-items-center">
+                <h2 class="mb-0 text-primary">
+                    <i class="fas fa-robot me-2"></i>
+                    TradeWise AI
+                </h2>
+                <span class="desktop-live-indicator ms-3">
+                    <span class="desktop-live-dot"></span>
+                    Live Market Data
+                </span>
+            </div>
+            
+            <div class="d-flex align-items-center gap-3">
+                <select class="form-select form-select-sm" id="investmentStrategy">
+                    <option value="growth_investor">🚀 Growth Investor</option>
+                    <option value="value_investor">💎 Value Investor</option>
+                    <option value="dividend_investor">💰 Dividend Investor</option>
+                    <option value="momentum_trader">⚡ Momentum Trader</option>
+                </select>
+                
+                <button class="desktop-action-button" onclick="refreshAllData()">
+                    <i class="fas fa-sync-alt me-1"></i>
+                    Refresh Data
+                </button>
+                
+                <button class="desktop-action-button secondary" onclick="openSettings()">
+                    <i class="fas fa-cog me-1"></i>
+                    Settings
+                </button>
+            </div>
+        </header>
+
+        <!-- Left Sidebar - Search & Navigation -->
+        <aside class="desktop-sidebar">
+            <div class="desktop-search-container">
+                <input type="text" 
+                       class="desktop-search-input" 
+                       id="desktopStockSearch"
+                       placeholder="Search stocks, companies, or tickers..."
+                       autocomplete="off">
+                <div class="desktop-search-suggestions" id="searchSuggestions"></div>
+            </div>
+            
+            <div class="mb-4">
+                <h5 class="text-primary mb-3">
+                    <i class="fas fa-star me-2"></i>
+                    Quick Analysis
+                </h5>
+                <div class="d-grid gap-2">
+                    <button class="btn btn-outline-primary btn-sm" onclick="analyzeStock('AAPL')">
+                        <i class="fab fa-apple me-1"></i> Apple (AAPL)
+                    </button>
+                    <button class="btn btn-outline-primary btn-sm" onclick="analyzeStock('TSLA')">
+                        <i class="fas fa-car me-1"></i> Tesla (TSLA)
+                    </button>
+                    <button class="btn btn-outline-primary btn-sm" onclick="analyzeStock('NVDA')">
+                        <i class="fas fa-microchip me-1"></i> NVIDIA (NVDA)
+                    </button>
+                    <button class="btn btn-outline-primary btn-sm" onclick="analyzeStock('GOOGL')">
+                        <i class="fab fa-google me-1"></i> Google (GOOGL)
+                    </button>
+                </div>
+            </div>
+            
+            <div class="mb-4">
+                <h5 class="text-primary mb-3">
+                    <i class="fas fa-chart-line me-2"></i>
+                    Market Tools
+                </h5>
+                <div class="d-grid gap-2">
+                    <button class="btn btn-outline-secondary btn-sm" onclick="showMarketOverview()">
+                        <i class="fas fa-globe me-1"></i> Market Overview
+                    </button>
+                    <button class="btn btn-outline-secondary btn-sm" onclick="showSectorAnalysis()">
+                        <i class="fas fa-industry me-1"></i> Sector Analysis
+                    </button>
+                    <button class="btn btn-outline-secondary btn-sm" onclick="showTopMovers()">
+                        <i class="fas fa-arrow-up me-1"></i> Top Movers
+                    </button>
+                    <button class="btn btn-outline-secondary btn-sm" onclick="showEarningsCalendar()">
+                        <i class="fas fa-calendar me-1"></i> Earnings Calendar
+                    </button>
+                </div>
+            </div>
+            
+            <div>
+                <h5 class="text-primary mb-3">
+                    <i class="fas fa-robot me-2"></i>
+                    AI Features
+                </h5>
+                <div class="d-grid gap-2">
+                    <button class="btn btn-outline-warning btn-sm" onclick="openAIScanner()">
+                        <i class="fas fa-search me-1"></i> AI Market Scanner
+                    </button>
+                    <button class="btn btn-outline-warning btn-sm" onclick="openPortfolioAnalyzer()">
+                        <i class="fas fa-briefcase me-1"></i> Portfolio AI
+                    </button>
+                    <button class="btn btn-outline-warning btn-sm" onclick="openRiskAnalyzer()">
+                        <i class="fas fa-shield-alt me-1"></i> Risk Analyzer
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="desktop-main-content">
+            <div class="desktop-toolbar">
+                <div class="desktop-toolbar-section">
+                    <h4 class="mb-0" id="mainContentTitle">Market Analysis</h4>
+                    <span class="badge bg-primary ms-2" id="analysisMode">Real-time</span>
+                </div>
+                <div class="desktop-toolbar-section">
+                    <button class="desktop-action-button" onclick="exportAnalysis()">
+                        <i class="fas fa-download me-1"></i> Export
+                    </button>
+                    <button class="desktop-action-button secondary" onclick="shareAnalysis()">
+                        <i class="fas fa-share me-1"></i> Share
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Analysis Results Container -->
+            <div id="mainAnalysisContainer">
+                <div class="desktop-analysis-grid" id="metricsGrid">
+                    <div class="desktop-metric-card">
+                        <div class="desktop-metric-value" id="currentPrice">--</div>
+                        <div class="desktop-metric-label">Current Price</div>
+                    </div>
+                    <div class="desktop-metric-card">
+                        <div class="desktop-metric-value" id="priceChange">--</div>
+                        <div class="desktop-metric-label">24h Change</div>
+                    </div>
+                    <div class="desktop-metric-card">
+                        <div class="desktop-metric-value" id="aiConfidence">--</div>
+                        <div class="desktop-metric-label">AI Confidence</div>
+                    </div>
+                    <div class="desktop-metric-card">
+                        <div class="desktop-metric-value" id="aiRecommendation">--</div>
+                        <div class="desktop-metric-label">AI Recommendation</div>
+                    </div>
+                </div>
+                
+                <!-- Advanced Chart Container -->
+                <div class="desktop-chart-container">
+                    <div class="desktop-chart-tabs">
+                        <div class="desktop-chart-tab active" onclick="switchChart('price')">Price Chart</div>
+                        <div class="desktop-chart-tab" onclick="switchChart('volume')">Volume</div>
+                        <div class="desktop-chart-tab" onclick="switchChart('technical')">Technical Indicators</div>
+                        <div class="desktop-chart-tab" onclick="switchChart('sentiment')">AI Sentiment</div>
+                    </div>
+                    <canvas id="mainChart" style="height: 320px;"></canvas>
+                </div>
+                
+                <!-- Detailed Analysis Table -->
+                <table class="desktop-data-table">
+                    <thead>
+                        <tr>
+                            <th>Metric</th>
+                            <th>Current Value</th>
+                            <th>Industry Average</th>
+                            <th>AI Assessment</th>
+                            <th>Trend</th>
+                        </tr>
+                    </thead>
+                    <tbody id="detailedMetricsTable">
+                        <tr>
+                            <td>P/E Ratio</td>
+                            <td id="peRatio">--</td>
+                            <td>--</td>
+                            <td><span class="badge bg-secondary">Loading...</span></td>
+                            <td><i class="fas fa-minus text-muted"></i></td>
+                        </tr>
+                        <tr>
+                            <td>Market Cap</td>
+                            <td id="marketCap">--</td>
+                            <td>--</td>
+                            <td><span class="badge bg-secondary">Loading...</span></td>
+                            <td><i class="fas fa-minus text-muted"></i></td>
+                        </tr>
+                        <tr>
+                            <td>52-Week Range</td>
+                            <td id="weekRange">--</td>
+                            <td>--</td>
+                            <td><span class="badge bg-secondary">Loading...</span></td>
+                            <td><i class="fas fa-minus text-muted"></i></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+
+        <!-- Right Panel - Watchlist & News -->
+        <aside class="desktop-right-panel">
+            <div class="desktop-watchlist mb-4">
+                <div class="desktop-watchlist-header">
+                    <span><i class="fas fa-heart me-2"></i>Watchlist</span>
+                    <button class="btn btn-sm btn-light" onclick="addToWatchlist()">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+                <div id="watchlistContainer">
+                    <!-- Watchlist items will be populated by JavaScript -->
+                </div>
+            </div>
+            
+            <div class="mb-4">
+                <h5 class="text-primary mb-3">
+                    <i class="fas fa-newspaper me-2"></i>
+                    Market News
+                </h5>
+                <div id="marketNewsContainer">
+                    <!-- News items will be populated by JavaScript -->
+                </div>
+            </div>
+            
+            <div>
+                <h5 class="text-primary mb-3">
+                    <i class="fas fa-bell me-2"></i>
+                    AI Alerts
+                </h5>
+                <div id="aiAlertsContainer">
+                    <!-- AI alerts will be populated by JavaScript -->
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Enhanced Desktop JavaScript -->
+    <script src="{{ url_for('static', filename='js/ai_stock_search.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/enhanced_results.js') }}"></script>
+    
+    <script>
+        // Desktop-specific enhancements
+        let currentChart = null;
+        let watchlistData = [];
+        
+        // Initialize desktop interface
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeDesktopInterface();
+            loadWatchlist();
+            startRealTimeUpdates();
+        });
+        
+        function initializeDesktopInterface() {
+            // Setup search with enhanced autocomplete
+            const searchInput = document.getElementById('desktopStockSearch');
+            searchInput.addEventListener('input', handleDesktopSearch);
+            searchInput.addEventListener('keydown', handleSearchKeydown);
+            
+            // Initialize chart
+            initializeChart();
+            
+            // Load strategy from session
+            loadInvestmentStrategy();
+        }
+        
+        function handleDesktopSearch(event) {
+            const query = event.target.value.trim();
+            if (query.length >= 2) {
+                showSearchSuggestions(query);
+            } else {
+                hideSearchSuggestions();
+            }
+        }
+        
+        function handleSearchKeydown(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                const query = event.target.value.trim();
+                if (query) {
+                    analyzeStock(query);
+                    hideSearchSuggestions();
+                }
+            }
+        }
+        
+        function analyzeStock(symbol) {
+            document.getElementById('mainContentTitle').textContent = `Analyzing ${symbol.toUpperCase()}`;
+            
+            // Call the existing search function but display in desktop layout
+            performSearchAction(symbol);
+            
+            // Update URL for bookmarking
+            window.history.pushState({symbol: symbol}, '', `?symbol=${symbol}`);
+        }
+        
+        function initializeChart() {
+            const ctx = document.getElementById('mainChart').getContext('2d');
+            currentChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Price',
+                        data: [],
+                        borderColor: '#60a5fa',
+                        backgroundColor: 'rgba(96, 165, 250, 0.1)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#f4f4f5'
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: { color: '#a1a1aa' },
+                            grid: { color: '#27272a' }
+                        },
+                        y: {
+                            ticks: { color: '#a1a1aa' },
+                            grid: { color: '#27272a' }
+                        }
+                    }
+                }
+            });
+        }
+        
+        function loadWatchlist() {
+            // Simulate loading watchlist
+            const defaultWatchlist = ['AAPL', 'TSLA', 'NVDA', 'GOOGL', 'MSFT'];
+            defaultWatchlist.forEach(symbol => {
+                addWatchlistItem(symbol);
+            });
+        }
+        
+        function addWatchlistItem(symbol) {
+            const container = document.getElementById('watchlistContainer');
+            const item = document.createElement('div');
+            item.className = 'desktop-watchlist-item';
+            item.innerHTML = `
+                <strong>${symbol}</strong>
+                <span class="text-muted">Loading...</span>
+                <span class="text-success">--</span>
+                <button class="btn btn-sm btn-outline-primary" onclick="analyzeStock('${symbol}')">
+                    Analyze
+                </button>
+            `;
+            container.appendChild(item);
+        }
+        
+        function startRealTimeUpdates() {
+            // Simulate real-time updates every 30 seconds
+            setInterval(updateMarketData, 30000);
+        }
+        
+        function updateMarketData() {
+            // Update live indicator to show activity
+            const liveDot = document.querySelector('.desktop-live-dot');
+            liveDot.style.animation = 'none';
+            setTimeout(() => {
+                liveDot.style.animation = 'pulse 2s infinite';
+            }, 100);
+        }
+        
+        // Placeholder functions for desktop features
+        function refreshAllData() { console.log('Refreshing all data...'); }
+        function openSettings() { console.log('Opening settings...'); }
+        function showMarketOverview() { console.log('Showing market overview...'); }
+        function showSectorAnalysis() { console.log('Showing sector analysis...'); }
+        function showTopMovers() { console.log('Showing top movers...'); }
+        function showEarningsCalendar() { console.log('Showing earnings calendar...'); }
+        function openAIScanner() { console.log('Opening AI scanner...'); }
+        function openPortfolioAnalyzer() { console.log('Opening portfolio analyzer...'); }
+        function openRiskAnalyzer() { console.log('Opening risk analyzer...'); }
+        function exportAnalysis() { console.log('Exporting analysis...'); }
+        function shareAnalysis() { console.log('Sharing analysis...'); }
+        function addToWatchlist() { console.log('Adding to watchlist...'); }
+        function switchChart(type) { console.log('Switching to', type, 'chart'); }
+    </script>
+</body>
+</html>
