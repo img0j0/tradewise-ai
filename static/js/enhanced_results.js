@@ -43,7 +43,7 @@ function displayEnhancedAnalysis(stockData) {
 }
 
 function generateEnhancedAnalysisHTML(data) {
-    console.log('=== GENERATING NEW COMPETITIVE FEATURES UI ===');
+    console.log('=== GENERATING COMPETITIVE FEATURES UI - BLOOMBERG FOR EVERYONE ===');
     console.log('Enhanced Explanation Data:', data.enhanced_explanation);
     console.log('Smart Alerts Data:', data.smart_alerts);
     console.log('Educational Insights Data:', data.educational_insights);
@@ -57,27 +57,50 @@ function generateEnhancedAnalysisHTML(data) {
     const priceChangePercent = isNaN(parseFloat(data.price_change_percent)) ? 0 : parseFloat(data.price_change_percent);
     const changeClass = priceChange >= 0 ? 'positive' : 'negative';
     
+    // Generate competitive advantages sections
+    const competitiveAdvantagesHTML = generateCompetitiveAdvantagesHTML(data);
+    
     return `
-        <div class="enhanced-analysis-container">
-            <!-- Stock Header with Professional Layout -->
-            <div class="row mb-4">
-                <div class="col-md-8">
-                    <div class="d-flex align-items-center mb-3">
-                        <h2 class="mb-0 me-3">${data.symbol}</h2>
-                        <span class="badge bg-primary fs-6">${enhanced.enhanced_metrics?.market_position?.sector || 'Technology'}</span>
+        <div class="enhanced-analysis-container competitive-advantage-enter">
+            <!-- Bloomberg-Style Professional Header -->
+            <div class="bloomberg-style-header">
+                <div class="row mb-4">
+                    <div class="col-md-8">
+                        <div class="d-flex align-items-center mb-3">
+                            <h1 class="mb-0 me-3" style="font-size: 2.5rem; font-weight: 800;">${data.symbol}</h1>
+                            <span class="badge bg-primary fs-6 px-3 py-2">${enhanced.enhanced_metrics?.market_position?.sector || 'Technology'}</span>
+                            <span class="professional-badge">Live Analysis</span>
+                        </div>
+                        <h4 class="text-light mb-3" style="font-weight: 600;">${data.company_name}</h4>
+                        <div class="d-flex align-items-center gap-4">
+                            <span class="text-light"><i class="fas fa-building me-2"></i>${enhanced.enhanced_metrics?.market_position?.exchange || 'NASDAQ'}</span>
+                            <span class="text-light"><i class="fas fa-globe me-2"></i>${enhanced.enhanced_metrics?.market_position?.country || 'United States'}</span>
+                            <span class="text-light"><i class="fas fa-clock me-2"></i>Real-time Data</span>
+                        </div>
                     </div>
-                    <h5 class="text-muted mb-2">${data.company_name}</h5>
-                    <div class="d-flex align-items-center">
-                        <span class="me-3"><i class="fas fa-building"></i> ${enhanced.enhanced_metrics?.market_position?.exchange || 'NASDAQ'}</span>
-                        <span><i class="fas fa-globe"></i> ${enhanced.enhanced_metrics?.market_position?.country || 'United States'}</span>
+                    <div class="col-md-4 text-end">
+                        <div class="price-display-large">
+                            <div class="current-price-big">$${(parseFloat(data.current_price) || 0).toFixed(2)}</div>
+                            <div class="price-change-big ${changeClass}">
+                                ${priceChange >= 0 ? '+' : ''}${priceChange.toFixed(2)} (${priceChangePercent >= 0 ? '+' : ''}${priceChangePercent.toFixed(2)}%)
+                            </div>
+                            <div class="market-cap-display">
+                                Market Cap: ${formatMarketCap(data.market_cap)}
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-4 text-end">
-                    <div class="price-display-large">
-                        <div class="current-price-big">$${(parseFloat(data.current_price) || 0).toFixed(2)}</div>
-                        <div class="price-change-big ${changeClass}">
-                            ${priceChange >= 0 ? '+' : ''}${(priceChange || 0).toFixed(2)} 
-                            (${priceChangePercent >= 0 ? '+' : ''}${(priceChangePercent || 0).toFixed(2)}%)
+            </div>
+            
+            <!-- Professional Metrics Dashboard -->
+            ${generateProfessionalMetricsGrid(data)}
+            
+            <!-- Strategy Applied Indicator -->
+            ${generateStrategyIndicator(data)}
+            
+            <!-- Our Three Competitive Advantages -->
+            ${competitiveAdvantagesHTML}
+        </div>`;
                         </div>
                         <div class="market-cap-display">Market Cap: $${formatNumber(data.market_cap)}</div>
                     </div>
