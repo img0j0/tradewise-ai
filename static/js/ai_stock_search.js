@@ -264,9 +264,15 @@ async function searchStockAI() {
             displayEnhancedAnalysis(stockData);
             console.log('Enhanced analysis display used');
         } else {
-            // Fallback to comprehensive display
-            displayComprehensiveStockAnalysis(stockData);
-            console.log('Standard comprehensive display used');
+            // Fallback - use enhanced display anyway (function exists)
+            console.log('Enhanced analysis not detected, using enhanced display as fallback');
+            if (typeof displayEnhancedAnalysis === 'function') {
+                displayEnhancedAnalysis(stockData);
+                console.log('Enhanced display used as fallback');
+            } else {
+                console.error('No display function available');
+                throw new Error('Display function not available');
+            }
         }
         
     } catch (error) {
