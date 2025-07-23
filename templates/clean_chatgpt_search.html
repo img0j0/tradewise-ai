@@ -1573,7 +1573,6 @@
         // Enhanced quick action functions
         function showTrendingStocks() {
             hideQuickActions();
-            showNotification('Trending Stocks', 'Loading trending stocks with AI analysis...', 'info');
             
             // Simulate trending stocks display
             setTimeout(() => {
@@ -1584,7 +1583,6 @@
         
         function showTopMovers() {
             hideQuickActions();
-            showNotification('Top Movers', 'Analyzing biggest market moves today...', 'info');
             
             setTimeout(() => {
                 showAnalysisOverlay();
@@ -1594,7 +1592,6 @@
         
         function showMarketSummary() {
             hideQuickActions();
-            showNotification('Market Summary', 'Generating comprehensive market overview...', 'info');
             
             setTimeout(() => {
                 showAnalysisOverlay();
