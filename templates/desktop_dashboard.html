@@ -722,7 +722,7 @@
         // Market data loading functions - Fully optimized
         async function loadMarketOverviewData() {
             console.log('Loading Market Overview Data...');
-            const contentArea = document.querySelector('.desktop-main-content .row:last-child');
+            const contentArea = document.getElementById('mainAnalysisContainer');
             if (!contentArea) {
                 console.error('Content area not found for Market Overview');
                 return;
@@ -772,7 +772,7 @@
         
         async function loadSectorAnalysisData() {
             console.log('Loading Sector Analysis Data...');
-            const contentArea = document.querySelector('.desktop-main-content .row:last-child');
+            const contentArea = document.getElementById('mainAnalysisContainer');
             if (!contentArea) {
                 console.error('Content area not found for Sector Analysis');
                 return;
@@ -818,7 +818,7 @@
         
         async function loadTopMoversData() {
             console.log('Loading Top Movers Data...');
-            const contentArea = document.querySelector('.desktop-main-content .row:last-child');
+            const contentArea = document.getElementById('mainAnalysisContainer');
             if (!contentArea) {
                 console.error('Content area not found for Top Movers');
                 return;
@@ -870,7 +870,7 @@
         
         async function loadEarningsCalendarData() {
             console.log('Loading Earnings Calendar Data...');
-            const contentArea = document.querySelector('.desktop-main-content .row:last-child');
+            const contentArea = document.getElementById('mainAnalysisContainer');
             if (!contentArea) {
                 console.error('Content area not found for Earnings Calendar');
                 return;
@@ -922,7 +922,7 @@
         
         async function loadAIScannerInterface() {
             console.log('Loading AI Scanner Interface...');
-            const contentArea = document.querySelector('.desktop-main-content .row:last-child');
+            const contentArea = document.getElementById('mainAnalysisContainer');
             if (!contentArea) {
                 console.error('Content area not found for AI Scanner');
                 return;
@@ -966,7 +966,7 @@
         
         async function loadPortfolioAnalyzer() {
             console.log('Loading Portfolio Analyzer...');
-            const contentArea = document.querySelector('.desktop-main-content .row:last-child');
+            const contentArea = document.getElementById('mainAnalysisContainer');
             if (!contentArea) {
                 console.error('Content area not found for Portfolio Analyzer');
                 return;
@@ -1018,7 +1018,7 @@
         
         async function loadRiskAnalyzer() {
             console.log('Loading Risk Analyzer...');
-            const contentArea = document.querySelector('.desktop-main-content .row:last-child');
+            const contentArea = document.getElementById('mainAnalysisContainer');
             if (!contentArea) {
                 console.error('Content area not found for Risk Analyzer');
                 return;

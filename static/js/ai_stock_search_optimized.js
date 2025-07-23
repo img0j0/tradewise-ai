@@ -150,7 +150,7 @@ async function performSearch() {
 }
 
 function showLoadingState() {
-    const container = document.querySelector('.desktop-main-content .row:last-child');
+    const container = document.getElementById('mainAnalysisContainer');
     if (container) {
         container.innerHTML = `
             <div class="col-12 text-center p-5">
@@ -165,7 +165,7 @@ function showLoadingState() {
 }
 
 function displayResults(data) {
-    const container = document.querySelector('.desktop-main-content .row:last-child');
+    const container = document.getElementById('mainAnalysisContainer');
     if (!container) return;
 
     // Extract data safely
@@ -252,7 +252,7 @@ function getRiskColor(riskLevel) {
 }
 
 function showError(message) {
-    const container = document.querySelector('.desktop-main-content .row:last-child');
+    const container = document.getElementById('mainAnalysisContainer');
     if (container) {
         container.innerHTML = `
             <div class="col-12">
