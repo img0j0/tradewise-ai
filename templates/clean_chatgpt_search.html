@@ -1865,10 +1865,17 @@
             console.log('🔧 showAnalysisOverlay called with title:', title);
             const overlay = document.getElementById('analysis-overlay');
             if (overlay) {
-                // Set the content if provided
-                if (title && content) {
-                    const analysisContent = overlay.querySelector('.analysis-content');
-                    if (analysisContent) {
+                // Clear any existing content first
+                const analysisContent = overlay.querySelector('.analysis-content');
+                if (analysisContent) {
+                    // Clear the analysis results divs that might have old content
+                    const analysisResults = document.getElementById('analysis-results');
+                    const aiAnalysisResults = document.getElementById('ai-analysis-results');
+                    if (analysisResults) analysisResults.innerHTML = '';
+                    if (aiAnalysisResults) aiAnalysisResults.innerHTML = '';
+                    
+                    // Set the new content if provided
+                    if (title && content) {
                         analysisContent.innerHTML = `
                             <div class="close-btn" onclick="closeAnalysisOverlay()" style="position: absolute; top: 20px; right: 25px; width: 40px; height: 40px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: white; font-size: 18px; z-index: 1000;">×</div>
                             <div style="padding: 60px 30px 30px 30px; max-width: 800px; width: 100%;">
@@ -1879,7 +1886,7 @@
                     }
                 }
                 overlay.style.display = 'flex';
-                console.log('✅ Analysis overlay shown');
+                console.log('✅ Analysis overlay shown with title:', title);
             } else {
                 console.error('❌ Analysis overlay element not found');
             }
@@ -2076,11 +2083,12 @@
                 `;
                 
                 console.log('About to show overlay with content length:', content.length);
+                console.log('Advanced search content preview:', content.substring(0, 200));
                 
                 // Use the analysis overlay system directly
                 console.log('Using analysis overlay for advanced search');
                 showAnalysisOverlay('🔍 Advanced Stock Search', content);
-                console.log('Overlay should now be visible');
+                console.log('Advanced search overlay should now be visible');
                 
                 // Focus on search input
                 setTimeout(() => {
