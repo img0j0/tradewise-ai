@@ -1479,13 +1479,13 @@
                         
                         <!-- Upgrade Button -->
                         <div class="dropdown-divider"></div>
-                        <div class="dropdown-item upgrade-item" onclick="window.location.href='/premium/upgrade'">
+                        <div class="dropdown-item upgrade-item" onclick="navigateToPremium()">
                             <span class="icon upgrade-icon">✨</span>
                             <div class="item-content">
                                 <span class="item-title">Upgrade to Premium</span>
-                                <span class="item-description">Try AI Trading Copilot demos</span>
+                                <span class="item-description">AI Trading Copilot - $10/month</span>
                             </div>
-                            <span class="upgrade-price">$10/mo</span>
+                            <span class="upgrade-price">UPGRADE</span>
                         </div>
                         
                         <!-- Auth Actions -->
@@ -5673,6 +5673,21 @@
         function toggleDropdown() {
             const dropdown = document.getElementById('toolsDropdown');
             dropdown.classList.toggle('show');
+        }
+        
+        // Premium navigation function
+        function navigateToPremium() {
+            console.log('Premium navigation triggered');
+            // First close the dropdown
+            const dropdown = document.getElementById('toolsDropdown');
+            if (dropdown) {
+                dropdown.classList.remove('show');
+            }
+            
+            // Add a small delay to ensure smooth UX, then navigate
+            setTimeout(() => {
+                window.location.href = '/premium/upgrade';
+            }, 100);
         }
 
         function handleLogout() {
