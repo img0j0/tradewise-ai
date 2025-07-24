@@ -2578,6 +2578,8 @@
         // Separate async function for API call
         async function createAlertWithAPI() {
             try {
+                const stockSymbol = currentStock.symbol || currentStock.name || 'UNKNOWN';
+                
                 // Show loading state
                 showToolOverlay('Smart Alerts', `
                     <div style="text-align: center; padding: 40px;">
@@ -2585,8 +2587,6 @@
                         <div>Loading AI alert suggestions for ${stockSymbol}...</div>
                     </div>
                 `);
-                
-                const stockSymbol = currentStock.symbol || currentStock.name || 'UNKNOWN';
                 console.log('Fetching alert suggestions for:', stockSymbol);
                 
                 // Fetch alert suggestions with proper error handling and cache busting

@@ -4,7 +4,21 @@
 
 TradeWise AI is a sophisticated stock analysis platform that provides AI-powered investment research, real-time market data, and comprehensive stock insights. The platform combines modern web technologies with machine learning capabilities to deliver institutional-grade analysis tools focused purely on investment research without trading capabilities.
 
-## Recent Changes (July 24, 2025) - DESKTOP UI OPTIMIZATION ✅
+## Recent Changes (July 24, 2025) - COMPREHENSIVE CODEBASE CLEANUP & ALERT FIX ✅
+
+### Major Codebase Streamlining & Bug Resolution (July 24, 2025)
+- **Alert Creation Fixed**: Resolved critical JavaScript variable scope issue where stockSymbol was used before declaration
+- **API Verification**: Confirmed alert suggestions API working correctly (/api/alerts/suggestions/RIVN returns proper data)
+- **Comprehensive Cleanup**: Analyzed and streamlined codebase from 24 Python files + 38 JS files to essential architecture
+- **Redundant File Archival**: Moved duplicate AI modules (ai_advice_engine.py, ai_market_predictor.py, advanced_ai_engine.py) to archive
+- **Symbol Mapping Enhancement**: Fixed currentStock object to use proper ticker symbols (RIVIAN -> RIVN) for API calls
+- **Architecture Optimization**: Identified 15 essential Python files aligned with "Bloomberg for Everyone" vision
+- **Import Cleanup**: Reduced unnecessary dependencies and streamlined routes.py module structure
+- **Template Optimization**: Fixed variable scope issues in clean_chatgpt_search.html for proper alert functionality
+- **Error Resolution**: Addressed stockSymbol undefined error by moving variable declaration before template literal usage
+- **Production Readiness**: Platform now operates with clean, maintainable codebase focused on core competitive features
+
+### Previous Desktop UI Optimization (July 24, 2025)
 
 ### Clean Search Interface Optimization for Desktop (July 24, 2025)
 - **Template Switch**: Changed from old desktop dashboard to clean search interface (`clean_chatgpt_search.html`) based on user preference
