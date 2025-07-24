@@ -2018,9 +2018,24 @@
             
             // Store current stock data for buy modal
             // Store the stock data globally for other functions with symbol
+            // Try to get the actual ticker symbol from various data sources
+            // Priority: 1) stockData.symbol (from API response), 2) stockInfo.symbol, 3) fallback to input symbol
+            let actualSymbol = stockData.symbol || stockInfo.symbol || symbol || 'UNKNOWN';
+            
+            // Use symbol mapping to convert company names to proper tickers
+            const symbolMappings = {
+                'RIVIAN': 'RIVN', 'APPLE': 'AAPL', 'TESLA': 'TSLA', 'MICROSOFT': 'MSFT',
+                'GOOGLE': 'GOOGL', 'AMAZON': 'AMZN', 'NVIDIA': 'NVDA', 'META': 'META'
+            };
+            
+            const upperSymbol = actualSymbol.toUpperCase();
+            actualSymbol = symbolMappings[upperSymbol] || upperSymbol;
+            
             currentStock = {
                 ...stockData,
-                symbol: symbol // Ensure symbol is available for alerts
+                symbol: actualSymbol, // Proper ticker symbol for alerts
+                name: stockInfo.company_name || stockInfo.name || stockData.name || actualSymbol,
+                price: stockInfo.current_price || stockInfo.price || 0
             };
             
             // Safe access to price change data with fallbacks
