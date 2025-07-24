@@ -1258,6 +1258,79 @@
             50% { opacity: 0.5; }
         }
         
+        /* Smart Autocomplete Dropdown */
+        .autocomplete-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            display: none;
+            max-height: 350px;
+            overflow-y: auto;
+            margin-top: 8px;
+        }
+        
+        .autocomplete-item {
+            padding: 12px 16px;
+            cursor: pointer;
+            border-bottom: 1px solid rgba(139, 92, 246, 0.1);
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .autocomplete-item:last-child {
+            border-bottom: none;
+        }
+        
+        .autocomplete-item:hover,
+        .autocomplete-item.selected {
+            background: rgba(139, 92, 246, 0.08);
+            color: #8b5cf6;
+        }
+        
+        .autocomplete-main {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+        
+        .autocomplete-symbol {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: #8b5cf6;
+            margin-bottom: 2px;
+        }
+        
+        .autocomplete-name {
+            font-size: 0.85rem;
+            color: #666;
+            line-height: 1.2;
+        }
+        
+        .autocomplete-sector {
+            font-size: 0.75rem;
+            color: #999;
+            background: rgba(139, 92, 246, 0.1);
+            padding: 2px 8px;
+            border-radius: 8px;
+            white-space: nowrap;
+        }
+        
+        .autocomplete-empty {
+            padding: 20px;
+            text-align: center;
+            color: #999;
+            font-size: 0.9rem;
+        }
+
         /* Touch-friendly improvements */
         @media (max-width: 768px) {
             .tool-btn:active {
@@ -1295,6 +1368,16 @@
                 top: 15px;
                 left: 15px;
                 font-size: 0.8rem;
+            }
+            
+            .autocomplete-dropdown {
+                border-radius: 12px;
+                max-height: 300px;
+            }
+            
+            .autocomplete-item {
+                padding: 14px 16px;
+                min-height: 44px;
             }
         }
     </style>
@@ -1446,6 +1529,7 @@
             <input type="text" id="search-input" placeholder="Ask about any stock... (try AAPL, TSLA, or GOOGL)" autocomplete="off">
             <button id="search-btn">🔍</button>
             <div class="smart-suggestions" id="smartSuggestions"></div>
+            <div class="autocomplete-dropdown" id="autocompleteDropdown"></div>
         </div>
         
         <!-- Quick Actions Panel -->
@@ -1501,6 +1585,10 @@
             showQuickActions();
         });
         
+        // Smart Autocomplete System
+        let selectedSuggestionIndex = -1;
+        let currentSuggestions = [];
+        
         function initializeEnhancements() {
             // Smart search suggestions
             const searchInput = document.getElementById('search-input');
@@ -1508,21 +1596,46 @@
             searchInput.addEventListener('input', function() {
                 clearTimeout(templateSearchTimeout);
                 templateSearchTimeout = setTimeout(() => {
-                    showSmartSuggestions(this.value);
+                    if (this.value.length >= 2) {
+                        fetchSearchSuggestions(this.value);
+                    } else {
+                        hideAutocomplete();
+                    }
                 }, 300);
             });
             
             searchInput.addEventListener('focus', function() {
-                if (!this.value) {
-                    showSmartSuggestions('');
+                if (this.value.length >= 2) {
+                    fetchSearchSuggestions(this.value);
                 }
                 showQuickActions();
+            });
+            
+            // Keyboard navigation for autocomplete
+            searchInput.addEventListener('keydown', function(e) {
+                const dropdown = document.getElementById('autocompleteDropdown');
+                if (dropdown.style.display !== 'block') return;
+                
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    selectedSuggestionIndex = Math.min(selectedSuggestionIndex + 1, currentSuggestions.length - 1);
+                    updateSelectedSuggestion();
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    selectedSuggestionIndex = Math.max(selectedSuggestionIndex - 1, -1);
+                    updateSelectedSuggestion();
+                } else if (e.key === 'Enter' && selectedSuggestionIndex >= 0) {
+                    e.preventDefault();
+                    selectSuggestion(currentSuggestions[selectedSuggestionIndex]);
+                } else if (e.key === 'Escape') {
+                    hideAutocomplete();
+                }
             });
             
             // Click outside to close suggestions
             document.addEventListener('click', function(e) {
                 if (!e.target.closest('.search-box')) {
-                    hideSmartSuggestions();
+                    hideAutocomplete();
                     // Only hide quick actions if not clicking analysis overlay or tools
                     if (!e.target.closest('.analysis-overlay') && !e.target.closest('.tools-menu')) {
                         hideQuickActions();
