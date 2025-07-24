@@ -319,7 +319,7 @@ async function searchStockAI(inputSymbol = null) {
             console.log('Using desktop displayResults function');
             if (typeof displayResults === 'function') {
                 try {
-                    displayResults(stockData);
+                    displayResults(stockData, symbol);
                     console.log('✅ Desktop display successful');
                 } catch (displayError) {
                     console.error('❌ Desktop display error:', displayError);

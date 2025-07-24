@@ -1958,7 +1958,7 @@
                 
                 if (data.success) {
                     console.log('✅ Fallback search successful:', data);
-                    displayResults(data);
+                    displayResults(data, query);
                 } else {
                     throw new Error(data.error || 'Search failed');
                 }
@@ -2006,7 +2006,7 @@
             `;
         }
         
-        function displayResults(data) {
+        function displayResults(data, symbol = 'UNKNOWN') {
             console.log('💡 DISPLAYRESULTS: Received data structure:', data);
             
             // Handle both direct data and nested analysis structure
