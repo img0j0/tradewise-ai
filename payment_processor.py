@@ -5,10 +5,13 @@ import logging
 
 # Import specific Stripe error classes
 try:
-    from stripe.error import StripeError
+    from stripe._error import StripeError
 except ImportError:
-    # Fallback if StripeError isn't available
-    StripeError = Exception
+    try:
+        from stripe.error import StripeError
+    except ImportError:
+        # Fallback if StripeError isn't available
+        StripeError = Exception
 
 # Configure Stripe
 stripe.api_key = os.environ.get('STRIPE_SECRET_KEY')
