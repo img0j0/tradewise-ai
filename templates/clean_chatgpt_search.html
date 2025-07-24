@@ -2639,6 +2639,20 @@
             }
         }
         
+        function showAlertError(message) {
+            console.log('Showing alert error:', message);
+            showToolOverlay('Alert Error', `
+                <div style="text-align: center; padding: 40px;">
+                    <div style="font-size: 3rem; margin-bottom: 20px; opacity: 0.7;">⚠️</div>
+                    <div style="font-size: 1.2rem; margin-bottom: 15px; color: #ef4444;">Alert Creation Failed</div>
+                    <div style="opacity: 0.8; margin-bottom: 25px;">${message}</div>
+                    <button onclick="closeAnalysis()" style="padding: 10px 20px; background: linear-gradient(45deg, #8b5cf6, #06b6d4); color: white; border: none; border-radius: 10px; cursor: pointer;">
+                        Close
+                    </button>
+                </div>
+            `);
+        }
+        
         function displayAlertCreator(suggestions) {
             console.log('DisplayAlertCreator called with suggestions:', suggestions);
             
@@ -2647,6 +2661,8 @@
                 showAlertError('No alert suggestions available');
                 return;
             }
+            
+            const stockSymbol = currentStock.symbol || currentStock.name || 'UNKNOWN';
             
             let alertHTML = `
                 <div style="padding: 20px; max-height: 80vh; overflow-y: auto;">
