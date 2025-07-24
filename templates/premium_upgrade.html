@@ -473,9 +473,16 @@
         async function startPremiumPurchase() {
             try {
                 const button = document.querySelector('.upgrade-btn');
+                if (!button) {
+                    console.error('Upgrade button not found');
+                    return;
+                }
+                
                 const originalText = button.innerHTML;
                 button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
                 button.disabled = true;
+
+                console.log('Creating Stripe checkout session...');
 
                 // Create Stripe checkout session
                 const response = await fetch('/premium/purchase', {
@@ -485,21 +492,33 @@
                     }
                 });
 
-                const data = await response.json();
+                console.log('Response status:', response.status);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
 
-                if (data.success) {
+                const data = await response.json();
+                console.log('Response data:', data);
+
+                if (data.success && data.checkout_url) {
+                    console.log('Redirecting to:', data.checkout_url);
                     // Redirect to Stripe checkout
                     window.location.href = data.checkout_url;
                 } else {
+                    console.error('Payment API error:', data);
                     alert('Payment Error: ' + (data.error || 'Please try again.'));
                     button.innerHTML = originalText;
                     button.disabled = false;
                 }
             } catch (error) {
                 console.error('Payment error:', error);
-                alert('Payment failed. Please try again.');
-                button.innerHTML = '<i class="fas fa-crown"></i> Upgrade to Premium - $10/month';
-                button.disabled = false;
+                alert('Payment failed. Please try again. Error: ' + error.message);
+                const button = document.querySelector('.upgrade-btn');
+                if (button) {
+                    button.innerHTML = '<i class="fas fa-crown"></i> Upgrade to Premium - $10/month';
+                    button.disabled = false;
+                }
             }
         }
         
