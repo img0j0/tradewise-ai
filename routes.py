@@ -177,15 +177,18 @@ def stock_analysis_api():
     try:
         # Rate limiting is handled by decorator
         
-        # Support both GET and POST requests
+        # Support both GET and POST requests with multiple parameter names
         if request.method == 'GET':
-            original_query = request.args.get('query', '').strip()
+            original_query = request.args.get('query', '').strip() or request.args.get('symbol', '').strip()
         else:
             data = request.get_json()
-            original_query = data.get('query', '').strip() if data else ''
+            if data:
+                original_query = data.get('query', '').strip() or data.get('symbol', '').strip()
+            else:
+                original_query = ''
         
         if not original_query:
-            return jsonify({'error': 'Query parameter required'}), 400
+            return jsonify({'error': 'Query or symbol parameter required. Please provide a stock symbol or company name.'}), 400
         
         # Comprehensive symbol mapping with fallback search
         from symbol_mapper import normalize_symbol, validate_symbol, create_comprehensive_fallback_search
