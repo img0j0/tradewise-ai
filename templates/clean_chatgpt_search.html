@@ -2076,7 +2076,18 @@
                 `;
                 
                 console.log('About to show overlay with content length:', content.length);
-                showAnalysisOverlay('🔍 Advanced Stock Search', content);
+                
+                // Use the history overlay system which we know works
+                const historyOverlay = document.getElementById('historyOverlay');
+                if (historyOverlay) {
+                    document.getElementById('historyTitle').textContent = '🔍 Advanced Stock Search';
+                    document.getElementById('historyContent').innerHTML = content;
+                    historyOverlay.style.display = 'flex';
+                    console.log('Advanced search overlay displayed using history system');
+                } else {
+                    console.error('History overlay system not found, trying fallback');
+                    showAnalysisOverlay('🔍 Advanced Stock Search', content);
+                }
                 console.log('Overlay should now be visible');
                 
                 // Focus on search input
@@ -2229,6 +2240,18 @@
                 performSearchAction();
             } else {
                 showNotification('Please enter at least 2 characters', 'error');
+            }
+        }
+        
+        function closeAdvancedSearch() {
+            console.log('Closing advanced search...');
+            const historyOverlay = document.getElementById('historyOverlay');
+            if (historyOverlay) {
+                historyOverlay.style.display = 'none';
+                console.log('Advanced search closed using history overlay');
+            } else {
+                closeAnalysisOverlay();
+                console.log('Advanced search closed using analysis overlay');
             }
         }
         
