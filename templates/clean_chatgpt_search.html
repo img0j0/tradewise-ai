@@ -2476,7 +2476,8 @@
             results.forEach((stock, index) => {
                 const changeColor = stock.price_change >= 0 ? '#10b981' : '#ef4444';
                 const changeIcon = stock.price_change >= 0 ? '↗' : '↘';
-                const relevanceScore = stock.relevance_score || 0;
+                const relevanceScore = stock.ai_relevance_score || stock.basic_relevance_score || 0;
+                const isPremium = stock.premium_tier;
                 
                 html += `
                     <div onclick="selectStockFromAdvancedSearch('${stock.symbol}', '${stock.name}')" 
@@ -2488,6 +2489,7 @@
                             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
                                 <span style="font-weight: 700; font-size: 1.1rem; color: #1f2937;">${stock.symbol}</span>
                                 ${relevanceScore > 70 ? '<span style="background: #10b981; color: white; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px;">HOT</span>' : ''}
+                                ${isPremium ? '<span style="background: #f59e0b; color: white; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px;">PRO</span>' : '<span style="background: #6b7280; color: white; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px;">FREE</span>'}
                                 <span style="color: #8b5cf6; font-size: 0.8rem; font-weight: 500;">#${index + 1}</span>
                             </div>
                             <div style="color: #6b7280; font-size: 0.9rem; margin-bottom: 2px;">${stock.name}</div>
@@ -2495,18 +2497,21 @@
                                 <span>${stock.sector}</span>
                                 <span>•</span>
                                 <span>${stock.market_cap} cap</span>
-                                ${stock.pe_ratio ? `<span>• P/E: ${stock.pe_ratio.toFixed(1)}</span>` : ''}
+                                ${stock.pe_ratio ? `<span>• P/E: ${(typeof stock.pe_ratio === 'number' ? stock.pe_ratio.toFixed(1) : 'N/A')}</span>` : ''}
+                                ${isPremium && stock.analyst_consensus ? `<span>• ${stock.analyst_consensus.recommendation.toUpperCase()}</span>` : ''}
                             </div>
+                            ${stock.premium_locked ? `<div style="color: #f59e0b; font-size: 0.75rem; margin-top: 2px;">🔒 Upgrade for AI insights & advanced metrics</div>` : ''}
                         </div>
                         
                         <div style="text-align: right;">
                             <div style="font-weight: 600; font-size: 1.1rem; color: #1f2937;">$${stock.current_price.toFixed(2)}</div>
                             <div style="color: ${changeColor}; font-size: 0.9rem; font-weight: 500;">${changeIcon} ${stock.price_change.toFixed(2)} (${stock.price_change_pct.toFixed(2)}%)</div>
                             ${stock.volume ? `<div style="color: #9ca3af; font-size: 0.8rem;">Vol: ${(stock.volume / 1000000).toFixed(1)}M</div>` : ''}
+                            ${isPremium && stock.risk_assessment ? `<div style="color: ${getRiskColor(stock.risk_assessment.level)}; font-size: 0.8rem;">Risk: ${stock.risk_assessment.level.toUpperCase()}</div>` : ''}
                         </div>
                         
                         <div style="position: absolute; top: 8px; right: 8px; background: rgba(139, 92, 246, 0.2); color: #8b5cf6; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px;">
-                            Click to analyze
+                            ${isPremium ? 'Pro Analysis' : 'Basic Analysis'}
                         </div>
                     </div>
                 `;
@@ -2515,13 +2520,25 @@
             html += `
                     </div>
                     <div style="text-align: center; margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(139, 92, 246, 0.2);">
-                        <button onclick="performAdvancedSearchFixed()" style="padding: 8px 16px; background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 6px; color: #8b5cf6; cursor: pointer; font-size: 0.85rem;">
+                        <button onclick="performAdvancedSearchFixed()" style="padding: 8px 16px; background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 6px; color: #8b5cf6; cursor: pointer; font-size: 0.85rem; margin-right: 10px;">
                             🔄 Search Again
                         </button>
+                        ${!results[0]?.premium_tier ? `<button onclick="window.open('/premium', '_blank')" style="padding: 8px 16px; background: linear-gradient(135deg, #f59e0b, #d97706); border: none; border-radius: 6px; color: white; cursor: pointer; font-size: 0.85rem; font-weight: 600;">
+                            🚀 Upgrade to AI Trading Copilot
+                        </button>` : ''}
                     </div>
                 </div>
             `;
             resultsDiv.innerHTML = html;
+        }
+        
+        function getRiskColor(level) {
+            switch(level) {
+                case 'low': return '#10b981';
+                case 'medium': return '#f59e0b';
+                case 'high': return '#ef4444';
+                default: return '#6b7280';
+            }
         }
         
         async function selectStockFromAdvancedSearch(symbol, name) {
