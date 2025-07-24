@@ -1,5 +1,6 @@
 from app import db
 from datetime import datetime
+import json
 from sqlalchemy import func
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -98,4 +99,42 @@ class WatchlistItem(db.Model):
             'symbol': self.symbol,
             'added_date': self.added_date.isoformat(),
             'notes': self.notes
+        }
+
+class FavoriteStock(db.Model):
+    """User favorite stocks for quick access"""
+    id = db.Column(db.Integer, primary_key=True)
+    symbol = db.Column(db.String(10), nullable=False, index=True)
+    company_name = db.Column(db.String(255))
+    sector = db.Column(db.String(100))
+    user_session = db.Column(db.String(100), index=True)  # Track by session for now
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'symbol': self.symbol,
+            'company_name': self.company_name,
+            'sector': self.sector,
+            'timestamp': self.timestamp.isoformat()
+        }
+
+class SearchHistory(db.Model):
+    """Track user search history for quick re-access"""
+    id = db.Column(db.Integer, primary_key=True)
+    symbol = db.Column(db.String(10), nullable=False, index=True)
+    company_name = db.Column(db.String(255))
+    search_query = db.Column(db.String(100))  # What user typed to find this stock
+    user_session = db.Column(db.String(100), index=True)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    access_count = db.Column(db.Integer, default=1)  # How many times accessed
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'symbol': self.symbol,
+            'company_name': self.company_name,
+            'search_query': self.search_query,
+            'timestamp': self.timestamp.isoformat(),
+            'access_count': self.access_count
         }

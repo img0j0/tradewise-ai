@@ -3,7 +3,7 @@ from app import app, db
 from datetime import datetime, timedelta
 from sqlalchemy import text
 from premium_features import PremiumFeatures
-from models import User, StockAnalysis, WatchlistItem
+from models import User, StockAnalysis, WatchlistItem, FavoriteStock, SearchHistory
 from ai_insights import AIInsightsEngine
 from enhanced_ai_explanations import get_enhanced_explanation
 from smart_event_alerts import get_smart_alerts
@@ -75,6 +75,7 @@ def internal_server_error(error):
 def save_analysis_to_history(symbol, stock_data, insights):
     """Save analysis results for historical tracking and comparison"""
     try:
+        # Save analysis record
         analysis = StockAnalysis()
         analysis.symbol = symbol
         analysis.price_at_analysis = float(stock_data.get('current_price', 0))
@@ -94,6 +95,26 @@ def save_analysis_to_history(symbol, stock_data, insights):
             'data_source': 'Yahoo Finance'
         })
         db.session.add(analysis)
+        
+        # Track search history
+        from flask import request
+        session_id = request.cookies.get('session', 'anonymous')
+        existing_search = SearchHistory.query.filter_by(
+            user_session=session_id, symbol=symbol
+        ).first()
+        
+        if existing_search:
+            existing_search.access_count += 1
+            existing_search.timestamp = datetime.utcnow()
+        else:
+            search_record = SearchHistory(
+                symbol=symbol,
+                company_name=stock_data.get('company_name', ''),
+                search_query=symbol,
+                user_session=session_id
+            )
+            db.session.add(search_record)
+        
         db.session.commit()
         logger.info(f"Saved analysis for {symbol} to history")
     except Exception as e:
@@ -1385,10 +1406,49 @@ def demo_upgrade():
 
 @main_bp.route('/api/search/suggestions')
 def search_suggestions():
-    """Get real-time search suggestions for autocomplete"""
+    """Get real-time search suggestions for autocomplete with history integration"""
     query = request.args.get('q', '').strip().lower()
+    session_id = request.cookies.get('session', 'anonymous')
+    
     if len(query) < 2:
-        return jsonify({'suggestions': []})
+        # Return recent searches and favorites when no query
+        try:
+            recent_searches = SearchHistory.query.filter_by(user_session=session_id)\
+                .order_by(SearchHistory.timestamp.desc()).limit(3).all()
+            
+            favorites = FavoriteStock.query.filter_by(user_session=session_id)\
+                .order_by(FavoriteStock.timestamp.desc()).limit(3).all()
+            
+            suggestions = []
+            
+            # Add recent searches
+            for search in recent_searches:
+                suggestions.append({
+                    'symbol': search.symbol,
+                    'name': search.company_name or search.symbol,
+                    'sector': 'Recent Search',
+                    'match_type': 'recent',
+                    'display': f"{search.symbol} - {search.company_name or 'Recent Search'}"
+                })
+            
+            # Add favorites
+            for fav in favorites:
+                suggestions.append({
+                    'symbol': fav.symbol,
+                    'name': fav.company_name or fav.symbol,
+                    'sector': fav.sector or 'Favorite',
+                    'match_type': 'favorite',
+                    'display': f"⭐ {fav.symbol} - {fav.company_name or 'Favorite'}"
+                })
+            
+            return jsonify({
+                'success': True,
+                'query': '',
+                'suggestions': suggestions[:6]
+            })
+            
+        except Exception as e:
+            logger.error(f"Error fetching search history: {e}")
     
     # Popular stocks database
     popular_stocks = [
@@ -1439,6 +1499,118 @@ def search_suggestions():
         'query': query,
         'suggestions': suggestions[:6]  # Limit to top 6
     })
+
+@main_bp.route('/api/search/history')
+def get_search_history():
+    """Get user's search history"""
+    session_id = request.cookies.get('session', 'anonymous')
+    
+    try:
+        history = SearchHistory.query.filter_by(user_session=session_id)\
+            .order_by(SearchHistory.timestamp.desc()).limit(10).all()
+        
+        return jsonify({
+            'success': True,
+            'history': [item.to_dict() for item in history]
+        })
+    except Exception as e:
+        logger.error(f"Error fetching search history: {e}")
+        return jsonify({'success': False, 'error': 'Failed to fetch history'}), 500
+
+@main_bp.route('/api/favorites', methods=['GET'])
+def get_favorites():
+    """Get user's favorite stocks"""
+    session_id = request.cookies.get('session', 'anonymous')
+    
+    try:
+        favorites = FavoriteStock.query.filter_by(user_session=session_id)\
+            .order_by(FavoriteStock.timestamp.desc()).all()
+        
+        return jsonify({
+            'success': True,
+            'favorites': [fav.to_dict() for fav in favorites]
+        })
+    except Exception as e:
+        logger.error(f"Error fetching favorites: {e}")
+        return jsonify({'success': False, 'error': 'Failed to fetch favorites'}), 500
+
+@main_bp.route('/api/favorites', methods=['POST'])
+def add_favorite():
+    """Add stock to favorites"""
+    session_id = request.cookies.get('session', 'anonymous')
+    data = request.get_json()
+    
+    symbol = data.get('symbol', '').upper()
+    company_name = data.get('company_name', '')
+    sector = data.get('sector', '')
+    
+    if not symbol:
+        return jsonify({'success': False, 'error': 'Symbol required'}), 400
+    
+    try:
+        # Check if already favorited
+        existing = FavoriteStock.query.filter_by(
+            user_session=session_id, symbol=symbol
+        ).first()
+        
+        if existing:
+            return jsonify({
+                'success': True,
+                'message': f'{symbol} is already in favorites',
+                'action': 'already_exists'
+            })
+        
+        # Add new favorite
+        favorite = FavoriteStock(
+            symbol=symbol,
+            company_name=company_name,
+            sector=sector,
+            user_session=session_id
+        )
+        
+        db.session.add(favorite)
+        db.session.commit()
+        
+        return jsonify({
+            'success': True,
+            'message': f'{symbol} added to favorites',
+            'action': 'added',
+            'favorite': favorite.to_dict()
+        })
+        
+    except Exception as e:
+        logger.error(f"Error adding favorite: {e}")
+        db.session.rollback()
+        return jsonify({'success': False, 'error': 'Failed to add favorite'}), 500
+
+@main_bp.route('/api/favorites/<symbol>', methods=['DELETE'])
+def remove_favorite(symbol):
+    """Remove stock from favorites"""
+    session_id = request.cookies.get('session', 'anonymous')
+    
+    try:
+        favorite = FavoriteStock.query.filter_by(
+            user_session=session_id, symbol=symbol.upper()
+        ).first()
+        
+        if not favorite:
+            return jsonify({
+                'success': False,
+                'error': f'{symbol} not found in favorites'
+            }), 404
+        
+        db.session.delete(favorite)
+        db.session.commit()
+        
+        return jsonify({
+            'success': True,
+            'message': f'{symbol} removed from favorites'
+        })
+        
+    except Exception as e:
+        logger.error(f"Error removing favorite: {e}")
+        db.session.rollback()
+        return jsonify({'success': False, 'error': 'Failed to remove favorite'}), 500
 
 @main_bp.route('/premium/api/portfolio/optimization')
 def portfolio_optimization():
