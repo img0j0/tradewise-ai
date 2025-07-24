@@ -2077,17 +2077,9 @@
                 
                 console.log('About to show overlay with content length:', content.length);
                 
-                // Use the history overlay system which we know works
-                const historyOverlay = document.getElementById('historyOverlay');
-                if (historyOverlay) {
-                    document.getElementById('historyTitle').textContent = '🔍 Advanced Stock Search';
-                    document.getElementById('historyContent').innerHTML = content;
-                    historyOverlay.style.display = 'flex';
-                    console.log('Advanced search overlay displayed using history system');
-                } else {
-                    console.error('History overlay system not found, trying fallback');
-                    showAnalysisOverlay('🔍 Advanced Stock Search', content);
-                }
+                // Use the analysis overlay system directly
+                console.log('Using analysis overlay for advanced search');
+                showAnalysisOverlay('🔍 Advanced Stock Search', content);
                 console.log('Overlay should now be visible');
                 
                 // Focus on search input
@@ -2245,14 +2237,8 @@
         
         function closeAdvancedSearch() {
             console.log('Closing advanced search...');
-            const historyOverlay = document.getElementById('historyOverlay');
-            if (historyOverlay) {
-                historyOverlay.style.display = 'none';
-                console.log('Advanced search closed using history overlay');
-            } else {
-                closeAnalysisOverlay();
-                console.log('Advanced search closed using analysis overlay');
-            }
+            closeAnalysisOverlay();
+            console.log('Advanced search closed using analysis overlay');
         }
         
         // Enhanced quick action functions
