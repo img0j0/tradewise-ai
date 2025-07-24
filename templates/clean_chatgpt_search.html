@@ -6119,7 +6119,7 @@
         }
     </script>
     <!-- Enhanced Results Display -->
-    <script src="{{ url_for('static', filename='js/enhanced_results.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/enhanced_results.js') }}" defer onerror="console.log('Enhanced results script not found - continuing without it')"></script>
     <!-- Main AI Stock Search -->
     <script>
         // Load ai_stock_search.js with better error handling
@@ -6130,6 +6130,6 @@
         document.head.appendChild(aiScript);
     </script>
     <!-- Debug Test Functions -->
-    <script src="{{ url_for('static', filename='js/debug_test.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/debug_test.js') }}" defer onerror="console.log('Debug test script not found - continuing without it')"></script>
 </body>
 </html>
