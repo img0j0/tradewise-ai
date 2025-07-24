@@ -1598,8 +1598,8 @@
             showQuickActions();
         });
         
-        // Smart Autocomplete System
-        let selectedSuggestionIndex = -1;
+        // Smart Autocomplete System (template version)
+        let templateSelectedSuggestionIndex = -1;
         let currentSuggestions = [];
         
         function initializeEnhancements() {
@@ -1631,15 +1631,15 @@
                 
                 if (e.key === 'ArrowDown') {
                     e.preventDefault();
-                    selectedSuggestionIndex = Math.min(selectedSuggestionIndex + 1, currentSuggestions.length - 1);
+                    templateSelectedSuggestionIndex = Math.min(templateSelectedSuggestionIndex + 1, currentSuggestions.length - 1);
                     updateSelectedSuggestion();
                 } else if (e.key === 'ArrowUp') {
                     e.preventDefault();
-                    selectedSuggestionIndex = Math.max(selectedSuggestionIndex - 1, -1);
+                    templateSelectedSuggestionIndex = Math.max(templateSelectedSuggestionIndex - 1, -1);
                     updateSelectedSuggestion();
-                } else if (e.key === 'Enter' && selectedSuggestionIndex >= 0) {
+                } else if (e.key === 'Enter' && templateSelectedSuggestionIndex >= 0) {
                     e.preventDefault();
-                    selectSuggestion(currentSuggestions[selectedSuggestionIndex]);
+                    selectSuggestion(currentSuggestions[templateSelectedSuggestionIndex]);
                 } else if (e.key === 'Escape') {
                     hideAutocomplete();
                 }

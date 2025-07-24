@@ -3,15 +3,12 @@ import stripe
 from flask import current_app
 import logging
 
-# Import specific Stripe error classes with fallback
+# Import specific Stripe error classes with proper error handling
 try:
-    from stripe.error import StripeError
+    from stripe import StripeError
 except ImportError:
-    # Fallback for different Stripe versions
-    try:
-        from stripe._error import StripeError
-    except ImportError:
-        StripeError = Exception
+    # Fallback for different Stripe versions or installations
+    StripeError = Exception
 
 # Configure Stripe
 stripe.api_key = os.environ.get('STRIPE_SECRET_KEY')
