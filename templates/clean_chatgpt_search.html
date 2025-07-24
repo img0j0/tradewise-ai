@@ -594,18 +594,65 @@
         }
         
         .logo {
-            font-size: 2.5rem;
+            font-size: 3rem;
             font-weight: 700;
-            margin-bottom: 2rem;
+            margin-bottom: 2.5rem;
             background: linear-gradient(45deg, #8b5cf6, #06b6d4);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
+
+        /* Desktop Enhancements */
+        @media (min-width: 1024px) {
+            .logo {
+                font-size: 3.5rem;
+                margin-bottom: 3rem;
+            }
+            
+            .search-box {
+                max-width: 800px;
+            }
+            
+            #search-input {
+                padding: 22px 70px 22px 25px;
+                font-size: 18px;
+            }
+            
+            #search-btn {
+                width: 60px;
+                height: 60px;
+                right: 5px;
+            }
+            
+            .analysis-content {
+                max-width: 1200px;
+                padding: 50px;
+            }
+        }
+
+        @media (min-width: 1440px) {
+            .search-container {
+                padding-top: 120px;
+            }
+            
+            .logo {
+                font-size: 4rem;
+            }
+            
+            .search-box {
+                max-width: 900px;
+            }
+            
+            .analysis-content {
+                max-width: 1400px;
+            }
+        }
         
         .search-box {
             width: 100%;
-            max-width: 600px;
+            max-width: 700px;
             position: relative;
+            margin: 0 auto;
         }
         
         #search-input {
@@ -644,7 +691,7 @@
             transform: translateY(-50%) scale(1.1);
         }
         
-        /* ChatGPT-Style Overlay */
+        /* ChatGPT-Style Overlay - Enhanced for Desktop */
         .analysis-overlay {
             position: fixed;
             top: 0;
@@ -659,6 +706,42 @@
             align-items: flex-start;
             overflow-y: auto;
             padding: 20px;
+        }
+
+        /* Desktop Keyboard Shortcuts Indicator */
+        .keyboard-shortcuts {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            padding: 15px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.85rem;
+            z-index: 1000;
+        }
+
+        .shortcut-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+
+        .shortcut-key {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+        }
+
+        /* Hide shortcuts on mobile */
+        @media (max-width: 768px) {
+            .keyboard-shortcuts {
+                display: none;
+            }
         }
         
         .analysis-content {
@@ -1227,6 +1310,22 @@
     <div class="notification-container" id="notificationContainer"></div>
     
     <div class="search-container">
+        <!-- Desktop Keyboard Shortcuts (hidden on mobile) -->
+        <div class="keyboard-shortcuts">
+            <div class="shortcut-item">
+                <span>Search</span>
+                <span class="shortcut-key">Enter</span>
+            </div>
+            <div class="shortcut-item">
+                <span>Quick Search</span>
+                <span class="shortcut-key">Ctrl+K</span>
+            </div>
+            <div class="shortcut-item">
+                <span>Close Overlay</span>
+                <span class="shortcut-key">Esc</span>
+            </div>
+        </div>
+
         <!-- Tools Menu -->
         <div class="tools-menu">
             <div class="tools-dropdown">
@@ -1758,6 +1857,31 @@
             `;
         }
         
+        // Desktop keyboard shortcuts for enhanced productivity
+        document.addEventListener('keydown', function(e) {
+            // Ctrl+K for quick search focus
+            if (e.ctrlKey && e.key === 'k') {
+                e.preventDefault();
+                const searchInput = document.getElementById('search-input');
+                if (searchInput) {
+                    searchInput.focus();
+                    searchInput.select();
+                }
+            }
+            
+            // Escape to close analysis overlay
+            if (e.key === 'Escape') {
+                const overlay = document.getElementById('ai-analysis-results');
+                if (overlay && overlay.style.display !== 'none') {
+                    if (typeof closeAnalysisOverlay === 'function') {
+                        closeAnalysisOverlay();
+                    } else {
+                        overlay.style.display = 'none';
+                    }
+                }
+            }
+        });
+
         // Clean, minimal search implementation with enhanced debugging
         const searchInputElement = document.getElementById('search-input');
         const searchButtonElement = document.getElementById('search-btn');
