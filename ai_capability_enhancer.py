@@ -547,6 +547,182 @@ class AICapabilityEnhancer:
         insight_count = len([v for v in insights.values() if v is not None])
         base_confidence = min(85, max(50, insight_count * 15))
         return base_confidence
+    
+    def _calculate_enhanced_confidence(self, enhanced_analysis: Dict) -> Dict:
+        """Calculate comprehensive AI confidence with reasoning"""
+        try:
+            # Count successful analysis components
+            components_completed = 0
+            total_components = 6
+            
+            if enhanced_analysis.get('market_intelligence'):
+                components_completed += 1
+            if enhanced_analysis.get('ai_predictions'):
+                components_completed += 1
+            if enhanced_analysis.get('opportunity_metrics'):
+                components_completed += 1
+            if enhanced_analysis.get('risk_intelligence'):
+                components_completed += 1
+            if enhanced_analysis.get('competitive_intelligence'):
+                components_completed += 1
+            if enhanced_analysis.get('current_price'):
+                components_completed += 1
+            
+            # Calculate base confidence
+            completion_rate = components_completed / total_components
+            base_confidence = completion_rate * 85
+            
+            # Adjust for data quality
+            data_quality_bonus = 0
+            if enhanced_analysis.get('current_price', 0) > 0:
+                data_quality_bonus += 5
+            if enhanced_analysis.get('market_cap', 0) > 0:
+                data_quality_bonus += 5
+            
+            final_confidence = min(95, base_confidence + data_quality_bonus)
+            
+            return {
+                'overall_confidence': round(final_confidence, 1),
+                'components_analyzed': components_completed,
+                'total_components': total_components,
+                'confidence_factors': [
+                    'Real-time market data integration',
+                    'Multi-layer AI analysis',
+                    'Risk assessment algorithms',
+                    'Opportunity detection models'
+                ],
+                'reasoning': f'Analysis completed {components_completed}/{total_components} components with {final_confidence:.1f}% confidence'
+            }
+            
+        except Exception as e:
+            logger.error(f"Confidence calculation failed: {e}")
+            return {
+                'overall_confidence': 70.0,
+                'components_analyzed': 'Unknown',
+                'reasoning': 'Standard confidence applied due to calculation error'
+            }
+    
+    def _calculate_volatility_risk(self, hist_data: pd.DataFrame) -> float:
+        """Calculate volatility-based risk score"""
+        try:
+            returns = hist_data['Close'].pct_change().dropna()
+            volatility = returns.std()
+            
+            if volatility > 0.05:
+                return 80
+            elif volatility > 0.03:
+                return 60
+            elif volatility > 0.02:
+                return 40
+            else:
+                return 25
+        except:
+            return 50
+    
+    def _calculate_liquidity_risk(self, hist_data: pd.DataFrame) -> float:
+        """Calculate liquidity risk score"""
+        try:
+            avg_volume = hist_data['Volume'].mean()
+            
+            if avg_volume < 100000:
+                return 80
+            elif avg_volume < 500000:
+                return 60
+            elif avg_volume < 1000000:
+                return 40
+            else:
+                return 20
+        except:
+            return 50
+    
+    def _calculate_market_risk(self, symbol: str, info: Dict) -> float:
+        """Calculate market-related risk"""
+        try:
+            market_cap = info.get('marketCap', 0)
+            
+            if market_cap < 1e9:
+                return 75  # Small cap higher risk
+            elif market_cap < 10e9:
+                return 55  # Mid cap moderate risk
+            else:
+                return 35  # Large cap lower risk
+        except:
+            return 50
+    
+    def _calculate_fundamental_risk(self, info: Dict) -> float:
+        """Calculate fundamental risk factors"""
+        try:
+            debt_to_equity = info.get('debtToEquity', 50)
+            current_ratio = info.get('currentRatio', 1.5)
+            
+            risk_score = 50
+            
+            if debt_to_equity and debt_to_equity > 100:
+                risk_score += 20
+            elif debt_to_equity and debt_to_equity > 50:
+                risk_score += 10
+            
+            if current_ratio and current_ratio < 1:
+                risk_score += 15
+            
+            return min(90, risk_score)
+        except:
+            return 50
+    
+    def _calculate_sentiment_risk(self, symbol: str) -> float:
+        """Calculate sentiment-based risk (simplified)"""
+        # In production, would analyze news sentiment, social media, etc.
+        return 50  # Neutral risk for now
+    
+    def _generate_risk_mitigation(self, risk_factors: Dict, user_strategy: str) -> List[str]:
+        """Generate risk mitigation suggestions"""
+        suggestions = []
+        
+        if risk_factors.get('volatility_risk', 50) > 70:
+            suggestions.append("Consider smaller position size due to high volatility")
+        
+        if risk_factors.get('liquidity_risk', 50) > 70:
+            suggestions.append("Be cautious with position size due to lower liquidity")
+        
+        if risk_factors.get('market_risk', 50) > 70:
+            suggestions.append("Consider diversification to reduce small-cap risk")
+        
+        if not suggestions:
+            suggestions.append("Standard risk management applies")
+        
+        return suggestions
+    
+    def _categorize_market_cap(self, market_cap: float) -> str:
+        """Categorize company by market cap"""
+        if market_cap > 200e9:
+            return 'Mega Cap'
+        elif market_cap > 10e9:
+            return 'Large Cap'
+        elif market_cap > 2e9:
+            return 'Mid Cap'
+        elif market_cap > 300e6:
+            return 'Small Cap'
+        else:
+            return 'Micro Cap'
+    
+    def _identify_competitive_advantages(self, info: Dict) -> List[str]:
+        """Identify potential competitive advantages"""
+        advantages = []
+        
+        # Based on available info data
+        if info.get('profitMargins', 0) > 0.2:
+            advantages.append('High Profit Margins')
+        
+        if info.get('returnOnEquity', 0) > 0.15:
+            advantages.append('Strong ROE')
+        
+        if info.get('revenueGrowth', 0) > 0.1:
+            advantages.append('Revenue Growth')
+        
+        if not advantages:
+            advantages.append('Analyzing competitive position')
+        
+        return advantages
 
 
 # Global enhancer instance
