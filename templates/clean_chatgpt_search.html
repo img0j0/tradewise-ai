@@ -20,16 +20,16 @@
     <script src="{{ url_for('static', filename='js/preference_display.js') }}" defer></script>
     
     <style>
-        /* Clean Robot Mascot - Properly Aligned */
+        /* Clean Robot Mascot - Single Implementation Only */
         .ai-robot-mascot {
-            position: absolute;
-            top: 160px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 60px;
-            height: 70px;
-            z-index: 500;
-            animation: robotFloat 3s ease-in-out infinite;
+            position: absolute !important;
+            top: 160px !important;
+            left: 50% !important;
+            transform: translateX(-50%) !important;
+            width: 60px !important;
+            height: 70px !important;
+            z-index: 500 !important;
+            animation: robotFloat 3s ease-in-out infinite !important;
         }
         
         .robot-head {
