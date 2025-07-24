@@ -1827,6 +1827,10 @@
         
         function showNotification(title, message, type = 'info', duration = 4000) {
             const container = document.getElementById('notificationContainer');
+            if (!container) {
+                console.error('❌ Notification container not found');
+                return;
+            }
             const id = ++notificationId;
             
             const notification = document.createElement('div');
@@ -1871,31 +1875,40 @@
             console.log('🔧 Content preview:', content ? content.substring(0, 100) + '...' : 'No content');
             
             const overlay = document.getElementById('analysis-overlay');
-            if (overlay) {
-                const analysisContent = overlay.querySelector('.analysis-content');
-                if (analysisContent) {
-                    // COMPLETELY replace the content structure for advanced search
-                    if (title && content) {
-                        console.log('🔧 Setting overlay content...');
-                        analysisContent.innerHTML = `
-                            <div class="close-btn" onclick="closeAnalysisOverlay()" style="position: absolute; top: 20px; right: 25px; width: 40px; height: 40px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: white; font-size: 18px; z-index: 1000;">×</div>
-                            <div style="padding: 60px 30px 30px 30px; max-width: 800px; width: 100%;">
-                                <h2 style="color: white; margin-bottom: 25px; font-size: 1.5rem; font-weight: 600;">${title}</h2>
-                                <div style="color: rgba(255,255,255,0.9);">${content}</div>
-                            </div>
-                        `;
-                        console.log('🔧 Content set successfully');
-                    }
-                }
-                overlay.style.display = 'flex';
-                console.log('✅ Analysis overlay shown with title:', title);
-                
-                // Force DOM refresh
-                overlay.offsetHeight;
-                
-            } else {
+            if (!overlay) {
                 console.error('❌ Analysis overlay element not found');
+                return;
             }
+            
+            const analysisContent = overlay.querySelector('.analysis-content');
+            if (!analysisContent) {
+                console.error('❌ Analysis content element not found');
+                return;
+            }
+            
+            // COMPLETELY replace the content structure for advanced search
+            if (title && content) {
+                console.log('🔧 Setting overlay content...');
+                try {
+                    analysisContent.innerHTML = `
+                        <div class="close-btn" onclick="closeAnalysisOverlay()" style="position: absolute; top: 20px; right: 25px; width: 40px; height: 40px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: white; font-size: 18px; z-index: 1000;">×</div>
+                        <div style="padding: 60px 30px 30px 30px; max-width: 800px; width: 100%;">
+                            <h2 style="color: white; margin-bottom: 25px; font-size: 1.5rem; font-weight: 600;">${title}</h2>
+                            <div style="color: rgba(255,255,255,0.9);">${content}</div>
+                        </div>
+                    `;
+                    console.log('🔧 Content set successfully');
+                } catch (error) {
+                    console.error('❌ Error setting innerHTML:', error);
+                    return;
+                }
+            }
+            
+            overlay.style.display = 'flex';
+            console.log('✅ Analysis overlay shown with title:', title);
+            
+            // Force DOM refresh
+            overlay.offsetHeight;
         }
         
         function closeAnalysisOverlay() {
@@ -1976,9 +1989,13 @@
         
         function searchQuick(symbol) {
             const searchInput = document.getElementById('search-input');
-            searchInput.value = symbol;
-            closeAnalysisOverlay();
-            performSearchAction();
+            if (searchInput) {
+                searchInput.value = symbol;
+                closeAnalysisOverlay();
+                performSearchAction();
+            } else {
+                console.error('❌ Search input element not found');
+            }
         }
         
         async function addToFavorites(symbol, companyName = '') {
@@ -1998,7 +2015,7 @@
                 
                 if (data.success) {
                     // Refresh the history display if it's open
-                    const overlay = document.getElementById('analysisOverlay');
+                    const overlay = document.getElementById('analysis-overlay');
                     if (overlay && overlay.style.display !== 'none') {
                         showSearchHistory();
                     }
@@ -2377,16 +2394,26 @@
         }
         
         async function performAdvancedSearchFixed() {
-            const query = document.getElementById('advancedSearchQuery').value.trim();
-            const sector = document.getElementById('sectorFilter').value;
-            const marketCap = document.getElementById('marketCapFilter').value;
-            const sortBy = document.getElementById('sortFilter').value;
+            const queryElement = document.getElementById('advancedSearchQuery');
+            const sectorElement = document.getElementById('sectorFilter');
+            const marketCapElement = document.getElementById('marketCapFilter');
+            const sortElement = document.getElementById('sortFilter');
             const resultsDiv = document.getElementById('advancedSearchResults');
             const searchBtn = document.getElementById('advancedSearchBtn');
             
+            if (!queryElement || !resultsDiv || !searchBtn) {
+                console.error('❌ Required advanced search elements not found');
+                return;
+            }
+            
+            const query = queryElement.value.trim();
+            const sector = sectorElement ? sectorElement.value : '';
+            const marketCap = marketCapElement ? marketCapElement.value : '';
+            const sortBy = sortElement ? sortElement.value : 'relevance';
+            
             if (!query || query.length < 2) {
                 showNotification('Please enter at least 2 characters to search', 'error');
-                document.getElementById('advancedSearchQuery').focus();
+                if (queryElement) queryElement.focus();
                 return;
             }
             
@@ -2444,6 +2471,10 @@
         
         function displayAdvancedSearchResultsFixed(results, filters, originalQuery) {
             const resultsDiv = document.getElementById('advancedSearchResults');
+            if (!resultsDiv) {
+                console.error('❌ Advanced search results element not found');
+                return;
+            }
             
             if (!results || results.length === 0) {
                 resultsDiv.innerHTML = `
