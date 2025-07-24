@@ -6106,17 +6106,10 @@
         }
     </script>
     
-    <!-- Robot Mascot JavaScript (optional - only if file exists) -->
+    <!-- Robot Mascot JavaScript disabled to prevent duplicate mascots -->
     <script>
-        // Only load robot mascot if file exists, don't break if missing
-        try {
-            const script = document.createElement('script');
-            script.src = "{{ url_for('static', filename='js/robot_mascot.js') }}";
-            script.onerror = function() { console.log('Robot mascot script not found - continuing without it'); };
-            document.head.appendChild(script);
-        } catch(e) {
-            console.log('Robot mascot initialization skipped');
-        }
+        // Robot mascot is handled by CSS only to prevent duplicate elements
+        console.log('Robot mascot using CSS-only implementation');
     </script>
     <!-- Enhanced Results Display -->
     <script src="{{ url_for('static', filename='js/enhanced_results.js') }}" defer onerror="console.log('Enhanced results script not found - continuing without it')"></script>
