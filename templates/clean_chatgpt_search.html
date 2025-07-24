@@ -29,7 +29,7 @@
             width: 60px !important;
             height: 70px !important;
             z-index: 500 !important;
-            animation: robotFloat 3s ease-in-out infinite !important;
+            animation: robotFloat 4s ease-in-out infinite !important;
         }
         
         .robot-head {
@@ -154,9 +154,16 @@
             font-size: 9px;
             font-weight: 600;
             opacity: 0;
-            animation: robotThought 6s ease-in-out infinite;
+            animation: robotThought 6s ease-in-out infinite, robotThoughtFloat 4s ease-in-out infinite;
             white-space: nowrap;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        @keyframes robotThoughtFloat {
+            0%, 100% { transform: translateX(-50%) translateY(0px); }
+            25% { transform: translateX(-50%) translateY(-3px); }
+            50% { transform: translateX(-50%) translateY(-5px); }
+            75% { transform: translateX(-50%) translateY(-2px); }
         }
         
         .robot-thought::after {
@@ -172,10 +179,12 @@
             border-top: 2px solid rgba(255, 255, 255, 0.9);
         }
         
-        /* Fresh Animations */
+        /* Enhanced Floating Animation for Character */
         @keyframes robotFloat {
             0%, 100% { transform: translateX(-50%) translateY(0px); }
-            50% { transform: translateX(-50%) translateY(-5px); }
+            25% { transform: translateX(-50%) translateY(-8px); }
+            50% { transform: translateX(-50%) translateY(-12px); }
+            75% { transform: translateX(-50%) translateY(-6px); }
         }
         
         @keyframes robotBlink {
