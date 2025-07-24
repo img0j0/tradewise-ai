@@ -6122,11 +6122,11 @@
     <script src="{{ url_for('static', filename='js/enhanced_results.js') }}" defer onerror="console.log('Enhanced results script not found - continuing without it')"></script>
     <!-- Main AI Stock Search -->
     <script>
-        // Load ai_stock_search.js with better error handling
+        // Load clean AI stock search module with error handling
         const aiScript = document.createElement('script');
-        aiScript.src = "{{ url_for('static', filename='js/ai_stock_search.js') }}";
+        aiScript.src = "{{ url_for('static', filename='js/ai_stock_search_clean.js') }}";
         aiScript.defer = true;
-        aiScript.onerror = () => console.log('ai_stock_search.js not available, using inline functions');
+        aiScript.onerror = () => console.log('AI search module not available, using inline functions');
         document.head.appendChild(aiScript);
     </script>
     <!-- Debug Test Functions -->
