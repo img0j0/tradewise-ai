@@ -454,7 +454,7 @@ class PremiumSearchEngine:
         elif sort_by == 'market_cap':
             return sorted(results, key=lambda x: x.get('market_cap_value', 0), reverse=True)
         else:  # relevance
-            score_key = 'ai_relevance_score' if 'ai_relevance_score' in results[0] if results else 'basic_relevance_score'
+            score_key = 'ai_relevance_score' if (results and 'ai_relevance_score' in results[0]) else 'basic_relevance_score'
             return sorted(results, key=lambda x: x.get(score_key, 0), reverse=True)
 
 # Global instance

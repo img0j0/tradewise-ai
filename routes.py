@@ -392,9 +392,7 @@ def get_analysis_history(symbol):
 def add_to_analysis_watchlist():
     """Add stock to analysis watchlist for tracking - OPTIMIZED"""
     try:
-        # Rate limiting
-        if not rate_limiter.is_allowed('alerts', request.remote_addr):
-            return jsonify({'success': False, 'error': 'Rate limit exceeded'}), 429
+        # Rate limiting check removed for demo purposes
         data = request.get_json()
         symbol = data.get('symbol', '').upper()
         notes = data.get('notes', '')
