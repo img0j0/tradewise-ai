@@ -1701,8 +1701,74 @@
         function selectSuggestion(symbol) {
             document.getElementById('search-input').value = symbol;
             hideSmartSuggestions();
+            hideAutocomplete();
             hideQuickActions();
             performSearchAction();
+        }
+        
+        async function fetchSearchSuggestions(query) {
+            try {
+                const response = await fetch(`/api/search/suggestions?q=${encodeURIComponent(query)}`);
+                const data = await response.json();
+                
+                if (data.success && data.suggestions.length > 0) {
+                    currentSuggestions = data.suggestions;
+                    showAutocomplete(data.suggestions);
+                } else {
+                    hideAutocomplete();
+                }
+            } catch (error) {
+                console.error('Error fetching search suggestions:', error);
+                hideAutocomplete();
+            }
+        }
+        
+        function showAutocomplete(suggestions) {
+            const dropdown = document.getElementById('autocompleteDropdown');
+            selectedSuggestionIndex = -1;
+            
+            if (suggestions.length === 0) {
+                dropdown.innerHTML = '<div class="autocomplete-empty">No stocks found</div>';
+            } else {
+                dropdown.innerHTML = suggestions.map((suggestion, index) => `
+                    <div class="autocomplete-item" data-index="${index}" onclick="selectAutocompleteItem('${suggestion.symbol}')">
+                        <div class="autocomplete-main">
+                            <div class="autocomplete-symbol">${suggestion.symbol}</div>
+                            <div class="autocomplete-name">${suggestion.name}</div>
+                        </div>
+                        <div class="autocomplete-sector">${suggestion.sector}</div>
+                    </div>
+                `).join('');
+            }
+            
+            dropdown.style.display = 'block';
+        }
+        
+        function hideAutocomplete() {
+            const dropdown = document.getElementById('autocompleteDropdown');
+            if (dropdown) {
+                dropdown.style.display = 'none';
+            }
+            selectedSuggestionIndex = -1;
+            currentSuggestions = [];
+        }
+        
+        function selectAutocompleteItem(symbol) {
+            const searchInput = document.getElementById('search-input');
+            searchInput.value = symbol;
+            hideAutocomplete();
+            performSearchAction();
+        }
+        
+        function updateSelectedSuggestion() {
+            const items = document.querySelectorAll('.autocomplete-item');
+            items.forEach((item, index) => {
+                if (index === selectedSuggestionIndex) {
+                    item.classList.add('selected');
+                } else {
+                    item.classList.remove('selected');
+                }
+            });
         }
         
         function showQuickActions() {
