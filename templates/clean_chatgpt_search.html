@@ -1542,6 +1542,10 @@
                 <span>📈</span>
                 <span>Top Movers</span>
             </div>
+            <div class="quick-action-btn" onclick="showSearchHistory()">
+                <span>📚</span>
+                <span>History</span>
+            </div>
             <div class="quick-action-btn" onclick="showMarketSummary()">
                 <span>🌐</span>
                 <span>Market Summary</span>
@@ -1853,10 +1857,23 @@
         }
         
         // Analysis overlay control functions
-        function showAnalysisOverlay() {
-            console.log('🔧 showAnalysisOverlay called');
+        function showAnalysisOverlay(title, content) {
+            console.log('🔧 showAnalysisOverlay called with title:', title);
             const overlay = document.getElementById('analysis-overlay');
             if (overlay) {
+                // Set the content if provided
+                if (title && content) {
+                    const analysisContent = overlay.querySelector('.analysis-content');
+                    if (analysisContent) {
+                        analysisContent.innerHTML = `
+                            <div class="close-btn" onclick="closeAnalysisOverlay()" style="position: absolute; top: 20px; right: 25px; width: 40px; height: 40px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: white; font-size: 18px; z-index: 1000;">×</div>
+                            <div style="padding: 60px 30px 30px 30px; max-width: 800px; width: 100%;">
+                                <h2 style="color: white; margin-bottom: 25px; font-size: 1.5rem; font-weight: 600;">${title}</h2>
+                                <div style="color: rgba(255,255,255,0.9);">${content}</div>
+                            </div>
+                        `;
+                    }
+                }
                 overlay.style.display = 'flex';
                 console.log('✅ Analysis overlay shown');
             } else {
@@ -1943,7 +1960,7 @@
         function searchQuick(symbol) {
             const searchInput = document.getElementById('search-input');
             searchInput.value = symbol;
-            hideAnalysisOverlay();
+            closeAnalysisOverlay();
             performSearchAction();
         }
         
