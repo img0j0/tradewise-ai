@@ -1347,53 +1347,9 @@ def update_account_profile():
         logger.error(f"Error updating account profile: {e}")
         return jsonify({'success': False, 'error': 'Failed to update profile'}), 500
 
-# Premium Routes
-@main_bp.route('/premium/upgrade')
-def premium_upgrade():
-    """Premium upgrade page with AI Trading Copilot demos"""
-    return render_template('premium_upgrade_new.html')
+# Premium upgrade route - removed duplicate, use premium_routes.py instead
 
-@main_bp.route('/create-checkout-session', methods=['POST'])
-def create_checkout_session():
-    """Create Stripe checkout session for premium subscription"""
-    try:
-        import stripe
-        import os
-        
-        stripe.api_key = os.environ.get('STRIPE_SECRET_KEY')
-        
-        # Get domain for redirect URLs
-        domain = os.environ.get('REPLIT_DEV_DOMAIN', 'localhost:5000')
-        if not domain.startswith('http'):
-            domain = f'https://{domain}' if 'replit' in domain else f'http://{domain}'
-        
-        checkout_session = stripe.checkout.Session.create(
-            line_items=[
-                {
-                    'price_data': {
-                        'currency': 'usd',
-                        'product_data': {
-                            'name': 'TradeWise AI Premium',
-                            'description': 'AI Trading Copilot with institutional-grade analysis tools',
-                        },
-                        'unit_amount': 1000,  # $10.00 in cents
-                        'recurring': {
-                            'interval': 'month',
-                        },
-                    },
-                    'quantity': 1,
-                },
-            ],
-            mode='subscription',
-            success_url=f'{domain}/payment/success',
-            cancel_url=f'{domain}/premium/upgrade',
-        )
-        
-        return jsonify({'checkout_url': checkout_session.url})
-        
-    except Exception as e:
-        logger.error(f"Error creating checkout session: {e}")
-        return jsonify({'error': 'Payment processing temporarily unavailable'}), 500
+# Removed duplicate create-checkout-session route - use premium_routes.py instead
 
 @main_bp.route('/payment/success')
 def payment_success():
