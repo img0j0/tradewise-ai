@@ -296,6 +296,28 @@ def get_symbol_mapping():
         'INTERNATIONAL BUSINESS MACHINES': 'IBM'
     }
 
+def get_stock_symbol(input_text):
+    """Convert company name to stock symbol or validate existing symbol"""
+    if not input_text:
+        return None
+    
+    # Convert to uppercase for mapping
+    input_upper = input_text.upper().strip()
+    
+    # Get the symbol mapping
+    mapping = get_symbol_mapping()
+    
+    # Check if it's a company name in our mapping
+    if input_upper in mapping:
+        return mapping[input_upper]
+    
+    # Check if it's already a valid stock symbol (basic validation)
+    if len(input_upper) <= 5 and input_upper.replace('.', '').replace('-', '').isalpha():
+        return input_upper
+    
+    # If not found, return the input as-is (let Yahoo Finance handle validation)
+    return input_upper
+
 def normalize_symbol(query):
     """
     Normalize user input to proper stock symbol

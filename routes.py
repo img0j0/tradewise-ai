@@ -1490,10 +1490,14 @@ def get_enhanced_ai_analysis():
     """Get enhanced AI analysis with all advanced capabilities"""
     try:
         data = request.get_json()
-        symbol = data.get('symbol', '').upper()
+        input_symbol = data.get('symbol', '').strip()
         
-        if not symbol:
+        if not input_symbol:
             return jsonify({'success': False, 'error': 'Symbol required'}), 400
+        
+        # Convert company name to stock symbol if needed
+        from symbol_mapper import get_stock_symbol
+        symbol = get_stock_symbol(input_symbol)
         
         # Get user strategy
         user_strategy = simple_personalization.get_user_strategy()
@@ -1538,7 +1542,9 @@ def get_enhanced_ai_analysis():
 def get_predictive_alerts(symbol):
     """Get AI-powered predictive alerts for a stock"""
     try:
-        symbol = symbol.upper()
+        # Convert company name to stock symbol if needed
+        from symbol_mapper import get_stock_symbol
+        symbol = get_stock_symbol(symbol)
         
         # Get stock data for prediction
         ticker = yf.Ticker(symbol)
