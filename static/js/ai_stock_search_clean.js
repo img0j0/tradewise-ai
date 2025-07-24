@@ -184,19 +184,32 @@ async function searchStockAI(inputSymbol = null) {
     
     try {
         console.log('Fetching stock data for:', symbol);
-        const response = await fetch(`/api/stock-analysis?query=${encodeURIComponent(symbol)}`);
+        const response = await fetch('/api/stock-analysis', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ symbol: symbol })
+        });
         const stockData = await response.json();
         
         if (!stockData || !stockData.success) {
             throw new Error(stockData?.error || 'Stock analysis failed');
         }
         
+        // Show analysis overlay and display results
+        const overlay = document.getElementById('analysis-overlay');
+        if (overlay) {
+            overlay.style.display = 'flex';
+        }
+        
         // Display results using the existing function from the template
         if (typeof displayResults === 'function') {
-            displayResults(stockData);
+            displayResults(stockData, symbol);
+            console.log('✅ Results displayed successfully');
         } else {
             console.log('Stock data received:', stockData);
-            alert(`Analysis complete for ${stockData.symbol}: ${stockData.recommendation}`);
+            showSimpleResults(stockData, symbol);
         }
         
     } catch (error) {
@@ -205,8 +218,39 @@ async function searchStockAI(inputSymbol = null) {
     }
 }
 
+// Simple results display fallback
+function showSimpleResults(data, symbol) {
+    const resultsContainer = document.getElementById('analysis-results');
+    if (resultsContainer) {
+        const analysis = data.analysis || data;
+        const stockInfo = data.stock_info || data;
+        
+        resultsContainer.innerHTML = `
+            <div style="padding: 20px; text-align: center;">
+                <h2>${symbol} Analysis</h2>
+                <div style="margin: 20px 0;">
+                    <div style="font-size: 1.5rem; margin: 10px 0;">
+                        Price: $${(stockInfo.price || 0).toFixed(2)}
+                    </div>
+                    <div style="font-size: 1.2rem; color: #8b5cf6;">
+                        Recommendation: ${analysis.recommendation || 'N/A'}
+                    </div>
+                    <div style="margin: 15px 0;">
+                        Confidence: ${analysis.confidence || 0}%
+                    </div>
+                </div>
+                <button onclick="document.getElementById('analysis-overlay').style.display='none'" 
+                        style="padding: 10px 20px; background: #8b5cf6; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                    Close
+                </button>
+            </div>
+        `;
+    }
+}
+
 // Make functions globally available
 window.searchStockAI = searchStockAI;
 window.selectSuggestion = selectSuggestion;
+window.showSimpleResults = showSimpleResults;
 
 console.log('AI Stock Search module loaded successfully');
