@@ -9,6 +9,7 @@ from enhanced_ai_explanations import get_enhanced_explanation
 from smart_event_alerts import get_smart_alerts
 from educational_insights import get_educational_insights
 from simple_personalization import simple_personalization
+from ai_capability_enhancer import enhance_analysis, get_live_opportunities, generate_deep_insights
 import yfinance as yf
 import logging
 import json
@@ -1454,6 +1455,163 @@ def clear_performance_cache():
     except Exception as e:
         logger.error(f'Error in cache operation: {e}')
         return jsonify({'success': False, 'error': str(e)}), 500
+
+# NEW AI CAPABILITY ENDPOINTS FOR ENHANCED FEATURES
+
+@main_bp.route('/api/ai/live-opportunities')
+@simple_rate_limit()
+def get_ai_opportunities():
+    """Get real-time AI-powered investment opportunities"""
+    try:
+        # Get user strategy from session
+        user_strategy = simple_personalization.get_user_strategy()
+        
+        # Get custom watchlist or use default
+        watchlist = request.args.get('watchlist', '').split(',') if request.args.get('watchlist') else None
+        watchlist = [s.strip().upper() for s in watchlist if s.strip()] if watchlist else None
+        
+        # Get live opportunities using AI
+        opportunities = get_live_opportunities(watchlist, user_strategy)
+        
+        return jsonify({
+            'success': True,
+            'opportunities': opportunities,
+            'user_strategy': user_strategy,
+            'scan_type': 'ai_powered'
+        })
+        
+    except Exception as e:
+        logger.error(f"Error getting AI opportunities: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@main_bp.route('/api/ai/enhanced-analysis', methods=['POST'])
+@simple_rate_limit()
+def get_enhanced_ai_analysis():
+    """Get enhanced AI analysis with all advanced capabilities"""
+    try:
+        data = request.get_json()
+        symbol = data.get('symbol', '').upper()
+        
+        if not symbol:
+            return jsonify({'success': False, 'error': 'Symbol required'}), 400
+        
+        # Get user strategy
+        user_strategy = simple_personalization.get_user_strategy()
+        
+        # Get base analysis first (using existing analysis logic)
+        ticker = yf.Ticker(symbol)
+        info = ticker.info
+        
+        if not info or not info.get('symbol'):
+            return jsonify({'success': False, 'error': 'Symbol not found'}), 404
+        
+        # Create base analysis
+        base_analysis = {
+            'symbol': symbol,
+            'company_name': info.get('longName', symbol),
+            'current_price': info.get('currentPrice') or info.get('regularMarketPrice', 0),
+            'price_change': info.get('regularMarketChange', 0),
+            'price_change_percent': info.get('regularMarketChangePercent', 0),
+            'volume': info.get('volume', 0),
+            'market_cap': info.get('marketCap', 0),
+            'sector': info.get('sector', 'Unknown'),
+            'industry': info.get('industry', 'Unknown')
+        }
+        
+        # Enhance with AI capabilities
+        enhanced_analysis = enhance_analysis(symbol, base_analysis, user_strategy)
+        
+        return jsonify({
+            'success': True,
+            'symbol': symbol,
+            'enhanced_analysis': enhanced_analysis,
+            'user_strategy': user_strategy,
+            'enhancement_timestamp': datetime.now().isoformat()
+        })
+        
+    except Exception as e:
+        logger.error(f"Error in enhanced AI analysis: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@main_bp.route('/api/ai/predictive-alerts/<symbol>')
+@simple_rate_limit()
+def get_predictive_alerts(symbol):
+    """Get AI-powered predictive alerts for a stock"""
+    try:
+        symbol = symbol.upper()
+        
+        # Get stock data for prediction
+        ticker = yf.Ticker(symbol)
+        hist = ticker.history(period="30d", interval="1d")
+        
+        if len(hist) < 5:
+            return jsonify({'success': False, 'error': 'Insufficient data for predictions'}), 400
+        
+        # Generate predictive alerts
+        current_price = hist['Close'].iloc[-1]
+        price_5d_ago = hist['Close'].iloc[-6] if len(hist) >= 6 else hist['Close'].iloc[0]
+        momentum = (current_price / price_5d_ago - 1) * 100
+        
+        # Calculate volatility
+        returns = hist['Close'].pct_change().dropna()
+        volatility = returns.std() * 100
+        
+        # Generate alerts based on AI analysis
+        alerts = []
+        
+        if momentum > 5 and volatility < 3:
+            alerts.append({
+                'type': 'momentum_continuation',
+                'message': f'{symbol} showing strong momentum ({momentum:.1f}%) with low volatility',
+                'action': 'Consider position entry',
+                'confidence': 75,
+                'urgency': 'Medium'
+            })
+        
+        if volatility > 5:
+            alerts.append({
+                'type': 'high_volatility',
+                'message': f'{symbol} experiencing high volatility ({volatility:.1f}%)',
+                'action': 'Monitor for breakout or breakdown',
+                'confidence': 80,
+                'urgency': 'High'
+            })
+        
+        # Volume analysis
+        current_volume = hist['Volume'].iloc[-1]
+        avg_volume = hist['Volume'].mean()
+        
+        if current_volume > avg_volume * 1.5:
+            alerts.append({
+                'type': 'volume_surge',
+                'message': f'{symbol} volume {current_volume/avg_volume:.1f}x above average',
+                'action': 'Watch for price movement',
+                'confidence': 70,
+                'urgency': 'Medium'
+            })
+        
+        return jsonify({
+            'success': True,
+            'symbol': symbol,
+            'alerts': alerts,
+            'current_metrics': {
+                'price': round(current_price, 2),
+                'momentum_5d': round(momentum, 2),
+                'volatility': round(volatility, 2),
+                'volume_ratio': round(current_volume/avg_volume, 1)
+            },
+            'prediction_timestamp': datetime.now().isoformat()
+        })
+        
+    except Exception as e:
+        logger.error(f"Error generating predictive alerts for {symbol}: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+# AI Demo Route
+@main_bp.route('/ai-demo')
+def ai_demo():
+    """Demo page for advanced AI capabilities"""
+    return render_template('ai_demo.html')
 
 # Create database tables
 with app.app_context():
