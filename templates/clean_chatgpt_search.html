@@ -2017,7 +2017,11 @@
             console.log('💡 DISPLAYRESULTS: Extracted stockInfo:', stockInfo);
             
             // Store current stock data for buy modal
-            currentStock = stockData;
+            // Store the stock data globally for other functions with symbol
+            currentStock = {
+                ...stockData,
+                symbol: symbol // Ensure symbol is available for alerts
+            };
             
             // Safe access to price change data with fallbacks
             const price = stockInfo.current_price || stockInfo.price || 0;
@@ -2187,7 +2191,9 @@
             }
             
             // Show simple alert first to test
-            alert(`Creating alert for ${currentStock.symbol} - ${currentStock.name}`);
+            const stockSymbol = currentStock.symbol || currentStock.name || 'Unknown Stock';
+            const stockName = currentStock.name || stockSymbol;
+            alert(`Creating alert for ${stockSymbol} - ${stockName}`);
             
             // Then proceed with API call
             createAlertWithAPI();
@@ -2561,14 +2567,15 @@
                 showToolOverlay('Smart Alerts', `
                     <div style="text-align: center; padding: 40px;">
                         <div class="spinner" style="margin: 0 auto 20px;"></div>
-                        <div>Loading AI alert suggestions for ${currentStock.symbol}...</div>
+                        <div>Loading AI alert suggestions for ${stockSymbol}...</div>
                     </div>
                 `);
                 
-                console.log('Fetching alert suggestions for:', currentStock.symbol);
+                const stockSymbol = currentStock.symbol || currentStock.name || 'UNKNOWN';
+                console.log('Fetching alert suggestions for:', stockSymbol);
                 
                 // Fetch alert suggestions with proper error handling and cache busting
-                const url = `/api/alerts/suggestions/${currentStock.symbol}?t=${Date.now()}`;
+                const url = `/api/alerts/suggestions/${stockSymbol}?t=${Date.now()}`;
                 console.log('Making fetch request to:', url);
                 
                 const response = await fetch(url, {
@@ -2628,11 +2635,11 @@
             
             let alertHTML = `
                 <div style="padding: 20px; max-height: 80vh; overflow-y: auto;">
-                    <h3 style="margin-bottom: 25px; text-align: center;">Smart Alerts for ${currentStock.symbol}</h3>
+                    <h3 style="margin-bottom: 25px; text-align: center;">Smart Alerts for ${stockSymbol}</h3>
                     
                     <div style="background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 15px; padding: 20px; margin-bottom: 25px; text-align: center;">
                         <div style="font-size: 1.1rem; font-weight: 600; margin-bottom: 10px; color: #8b5cf6;">🤖 AI-Powered Alert Suggestions</div>
-                        <div style="opacity: 0.8;">Current Price: $${currentStock.price.toFixed(2)} • Company: ${currentStock.name}</div>
+                        <div style="opacity: 0.8;">Current Price: $${(currentStock.price || 0).toFixed(2)} • Company: ${currentStock.name || stockSymbol}</div>
                     </div>
                     
                     <h4 style="margin-bottom: 20px;">Recommended Alerts:</h4>
@@ -5027,7 +5034,14 @@
     <!-- Enhanced Results Display -->
     <script src="{{ url_for('static', filename='js/enhanced_results.js') }}" defer></script>
     <!-- Main AI Stock Search -->
-    <script src="{{ url_for('static', filename='js/ai_stock_search.js') }}" defer></script>
+    <script>
+        // Load ai_stock_search.js with better error handling
+        const aiScript = document.createElement('script');
+        aiScript.src = "{{ url_for('static', filename='js/ai_stock_search.js') }}";
+        aiScript.defer = true;
+        aiScript.onerror = () => console.log('ai_stock_search.js not available, using inline functions');
+        document.head.appendChild(aiScript);
+    </script>
     <!-- Debug Test Functions -->
     <script src="{{ url_for('static', filename='js/debug_test.js') }}" defer></script>
 </body>
