@@ -2013,10 +2013,13 @@
         
         // Advanced Search functionality
         async function showAdvancedSearch() {
+            console.log('🔍 Advanced Search triggered');
             try {
                 // Get available filters
+                console.log('Fetching search filters...');
                 const filtersResponse = await fetch('/api/search/filters');
                 const filtersData = await filtersResponse.json();
+                console.log('Filters data received:', filtersData);
                 
                 if (!filtersData.success) {
                     throw new Error('Failed to load search filters');
