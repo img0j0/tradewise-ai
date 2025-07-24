@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Advanced Search Test</title>
+</head>
+<body>
+    <h1>Advanced Search Function Test</h1>
+    
+    <div id="analysis-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center;">
+        <div class="analysis-content" style="background: #1a1a2e; border-radius: 15px; padding: 30px; max-width: 900px; width: 90%; max-height: 90%; overflow-y: auto;">
+            <!-- Content will be populated here -->
+        </div>
+    </div>
+    
+    <button onclick="testAdvancedSearch()">Test Advanced Search</button>
+    
+    <script>
+        async function testAdvancedSearch() {
+            console.log('Testing advanced search...');
+            
+            try {
+                const filtersResponse = await fetch('/api/search/filters');
+                const filtersData = await filtersResponse.json();
+                console.log('Filters received:', filtersData);
+                
+                if (!filtersData.success) {
+                    throw new Error('Failed to load search filters');
+                }
+                
+                const filters = filtersData.filters;
+                
+                const content = `
+                    <div style="max-height: 500px; overflow-y: auto; padding: 20px;">
+                        <div style="margin-bottom: 25px;">
+                            <label style="display: block; color: #8b5cf6; font-weight: 600; margin-bottom: 8px; font-size: 0.95rem;">Search Query</label>
+                            <input type="text" id="advancedSearchQuery" placeholder="Enter stock symbol or company name..." style="width: 100%; padding: 12px 16px; border: 2px solid rgba(139, 92, 246, 0.3); border-radius: 10px; background: rgba(139, 92, 246, 0.1); color: #1f2937; font-size: 0.95rem;">
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px;">
+                            <div>
+                                <label style="display: block; color: #8b5cf6; font-weight: 600; margin-bottom: 8px; font-size: 0.95rem;">Sector</label>
+                                <select id="sectorFilter" style="width: 100%; padding: 12px 16px; border: 2px solid rgba(139, 92, 246, 0.3); border-radius: 10px; background: rgba(139, 92, 246, 0.1); color: #1f2937; font-size: 0.95rem;">
+                                    <option value="">All Sectors</option>
+                                    ${filters.sectors.map(sector => `<option value="${sector.value}">${sector.label} (${sector.count})</option>`).join('')}
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label style="display: block; color: #8b5cf6; font-weight: 600; margin-bottom: 8px; font-size: 0.95rem;">Market Cap</label>
+                                <select id="marketCapFilter" style="width: 100%; padding: 12px 16px; border: 2px solid rgba(139, 92, 246, 0.3); border-radius: 10px; background: rgba(139, 92, 246, 0.1); color: #1f2937; font-size: 0.95rem;">
+                                    <option value="">All Sizes</option>
+                                    ${filters.market_caps.map(cap => `<option value="${cap.value}">${cap.label} - ${cap.description}</option>`).join('')}
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-bottom: 25px;">
+                            <label style="display: block; color: #8b5cf6; font-weight: 600; margin-bottom: 8px; font-size: 0.95rem;">Sort Results By</label>
+                            <select id="sortFilter" style="width: 100%; padding: 12px 16px; border: 2px solid rgba(139, 92, 246, 0.3); border-radius: 10px; background: rgba(139, 92, 246, 0.1); color: #1f2937; font-size: 0.95rem;">
+                                ${filters.sort_options.map(sort => `<option value="${sort.value}">${sort.label}</option>`).join('')}
+                            </select>
+                        </div>
+                        
+                        <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                            <button onclick="closeOverlay()" style="padding: 12px 24px; background: rgba(255, 255, 255, 0.1); border: 2px solid rgba(255, 255, 255, 0.2); border-radius: 10px; color: white; cursor: pointer; font-size: 0.95rem;">
+                                Cancel
+                            </button>
+                            <button onclick="performSearch()" style="padding: 12px 24px; background: linear-gradient(135deg, #8b5cf6, #7c3aed); border: none; border-radius: 10px; color: white; cursor: pointer; font-weight: 600; font-size: 0.95rem;">
+                                🔍 Search
+                            </button>
+                        </div>
+                        
+                        <div id="searchResults" style="margin-top: 25px;"></div>
+                    </div>
+                `;
+                
+                console.log('Generated content length:', content.length);
+                
+                // Show overlay
+                const overlay = document.getElementById('analysis-overlay');
+                const analysisContent = overlay.querySelector('.analysis-content');
+                
+                analysisContent.innerHTML = `
+                    <div style="position: absolute; top: 20px; right: 25px; width: 40px; height: 40px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: white; font-size: 18px; z-index: 1000;" onclick="closeOverlay()">×</div>
+                    <div style="padding: 60px 30px 30px 30px; max-width: 800px; width: 100%;">
+                        <h2 style="color: white; margin-bottom: 25px; font-size: 1.5rem; font-weight: 600;">🔍 Advanced Stock Search</h2>
+                        <div style="color: rgba(255,255,255,0.9);">${content}</div>
+                    </div>
+                `;
+                
+                overlay.style.display = 'flex';
+                console.log('Overlay displayed successfully');
+                
+                // Test input focus
+                setTimeout(() => {
+                    const input = document.getElementById('advancedSearchQuery');
+                    if (input) {
+                        input.focus();
+                        console.log('Input found and focused');
+                    } else {
+                        console.error('Input not found');
+                    }
+                }, 100);
+                
+            } catch (error) {
+                console.error('Error in advanced search test:', error);
+            }
+        }
+        
+        function closeOverlay() {
+            document.getElementById('analysis-overlay').style.display = 'none';
+        }
+        
+        function performSearch() {
+            const query = document.getElementById('advancedSearchQuery').value;
+            const sector = document.getElementById('sectorFilter').value;
+            const marketCap = document.getElementById('marketCapFilter').value;
+            const sort = document.getElementById('sortFilter').value;
+            
+            console.log('Search params:', { query, sector, marketCap, sort });
+            alert(`Search would be performed with: ${query}, ${sector}, ${marketCap}, ${sort}`);
+        }
+    </script>
+</body>
+</html>
