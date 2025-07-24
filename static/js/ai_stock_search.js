@@ -398,13 +398,13 @@ function showBasicAnalysis(stockData) {
 async function searchStockData(symbol) {
     try {
         console.log(`Fetching comprehensive stock data for: ${symbol}`);
-        const response = await fetch('/api/stock-analysis', {
+        const response = await fetch('/api/ai/enhanced-analysis', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             credentials: 'include',
-            body: JSON.stringify({ query: symbol })
+            body: JSON.stringify({ symbol: symbol })
         });
         
         console.log(`Response status: ${response.status}`);
@@ -417,22 +417,52 @@ async function searchStockData(symbol) {
         }
         
         const data = await response.json();
-        console.log('🔍 COMPREHENSIVE STOCK DATA RECEIVED:', data);
-        console.log('🔍 Data structure check:');
-        console.log('🔍 - success:', data.success);
-        console.log('🔍 - current_price:', data.current_price);
-        console.log('🔍 - price_change:', data.price_change);
-        console.log('🔍 - price_change_percent:', data.price_change_percent);
-        console.log('🔍 - company_name:', data.company_name);
-        console.log('🔍 - symbol:', data.symbol);
-        console.log('Search results:', [data]);
+        console.log('🔍 ENHANCED AI ANALYSIS DATA RECEIVED:', data);
+        
+        if (!data.success) {
+            throw new Error(data.error || 'Analysis failed');
+        }
+        
+        // Extract enhanced analysis data
+        const enhancedAnalysis = data.enhanced_analysis;
+        console.log('🔍 Enhanced Analysis Keys:', Object.keys(enhancedAnalysis));
+        console.log('🔍 - AI Predictions:', enhancedAnalysis.ai_predictions);
+        console.log('🔍 - Risk Intelligence:', Object.keys(enhancedAnalysis.risk_intelligence || {}));
+        console.log('🔍 - Market Intelligence:', enhancedAnalysis.market_intelligence);
+        console.log('🔍 - Competitive Intelligence:', Object.keys(enhancedAnalysis.competitive_intelligence || {}));
+        
+        // Return formatted data structure for frontend with all enhanced AI data
+        const formattedData = {
+            symbol: data.symbol,
+            company_name: enhancedAnalysis.company_name,
+            current_price: enhancedAnalysis.current_price,
+            price_change: enhancedAnalysis.price_change,
+            price_change_percent: enhancedAnalysis.price_change_percent,
+            volume: enhancedAnalysis.volume,
+            market_cap: enhancedAnalysis.market_cap,
+            sector: enhancedAnalysis.sector,
+            industry: enhancedAnalysis.industry,
+            
+            // Enhanced AI data - THE GOOD STUFF!
+            ai_predictions: enhancedAnalysis.ai_predictions,
+            risk_intelligence: enhancedAnalysis.risk_intelligence,
+            market_intelligence: enhancedAnalysis.market_intelligence,
+            competitive_intelligence: enhancedAnalysis.competitive_intelligence,
+            opportunity_metrics: enhancedAnalysis.opportunity_metrics,
+            ai_confidence_detailed: enhancedAnalysis.ai_confidence_detailed,
+            
+            // User strategy
+            user_strategy: data.user_strategy
+        };
+        
+        console.log('🚀 ENHANCED AI DATA PREPARED FOR FRONTEND:', formattedData);
         
         // Validate response has required data
         if (!data.success) {
             throw new Error(data.error || 'Analysis failed');
         }
         
-        return data;
+        return formattedData;
     } catch (error) {
         console.error('🔍 SEARCH DATA ERROR FOUND:', error);
         console.error('🔍 Error type:', error.constructor?.name || 'Unknown');
@@ -704,18 +734,21 @@ function displayComprehensiveStockAnalysis(stockData) {
     window.scrollTo(0, 0);
 }
 
-// Build comprehensive analysis HTML using new API data structure
+// Build comprehensive analysis HTML using enhanced AI analysis data
 function buildComprehensiveAnalysisHTML(stockData) {
-    // Extract real-time data from comprehensive API response
-    const currentPrice = parseFloat(stockData.price || stockData.current_price || 0);
-    const change = parseFloat(stockData.change || 0);
-    const changePercent = parseFloat(stockData.change_percent || 0);
+    console.log('🏗️ Building comprehensive analysis HTML with:', stockData);
+    
+    // Extract real-time data from enhanced AI analysis
+    const currentPrice = parseFloat(stockData.current_price || 0);
+    const change = parseFloat(stockData.price_change || 0);
+    const changePercent = parseFloat(stockData.price_change_percent || 0);
     
     const changeColor = change >= 0 ? '#10b981' : '#ef4444';
     const changeSign = change >= 0 ? '+' : '';
     
-    // Get confidence level color
-    const confidence = parseInt(stockData.confidence || 50);
+    // Get AI confidence from enhanced analysis
+    const aiConfidence = stockData.ai_confidence_detailed || {};
+    const confidence = parseInt(aiConfidence.overall_confidence || 50);
     let confidenceColor = '#ef4444'; // Red for low confidence
     if (confidence > 70) confidenceColor = '#10b981'; // Green for high confidence
     else if (confidence > 40) confidenceColor = '#f59e0b'; // Yellow for medium confidence
@@ -789,10 +822,17 @@ function buildComprehensiveAnalysisHTML(stockData) {
                             <!-- Preference Personalization Indicators -->
                             ${generatePreferenceIndicatorDisplay(stockData)}
                             
-                            <!-- Key Insights -->
+                            <!-- Key Insights with AI Data -->
                             <div class="key-insights">
-                                <h5><i class="fas fa-chart-line"></i> Key Market Insights</h5>
+                                <h5><i class="fas fa-chart-line"></i> AI Market Insights</h5>
                                 <ul class="insights-list">
+                                    <li><i class="fas fa-brain"></i> AI Predictions: ${stockData.ai_predictions ? Object.keys(stockData.ai_predictions).length + ' predictions generated' : 'Analyzing...'}</li>
+                                    <li><i class="fas fa-shield-alt"></i> Risk Intelligence: ${stockData.risk_intelligence ? Object.keys(stockData.risk_intelligence).length + ' risk factors assessed' : 'Calculating...'}</li>
+                                    <li><i class="fas fa-chart-bar"></i> Market Intelligence: ${stockData.market_intelligence ? 'Real-time market conditions analyzed' : 'Loading...'}</li>
+                                    <li><i class="fas fa-crosshairs"></i> Competitive Intelligence: ${stockData.competitive_intelligence ? Object.keys(stockData.competitive_intelligence).length + ' competitors analyzed' : 'Researching...'}</li>
+                                    <li><i class="fas fa-star"></i> Investment Strategy: Optimized for ${stockData.user_strategy || 'Growth Investor'}</li>
+                                </ul>
+                            </div>
                                     ${(stockData.key_points || []).map(point => `<li><i class="fas fa-arrow-right"></i> ${point}</li>`).join('')}
                                     ${(!stockData.key_points || stockData.key_points.length === 0) ? '<li><i class="fas fa-info-circle"></i> Market conditions appear stable</li>' : ''}
                                 </ul>
@@ -890,6 +930,21 @@ function buildComprehensiveAnalysisHTML(stockData) {
                         Analysis Type: ${stockData.analysis_type || 'Live AI Analysis'}
                     </div>
                 </div>
+                
+                <!-- Enhanced AI Intelligence Sections -->
+                ${buildAIPredictionsSection(stockData)}
+                ${buildRiskIntelligenceSection(stockData)}
+                ${buildCompetitiveIntelligenceSection(stockData)}
+                ${buildMarketIntelligenceSection(stockData)}
+                ${buildOpportunityMetricsSection(stockData)}
+                
+                <!-- Close Button -->
+                <div class="close-overlay" onclick="closeAnalysisOverlay()">
+                    <i class="fas fa-times"></i> Close Analysis
+                </div>
+            </div>
+        </div>
+    `;
                 
                 <!-- Close Button -->
                 <button class="close-results" onclick="closeSearchResults()">
