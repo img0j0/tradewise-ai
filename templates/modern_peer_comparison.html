@@ -7,64 +7,83 @@
 
 {% block content %}
 <div class="py-8">
-    <!-- Header -->
-    <div class="mb-8">
-        <h1 class="text-3xl font-bold text-gray-900">
-            <i class="fas fa-balance-scale text-brand-blue mr-3"></i>
-            Peer Comparison Analysis
-        </h1>
-        <p class="text-gray-600 mt-2">Compare stocks against industry peers and benchmarks</p>
+    <!-- Header - Enhanced -->
+    <div class="layout-container content-section">
+        <div class="space-y-enhanced">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-gradient-to-r from-brand-blue to-brand-purple rounded-xl flex items-center justify-center">
+                    <i class="fas fa-balance-scale text-white text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-headline text-gray-900">
+                        Peer Comparison Analysis
+                    </h1>
+                    <p class="text-body-large text-gray-600 mt-1">
+                        Compare stocks against industry peers and benchmarks with comprehensive financial metrics
+                    </p>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- Premium Feature Lock (for Free users) -->
-    <div class="premium-lock-overlay" id="peer-comparison-lock">
-        <div class="saas-card text-center p-8">
+    <!-- Premium Feature Lock (for Free users) - Enhanced -->
+    <div class="layout-container content-section">
+        <div class="premium-lock-overlay" id="peer-comparison-lock">
+            <div class="enhanced-card text-center p-12 max-w-4xl mx-auto">
             <div class="premium-lock-icon mb-4">
                 <i class="fas fa-crown text-6xl text-gold-500"></i>
             </div>
-            <h3 class="text-2xl font-bold text-gray-900 mb-3">Peer Comparison Analysis</h3>
-            <p class="text-gray-600 mb-6 max-w-md mx-auto">
-                Get comprehensive peer analysis, industry benchmarks, and competitive positioning insights
+            <h3 class="text-title text-gray-900 mb-4">Peer Comparison Analysis</h3>
+            <p class="text-body-large text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed">
+                Get comprehensive peer analysis, industry benchmarks, and competitive positioning insights to make informed investment decisions
             </p>
             
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8 text-left max-w-2xl mx-auto">
-                <div class="flex items-start gap-3">
-                    <i class="fas fa-chart-line text-brand-blue mt-1"></i>
+            <div class="grid-2-enhanced mb-10 text-left max-w-3xl mx-auto">
+                <div class="flex items-start gap-4 p-4 bg-blue-50 rounded-lg">
+                    <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
+                        <i class="fas fa-chart-line text-white text-sm"></i>
+                    </div>
                     <div>
-                        <div class="font-semibold text-gray-900">Industry Benchmarks</div>
-                        <div class="text-sm text-gray-600">Compare against sector averages</div>
+                        <div class="font-semibold text-gray-900 text-body">Industry Benchmarks</div>
+                        <div class="text-body-small text-gray-600 mt-1">Compare against sector averages and industry leaders</div>
                     </div>
                 </div>
-                <div class="flex items-start gap-3">
-                    <i class="fas fa-trophy text-brand-purple mt-1"></i>
+                <div class="flex items-start gap-4 p-4 bg-purple-50 rounded-lg">
+                    <div class="w-8 h-8 bg-purple-500 rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
+                        <i class="fas fa-trophy text-white text-sm"></i>
+                    </div>
                     <div>
-                        <div class="font-semibold text-gray-900">Competitive Ranking</div>
-                        <div class="text-sm text-gray-600">See how stocks rank vs peers</div>
+                        <div class="font-semibold text-gray-900 text-body">Competitive Ranking</div>
+                        <div class="text-body-small text-gray-600 mt-1">See how stocks rank vs peers in key metrics</div>
                     </div>
                 </div>
-                <div class="flex items-start gap-3">
-                    <i class="fas fa-calculator text-green-600 mt-1"></i>
+                <div class="flex items-start gap-4 p-4 bg-green-50 rounded-lg">
+                    <div class="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
+                        <i class="fas fa-calculator text-white text-sm"></i>
+                    </div>
                     <div>
-                        <div class="font-semibold text-gray-900">Financial Ratios</div>
-                        <div class="text-sm text-gray-600">P/E, ROE, margins comparison</div>
+                        <div class="font-semibold text-gray-900 text-body">Financial Ratios</div>
+                        <div class="text-body-small text-gray-600 mt-1">P/E, ROE, margins and profitability comparison</div>
                     </div>
                 </div>
-                <div class="flex items-start gap-3">
-                    <i class="fas fa-search text-blue-600 mt-1"></i>
+                <div class="flex items-start gap-4 p-4 bg-indigo-50 rounded-lg">
+                    <div class="w-8 h-8 bg-indigo-500 rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
+                        <i class="fas fa-search text-white text-sm"></i>
+                    </div>
                     <div>
-                        <div class="font-semibold text-gray-900">Deep Analysis</div>
-                        <div class="text-sm text-gray-600">AI-powered peer insights</div>
+                        <div class="font-semibold text-gray-900 text-body">Deep Analysis</div>
+                        <div class="text-body-small text-gray-600 mt-1">AI-powered peer insights and recommendations</div>
                     </div>
                 </div>
             </div>
             
-            <a href="/premium/upgrade" class="premium-upgrade-btn">
+            <a href="/premium/upgrade" class="btn-primary-enhanced inline-flex items-center mt-2">
                 <i class="fas fa-crown mr-2"></i>
                 Upgrade to Pro
             </a>
             
-            <p class="text-sm text-gray-500 mt-4">
-                Starting at $29.99/month • Cancel anytime
+            <p class="text-body-small text-gray-500 mt-6">
+                Starting at $29.99/month • Cancel anytime • 7-day free trial
             </p>
         </div>
     </div>

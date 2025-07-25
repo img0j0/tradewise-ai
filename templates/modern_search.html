@@ -6,62 +6,67 @@
 {% block sidebar_search %}active{% endblock %}
 
 {% block content %}
-    <!-- Search Hero Section -->
-    <div class="text-center mb-12">
-        <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mb-6">
-            <span class="bg-gradient-to-r from-brand-blue to-brand-purple bg-clip-text text-transparent">Smart Stock Search</span>
-        </h1>
-        <p class="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-            Get instant AI-powered analysis on any stock with real-time data and professional insights.
-        </p>
+    <!-- Search Hero Section - Enhanced -->
+    <div class="layout-container content-section text-center">
+        <div class="space-y-enhanced max-w-4xl mx-auto">
+            <h1 class="text-display text-gray-800">
+                <span class="bg-gradient-to-r from-brand-blue to-brand-purple bg-clip-text text-transparent">Smart Stock Search</span>
+            </h1>
+            <p class="text-body-large text-gray-600 max-w-3xl mx-auto leading-relaxed">
+                Get instant AI-powered analysis on any stock with real-time data, professional insights, and comprehensive market intelligence to make informed investment decisions.
+            </p>
+        </div>
     </div>
-        <div class="grid md:grid-cols-2 gap-6 mb-12 max-w-4xl mx-auto">
+    <!-- Search Tools Section - Enhanced Layout -->
+    <div class="layout-container content-section">
+        <div class="grid-2-enhanced max-w-5xl mx-auto">
             <!-- Recent Searches -->
-            <div class="saas-card">
-                <div class="saas-card-header">
-                    <div class="flex items-center gap-3">
-                        <i class="fas fa-history saas-card-icon"></i>
-                        <h3 class="saas-card-title">Recent Searches</h3>
+            <div class="enhanced-card">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-history text-white text-sm"></i>
                     </div>
+                    <h3 class="text-subtitle text-gray-900">Recent Searches</h3>
                 </div>
                 
-                <div id="recent-searches" class="space-y-2">
-                    <div class="text-sm text-gray-500 text-center py-4">
-                        No recent searches yet
+                <div id="recent-searches" class="space-y-tight">
+                    <div class="text-body-small text-gray-500 text-center py-6 bg-gray-50 rounded-lg">
+                        No recent searches yet. Start by searching for a stock symbol or company name.
                     </div>
                 </div>
             </div>
 
             <!-- Starred Stocks -->
-            <div class="saas-card">
-                <div class="saas-card-header">
-                    <div class="flex items-center gap-3">
-                        <i class="fas fa-star saas-card-icon"></i>
-                        <h3 class="saas-card-title">Starred Stocks</h3>
+            <div class="enhanced-card">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-10 h-10 bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-star text-white text-sm"></i>
                     </div>
+                    <h3 class="text-subtitle text-gray-900">Starred Stocks</h3>
                 </div>
                 
-                <div id="starred-stocks" class="space-y-2">
-                    <div class="text-sm text-gray-500 text-center py-4">
-                        No starred stocks yet
+                <div id="starred-stocks" class="space-y-tight">
+                    <div class="text-body-small text-gray-500 text-center py-6 bg-gray-50 rounded-lg">
+                        No starred stocks yet. Star your favorite stocks for quick access.
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Search Results Container -->
+    <!-- Search Results Container - Enhanced -->
+    <div class="layout-container content-section">
         <div id="search-results" class="hidden">
-            <div class="saas-card">
-                <div class="saas-card-header">
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center gap-3">
-                            <i class="fas fa-chart-bar saas-card-icon"></i>
-                            <h3 class="saas-card-title">Analysis Results</h3>
+            <div class="enhanced-card">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-gradient-to-r from-green-500 to-green-600 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-chart-bar text-white text-sm"></i>
                         </div>
-                        <button onclick="closeResults()" class="text-gray-400 hover:text-gray-600">
-                            <i class="fas fa-times text-lg"></i>
-                        </button>
+                        <h3 class="text-subtitle text-gray-900">Analysis Results</h3>
                     </div>
+                    <button onclick="closeResults()" class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors focus-enhanced">
+                        <i class="fas fa-times text-lg"></i>
+                    </button>
                 </div>
                 
                 <div id="analysis-content">
@@ -69,52 +74,59 @@
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- Loading State -->
+    <!-- Loading State - Enhanced -->
+    <div class="layout-container content-section">
         <div id="loading-state" class="hidden">
-            <div class="saas-card text-center py-12">
+            <div class="enhanced-card text-center py-16 max-w-2xl mx-auto">
                 <div class="animate-pulse">
-                    <div class="w-16 h-16 bg-gradient-to-r from-brand-blue to-brand-purple rounded-2xl mx-auto mb-4 flex items-center justify-center">
+                    <div class="w-20 h-20 bg-gradient-to-r from-brand-blue to-brand-purple rounded-2xl mx-auto mb-6 flex items-center justify-center">
                         <i class="fas fa-brain text-white text-2xl"></i>
                     </div>
-                    <h3 class="saas-heading-3 mb-2">AI Analysis in Progress</h3>
-                    <p class="text-gray-600">Processing market data and generating insights...</p>
+                    <h3 class="text-subtitle mb-4">AI Analysis in Progress</h3>
+                    <p class="text-body text-gray-600 max-w-md mx-auto">
+                        Processing market data and generating comprehensive insights with real-time analysis...
+                    </p>
+                    <div class="loading-spinner mx-auto mt-6"></div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- Trending Stocks -->
-        <div class="saas-card max-w-4xl mx-auto">
-            <div class="saas-card-header">
-                <div class="flex items-center gap-3">
-                    <i class="fas fa-fire saas-card-icon"></i>
-                    <h3 class="saas-card-title">Trending Stocks</h3>
+    <!-- Trending Stocks - Enhanced -->
+    <div class="layout-container content-section">
+        <div class="enhanced-card max-w-5xl mx-auto">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-10 h-10 bg-gradient-to-r from-red-500 to-orange-500 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-fire text-white text-sm"></i>
                 </div>
+                <h3 class="text-subtitle text-gray-900">Trending Stocks</h3>
             </div>
             
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <button onclick="SearchManager.search('AAPL')" class="p-4 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors text-left">
-                    <div class="font-semibold text-gray-800">AAPL</div>
-                    <div class="text-sm text-gray-600">Apple Inc.</div>
-                    <div class="text-sm text-green-600">+2.4%</div>
+            <div class="grid-4-enhanced">
+                <button onclick="SearchManager.search('AAPL')" class="p-5 bg-gray-50 hover:bg-white rounded-xl transition-all hover:shadow-md border border-gray-100 hover:border-gray-200 text-left focus-enhanced">
+                    <div class="font-semibold text-gray-900 text-body">AAPL</div>
+                    <div class="text-body-small text-gray-600 mt-1">Apple Inc.</div>
+                    <div class="text-body-small text-green-600 font-medium mt-2">+2.4%</div>
                 </button>
                 
-                <button onclick="SearchManager.search('TSLA')" class="p-4 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors text-left">
-                    <div class="font-semibold text-gray-800">TSLA</div>
-                    <div class="text-sm text-gray-600">Tesla, Inc.</div>
-                    <div class="text-sm text-green-600">+5.1%</div>
+                <button onclick="SearchManager.search('TSLA')" class="p-5 bg-gray-50 hover:bg-white rounded-xl transition-all hover:shadow-md border border-gray-100 hover:border-gray-200 text-left focus-enhanced">
+                    <div class="font-semibold text-gray-900 text-body">TSLA</div>
+                    <div class="text-body-small text-gray-600 mt-1">Tesla, Inc.</div>
+                    <div class="text-body-small text-green-600 font-medium mt-2">+5.1%</div>
                 </button>
                 
-                <button onclick="SearchManager.search('NVDA')" class="p-4 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors text-left">
-                    <div class="font-semibold text-gray-800">NVDA</div>
-                    <div class="text-sm text-gray-600">NVIDIA Corp.</div>
-                    <div class="text-sm text-green-600">+3.8%</div>
+                <button onclick="SearchManager.search('NVDA')" class="p-5 bg-gray-50 hover:bg-white rounded-xl transition-all hover:shadow-md border border-gray-100 hover:border-gray-200 text-left focus-enhanced">
+                    <div class="font-semibold text-gray-900 text-body">NVDA</div>
+                    <div class="text-body-small text-gray-600 mt-1">NVIDIA Corp.</div>
+                    <div class="text-body-small text-green-600 font-medium mt-2">+3.8%</div>
                 </button>
                 
-                <button onclick="SearchManager.search('MSFT')" class="p-4 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors text-left">
-                    <div class="font-semibold text-gray-800">MSFT</div>
-                    <div class="text-sm text-gray-600">Microsoft Corp.</div>
-                    <div class="text-sm text-green-600">+1.9%</div>
+                <button onclick="SearchManager.search('MSFT')" class="p-5 bg-gray-50 hover:bg-white rounded-xl transition-all hover:shadow-md border border-gray-100 hover:border-gray-200 text-left focus-enhanced">
+                    <div class="font-semibold text-gray-900 text-body">MSFT</div>
+                    <div class="text-body-small text-gray-600 mt-1">Microsoft Corp.</div>
+                    <div class="text-body-small text-red-600 font-medium mt-2">-1.2%</div>
                 </button>
             </div>
         </div>

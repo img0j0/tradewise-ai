@@ -6,18 +6,23 @@
 {% block sidebar_dashboard %}active{% endblock %}
 
 {% block content %}
-    <!-- Dashboard Header -->
-    <div class="mb-8">
-        <h1 class="text-3xl font-bold text-gray-900">
-            Welcome back, <span class="text-brand-blue">John</span>
-        </h1>
-        <p class="text-gray-600 mt-2">Here's your portfolio overview and market insights</p>
+    <!-- Dashboard Header - Enhanced -->
+    <div class="layout-container content-section">
+        <div class="space-y-enhanced">
+            <h1 class="text-headline text-gray-900">
+                Welcome back, <span class="text-brand-blue">Trader</span>
+            </h1>
+            <p class="text-body-large text-gray-600 max-w-2xl">
+                Here's your portfolio overview and AI-powered market insights to help you make informed investment decisions
+            </p>
+        </div>
     </div>
 
-    <!-- Main Dashboard Cards -->
-    <div class="desktop-grid mb-8">
-        <!-- Portfolio Overview Card -->
-        <div class="dashboard-card saas-card">
+    <!-- Main Dashboard Cards - Enhanced Layout -->
+    <div class="layout-container">
+        <div class="grid-3-enhanced">
+            <!-- Portfolio Overview Card -->
+            <div class="enhanced-card">
             <div class="dashboard-card-header">
                 <div class="flex items-center justify-between">
                     <h3 class="dashboard-card-title">
@@ -48,48 +53,47 @@
         </div>
 
         <!-- AI Insights Card -->
-        <div class="dashboard-card saas-card">
-            <div class="dashboard-card-header">
-                <div class="flex items-center justify-between">
-                    <h3 class="dashboard-card-title">
-                        <i class="fas fa-brain text-brand-purple mr-2"></i>
-                        AI Insights
-                    </h3>
-                    <a href="/search" class="text-brand-blue hover:text-brand-purple text-sm font-medium">View All</a>
+        <div class="enhanced-card">
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-brain text-white text-sm"></i>
+                    </div>
+                    <h3 class="text-subtitle text-gray-900">AI Insights</h3>
                 </div>
+                <a href="/search" class="text-brand-blue hover:text-brand-purple text-body-small font-medium">View All</a>
             </div>
-            <div class="dashboard-card-content">
-                <div id="ai-insights" class="space-y-3">
-                    <div class="flex items-start gap-3 p-3 bg-green-50 rounded-lg border border-green-100">
-                        <div class="flex-shrink-0">
-                            <i class="fas fa-arrow-up text-green-600"></i>
+            <div id="ai-insights" class="space-y-enhanced">
+                    <div class="flex items-start gap-4 p-4 bg-green-50 rounded-xl border border-green-100">
+                        <div class="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-arrow-up text-white text-sm"></i>
                         </div>
                         <div class="flex-1">
-                            <div class="font-semibold text-green-800 text-sm">Strong Buy Signal</div>
-                            <div class="text-green-600 text-xs mt-1">NVDA showing bullish momentum with strong earnings</div>
-                            <a href="/search?symbol=NVDA" class="text-green-700 hover:text-green-800 text-xs font-medium mt-1 inline-block">Analyze →</a>
+                            <div class="font-semibold text-green-800 text-body">Strong Buy Signal</div>
+                            <div class="text-green-600 text-body-small mt-1">NVDA showing bullish momentum with strong earnings performance</div>
+                            <a href="/search?symbol=NVDA" class="text-green-700 hover:text-green-800 text-body-small font-medium mt-2 inline-block">Analyze →</a>
                         </div>
                     </div>
                     
-                    <div class="flex items-start gap-3 p-3 bg-yellow-50 rounded-lg border border-yellow-100">
-                        <div class="flex-shrink-0">
-                            <i class="fas fa-exclamation-triangle text-yellow-600"></i>
+                    <div class="flex items-start gap-4 p-4 bg-yellow-50 rounded-xl border border-yellow-100">
+                        <div class="w-8 h-8 bg-yellow-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-exclamation-triangle text-white text-sm"></i>
                         </div>
                         <div class="flex-1">
-                            <div class="font-semibold text-yellow-800 text-sm">Risk Alert</div>
-                            <div class="text-yellow-600 text-xs mt-1">Tech sector volatility increasing - monitor positions</div>
-                            <a href="/search?sector=technology" class="text-yellow-700 hover:text-yellow-800 text-xs font-medium mt-1 inline-block">Analyze →</a>
+                            <div class="font-semibold text-yellow-800 text-body">Risk Alert</div>
+                            <div class="text-yellow-600 text-body-small mt-1">Tech sector volatility increasing - monitor positions carefully</div>
+                            <a href="/search?sector=technology" class="text-yellow-700 hover:text-yellow-800 text-body-small font-medium mt-2 inline-block">Analyze →</a>
                         </div>
                     </div>
 
-                    <div class="flex items-start gap-3 p-3 bg-blue-50 rounded-lg border border-blue-100">
-                        <div class="flex-shrink-0">
-                            <i class="fas fa-lightbulb text-blue-600"></i>
+                    <div class="flex items-start gap-4 p-4 bg-blue-50 rounded-xl border border-blue-100">
+                        <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-lightbulb text-white text-sm"></i>
                         </div>
                         <div class="flex-1">
-                            <div class="font-semibold text-blue-800 text-sm">Opportunity</div>
-                            <div class="text-blue-600 text-xs mt-1">Dividend aristocrats showing value opportunities</div>
-                            <a href="/search?strategy=dividend" class="text-blue-700 hover:text-blue-800 text-xs font-medium mt-1 inline-block">Analyze →</a>
+                            <div class="font-semibold text-blue-800 text-body">Opportunity</div>
+                            <div class="text-blue-600 text-body-small mt-1">Dividend aristocrats showing value opportunities this quarter</div>
+                            <a href="/search?strategy=dividend" class="text-blue-700 hover:text-blue-800 text-body-small font-medium mt-2 inline-block">Analyze →</a>
                         </div>
                     </div>
                 </div>
@@ -97,32 +101,35 @@
         </div>
 
         <!-- Market Highlights Card -->
-        <div class="dashboard-card">
-            <div class="dashboard-card-header">
-                <div class="flex items-center justify-between">
-                    <h3 class="dashboard-card-title">
-                        <i class="fas fa-globe text-brand-blue mr-2"></i>
-                        Market Highlights
-                    </h3>
-                    <div class="text-xs text-gray-500">Live</div>
+        <div class="enhanced-card">
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-gradient-to-r from-green-500 to-emerald-600 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-globe text-white text-sm"></i>
+                    </div>
+                    <h3 class="text-subtitle text-gray-900">Market Highlights</h3>
+                </div>
+                <div class="flex items-center gap-2">
+                    <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                    <span class="text-body-small text-gray-500">Live</span>
                 </div>
             </div>
-            <div class="dashboard-card-content">
-                <!-- Market Indices -->
-                <div class="mb-4">
-                    <h4 class="text-sm font-semibold text-gray-700 mb-2">Major Indices</h4>
-                    <div id="market-indices" class="space-y-2">
-                        <div class="flex justify-between items-center">
-                            <span class="text-sm">S&P 500</span>
-                            <span class="text-green-600 font-medium text-sm">+0.8%</span>
+            <!-- Market Indices -->
+            <div class="content-spacing">
+                <div>
+                    <h4 class="text-body font-semibold text-gray-700 mb-4">Major Indices</h4>
+                    <div id="market-indices" class="space-y-tight">
+                        <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                            <span class="text-body text-gray-900 font-medium">S&P 500</span>
+                            <span class="status-positive">+0.8%</span>
                         </div>
-                        <div class="flex justify-between items-center">
-                            <span class="text-sm">NASDAQ</span>
-                            <span class="text-green-600 font-medium text-sm">+1.2%</span>
+                        <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                            <span class="text-body text-gray-900 font-medium">NASDAQ</span>
+                            <span class="status-positive">+1.2%</span>
                         </div>
-                        <div class="flex justify-between items-center">
-                            <span class="text-sm">Dow Jones</span>
-                            <span class="text-red-600 font-medium text-sm">-0.3%</span>
+                        <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                            <span class="text-body text-gray-900 font-medium">Dow Jones</span>
+                            <span class="status-negative">-0.3%</span>
                         </div>
                     </div>
                 </div>

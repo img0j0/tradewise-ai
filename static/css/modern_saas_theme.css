@@ -103,13 +103,11 @@ body {
   margin: 0;
   padding: 0;
 }
-  --gray-900: #f9fafb;
-  
   --gradient-subtle: linear-gradient(135deg, #1f2937, #111827);
   --gradient-card: linear-gradient(135deg, #1f2937, #374151);
 }
 
-/* Global Styles */
+/* Global Styles - Enhanced for Better Readability */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -120,9 +118,12 @@ body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   background: var(--gradient-subtle);
   color: var(--gray-800);
-  line-height: 1.6;
+  line-height: 1.7; /* Improved line height for better readability */
   font-size: var(--font-size-base);
+  font-weight: 400; /* Explicit font weight */
+  letter-spacing: -0.01em; /* Slight negative letter spacing for better text density */
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   -moz-osx-font-smoothing: grayscale;
 }
 
