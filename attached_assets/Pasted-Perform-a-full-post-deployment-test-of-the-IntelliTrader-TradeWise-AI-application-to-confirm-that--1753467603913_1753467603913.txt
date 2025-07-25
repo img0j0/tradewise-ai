@@ -1,0 +1,40 @@
+Perform a full post-deployment test of the IntelliTrader (TradeWise AI) application to confirm that all systems are functioning and the patches have been applied successfully.
+
+1. Health & Core Endpoint Tests
+	•	Call /api/health and expect a 200 OK with valid JSON.
+	•	Call /api/market/overview and /api/market/movers and confirm data is returned.
+	•	Check /api/search/suggestions?query=AAPL and /api/search/enhanced?query=TSLA for proper results.
+	•	Call /api/ai/live-opportunities to ensure the AI engine is operational.
+
+2. Premium Access Validation
+	•	Attempt to hit a premium endpoint (e.g., /premium/api/subscription/status) without authentication → Expect 401 Unauthorized.
+	•	Authenticate as a non-premium user and call the same endpoint → Expect 403 Premium subscription required.
+	•	Authenticate as a premium user and call:
+	•	/premium/api/subscription/status
+	•	/premium/api/portfolio/optimization
+	•	/premium/api/market/scanner
+→ Expect valid responses and confirm @premium_required is enforced.
+
+3. Payment System Verification
+	•	Confirm SESSION_COOKIE_SECURE = True and Samesite settings are applied on all responses.
+	•	If Stripe webhooks are enabled:
+	•	Trigger a test webhook from the Stripe dashboard and ensure it is properly verified (signature validation).
+	•	Confirm that subscription status updates correctly after the webhook event.
+
+4. Redundancy & File Check
+	•	Confirm the following files are removed or archived:
+	•	routes_search_enhancement.py
+	•	test_advanced_search.html
+	•	Inspect routes.py and ensure no duplicate premium endpoints remain (they should only be in premium_routes.py).
+
+5. AI Engine & Strategy Builder Validation
+	•	Call /api/stock-analysis with a valid symbol (e.g., AAPL) and ensure the AI analysis returns a structured response.
+	•	Create a sample strategy via /api/investment-strategy and confirm it saves properly.
+	•	Restart the application and verify the AI model and created strategy persist (check storage or DB entries).
+
+6. Final Report
+	•	Generate a final summary that includes:
+	•	Pass/fail status for each test step.
+	•	Any errors or regressions found.
+	•	Confirmation of session security and Stripe webhook validation.
+	•	Verification that redundant files and endpoints were cleaned up.
