@@ -1,0 +1,473 @@
+# Grafana Deployment for TradeWise AI Dashboards
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-config
+  namespace: tradewise-ai
+  labels:
+    app: grafana
+data:
+  grafana.ini: |
+    [analytics]
+    check_for_updates = true
+
+    [grafana_net]
+    url = https://grafana.net
+
+    [log]
+    mode = console
+
+    [paths]
+    data = /var/lib/grafana/data
+    logs = /var/log/grafana
+    plugins = /var/lib/grafana/plugins
+    provisioning = /etc/grafana/provisioning
+
+    [server]
+    domain = localhost
+    http_port = 3000
+    root_url = %(protocol)s://%(domain)s:%(http_port)s/
+
+    [security]
+    admin_user = admin
+    admin_password = tradewise_grafana_admin
+
+    [users]
+    allow_sign_up = false
+
+  datasources.yaml: |
+    apiVersion: 1
+    datasources:
+    - name: Prometheus
+      type: prometheus
+      access: proxy
+      url: http://prometheus-service:9090
+      isDefault: true
+
+  dashboards.yaml: |
+    apiVersion: 1
+    providers:
+    - name: 'default'
+      orgId: 1
+      folder: ''
+      type: file
+      disableDeletion: false
+      updateIntervalSeconds: 10
+      allowUiUpdates: true
+      options:
+        path: /var/lib/grafana/dashboards
+
+---
+# Grafana Dashboards ConfigMap
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboards
+  namespace: tradewise-ai
+  labels:
+    app: grafana
+data:
+  tradewise-api-dashboard.json: |
+    {
+      "dashboard": {
+        "id": null,
+        "title": "TradeWise AI - API Performance",
+        "tags": ["tradewise", "api"],
+        "timezone": "browser",
+        "panels": [
+          {
+            "id": 1,
+            "title": "Request Rate",
+            "type": "stat",
+            "targets": [
+              {
+                "expr": "rate(flask_request_total[5m])",
+                "legendFormat": "Requests/sec"
+              }
+            ],
+            "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0}
+          },
+          {
+            "id": 2,
+            "title": "Response Time Percentiles",
+            "type": "graph",
+            "targets": [
+              {
+                "expr": "histogram_quantile(0.50, rate(flask_request_duration_seconds_bucket[5m]))",
+                "legendFormat": "p50"
+              },
+              {
+                "expr": "histogram_quantile(0.90, rate(flask_request_duration_seconds_bucket[5m]))",
+                "legendFormat": "p90"
+              },
+              {
+                "expr": "histogram_quantile(0.99, rate(flask_request_duration_seconds_bucket[5m]))",
+                "legendFormat": "p99"
+              }
+            ],
+            "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0},
+            "yAxes": [
+              {
+                "label": "Seconds",
+                "min": 0
+              }
+            ]
+          },
+          {
+            "id": 3,
+            "title": "Error Rate",
+            "type": "stat",
+            "targets": [
+              {
+                "expr": "rate(flask_request_exceptions_total[5m]) / rate(flask_request_total[5m]) * 100",
+                "legendFormat": "Error %"
+              }
+            ],
+            "gridPos": {"h": 8, "w": 8, "x": 0, "y": 8},
+            "fieldConfig": {
+              "defaults": {
+                "unit": "percent",
+                "thresholds": {
+                  "steps": [
+                    {"color": "green", "value": 0},
+                    {"color": "yellow", "value": 1},
+                    {"color": "red", "value": 5}
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "id": 4,
+            "title": "Active Pods",
+            "type": "stat",
+            "targets": [
+              {
+                "expr": "count(up{job=\"tradewise-api\"} == 1)",
+                "legendFormat": "Active Pods"
+              }
+            ],
+            "gridPos": {"h": 8, "w": 8, "x": 8, "y": 8}
+          },
+          {
+            "id": 5,
+            "title": "Cache Hit Rate",
+            "type": "stat",
+            "targets": [
+              {
+                "expr": "tradewise_cache_hit_rate * 100",
+                "legendFormat": "Hit Rate %"
+              }
+            ],
+            "gridPos": {"h": 8, "w": 8, "x": 16, "y": 8},
+            "fieldConfig": {
+              "defaults": {
+                "unit": "percent",
+                "thresholds": {
+                  "steps": [
+                    {"color": "red", "value": 0},
+                    {"color": "yellow", "value": 50},
+                    {"color": "green", "value": 70}
+                  ]
+                }
+              }
+            }
+          }
+        ],
+        "time": {
+          "from": "now-1h",
+          "to": "now"
+        },
+        "refresh": "30s"
+      }
+    }
+
+  tradewise-workers-dashboard.json: |
+    {
+      "dashboard": {
+        "id": null,
+        "title": "TradeWise AI - Workers & Queue",
+        "tags": ["tradewise", "workers"],
+        "timezone": "browser",
+        "panels": [
+          {
+            "id": 1,
+            "title": "Task Queue Depth",
+            "type": "graph",
+            "targets": [
+              {
+                "expr": "tradewise_task_queue_length",
+                "legendFormat": "Queue Depth"
+              }
+            ],
+            "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0}
+          },
+          {
+            "id": 2,
+            "title": "Worker CPU Usage",
+            "type": "graph",
+            "targets": [
+              {
+                "expr": "rate(container_cpu_usage_seconds_total{pod=~\"tradewise-worker.*\"}[5m]) * 100",
+                "legendFormat": "{{ pod }}"
+              }
+            ],
+            "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0},
+            "yAxes": [
+              {
+                "label": "CPU %",
+                "max": 100,
+                "min": 0
+              }
+            ]
+          },
+          {
+            "id": 3,
+            "title": "Active Workers",
+            "type": "stat",
+            "targets": [
+              {
+                "expr": "count(up{job=\"tradewise-workers\"} == 1)",
+                "legendFormat": "Active Workers"
+              }
+            ],
+            "gridPos": {"h": 8, "w": 8, "x": 0, "y": 8}
+          },
+          {
+            "id": 4,
+            "title": "Task Success Rate",
+            "type": "stat",
+            "targets": [
+              {
+                "expr": "rate(tradewise_tasks_completed_total[5m]) / rate(tradewise_tasks_total[5m]) * 100",
+                "legendFormat": "Success %"
+              }
+            ],
+            "gridPos": {"h": 8, "w": 8, "x": 8, "y": 8}
+          },
+          {
+            "id": 5,
+            "title": "Worker Memory Usage",
+            "type": "graph",
+            "targets": [
+              {
+                "expr": "container_memory_usage_bytes{pod=~\"tradewise-worker.*\"} / 1024 / 1024",
+                "legendFormat": "{{ pod }}"
+              }
+            ],
+            "gridPos": {"h": 8, "w": 8, "x": 16, "y": 8},
+            "yAxes": [
+              {
+                "label": "Memory (MB)"
+              }
+            ]
+          }
+        ],
+        "time": {
+          "from": "now-1h",
+          "to": "now"
+        },
+        "refresh": "30s"
+      }
+    }
+
+  tradewise-infrastructure-dashboard.json: |
+    {
+      "dashboard": {
+        "id": null,
+        "title": "TradeWise AI - Infrastructure",
+        "tags": ["tradewise", "infrastructure"],
+        "timezone": "browser",
+        "panels": [
+          {
+            "id": 1,
+            "title": "Database Status",
+            "type": "stat",
+            "targets": [
+              {
+                "expr": "up{job=\"postgres\"}",
+                "legendFormat": "Database Up"
+              }
+            ],
+            "gridPos": {"h": 8, "w": 8, "x": 0, "y": 0}
+          },
+          {
+            "id": 2,
+            "title": "Redis Status",
+            "type": "stat",
+            "targets": [
+              {
+                "expr": "up{job=\"redis\"}",
+                "legendFormat": "Redis Up"
+              }
+            ],
+            "gridPos": {"h": 8, "w": 8, "x": 8, "y": 0}
+          },
+          {
+            "id": 3,
+            "title": "Pod Restarts",
+            "type": "graph",
+            "targets": [
+              {
+                "expr": "increase(kube_pod_container_status_restarts_total{namespace=\"tradewise-ai\"}[1h])",
+                "legendFormat": "{{ pod }}"
+              }
+            ],
+            "gridPos": {"h": 8, "w": 8, "x": 16, "y": 0}
+          },
+          {
+            "id": 4,
+            "title": "Cluster CPU Usage",
+            "type": "graph",
+            "targets": [
+              {
+                "expr": "100 - (avg by (instance) (rate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)",
+                "legendFormat": "{{ instance }}"
+              }
+            ],
+            "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8}
+          },
+          {
+            "id": 5,
+            "title": "Cluster Memory Usage",
+            "type": "graph",
+            "targets": [
+              {
+                "expr": "(1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100",
+                "legendFormat": "{{ instance }}"
+              }
+            ],
+            "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8}
+          }
+        ],
+        "time": {
+          "from": "now-1h",
+          "to": "now"
+        },
+        "refresh": "30s"
+      }
+    }
+
+---
+# Grafana Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grafana-deployment
+  namespace: tradewise-ai
+  labels:
+    app: grafana
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: grafana
+  template:
+    metadata:
+      labels:
+        app: grafana
+    spec:
+      containers:
+      - name: grafana
+        image: grafana/grafana:10.0.0
+        ports:
+        - containerPort: 3000
+          name: grafana
+        env:
+        - name: GF_SECURITY_ADMIN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: grafana-secrets
+              key: admin-password
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+        volumeMounts:
+        - name: grafana-config
+          mountPath: /etc/grafana/grafana.ini
+          subPath: grafana.ini
+        - name: grafana-config
+          mountPath: /etc/grafana/provisioning/datasources/datasources.yaml
+          subPath: datasources.yaml
+        - name: grafana-config
+          mountPath: /etc/grafana/provisioning/dashboards/dashboards.yaml
+          subPath: dashboards.yaml
+        - name: grafana-dashboards
+          mountPath: /var/lib/grafana/dashboards
+        - name: grafana-storage
+          mountPath: /var/lib/grafana
+        livenessProbe:
+          httpGet:
+            path: /api/health
+            port: 3000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /api/health
+            port: 3000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+      volumes:
+      - name: grafana-config
+        configMap:
+          name: grafana-config
+      - name: grafana-dashboards
+        configMap:
+          name: grafana-dashboards
+      - name: grafana-storage
+        persistentVolumeClaim:
+          claimName: grafana-storage-pvc
+
+---
+# Grafana Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana-service
+  namespace: tradewise-ai
+  labels:
+    app: grafana
+spec:
+  type: ClusterIP
+  ports:
+  - port: 3000
+    targetPort: 3000
+    protocol: TCP
+    name: grafana
+  selector:
+    app: grafana
+
+---
+# Grafana Secrets
+apiVersion: v1
+kind: Secret
+metadata:
+  name: grafana-secrets
+  namespace: tradewise-ai
+  labels:
+    app: grafana
+type: Opaque
+stringData:
+  admin-password: "tradewise_grafana_secure_password"
+
+---
+# Grafana Storage PVC
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: grafana-storage-pvc
+  namespace: tradewise-ai
+  labels:
+    app: grafana
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: fast-ssd

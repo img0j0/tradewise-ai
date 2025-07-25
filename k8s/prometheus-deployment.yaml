@@ -1,0 +1,411 @@
+# Prometheus Deployment for TradeWise AI Monitoring
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-config
+  namespace: tradewise-ai
+  labels:
+    app: prometheus
+data:
+  prometheus.yml: |
+    global:
+      scrape_interval: 15s
+      evaluation_interval: 15s
+      external_labels:
+        cluster: 'tradewise-ai'
+        environment: 'production'
+
+    rule_files:
+      - "/etc/prometheus/rules/*.yml"
+
+    alerting:
+      alertmanagers:
+        - static_configs:
+            - targets:
+              - alertmanager-service:9093
+
+    scrape_configs:
+      # Prometheus self-monitoring
+      - job_name: 'prometheus'
+        static_configs:
+          - targets: ['localhost:9090']
+
+      # TradeWise AI API pods
+      - job_name: 'tradewise-api'
+        kubernetes_sd_configs:
+          - role: pod
+            namespaces:
+              names:
+                - tradewise-ai
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_pod_label_app]
+            action: keep
+            regex: tradewise-api
+          - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+            action: keep
+            regex: true
+          - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+            action: replace
+            target_label: __metrics_path__
+            regex: (.+)
+          - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
+            action: replace
+            regex: ([^:]+)(?::\d+)?;(\d+)
+            replacement: $1:$2
+            target_label: __address__
+
+      # TradeWise AI Workers
+      - job_name: 'tradewise-workers'
+        kubernetes_sd_configs:
+          - role: pod
+            namespaces:
+              names:
+                - tradewise-ai
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_pod_label_app]
+            action: keep
+            regex: tradewise-worker|tradewise-precompute
+          - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+            action: keep
+            regex: true
+
+      # Redis metrics
+      - job_name: 'redis'
+        kubernetes_sd_configs:
+          - role: pod
+            namespaces:
+              names:
+                - tradewise-ai
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_pod_label_app]
+            action: keep
+            regex: redis
+
+      # PostgreSQL metrics
+      - job_name: 'postgres'
+        kubernetes_sd_configs:
+          - role: pod
+            namespaces:
+              names:
+                - tradewise-ai
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_pod_label_app]
+            action: keep
+            regex: postgres
+
+      # Kubernetes cluster metrics
+      - job_name: 'kubernetes-apiservers'
+        kubernetes_sd_configs:
+          - role: endpoints
+        scheme: https
+        tls_config:
+          ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+        bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_namespace, __meta_kubernetes_service_name, __meta_kubernetes_endpoint_port_name]
+            action: keep
+            regex: default;kubernetes;https
+
+      # Kubernetes nodes
+      - job_name: 'kubernetes-nodes'
+        kubernetes_sd_configs:
+          - role: node
+        scheme: https
+        tls_config:
+          ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+        bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+        relabel_configs:
+          - action: labelmap
+            regex: __meta_kubernetes_node_label_(.+)
+
+      # Kubernetes pods
+      - job_name: 'kubernetes-pods'
+        kubernetes_sd_configs:
+          - role: pod
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+            action: keep
+            regex: true
+          - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+            action: replace
+            target_label: __metrics_path__
+            regex: (.+)
+          - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
+            action: replace
+            regex: ([^:]+)(?::\d+)?;(\d+)
+            replacement: $1:$2
+            target_label: __address__
+          - action: labelmap
+            regex: __meta_kubernetes_pod_label_(.+)
+
+---
+# Prometheus Rules ConfigMap
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-rules
+  namespace: tradewise-ai
+  labels:
+    app: prometheus
+data:
+  tradewise-alerts.yml: |
+    groups:
+    - name: tradewise.api
+      rules:
+      - alert: HighErrorRate
+        expr: rate(flask_request_exceptions_total[5m]) / rate(flask_request_total[5m]) > 0.05
+        for: 2m
+        labels:
+          severity: critical
+          service: tradewise-api
+        annotations:
+          summary: "High error rate detected"
+          description: "Error rate is {{ $value | humanizePercentage }} for 2 minutes"
+
+      - alert: HighLatency
+        expr: histogram_quantile(0.99, rate(flask_request_duration_seconds_bucket[5m])) > 1.0
+        for: 5m
+        labels:
+          severity: warning
+          service: tradewise-api
+        annotations:
+          summary: "High response latency"
+          description: "99th percentile latency is {{ $value }}s"
+
+      - alert: APIPodsDown
+        expr: up{job="tradewise-api"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: tradewise-api
+        annotations:
+          summary: "API pods are down"
+          description: "{{ $labels.instance }} has been down for more than 1 minute"
+
+    - name: tradewise.workers
+      rules:
+      - alert: TaskQueueBacklog
+        expr: tradewise_task_queue_length > 50
+        for: 5m
+        labels:
+          severity: warning
+          service: tradewise-workers
+        annotations:
+          summary: "Task queue backlog"
+          description: "Task queue has {{ $value }} pending tasks"
+
+      - alert: WorkerHighCPU
+        expr: rate(container_cpu_usage_seconds_total{pod=~"tradewise-worker.*"}[5m]) > 0.8
+        for: 10m
+        labels:
+          severity: warning
+          service: tradewise-workers
+        annotations:
+          summary: "Worker high CPU usage"
+          description: "Worker {{ $labels.pod }} CPU usage is {{ $value | humanizePercentage }}"
+
+    - name: tradewise.infrastructure
+      rules:
+      - alert: DatabaseDown
+        expr: up{job="postgres"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: postgres
+        annotations:
+          summary: "Database is down"
+          description: "PostgreSQL database has been down for more than 1 minute"
+
+      - alert: RedisDown
+        expr: up{job="redis"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: redis
+        annotations:
+          summary: "Redis is down"
+          description: "Redis cache has been down for more than 1 minute"
+
+      - alert: LowCacheHitRate
+        expr: tradewise_cache_hit_rate < 0.5
+        for: 10m
+        labels:
+          severity: warning
+          service: redis
+        annotations:
+          summary: "Low cache hit rate"
+          description: "Cache hit rate is {{ $value | humanizePercentage }}"
+
+      - alert: HighMemoryUsage
+        expr: container_memory_usage_bytes / container_spec_memory_limit_bytes > 0.9
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High memory usage"
+          description: "Pod {{ $labels.pod }} memory usage is {{ $value | humanizePercentage }}"
+
+      - alert: PodCrashLooping
+        expr: increase(kube_pod_container_status_restarts_total{namespace="tradewise-ai"}[15m]) > 0
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Pod is crash looping"
+          description: "Pod {{ $labels.pod }} has restarted {{ $value }} times in the last 15 minutes"
+
+---
+# Prometheus Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus-deployment
+  namespace: tradewise-ai
+  labels:
+    app: prometheus
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prometheus
+  template:
+    metadata:
+      labels:
+        app: prometheus
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9090"
+    spec:
+      serviceAccountName: prometheus-service-account
+      containers:
+      - name: prometheus
+        image: prom/prometheus:v2.45.0
+        args:
+          - '--config.file=/etc/prometheus/prometheus.yml'
+          - '--storage.tsdb.path=/prometheus/'
+          - '--web.console.libraries=/etc/prometheus/console_libraries'
+          - '--web.console.templates=/etc/prometheus/consoles'
+          - '--storage.tsdb.retention.time=30d'
+          - '--web.enable-lifecycle'
+          - '--web.enable-admin-api'
+        ports:
+        - containerPort: 9090
+          name: prometheus
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "200m"
+          limits:
+            memory: "2Gi"
+            cpu: "1000m"
+        volumeMounts:
+        - name: prometheus-config
+          mountPath: /etc/prometheus/
+        - name: prometheus-rules
+          mountPath: /etc/prometheus/rules/
+        - name: prometheus-storage
+          mountPath: /prometheus/
+        livenessProbe:
+          httpGet:
+            path: /-/healthy
+            port: 9090
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /-/ready
+            port: 9090
+          initialDelaySeconds: 5
+          periodSeconds: 5
+      volumes:
+      - name: prometheus-config
+        configMap:
+          name: prometheus-config
+      - name: prometheus-rules
+        configMap:
+          name: prometheus-rules
+      - name: prometheus-storage
+        persistentVolumeClaim:
+          claimName: prometheus-storage-pvc
+
+---
+# Prometheus Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus-service
+  namespace: tradewise-ai
+  labels:
+    app: prometheus
+spec:
+  type: ClusterIP
+  ports:
+  - port: 9090
+    targetPort: 9090
+    protocol: TCP
+    name: prometheus
+  selector:
+    app: prometheus
+
+---
+# Prometheus ServiceAccount
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: prometheus-service-account
+  namespace: tradewise-ai
+
+---
+# Prometheus ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: prometheus-cluster-role
+rules:
+- apiGroups: [""]
+  resources:
+  - nodes
+  - nodes/proxy
+  - services
+  - endpoints
+  - pods
+  verbs: ["get", "list", "watch"]
+- apiGroups:
+  - extensions
+  resources:
+  - ingresses
+  verbs: ["get", "list", "watch"]
+- nonResourceURLs: ["/metrics"]
+  verbs: ["get"]
+
+---
+# Prometheus ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: prometheus-cluster-role-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: prometheus-cluster-role
+subjects:
+- kind: ServiceAccount
+  name: prometheus-service-account
+  namespace: tradewise-ai
+
+---
+# Prometheus Storage PVC
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: prometheus-storage-pvc
+  namespace: tradewise-ai
+  labels:
+    app: prometheus
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 50Gi
+  storageClassName: fast-ssd

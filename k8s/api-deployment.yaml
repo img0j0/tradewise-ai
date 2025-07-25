@@ -21,6 +21,10 @@ spec:
         app: tradewise-api
         tier: api
         component: web
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "5000"
+        prometheus.io/path: "/api/performance/stats"
     spec:
       containers:
       - name: tradewise-api
@@ -67,6 +71,10 @@ spec:
         - containerPort: 5000
           name: http
           protocol: TCP
+        annotations:
+          prometheus.io/scrape: "true"
+          prometheus.io/port: "5000"
+          prometheus.io/path: "/api/performance/stats"
         resources:
           requests:
             memory: "512Mi"

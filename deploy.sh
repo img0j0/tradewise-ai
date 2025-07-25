@@ -182,14 +182,35 @@ deploy_ingress() {
 
 # Deploy monitoring
 deploy_monitoring() {
-    log_info "Deploying monitoring (optional)..."
+    log_info "Deploying observability stack..."
     
+    # Deploy Prometheus
+    kubectl apply -f k8s/prometheus-deployment.yaml
+    log_info "Prometheus deployed"
+    
+    # Deploy Grafana
+    kubectl apply -f k8s/grafana-deployment.yaml
+    log_info "Grafana deployed"
+    
+    # Deploy Alertmanager
+    kubectl apply -f k8s/alertmanager-deployment.yaml
+    log_info "Alertmanager deployed"
+    
+    # Deploy ServiceMonitors (if Prometheus Operator available)
     if kubectl api-resources | grep -q servicemonitors; then
-        kubectl apply -f k8s/monitoring.yaml
-        log_success "Monitoring deployed"
+        kubectl apply -f k8s/servicemonitor.yaml
+        log_info "ServiceMonitors deployed"
     else
-        log_warning "Prometheus operator not found, skipping monitoring deployment"
+        log_warning "Prometheus operator not found, skipping ServiceMonitors"
     fi
+    
+    # Wait for monitoring stack to be ready
+    log_info "Waiting for monitoring stack to be ready..."
+    kubectl wait --for=condition=available --timeout=300s deployment/prometheus-deployment -n $NAMESPACE
+    kubectl wait --for=condition=available --timeout=300s deployment/grafana-deployment -n $NAMESPACE
+    kubectl wait --for=condition=available --timeout=300s deployment/alertmanager-deployment -n $NAMESPACE
+    
+    log_success "Observability stack deployed successfully"
 }
 
 # Initialize database
@@ -241,6 +262,12 @@ verify_deployment() {
     fi
     
     kill $PF_PID 2>/dev/null || true
+    
+    # Show monitoring access info
+    log_info "Monitoring stack access:"
+    echo "Prometheus: kubectl port-forward -n $NAMESPACE service/prometheus-service 9090:9090"
+    echo "Grafana: kubectl port-forward -n $NAMESPACE service/grafana-service 3000:3000"
+    echo "Alertmanager: kubectl port-forward -n $NAMESPACE service/alertmanager-service 9093:9093"
 }
 
 # Rollback function

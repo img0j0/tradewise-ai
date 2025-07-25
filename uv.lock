@@ -1364,6 +1364,15 @@ wheels = [
 ]
 
 [[package]]
+name = "prometheus-client"
+version = "0.22.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/5e/cf/40dde0a2be27cc1eb41e333d1a674a74ce8b8b0457269cc640fd42b07cf7/prometheus_client-0.22.1.tar.gz", hash = "sha256:190f1331e783cf21eb60bca559354e0a4d4378facecf78f5428c39b675d20d28", size = 69746 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/32/ae/ec06af4fe3ee72d16973474f122541746196aaa16cea6f66d18b963c6177/prometheus_client-0.22.1-py3-none-any.whl", hash = "sha256:cca895342e308174341b2cbf99a56bef291fbc0ef7b9e5412a0f26d653ba7094", size = 58694 },
+]
+
+[[package]]
 name = "protobuf"
 version = "6.31.1"
 source = { registry = "https://pypi.org/simple" }
@@ -1739,6 +1748,7 @@ dependencies = [
     { name = "oauthlib" },
     { name = "openai" },
     { name = "pandas" },
+    { name = "prometheus-client" },
     { name = "psutil" },
     { name = "psycopg2-binary" },
     { name = "pyjwt" },
@@ -1749,6 +1759,7 @@ dependencies = [
     { name = "scikit-learn" },
     { name = "scipy" },
     { name = "seaborn" },
+    { name = "setuptools" },
     { name = "sqlalchemy" },
     { name = "stripe" },
     { name = "textblob" },
@@ -1778,6 +1789,7 @@ requires-dist = [
     { name = "oauthlib", specifier = ">=3.3.1" },
     { name = "openai", specifier = ">=1.97.0" },
     { name = "pandas", specifier = ">=2.3.1" },
+    { name = "prometheus-client", specifier = ">=0.22.1" },
     { name = "psutil", specifier = ">=7.0.0" },
     { name = "psycopg2-binary", specifier = ">=2.9.10" },
     { name = "pyjwt", specifier = ">=2.10.1" },
@@ -1788,6 +1800,7 @@ requires-dist = [
     { name = "scikit-learn", specifier = ">=1.7.0" },
     { name = "scipy", specifier = ">=1.16.0" },
     { name = "seaborn", specifier = ">=0.13.2" },
+    { name = "setuptools", specifier = ">=80.9.0" },
     { name = "sqlalchemy", specifier = ">=2.0.41" },
     { name = "stripe", specifier = ">=12.3.0" },
     { name = "textblob", specifier = ">=0.19.0" },
@@ -1925,6 +1938,15 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/86/59/a451d7420a77ab0b98f7affa3a1d78a313d2f7281a57afb1a34bae8ab412/seaborn-0.13.2.tar.gz", hash = "sha256:93e60a40988f4d65e9f4885df477e2fdaff6b73a9ded434c1ab356dd57eefff7", size = 1457696 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/83/11/00d3c3dfc25ad54e731d91449895a79e4bf2384dc3ac01809010ba88f6d5/seaborn-0.13.2-py3-none-any.whl", hash = "sha256:636f8336facf092165e27924f223d3c62ca560b1f2bb5dff7ab7fad265361987", size = 294914 },
+]
+
+[[package]]
+name = "setuptools"
+version = "80.9.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/18/5d/3bf57dcd21979b887f014ea83c24ae194cfcd12b9e0fda66b957c69d1fca/setuptools-80.9.0.tar.gz", hash = "sha256:f36b47402ecde768dbfafc46e8e4207b4360c654f1f3bb84475f0a28628fb19c", size = 1319958 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/a3/dc/17031897dae0efacfea57dfd3a82fdd2a2aeb58e0ff71b77b87e44edc772/setuptools-80.9.0-py3-none-any.whl", hash = "sha256:062d34222ad13e0cc312a4c02d73f059e86a4acbfbdea8f8f76b28c99f306922", size = 1201486 },
 ]
 
 [[package]]

@@ -39,4 +39,6 @@ dependencies = [
     "trafilatura>=2.0.0",
     "psutil>=7.0.0",
     "beautifulsoup4>=4.13.4",
+    "prometheus-client>=0.22.1",
+    "setuptools>=80.9.0",
 ]

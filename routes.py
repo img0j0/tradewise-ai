@@ -19,6 +19,7 @@ from functools import wraps
 from flask import session
 from cache_optimizer import market_cache, ai_cache, search_cache, stock_cache
 from performance_monitor import performance_optimized
+from prometheus_metrics import record_stock_analysis, record_ai_request, update_cache_hit_rate
 
 logger = logging.getLogger(__name__)
 
@@ -234,6 +235,10 @@ def stock_analysis_api():
                     'suggestion': 'Please use a valid stock symbol (e.g., AAPL, MSFT, GOOGL) or company name (e.g., Apple, Microsoft, Google)',
                     'success': False
                 }), 400
+        
+        # Record stock analysis request in Prometheus
+        user_tier = 'premium' if hasattr(g, 'user') and g.user and g.user.is_premium else 'free'
+        record_stock_analysis(query, user_tier)
         
         # Get stock data directly from yfinance
         symbol = query

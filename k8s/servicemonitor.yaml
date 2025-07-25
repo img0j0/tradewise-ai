@@ -1,0 +1,241 @@
+# ServiceMonitor objects for automatic Prometheus scraping
+# Requires Prometheus Operator to be installed
+
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: tradewise-api-monitor
+  namespace: tradewise-ai
+  labels:
+    app: tradewise-api
+    monitoring: prometheus
+spec:
+  selector:
+    matchLabels:
+      app: tradewise-api
+  endpoints:
+  - port: http
+    path: /api/performance/stats
+    interval: 30s
+    scrapeTimeout: 10s
+    honorLabels: true
+
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: tradewise-workers-monitor
+  namespace: tradewise-ai
+  labels:
+    app: tradewise-worker
+    monitoring: prometheus
+spec:
+  selector:
+    matchLabels:
+      app: tradewise-worker
+  endpoints:
+  - port: metrics
+    path: /metrics
+    interval: 30s
+    scrapeTimeout: 10s
+
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: prometheus-monitor
+  namespace: tradewise-ai
+  labels:
+    app: prometheus
+    monitoring: prometheus
+spec:
+  selector:
+    matchLabels:
+      app: prometheus
+  endpoints:
+  - port: prometheus
+    path: /metrics
+    interval: 30s
+    scrapeTimeout: 10s
+
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: grafana-monitor
+  namespace: tradewise-ai
+  labels:
+    app: grafana
+    monitoring: prometheus
+spec:
+  selector:
+    matchLabels:
+      app: grafana
+  endpoints:
+  - port: grafana
+    path: /metrics
+    interval: 30s
+    scrapeTimeout: 10s
+
+---
+# PodMonitor for direct pod monitoring
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: tradewise-pods-monitor
+  namespace: tradewise-ai
+  labels:
+    monitoring: prometheus
+spec:
+  selector:
+    matchLabels:
+      app: tradewise-ai
+  podMetricsEndpoints:
+  - port: metrics
+    path: /metrics
+    interval: 30s
+  - port: http
+    path: /api/performance/stats
+    interval: 30s
+
+---
+# PrometheusRule for custom alerting rules
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: tradewise-alerting-rules
+  namespace: tradewise-ai
+  labels:
+    app: tradewise-ai
+    monitoring: prometheus
+spec:
+  groups:
+  - name: tradewise.sla
+    rules:
+    - alert: APIResponseTimeHigh
+      expr: histogram_quantile(0.95, rate(flask_request_duration_seconds_bucket{job="tradewise-api"}[5m])) > 0.5
+      for: 5m
+      labels:
+        severity: warning
+        team: platform
+        service: api
+      annotations:
+        summary: "API response time is high"
+        description: "95th percentile response time is {{ $value }}s for {{ $labels.instance }}"
+        runbook_url: "https://docs.tradewise-ai.com/runbooks/high-latency"
+
+    - alert: APIErrorRateHigh
+      expr: rate(flask_request_exceptions_total{job="tradewise-api"}[5m]) / rate(flask_request_total{job="tradewise-api"}[5m]) > 0.05
+      for: 2m
+      labels:
+        severity: critical
+        team: platform
+        service: api
+      annotations:
+        summary: "API error rate is high"
+        description: "Error rate is {{ $value | humanizePercentage }} for {{ $labels.instance }}"
+        runbook_url: "https://docs.tradewise-ai.com/runbooks/high-error-rate"
+
+    - alert: TaskQueueBacklog
+      expr: tradewise_task_queue_length > 50
+      for: 5m
+      labels:
+        severity: warning
+        team: platform
+        service: workers
+      annotations:
+        summary: "Task queue has a backlog"
+        description: "Task queue has {{ $value }} pending tasks"
+        runbook_url: "https://docs.tradewise-ai.com/runbooks/queue-backlog"
+
+    - alert: CacheHitRateLow
+      expr: tradewise_cache_hit_rate < 0.5
+      for: 10m
+      labels:
+        severity: warning
+        team: platform
+        service: cache
+      annotations:
+        summary: "Cache hit rate is low"
+        description: "Cache hit rate is {{ $value | humanizePercentage }}"
+        runbook_url: "https://docs.tradewise-ai.com/runbooks/low-cache-hit-rate"
+
+  - name: tradewise.infrastructure
+    rules:
+    - alert: PodCrashLooping
+      expr: increase(kube_pod_container_status_restarts_total{namespace="tradewise-ai"}[15m]) > 0
+      for: 5m
+      labels:
+        severity: warning
+        team: platform
+      annotations:
+        summary: "Pod is crash looping"
+        description: "Pod {{ $labels.pod }} has restarted {{ $value }} times in the last 15 minutes"
+
+    - alert: PodMemoryUsageHigh
+      expr: container_memory_usage_bytes{namespace="tradewise-ai"} / container_spec_memory_limit_bytes > 0.9
+      for: 5m
+      labels:
+        severity: warning
+        team: platform
+      annotations:
+        summary: "Pod memory usage is high"
+        description: "Pod {{ $labels.pod }} memory usage is {{ $value | humanizePercentage }}"
+
+    - alert: PodCPUUsageHigh
+      expr: rate(container_cpu_usage_seconds_total{namespace="tradewise-ai"}[5m]) / (container_spec_cpu_quota / container_spec_cpu_period) > 0.9
+      for: 10m
+      labels:
+        severity: warning
+        team: platform
+      annotations:
+        summary: "Pod CPU usage is high"
+        description: "Pod {{ $labels.pod }} CPU usage is {{ $value | humanizePercentage }}"
+
+    - alert: DatabaseDown
+      expr: up{job="postgres"} == 0
+      for: 1m
+      labels:
+        severity: critical
+        team: platform
+        service: database
+      annotations:
+        summary: "PostgreSQL database is down"
+        description: "PostgreSQL database has been down for more than 1 minute"
+        runbook_url: "https://docs.tradewise-ai.com/runbooks/database-down"
+
+    - alert: RedisDown
+      expr: up{job="redis"} == 0
+      for: 1m
+      labels:
+        severity: critical
+        team: platform
+        service: cache
+      annotations:
+        summary: "Redis cache is down"
+        description: "Redis cache has been down for more than 1 minute"
+        runbook_url: "https://docs.tradewise-ai.com/runbooks/redis-down"
+
+  - name: tradewise.business
+    rules:
+    - alert: StockAnalysisRequestsLow
+      expr: rate(flask_request_total{endpoint="/api/stock-analysis"}[1h]) < 1
+      for: 30m
+      labels:
+        severity: warning
+        team: business
+        service: api
+      annotations:
+        summary: "Stock analysis requests are unusually low"
+        description: "Only {{ $value }} stock analysis requests per second in the last hour"
+
+    - alert: PrecomputationServiceDown
+      expr: tradewise_precomputation_service_running == 0
+      for: 5m
+      labels:
+        severity: warning
+        team: platform
+        service: precomputation
+      annotations:
+        summary: "AI precomputation service is down"
+        description: "Precomputation service has been down for 5 minutes"
