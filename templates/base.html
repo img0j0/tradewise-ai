@@ -25,6 +25,7 @@
     
     <!-- Premium Features CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/premium_features.css') }}?v={{ range(1000, 9999) | random }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/premium_indicators.css') }}?v={{ range(1000, 9999) | random }}">
     
     <!-- Additional Block for Page-Specific CSS -->
     {% block extra_css %}{% endblock %}
@@ -93,21 +94,21 @@
                     <li><a href="/search" class="saas-nav-link {% block nav_search %}{% endblock %}">
                         <i class="fas fa-search mr-2"></i>Search
                     </a></li>
-                    <li><a href="/backtest" class="saas-nav-link {% block nav_backtest %}{% endblock %}">
+                    <li><a href="/backtest" class="saas-nav-link {% block nav_backtest %}{% endblock %}" data-premium="backtest">
                         <i class="fas fa-chart-bar mr-2"></i>Backtest
                     </a></li>
-                    <li><a href="/peer-comparison" class="saas-nav-link {% block nav_peer %}{% endblock %}">
+                    <li><a href="/peer-comparison" class="saas-nav-link {% block nav_peer %}{% endblock %}" data-premium="peer-comparison">
                         <i class="fas fa-balance-scale mr-2"></i>Peer Analysis
                     </a></li>
                 </ul>
                 
                 <!-- Plan Status & Upgrade Button -->
                 <div class="hidden md:flex items-center gap-3">
-                    <span class="px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full font-medium">
-                        Free Plan
+                    <span class="plan-badge free" id="plan-badge">
+                        <i class="fas fa-user"></i> Free
                     </span>
-                    <a href="/premium/upgrade" class="saas-btn-primary">
-                        <i class="fas fa-crown mr-2"></i>Upgrade
+                    <a href="/premium/upgrade" class="navbar-upgrade-btn" id="navbar-upgrade-btn">
+                        <i class="fas fa-crown"></i>Upgrade to Pro
                     </a>
                 </div>
                 
@@ -178,10 +179,10 @@
                     <a href="/search" class="flex items-center px-3 py-3 text-gray-700 hover:bg-gray-50 rounded-lg font-medium">
                         <i class="fas fa-search mr-3 w-5"></i>Search
                     </a>
-                    <a href="/backtest" class="flex items-center px-3 py-3 text-gray-700 hover:bg-gray-50 rounded-lg font-medium">
+                    <a href="/backtest" class="flex items-center px-3 py-3 text-gray-700 hover:bg-gray-50 rounded-lg font-medium" data-premium="backtest">
                         <i class="fas fa-chart-bar mr-3 w-5"></i>Backtest
                     </a>
-                    <a href="/peer-comparison" class="flex items-center px-3 py-3 text-gray-700 hover:bg-gray-50 rounded-lg font-medium">
+                    <a href="/peer-comparison" class="flex items-center px-3 py-3 text-gray-700 hover:bg-gray-50 rounded-lg font-medium" data-premium="peer-comparison">
                         <i class="fas fa-balance-scale mr-3 w-5"></i>Peer Analysis
                     </a>
                     
@@ -218,10 +219,10 @@
             <a href="/search" class="sidebar-icon {% block sidebar_search %}{% endblock %}" title="Search">
                 <i class="fas fa-search text-xl"></i>
             </a>
-            <a href="/backtest" class="sidebar-icon {% block sidebar_backtest %}{% endblock %}" title="Backtest">
+            <a href="/backtest" class="sidebar-icon {% block sidebar_backtest %}{% endblock %}" title="Backtest" data-premium="backtest">
                 <i class="fas fa-chart-bar text-xl"></i>
             </a>
-            <a href="/peer-comparison" class="sidebar-icon {% block sidebar_peer %}{% endblock %}" title="Peer Analysis">
+            <a href="/peer-comparison" class="sidebar-icon {% block sidebar_peer %}{% endblock %}" title="Peer Analysis" data-premium="peer-comparison">
                 <i class="fas fa-balance-scale text-xl"></i>
             </a>
             
@@ -296,6 +297,7 @@
     <!-- Modern JavaScript -->
     <script src="{{ url_for('static', filename='js/modern_search.js') }}?v={{ range(1000, 9999) | random }}"></script>
     <script src="{{ url_for('static', filename='js/mobile_optimization.js') }}?v={{ range(1000, 9999) | random }}"></script>
+    <script src="{{ url_for('static', filename='js/premium_features.js') }}?v={{ range(1000, 9999) | random }}"></script>
     
     <!-- Page-specific JavaScript -->
     {% block extra_js %}{% endblock %}

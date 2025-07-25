@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+
+{% block title %}Upgrade to Premium - TradeWise AI{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="max-w-4xl mx-auto">
+        <!-- Header Section -->
+        <div class="text-center mb-12">
+            <div class="w-16 h-16 bg-gradient-to-r from-amber-500 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i class="fas fa-crown text-white text-2xl"></i>
+            </div>
+            <h1 class="text-4xl font-bold text-gray-900 mb-4">Unlock Premium Features</h1>
+            <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                Take your investment analysis to the next level with professional-grade tools and insights.
+            </p>
+        </div>
+
+        <!-- Plans Comparison -->
+        <div class="grid md:grid-cols-2 gap-8 mb-12">
+            <!-- Pro Plan -->
+            <div class="bg-white rounded-2xl shadow-lg border-2 border-blue-200 relative overflow-hidden">
+                <div class="absolute top-0 left-0 right-0 bg-gradient-to-r from-blue-500 to-blue-600 text-white text-center py-2 text-sm font-semibold">
+                    Most Popular
+                </div>
+                <div class="p-8 pt-12">
+                    <div class="text-center mb-6">
+                        <h3 class="text-2xl font-bold text-gray-900 mb-2">Pro Plan</h3>
+                        <div class="text-4xl font-bold text-blue-600 mb-2">
+                            $29.99<span class="text-lg font-normal text-gray-500">/month</span>
+                        </div>
+                        <p class="text-gray-600">Perfect for serious investors</p>
+                    </div>
+                    
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            <span>Unlimited stock analysis</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            <span>Portfolio backtesting</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            <span>Peer comparison analysis</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            <span>AI market scanner</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            <span>Advanced charting tools</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            <span>Priority support</span>
+                        </li>
+                    </ul>
+                    
+                    <button 
+                        onclick="premiumManager.createCheckoutSession('pro')"
+                        class="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:from-blue-600 hover:to-blue-700 transition-all duration-200"
+                    >
+                        Upgrade to Pro
+                    </button>
+                </div>
+            </div>
+
+            <!-- Enterprise Plan -->  
+            <div class="bg-white rounded-2xl shadow-lg border border-gray-200 relative">
+                <div class="p-8">
+                    <div class="text-center mb-6">
+                        <h3 class="text-2xl font-bold text-gray-900 mb-2">Enterprise</h3>
+                        <div class="text-4xl font-bold text-amber-600 mb-2">
+                            $99.99<span class="text-lg font-normal text-gray-500">/month</span>
+                        </div>
+                        <p class="text-gray-600">For professional traders</p>
+                    </div>
+                    
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            <span>Everything in Pro</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            <span>API access</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            <span>Custom alerts</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            <span>Team features (10 users)</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            <span>White-label options</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            <span>Dedicated support</span>
+                        </li>
+                    </ul>
+                    
+                    <button 
+                        onclick="premiumManager.createCheckoutSession('enterprise')"
+                        class="w-full bg-gradient-to-r from-amber-500 to-orange-500 text-white py-3 px-6 rounded-lg font-semibold hover:from-amber-600 hover:to-orange-600 transition-all duration-200"
+                    >
+                        Upgrade to Enterprise
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features Showcase -->
+        <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-8 mb-12">
+            <h2 class="text-2xl font-bold text-center mb-8">Premium Features Overview</h2>
+            
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-chart-bar text-white text-xl"></i>
+                    </div>
+                    <h3 class="font-semibold mb-2">Portfolio Backtesting</h3>
+                    <p class="text-gray-600 text-sm">Test your strategies with historical data and optimize returns</p>
+                </div>
+                
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-balance-scale text-white text-xl"></i>
+                    </div>
+                    <h3 class="font-semibold mb-2">Peer Comparison</h3>
+                    <p class="text-gray-600 text-sm">Compare stocks against industry competitors and benchmarks</p>
+                </div>
+                
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-search-plus text-white text-xl"></i>
+                    </div>
+                    <h3 class="font-semibold mb-2">AI Market Scanner</h3>
+                    <p class="text-gray-600 text-sm">AI-powered detection of market opportunities and trends</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- FAQ Section -->
+        <div class="text-center">
+            <h2 class="text-2xl font-bold mb-6">Frequently Asked Questions</h2>
+            
+            <div class="max-w-2xl mx-auto space-y-4">
+                <div class="bg-white rounded-lg p-6 shadow-sm border">
+                    <h3 class="font-semibold mb-2">Can I cancel anytime?</h3>
+                    <p class="text-gray-600">Yes, you can cancel your subscription at any time. You'll retain access until the end of your billing period.</p>
+                </div>
+                
+                <div class="bg-white rounded-lg p-6 shadow-sm border">
+                    <h3 class="font-semibold mb-2">Is there a free trial?</h3>
+                    <p class="text-gray-600">Your free account gives you access to basic features. Upgrade anytime to unlock premium functionality.</p>
+                </div>
+                
+                <div class="bg-white rounded-lg p-6 shadow-sm border">
+                    <h3 class="font-semibold mb-2">What payment methods do you accept?</h3>
+                    <p class="text-gray-600">We accept all major credit cards and PayPal through our secure Stripe payment processor.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Track page view
+    if (window.premiumManager) {
+        premiumManager.trackEvent('upgrade_page_viewed');
+    }
+});
+</script>
+{% endblock %}

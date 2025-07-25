@@ -1,0 +1,512 @@
+/* Premium Feature Indicators and Plan Badges */
+/* Modern SaaS theme compliant premium features styling */
+
+/* Plan Badge Styles */
+.plan-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.2s ease;
+}
+
+.plan-badge.free {
+    background: #f3f4f6;
+    color: #6b7280;
+    border: 1px solid #d1d5db;
+}
+
+.plan-badge.pro {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    color: white;
+    box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+}
+
+.plan-badge.enterprise {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: white;
+    box-shadow: 0 2px 4px rgba(245, 158, 11, 0.3);
+}
+
+.plan-badge i {
+    font-size: 10px;
+}
+
+/* Premium Lock Icons */
+.premium-lock {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.premium-lock-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    background: linear-gradient(135deg, #6b7280, #4b5563);
+    color: white;
+    border-radius: 3px;
+    font-size: 10px;
+    transition: all 0.2s ease;
+}
+
+.premium-lock:hover .premium-lock-icon {
+    transform: scale(1.1);
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+}
+
+/* Premium Tooltips */
+.premium-tooltip {
+    position: relative;
+    cursor: help;
+}
+
+.premium-tooltip::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1f2937;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease;
+    z-index: 1000;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.premium-tooltip::before {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(6px);
+    border: 5px solid transparent;
+    border-top-color: #1f2937;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease;
+    z-index: 1000;
+}
+
+.premium-tooltip:hover::after,
+.premium-tooltip:hover::before {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Premium Button Styles */
+.premium-button {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: #f3f4f6;
+    color: #6b7280;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    cursor: not-allowed;
+}
+
+.premium-button:hover {
+    background: #e5e7eb;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.premium-button.clickable {
+    cursor: pointer;
+    background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+    border-color: #cbd5e1;
+}
+
+.premium-button.clickable:hover {
+    background: linear-gradient(135deg, #e2e8f0, #cbd5e1);
+}
+
+/* Premium Card Overlays */
+.premium-card-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(2px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    border-radius: inherit;
+    transition: all 0.3s ease;
+    z-index: 10;
+}
+
+.premium-card-overlay:hover {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(3px);
+}
+
+.premium-card-overlay .lock-icon {
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, #6b7280, #4b5563);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    margin-bottom: 8px;
+}
+
+.premium-card-overlay .lock-message {
+    text-align: center;
+    color: #374151;
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 4px;
+}
+
+.premium-card-overlay .lock-description {
+    text-align: center;
+    color: #6b7280;
+    font-size: 12px;
+    margin-bottom: 12px;
+}
+
+.premium-card-overlay .unlock-button {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.premium-card-overlay .unlock-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
+}
+
+/* Upgrade Button in NavBar */
+.navbar-upgrade-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: white;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(245, 158, 11, 0.3);
+}
+
+.navbar-upgrade-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(245, 158, 11, 0.4);
+    color: white;
+    text-decoration: none;
+}
+
+.navbar-upgrade-btn i {
+    font-size: 12px;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .navbar-upgrade-btn {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+    
+    .plan-badge {
+        padding: 3px 6px;
+        font-size: 10px;
+    }
+    
+    .premium-card-overlay {
+        padding: 16px;
+    }
+    
+    .premium-tooltip::after {
+        font-size: 11px;
+        padding: 6px 10px;
+    }
+}
+
+/* Upsell Modal Styles */
+.upsell-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: 20px;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.upsell-modal.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.upsell-modal-content {
+    background: white;
+    border-radius: 16px;
+    max-width: 600px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    transform: scale(0.95) translateY(20px);
+    transition: all 0.3s ease;
+}
+
+.upsell-modal.active .upsell-modal-content {
+    transform: scale(1) translateY(0);
+}
+
+.upsell-modal-header {
+    padding: 24px 24px 0;
+    text-align: center;
+    position: relative;
+}
+
+.upsell-modal-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 32px;
+    height: 32px;
+    background: #f3f4f6;
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #6b7280;
+    transition: all 0.2s ease;
+}
+
+.upsell-modal-close:hover {
+    background: #e5e7eb;
+    color: #374151;
+}
+
+.upsell-modal-icon {
+    width: 64px;
+    height: 64px;
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+    color: white;
+    font-size: 28px;
+}
+
+.upsell-modal-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 8px;
+}
+
+.upsell-modal-subtitle {
+    font-size: 16px;
+    color: #6b7280;
+    margin-bottom: 24px;
+}
+
+.upsell-modal-body {
+    padding: 0 24px 24px;
+}
+
+.upsell-feature-list {
+    margin-bottom: 24px;
+}
+
+.upsell-feature-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.upsell-feature-item:last-child {
+    border-bottom: none;
+}
+
+.upsell-feature-icon {
+    width: 24px;
+    height: 24px;
+    background: linear-gradient(135deg, #10b981, #059669);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 12px;
+    flex-shrink: 0;
+}
+
+.upsell-feature-content h4 {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 2px;
+}
+
+.upsell-feature-content p {
+    font-size: 13px;
+    color: #6b7280;
+    margin: 0;
+}
+
+.upsell-modal-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    padding-top: 20px;
+    border-top: 1px solid #f3f4f6;
+}
+
+.upsell-upgrade-btn {
+    flex: 1;
+    max-width: 200px;
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    text-align: center;
+}
+
+.upsell-upgrade-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
+    color: white;
+}
+
+.upsell-cancel-btn {
+    flex: 1;
+    max-width: 120px;
+    background: transparent;
+    color: #6b7280;
+    border: 1px solid #d1d5db;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.upsell-cancel-btn:hover {
+    background: #f9fafb;
+    color: #374151;
+}
+
+/* Premium Badge Animations */
+@keyframes premiumPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+.plan-badge.pro,
+.plan-badge.enterprise {
+    animation: premiumPulse 3s ease-in-out infinite;
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+    .upsell-modal-content {
+        background: #1f2937;
+        color: #f9fafb;
+    }
+    
+    .upsell-modal-title {
+        color: #f9fafb;
+    }
+    
+    .upsell-modal-subtitle {
+        color: #d1d5db;
+    }
+    
+    .upsell-feature-item {
+        border-color: #374151;
+    }
+    
+    .upsell-feature-content h4 {
+        color: #f9fafb;
+    }
+    
+    .upsell-feature-content p {
+        color: #d1d5db;
+    }
+    
+    .upsell-modal-close {
+        background: #374151;
+        color: #d1d5db;
+    }
+    
+    .upsell-modal-close:hover {
+        background: #4b5563;
+        color: #f9fafb;
+    }
+    
+    .premium-card-overlay {
+        background: rgba(31, 41, 55, 0.9);
+    }
+    
+    .premium-card-overlay .lock-message {
+        color: #f9fafb;
+    }
+    
+    .premium-card-overlay .lock-description {
+        color: #d1d5db;
+    }
+}

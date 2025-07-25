@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block title %}Upgrade Successful - TradeWise AI{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-12">
+    <div class="max-w-2xl mx-auto text-center">
+        <!-- Success Icon -->
+        <div class="w-20 h-20 bg-gradient-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center mx-auto mb-8">
+            <i class="fas fa-check text-white text-3xl"></i>
+        </div>
+        
+        <!-- Success Message -->
+        <h1 class="text-4xl font-bold text-gray-900 mb-4">Welcome to Pro!</h1>
+        <p class="text-xl text-gray-600 mb-8">
+            Your upgrade was successful. You now have access to all premium features.
+        </p>
+        
+        <!-- Premium Features Unlocked -->
+        <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-8 mb-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">Features Now Unlocked</h2>
+            
+            <div class="grid md:grid-cols-2 gap-4">
+                <div class="flex items-center text-left">
+                    <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center mr-4">
+                        <i class="fas fa-check text-white"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold">Portfolio Backtesting</h3>
+                        <p class="text-sm text-gray-600">Test strategies with historical data</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center text-left">
+                    <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center mr-4">
+                        <i class="fas fa-check text-white"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold">Peer Comparison</h3>
+                        <p class="text-sm text-gray-600">Compare against competitors</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center text-left">
+                    <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center mr-4">
+                        <i class="fas fa-check text-white"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold">AI Market Scanner</h3>
+                        <p class="text-sm text-gray-600">Find opportunities with AI</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center text-left">
+                    <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center mr-4">
+                        <i class="fas fa-check text-white"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold">Priority Support</h3>
+                        <p class="text-sm text-gray-600">Get help when you need it</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Action Buttons -->
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="/" class="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:from-blue-600 hover:to-blue-700 transition-all duration-200">
+                <i class="fas fa-tachometer-alt mr-2"></i>Go to Dashboard
+            </a>
+            <a href="/backtest" class="bg-white text-blue-600 border-2 border-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-blue-50 transition-all duration-200">
+                <i class="fas fa-chart-bar mr-2"></i>Try Backtesting
+            </a>
+        </div>
+        
+        <!-- Additional Info -->
+        <div class="mt-12 pt-8 border-t border-gray-200">
+            <h3 class="text-lg font-semibold mb-4">What's Next?</h3>
+            <p class="text-gray-600 mb-4">
+                Your subscription will automatically renew monthly. You can manage your subscription 
+                or cancel anytime from your account settings.
+            </p>
+            <a href="/settings" class="text-blue-600 hover:text-blue-700 font-medium">
+                <i class="fas fa-cog mr-2"></i>Manage Subscription
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Update user plan in JavaScript
+    if (window.premiumManager) {
+        premiumManager.updateUserPlan('pro');
+        premiumManager.trackEvent('upgrade_completed', { plan: 'pro' });
+    }
+    
+    // Simulate unlocking premium features
+    setTimeout(() => {
+        // Remove lock overlays from premium features
+        const premiumElements = document.querySelectorAll('[data-premium]');
+        premiumElements.forEach(element => {
+            element.classList.remove('premium-locked');
+            const overlay = element.querySelector('.premium-card-overlay');
+            if (overlay) overlay.remove();
+            
+            const lockIcon = element.querySelector('.premium-lock-icon');
+            if (lockIcon) lockIcon.remove();
+        });
+        
+        // Update plan badge
+        const planBadge = document.getElementById('plan-badge');
+        if (planBadge) {
+            planBadge.className = 'plan-badge pro';
+            planBadge.innerHTML = '<i class="fas fa-star"></i> Pro';
+        }
+        
+        // Hide upgrade button
+        const upgradeBtn = document.getElementById('navbar-upgrade-btn');
+        if (upgradeBtn) {
+            upgradeBtn.style.display = 'none';
+        }
+    }, 1000);
+});
+</script>
+{% endblock %}

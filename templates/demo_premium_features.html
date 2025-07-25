@@ -1,0 +1,211 @@
+{% extends "base.html" %}
+
+{% block title %}Premium Features Demo - TradeWise AI{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="max-w-6xl mx-auto">
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-3xl font-bold text-gray-900 mb-4">Premium Features Demo</h1>
+            <p class="text-gray-600 mb-6">Experience how premium features work with lock indicators and upsell modals</p>
+            
+            <!-- Demo Controls -->
+            <div class="flex gap-4 justify-center mb-8">
+                <button onclick="simulateFreePlan()" class="px-4 py-2 bg-gray-500 text-white rounded-lg">
+                    Simulate Free Plan
+                </button>
+                <button onclick="simulateProPlan()" class="px-4 py-2 bg-blue-500 text-white rounded-lg">
+                    Simulate Pro Plan
+                </button>
+                <button onclick="simulateEnterprisePlan()" class="px-4 py-2 bg-amber-500 text-white rounded-lg">
+                    Simulate Enterprise Plan
+                </button>
+            </div>
+        </div>
+
+        <!-- Premium Feature Cards -->
+        <div class="grid md:grid-cols-3 gap-6 mb-12">
+            <!-- Backtesting Card -->
+            <div class="bg-white rounded-xl shadow-lg p-6 relative premium-card" data-premium="backtest">
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-chart-bar text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Portfolio Backtesting</h3>
+                    <p class="text-gray-600 mb-4">Test your investment strategies with historical market data and see how they would have performed.</p>
+                    
+                    <div class="space-y-2 text-sm text-gray-500 mb-6">
+                        <div class="flex justify-between">
+                            <span>Historical Analysis:</span>
+                            <span class="font-semibold">10+ Years</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Strategies:</span>
+                            <span class="font-semibold">50+ Templates</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Risk Metrics:</span>
+                            <span class="font-semibold">Advanced</span>
+                        </div>
+                    </div>
+                    
+                    <button class="w-full bg-blue-500 text-white py-2 px-4 rounded-lg font-semibold hover:bg-blue-600 transition-colors">
+                        Start Backtesting
+                    </button>
+                </div>
+            </div>
+
+            <!-- Peer Comparison Card -->
+            <div class="bg-white rounded-xl shadow-lg p-6 relative premium-card" data-premium="peer-comparison">
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-balance-scale text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Peer Comparison Analysis</h3>
+                    <p class="text-gray-600 mb-4">Compare stocks against their industry peers and identify outperformers and underperformers.</p>
+                    
+                    <div class="space-y-2 text-sm text-gray-500 mb-6">
+                        <div class="flex justify-between">
+                            <span>Companies:</span>
+                            <span class="font-semibold">5,000+</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Metrics:</span>
+                            <span class="font-semibold">25+ Financial</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Industries:</span>
+                            <span class="font-semibold">All Sectors</span>
+                        </div>
+                    </div>
+                    
+                    <button class="w-full bg-green-500 text-white py-2 px-4 rounded-lg font-semibold hover:bg-green-600 transition-colors">
+                        Compare Stocks
+                    </button>
+                </div>
+            </div>
+
+            <!-- AI Scanner Card -->
+            <div class="bg-white rounded-xl shadow-lg p-6 relative premium-card" data-premium="ai-scanner">
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-search-plus text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">AI Market Scanner</h3>
+                    <p class="text-gray-600 mb-4">AI-powered detection of market opportunities, patterns, and emerging trends before they become obvious.</p>
+                    
+                    <div class="space-y-2 text-sm text-gray-500 mb-6">
+                        <div class="flex justify-between">
+                            <span>AI Models:</span>
+                            <span class="font-semibold">5 Advanced</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Real-time:</span>
+                            <span class="font-semibold">24/7 Scanning</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Opportunities:</span>
+                            <span class="font-semibold">Daily Updates</span>
+                        </div>
+                    </div>
+                    
+                    <button class="w-full bg-purple-500 text-white py-2 px-4 rounded-lg font-semibold hover:bg-purple-600 transition-colors">
+                        Scan Market
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Items Demo -->
+        <div class="bg-gray-50 rounded-xl p-8 mb-12">
+            <h2 class="text-2xl font-bold text-center mb-8">Navigation Lock Demo</h2>
+            <p class="text-center text-gray-600 mb-6">Click on these navigation items to see how premium locks work</p>
+            
+            <div class="flex flex-wrap justify-center gap-4">
+                <a href="/backtest" class="flex items-center px-6 py-3 bg-white text-gray-700 rounded-lg border hover:bg-gray-50 transition-colors" data-premium="backtest">
+                    <i class="fas fa-chart-bar mr-3"></i>Portfolio Backtesting
+                </a>
+                <a href="/peer-comparison" class="flex items-center px-6 py-3 bg-white text-gray-700 rounded-lg border hover:bg-gray-50 transition-colors" data-premium="peer-comparison">
+                    <i class="fas fa-balance-scale mr-3"></i>Peer Comparison
+                </a>
+                <a href="/ai-scanner" class="flex items-center px-6 py-3 bg-white text-gray-700 rounded-lg border hover:bg-gray-50 transition-colors" data-premium="ai-scanner">
+                    <i class="fas fa-search-plus mr-3"></i>AI Market Scanner
+                </a>
+            </div>
+        </div>
+
+        <!-- Plan Status Demo -->
+        <div class="bg-white rounded-xl shadow-lg p-8">
+            <h2 class="text-2xl font-bold text-center mb-8">Plan Badge Demo</h2>
+            <p class="text-center text-gray-600 mb-6">See how different plan badges appear in the navigation</p>
+            
+            <div class="flex justify-center gap-6">
+                <div class="text-center">
+                    <p class="text-sm text-gray-500 mb-2">Free Plan</p>
+                    <span class="plan-badge free">
+                        <i class="fas fa-user"></i> Free
+                    </span>
+                </div>
+                <div class="text-center">
+                    <p class="text-sm text-gray-500 mb-2">Pro Plan</p>
+                    <span class="plan-badge pro">
+                        <i class="fas fa-star"></i> Pro
+                    </span>
+                </div>
+                <div class="text-center">
+                    <p class="text-sm text-gray-500 mb-2">Enterprise Plan</p>
+                    <span class="plan-badge enterprise">
+                        <i class="fas fa-crown"></i> Enterprise
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function simulateFreePlan() {
+    // Update session plan
+    fetch('/demo/upgrade-plan/free', { method: 'GET' })
+        .then(() => {
+            // Update premium manager
+            if (window.premiumManager) {
+                premiumManager.updateUserPlan('free');
+            }
+            
+            // Reload page to show locks
+            setTimeout(() => location.reload(), 500);
+        });
+}
+
+function simulateProPlan() {
+    fetch('/demo/upgrade-plan/pro', { method: 'GET' })
+        .then(() => {
+            if (window.premiumManager) {
+                premiumManager.updateUserPlan('pro');
+            }
+            setTimeout(() => location.reload(), 500);
+        });
+}
+
+function simulateEnterprisePlan() {
+    fetch('/demo/upgrade-plan/enterprise', { method: 'GET' })
+        .then(() => {
+            if (window.premiumManager) {
+                premiumManager.updateUserPlan('enterprise');
+            }
+            setTimeout(() => location.reload(), 500);
+        });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize premium features manager if not already done
+    if (!window.premiumManager && window.PremiumFeaturesManager) {
+        window.premiumManager = new PremiumFeaturesManager();
+    }
+});
+</script>
+{% endblock %}
