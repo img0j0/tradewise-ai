@@ -146,7 +146,12 @@ class AIPrecomputationService:
             
             # Cache the result with strategy-specific key
             cache_key = f"precomputed_analysis:{symbol}:{strategy}"
-            cache.set(cache_key, analysis_result, timeout=300)
+            try:
+                from app import app, cache
+                with app.app_context():
+                    cache.set(cache_key, analysis_result, timeout=300)
+            except Exception as e:
+                logger.warning(f"Cache storage error: {e}")
             
             # Store in database for persistence
             self._store_precomputed_analysis(symbol, strategy, analysis_result)
