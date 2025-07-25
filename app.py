@@ -8,8 +8,9 @@ from flask_login import LoginManager
 from flask_caching import Cache
 from flask_compress import Compress
 
-# Set up logging
-logging.basicConfig(level=logging.DEBUG)
+# Production logging configuration
+log_level = logging.INFO if os.environ.get('REPLIT_DEPLOYMENT') else logging.DEBUG
+logging.basicConfig(level=log_level, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 class Base(DeclarativeBase):
     pass
@@ -18,15 +19,31 @@ db = SQLAlchemy(model_class=Base)
 
 # create the app
 app = Flask(__name__)
-app.secret_key = os.environ.get("SESSION_SECRET", "dev-secret-key-change-in-production")
-app.config['SESSION_COOKIE_SECURE'] = True if os.environ.get('REPLIT_DEPLOYMENT') else False
-app.config['SESSION_COOKIE_HTTPONLY'] = True
-app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'  # Enhanced security for production
-app.config['SESSION_COOKIE_NAME'] = 'session'
-app.config['PERMANENT_SESSION_LIFETIME'] = 86400  # 24 hours
-app.config['SESSION_COOKIE_PATH'] = '/'
-app.config['SESSION_COOKIE_DOMAIN'] = None  # Let Flask determine the domain
-app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1, x_for=1)
+# Production security configuration
+app.secret_key = os.environ.get("SESSION_SECRET")
+if not app.secret_key:
+    raise ValueError("SESSION_SECRET environment variable is required for production")
+
+# Production-grade security settings
+is_production = bool(os.environ.get('REPLIT_DEPLOYMENT'))
+app.config.update({
+    'DEBUG': False,  # Always False for production
+    'TESTING': False,
+    'SECRET_KEY': app.secret_key,
+    'SESSION_COOKIE_SECURE': is_production,  # HTTPS only in production
+    'SESSION_COOKIE_HTTPONLY': True,  # Prevent XSS attacks
+    'SESSION_COOKIE_SAMESITE': 'Strict',  # CSRF protection
+    'SESSION_COOKIE_NAME': 'tradewise_session',
+    'PERMANENT_SESSION_LIFETIME': 28800,  # 8 hours
+    'SESSION_COOKIE_PATH': '/',
+    'SESSION_COOKIE_DOMAIN': None,
+    'PREFERRED_URL_SCHEME': 'https' if is_production else 'http',
+    'WTF_CSRF_ENABLED': True,  # CSRF protection
+    'WTF_CSRF_TIME_LIMIT': 3600,  # 1 hour CSRF token lifetime
+})
+
+# Enhanced proxy fix for production
+app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1, x_for=1, x_port=1, x_prefix=1)
 
 # configure the database
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL", "sqlite:///trading_platform.db")
@@ -67,6 +84,36 @@ def initialize_optimization_services():
         
     except Exception as e:
         print(f"⚠️ Error initializing optimization services: {e}")
+
+# Production security middleware
+@app.before_request
+def force_https():
+    """Force HTTPS in production"""
+    if is_production and not request.is_secure and request.url.startswith('http://'):
+        return redirect(request.url.replace('http://', 'https://', 1), code=301)
+
+@app.before_request
+def security_headers():
+    """Add security headers to all responses"""
+    pass  # Headers added in after_request
+
+@app.after_request
+def add_security_headers(response):
+    """Add comprehensive security headers"""
+    if is_production:
+        response.headers.update({
+            'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
+            'X-Content-Type-Options': 'nosniff',
+            'X-Frame-Options': 'DENY',
+            'X-XSS-Protection': '1; mode=block',
+            'Referrer-Policy': 'strict-origin-when-cross-origin',
+            'Content-Security-Policy': "default-src 'self'; script-src 'self' 'unsafe-inline' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https://api.stripe.com;",
+            'Permissions-Policy': 'geolocation=(), microphone=(), camera=()'
+        })
+    
+    # Add performance headers
+    response.headers['X-Response-Time'] = getattr(response, '_response_time', '0ms')
+    return response
 
 # Start optimization services in background
 import threading
