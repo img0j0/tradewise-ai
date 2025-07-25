@@ -1,0 +1,362 @@
+/* Desktop-First Optimization & Dark Mode Support */
+/* TradeWise AI - Professional Layout System */
+
+:root {
+    /* Desktop-First Layout Variables */
+    --max-content-width: 1440px;
+    --content-padding: 32px;
+    --mobile-padding: 20px;
+    --tablet-padding: 24px;
+    
+    /* Light Mode Colors */
+    --bg-primary: #ffffff;
+    --bg-secondary: #f8fafc;
+    --bg-tertiary: #f1f5f9;
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --text-muted: #94a3b8;
+    --border-primary: #e2e8f0;
+    --border-secondary: #cbd5e1;
+    
+    /* Brand Colors */
+    --brand-blue: #1e40af;
+    --brand-purple: #7c3aed;
+    --accent-blue: #3b82f6;
+    --accent-purple: #8b5cf6;
+    --accent-gold: #f59e0b;
+    
+    /* Component Colors */
+    --card-bg: #ffffff;
+    --card-border: #e2e8f0;
+    --card-shadow: rgba(0, 0, 0, 0.05);
+    --hover-bg: #f8fafc;
+    --active-bg: #f1f5f9;
+    
+    /* Navigation */
+    --navbar-bg: #ffffff;
+    --navbar-border: #e2e8f0;
+    --sidebar-bg: #ffffff;
+    --sidebar-hover: #f8fafc;
+    
+    /* Form Elements */
+    --input-bg: #ffffff;
+    --input-border: #d1d5db;
+    --input-focus: #3b82f6;
+    
+    /* Chart Colors */
+    --chart-grid: #f1f5f9;
+    --chart-text: #64748b;
+}
+
+/* Dark Mode Variables */
+[data-theme="dark"] {
+    /* Dark Mode Colors */
+    --bg-primary: #0f172a;
+    --bg-secondary: #1e293b;
+    --bg-tertiary: #334155;
+    --text-primary: #f8fafc;
+    --text-secondary: #cbd5e1;
+    --text-muted: #94a3b8;
+    --border-primary: #334155;
+    --border-secondary: #475569;
+    
+    /* Component Colors - Dark */
+    --card-bg: #1e293b;
+    --card-border: #334155;
+    --card-shadow: rgba(0, 0, 0, 0.3);
+    --hover-bg: #334155;
+    --active-bg: #475569;
+    
+    /* Navigation - Dark */
+    --navbar-bg: #1e293b;
+    --navbar-border: #334155;
+    --sidebar-bg: #1e293b;
+    --sidebar-hover: #334155;
+    
+    /* Form Elements - Dark */
+    --input-bg: #334155;
+    --input-border: #475569;
+    --input-focus: #3b82f6;
+    
+    /* Chart Colors - Dark */
+    --chart-grid: #334155;
+    --chart-text: #cbd5e1;
+}
+
+/* Desktop-First Container System */
+.desktop-container {
+    max-width: var(--max-content-width);
+    margin: 0 auto;
+    padding: 0 var(--content-padding);
+    width: 100%;
+}
+
+.desktop-content {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Navigation Optimizations */
+.saas-navbar {
+    background: var(--navbar-bg);
+    border-bottom: 1px solid var(--navbar-border);
+    transition: all 0.3s ease;
+}
+
+.saas-navbar-content {
+    max-width: var(--max-content-width);
+    margin: 0 auto;
+    padding: 0 var(--content-padding);
+}
+
+/* Sidebar Enhancements */
+.desktop-sidebar {
+    background: var(--sidebar-bg);
+    border-right: 1px solid var(--border-primary);
+    transition: all 0.3s ease;
+}
+
+.sidebar-icon {
+    color: var(--text-secondary);
+    background: transparent;
+    transition: all 0.2s ease;
+}
+
+.sidebar-icon:hover {
+    background: var(--sidebar-hover);
+    color: var(--text-primary);
+}
+
+/* Card System Optimization */
+.saas-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    box-shadow: 0 1px 3px var(--card-shadow);
+    transition: all 0.3s ease;
+}
+
+.saas-card:hover {
+    box-shadow: 0 4px 6px -1px var(--card-shadow), 0 2px 4px -1px var(--card-shadow);
+    transform: translateY(-1px);
+}
+
+/* Grid System Enhancements */
+.desktop-grid {
+    display: grid;
+    gap: 24px;
+    width: 100%;
+}
+
+/* Desktop: 3-column grid */
+@media (min-width: 1024px) {
+    .desktop-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* Tablet: 2-column grid */
+@media (min-width: 768px) and (max-width: 1023px) {
+    .desktop-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+    
+    .desktop-container {
+        padding: 0 var(--tablet-padding);
+    }
+}
+
+/* Mobile: Single column */
+@media (max-width: 767px) {
+    .desktop-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    
+    .desktop-container {
+        padding: 0 var(--mobile-padding);
+    }
+}
+
+/* Dark Mode Toggle */
+.theme-toggle {
+    width: 40px;
+    height: 40px;
+    border: 1px solid var(--border-primary);
+    background: var(--bg-primary);
+    color: var(--text-secondary);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.theme-toggle:hover {
+    background: var(--hover-bg);
+    color: var(--text-primary);
+    transform: scale(1.05);
+}
+
+/* Form Elements Dark Mode */
+input, textarea, select {
+    background: var(--input-bg);
+    border-color: var(--input-border);
+    color: var(--text-primary);
+    transition: all 0.3s ease;
+}
+
+input:focus, textarea:focus, select:focus {
+    border-color: var(--input-focus);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Button Enhancements */
+.saas-btn-primary {
+    background: linear-gradient(135deg, var(--accent-blue), var(--brand-blue));
+    color: white;
+    transition: all 0.2s ease;
+}
+
+.saas-btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
+}
+
+.saas-btn-secondary {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-primary);
+    transition: all 0.2s ease;
+}
+
+.saas-btn-secondary:hover {
+    background: var(--hover-bg);
+    transform: translateY(-1px);
+}
+
+/* Modal Dark Mode Support */
+.modal, .upsell-modal-content {
+    background: var(--card-bg);
+    color: var(--text-primary);
+    border: 1px solid var(--card-border);
+}
+
+/* Chart Container Dark Mode */
+.chart-container {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 20px;
+    transition: all 0.3s ease;
+}
+
+/* Search Results Dark Mode */
+.search-results {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    color: var(--text-primary);
+}
+
+/* Dropdown Dark Mode */
+.dropdown-menu {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    box-shadow: 0 10px 15px -3px var(--card-shadow);
+}
+
+.dropdown-item {
+    color: var(--text-primary);
+    transition: all 0.2s ease;
+}
+
+.dropdown-item:hover {
+    background: var(--hover-bg);
+}
+
+/* Premium Feature Dark Mode */
+.premium-card-overlay {
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(4px);
+}
+
+[data-theme="dark"] .premium-card-overlay {
+    background: rgba(0, 0, 0, 0.9);
+}
+
+/* Tooltip Dark Mode */
+.premium-tooltip::after {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-primary);
+}
+
+/* Performance Optimizations */
+* {
+    box-sizing: border-box;
+}
+
+/* GPU Acceleration for Smooth Animations */
+.saas-card,
+.sidebar-icon,
+.theme-toggle,
+.saas-btn-primary,
+.saas-btn-secondary {
+    will-change: transform;
+    backface-visibility: hidden;
+}
+
+/* Reduce Motion for Accessibility */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Print Styles */
+@media print {
+    .sidebar, .navbar, .theme-toggle {
+        display: none !important;
+    }
+    
+    .desktop-container {
+        max-width: none;
+        padding: 0;
+    }
+    
+    .saas-card {
+        border: 1px solid #000;
+        box-shadow: none;
+    }
+}
+
+/* High DPI Display Optimizations */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    .saas-logo-icon {
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: crisp-edges;
+    }
+}
+
+/* Focus Indicators for Accessibility */
+*:focus-visible {
+    outline: 2px solid var(--accent-blue);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+/* Loading States */
+.loading-skeleton {
+    background: linear-gradient(90deg, var(--bg-secondary) 25%, var(--bg-tertiary) 50%, var(--bg-secondary) 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}

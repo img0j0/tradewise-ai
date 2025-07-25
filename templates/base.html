@@ -27,6 +27,9 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/premium_features.css') }}?v={{ range(1000, 9999) | random }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/premium_indicators.css') }}?v={{ range(1000, 9999) | random }}">
     
+    <!-- Desktop Optimization & Dark Mode -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/desktop_optimization.css') }}?v={{ range(1000, 9999) | random }}">
+    
     <!-- Additional Block for Page-Specific CSS -->
     {% block extra_css %}{% endblock %}
     
@@ -149,7 +152,7 @@
                 </button>
                 
                 <!-- Dark Mode Toggle -->
-                <button id="theme-toggle" class="p-2 text-gray-600 hover:text-gray-800 rounded-lg hover:bg-gray-100">
+                <button id="theme-toggle" class="theme-toggle" title="Toggle Dark Mode">
                     <i id="theme-icon" class="fas fa-moon"></i>
                 </button>
             </div>
@@ -211,7 +214,7 @@
     </nav>
 
     <!-- Optional Desktop Sidebar for Large Screens -->
-    <aside id="desktop-sidebar" class="hidden xl:block fixed left-0 top-16 bottom-0 w-20 bg-white border-r border-gray-200 z-40">
+    <aside id="desktop-sidebar" class="desktop-sidebar hidden xl:block fixed left-0 top-16 bottom-0 w-20 z-40">
         <div class="flex flex-col items-center py-6 space-y-6">
             <a href="/" class="sidebar-icon {% block sidebar_dashboard %}{% endblock %}" title="Dashboard">
                 <i class="fas fa-tachometer-alt text-xl"></i>
@@ -236,8 +239,8 @@
     </aside>
 
     <!-- Main Content with Desktop-First Layout -->
-    <main class="{% block main_class %}xl:ml-20 pt-16{% endblock %}">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <main class="{% block main_class %}xl:ml-20 pt-16{% endblock %} desktop-content">
+        <div class="desktop-container">
             {% block content %}{% endblock %}
         </div>
     </main>
@@ -298,6 +301,9 @@
     <script src="{{ url_for('static', filename='js/modern_search.js') }}?v={{ range(1000, 9999) | random }}"></script>
     <script src="{{ url_for('static', filename='js/mobile_optimization.js') }}?v={{ range(1000, 9999) | random }}"></script>
     <script src="{{ url_for('static', filename='js/premium_features.js') }}?v={{ range(1000, 9999) | random }}"></script>
+    <script src="{{ url_for('static', filename='js/dark_mode.js') }}?v={{ range(1000, 9999) | random }}"></script>
+    <script src="{{ url_for('static', filename='js/performance_optimizer.js') }}?v={{ range(1000, 9999) | random }}"></script>
+    <script src="{{ url_for('static', filename='js/cross_browser_compatibility.js') }}?v={{ range(1000, 9999) | random }}"></script>
     
     <!-- Page-specific JavaScript -->
     {% block extra_js %}{% endblock %}
