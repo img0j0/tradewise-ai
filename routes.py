@@ -299,7 +299,7 @@ def stock_analysis_api():
         
         # Check enhanced cache for recent analysis
         enhanced_cache_key = f"enhanced_analysis:{query}:{user_strategy}"
-        cached_analysis = cache.get(enhanced_cache_key)
+        cached_analysis = ai_cache.get(enhanced_cache_key)
         
         if cached_analysis:
             logger.info(f"Returning enhanced cached analysis for {query}")

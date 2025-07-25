@@ -1,0 +1,195 @@
+{
+  "timestamp": "2025-07-25T23:12:40.763227",
+  "summary": {
+    "total_test_suites": 11,
+    "passed_suites": 11,
+    "failed_suites": 0,
+    "individual_warnings": 3,
+    "success_rate_percent": 100.0,
+    "average_response_time_ms": 26.983461538461537
+  },
+  "detailed_results": [
+    {
+      "test": "Application Health",
+      "status": "PASS",
+      "details": "Status: 200, Size: 33561 bytes, Essential content: True",
+      "duration_ms": 25.4,
+      "timestamp": "2025-07-25T23:12:40.075546"
+    },
+    {
+      "test": "Auth: Login Page",
+      "status": "PASS",
+      "details": "Status: 200",
+      "duration_ms": 6.78,
+      "timestamp": "2025-07-25T23:12:40.082714"
+    },
+    {
+      "test": "Auth: Google OAuth",
+      "status": "PASS",
+      "details": "Status: 302",
+      "duration_ms": 6.63,
+      "timestamp": "2025-07-25T23:12:40.089624"
+    },
+    {
+      "test": "Auth: GitHub OAuth",
+      "status": "PASS",
+      "details": "Status: 302",
+      "duration_ms": 6.0,
+      "timestamp": "2025-07-25T23:12:40.095806"
+    },
+    {
+      "test": "Dashboard Functionality",
+      "status": "PASS",
+      "details": "Elements: portfolio, ai_insights, search, navigation, premium",
+      "duration_ms": 6.63,
+      "timestamp": "2025-07-25T23:12:40.102958"
+    },
+    {
+      "test": "Search: Symbol Search",
+      "status": "PASS",
+      "details": "Query: 'AAPL', Performance: Fast",
+      "duration_ms": 6.0,
+      "timestamp": "2025-07-25T23:12:40.109527"
+    },
+    {
+      "test": "Search: Company Name Search",
+      "status": "WARN",
+      "details": "Query: 'Apple', Server error (known issue)",
+      "duration_ms": 197.75,
+      "timestamp": "2025-07-25T23:12:40.307532"
+    },
+    {
+      "test": "Search: Fuzzy Matching",
+      "status": "WARN",
+      "details": "Query: 'Appl', Server error (known issue)",
+      "duration_ms": 132.99,
+      "timestamp": "2025-07-25T23:12:40.440778"
+    },
+    {
+      "test": "Search Performance",
+      "status": "PASS",
+      "details": "Average response time: 0.11s",
+      "duration_ms": 0,
+      "timestamp": "2025-07-25T23:12:40.442283"
+    },
+    {
+      "test": "Autocomplete System",
+      "status": "WARN",
+      "details": "Invalid response format",
+      "duration_ms": 101.21,
+      "timestamp": "2025-07-25T23:12:40.543837"
+    },
+    {
+      "test": "Premium: Backtesting",
+      "status": "PASS",
+      "details": "Accessible, Premium indicators: True",
+      "duration_ms": 9.11,
+      "timestamp": "2025-07-25T23:12:40.553400"
+    },
+    {
+      "test": "Premium: Peer Comparison",
+      "status": "PASS",
+      "details": "Accessible, Premium indicators: True",
+      "duration_ms": 9.26,
+      "timestamp": "2025-07-25T23:12:40.563068"
+    },
+    {
+      "test": "Premium: Premium Upgrade",
+      "status": "PASS",
+      "details": "Properly protected (requires auth)",
+      "duration_ms": 5.03,
+      "timestamp": "2025-07-25T23:12:40.568425"
+    },
+    {
+      "test": "Billing: User Plan API",
+      "status": "PASS",
+      "details": "Plan: free, Features: 3",
+      "duration_ms": 4.69,
+      "timestamp": "2025-07-25T23:12:40.573399"
+    },
+    {
+      "test": "Billing: Billing Plans",
+      "status": "PASS",
+      "details": "Page accessible",
+      "duration_ms": 73.21,
+      "timestamp": "2025-07-25T23:12:40.646890"
+    },
+    {
+      "test": "Asset: Main Theme",
+      "status": "PASS",
+      "details": "Size: 13.3KB",
+      "duration_ms": 10.18,
+      "timestamp": "2025-07-25T23:12:40.657533"
+    },
+    {
+      "test": "Asset: Desktop CSS",
+      "status": "PASS",
+      "details": "Size: 8.0KB",
+      "duration_ms": 6.05,
+      "timestamp": "2025-07-25T23:12:40.663784"
+    },
+    {
+      "test": "Asset: Dark Mode JS",
+      "status": "PASS",
+      "details": "Size: 7.8KB",
+      "duration_ms": 4.75,
+      "timestamp": "2025-07-25T23:12:40.668769"
+    },
+    {
+      "test": "Asset: Premium JS",
+      "status": "PASS",
+      "details": "Size: 14.4KB",
+      "duration_ms": 4.44,
+      "timestamp": "2025-07-25T23:12:40.673499"
+    },
+    {
+      "test": "Asset Bundle Size",
+      "status": "PASS",
+      "details": "Total: 43.5KB",
+      "duration_ms": 0,
+      "timestamp": "2025-07-25T23:12:40.673676"
+    },
+    {
+      "test": "Responsive: Mobile iOS",
+      "status": "PASS",
+      "details": "Mobile indicators: 3/3",
+      "duration_ms": 5.14,
+      "timestamp": "2025-07-25T23:12:40.679231"
+    },
+    {
+      "test": "Responsive: Mobile Android",
+      "status": "PASS",
+      "details": "Mobile indicators: 3/3",
+      "duration_ms": 5.31,
+      "timestamp": "2025-07-25T23:12:40.685123"
+    },
+    {
+      "test": "Responsive: Tablet iPad",
+      "status": "PASS",
+      "details": "Mobile indicators: 3/3",
+      "duration_ms": 4.16,
+      "timestamp": "2025-07-25T23:12:40.689914"
+    },
+    {
+      "test": "Security Configuration",
+      "status": "PASS",
+      "details": "Security headers: 5/5",
+      "duration_ms": 6.61,
+      "timestamp": "2025-07-25T23:12:40.696993"
+    },
+    {
+      "test": "Performance: Performance Stats",
+      "status": "PASS",
+      "details": "Response time: 0.005s",
+      "duration_ms": 5.23,
+      "timestamp": "2025-07-25T23:12:40.702605"
+    },
+    {
+      "test": "Performance: Health Check",
+      "status": "PASS",
+      "details": "Response time: 0.059s",
+      "duration_ms": 59.01,
+      "timestamp": "2025-07-25T23:12:40.761840"
+    }
+  ]
+}

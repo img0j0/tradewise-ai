@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+
+{% block title %}Peer Comparison - TradeWise AI{% endblock %}
+
+{% block nav_peer_comparison %}active{% endblock %}
+{% block sidebar_peer %}active{% endblock %}
+
+{% block content %}
+<div class="py-8">
+    <!-- Header -->
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900">
+            <i class="fas fa-balance-scale text-brand-blue mr-3"></i>
+            Peer Comparison Analysis
+        </h1>
+        <p class="text-gray-600 mt-2">Compare stocks against industry peers and benchmarks</p>
+    </div>
+
+    <!-- Premium Feature Lock (for Free users) -->
+    <div class="premium-lock-overlay" id="peer-comparison-lock">
+        <div class="saas-card text-center p-8">
+            <div class="premium-lock-icon mb-4">
+                <i class="fas fa-crown text-6xl text-gold-500"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-gray-900 mb-3">Peer Comparison Analysis</h3>
+            <p class="text-gray-600 mb-6 max-w-md mx-auto">
+                Get comprehensive peer analysis, industry benchmarks, and competitive positioning insights
+            </p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8 text-left max-w-2xl mx-auto">
+                <div class="flex items-start gap-3">
+                    <i class="fas fa-chart-line text-brand-blue mt-1"></i>
+                    <div>
+                        <div class="font-semibold text-gray-900">Industry Benchmarks</div>
+                        <div class="text-sm text-gray-600">Compare against sector averages</div>
+                    </div>
+                </div>
+                <div class="flex items-start gap-3">
+                    <i class="fas fa-trophy text-brand-purple mt-1"></i>
+                    <div>
+                        <div class="font-semibold text-gray-900">Competitive Ranking</div>
+                        <div class="text-sm text-gray-600">See how stocks rank vs peers</div>
+                    </div>
+                </div>
+                <div class="flex items-start gap-3">
+                    <i class="fas fa-calculator text-green-600 mt-1"></i>
+                    <div>
+                        <div class="font-semibold text-gray-900">Financial Ratios</div>
+                        <div class="text-sm text-gray-600">P/E, ROE, margins comparison</div>
+                    </div>
+                </div>
+                <div class="flex items-start gap-3">
+                    <i class="fas fa-search text-blue-600 mt-1"></i>
+                    <div>
+                        <div class="font-semibold text-gray-900">Deep Analysis</div>
+                        <div class="text-sm text-gray-600">AI-powered peer insights</div>
+                    </div>
+                </div>
+            </div>
+            
+            <a href="/premium/upgrade" class="premium-upgrade-btn">
+                <i class="fas fa-crown mr-2"></i>
+                Upgrade to Pro
+            </a>
+            
+            <p class="text-sm text-gray-500 mt-4">
+                Starting at $29.99/month • Cancel anytime
+            </p>
+        </div>
+    </div>
+
+    <!-- Actual Feature Content (hidden behind premium lock) -->
+    <div class="peer-comparison-content" style="display: none;">
+        <!-- Search Section -->
+        <div class="saas-card mb-8">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-search text-brand-blue mr-2"></i>
+                    Select Stock for Peer Analysis
+                </h3>
+            </div>
+            <div class="card-content">
+                <div class="flex gap-4">
+                    <div class="flex-1">
+                        <input type="text" 
+                               id="peer-search-input" 
+                               class="form-input w-full" 
+                               placeholder="Enter stock symbol (e.g., AAPL, MSFT)"
+                               autocomplete="off">
+                    </div>
+                    <button id="analyze-peers-btn" class="btn btn-primary">
+                        <i class="fas fa-chart-line mr-2"></i>
+                        Analyze Peers
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div id="peer-results" class="hidden">
+            <!-- Peer comparison results will be loaded here -->
+        </div>
+    </div>
+</div>
+
+<script>
+// Premium feature detection
+document.addEventListener('DOMContentLoaded', function() {
+    // Check user plan
+    fetch('/api/user/plan')
+        .then(response => response.json())
+        .then(data => {
+            if (data.plan === 'pro' || data.plan === 'enterprise') {
+                // Hide lock overlay and show content
+                document.getElementById('peer-comparison-lock').style.display = 'none';
+                document.querySelector('.peer-comparison-content').style.display = 'block';
+                
+                // Initialize peer comparison functionality
+                initializePeerComparison();
+            }
+        })
+        .catch(error => {
+            console.log('Could not check user plan');
+        });
+});
+
+function initializePeerComparison() {
+    const searchInput = document.getElementById('peer-search-input');
+    const analyzeBtn = document.getElementById('analyze-peers-btn');
+    
+    analyzeBtn.addEventListener('click', function() {
+        const symbol = searchInput.value.trim().toUpperCase();
+        if (symbol) {
+            loadPeerAnalysis(symbol);
+        }
+    });
+    
+    searchInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            analyzeBtn.click();
+        }
+    });
+}
+
+function loadPeerAnalysis(symbol) {
+    const resultsDiv = document.getElementById('peer-results');
+    resultsDiv.innerHTML = '<div class="loading-skeleton" style="height: 300px;"></div>';
+    resultsDiv.classList.remove('hidden');
+    
+    // Mock peer analysis for demonstration
+    setTimeout(() => {
+        resultsDiv.innerHTML = `
+            <div class="saas-card">
+                <div class="card-header">
+                    <h3 class="card-title">Peer Analysis: ${symbol}</h3>
+                </div>
+                <div class="card-content">
+                    <p class="text-gray-600">Peer comparison analysis would be displayed here for Pro/Enterprise users.</p>
+                </div>
+            </div>
+        `;
+    }, 1000);
+}
+</script>
+{% endblock %}
