@@ -15,10 +15,10 @@
                 Professional stock analysis platform delivering institutional-grade insights with retail-friendly pricing.
             </p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                <a href="/search" class="saas-btn-primary">
+                <a href="/search" class="saas-btn-primary" id="quick-search">
                     <i class="fas fa-search mr-2"></i>Start Analyzing Stocks
                 </a>
-                <a href="/premium/upgrade" class="saas-btn-secondary">
+                <a href="/premium/upgrade" class="saas-btn-secondary" id="show-upgrade">
                     <i class="fas fa-crown mr-2"></i>Upgrade to Pro
                 </a>
             </div>
@@ -30,32 +30,36 @@
         <div class="saas-card">
             <div class="saas-card-header">
                 <div class="flex items-center justify-between">
-                    <h3 class="saas-card-title">Market Overview</h3>
+                    <h3 class="saas-card-title">Portfolio Performance</h3>
                     <i class="fas fa-chart-line text-2xl text-brand-blue"></i>
                 </div>
             </div>
             <div class="saas-card-content">
-                <div class="text-3xl font-bold text-gray-800 mb-2">S&P 500</div>
-                <div class="text-green-600 font-medium">
-                    <i class="fas fa-arrow-up mr-1"></i>+1.24%
+                <div class="text-3xl font-bold text-gray-800 mb-2" id="portfolio-value">$12,450</div>
+                <div class="text-green-600 font-medium" id="portfolio-change">
+                    <i class="fas fa-arrow-up mr-1"></i>+2.3%
                 </div>
-                <p class="text-gray-600 text-sm mt-2">Market performing well today</p>
+                <div class="mt-4 h-32">
+                    <canvas id="portfolio-chart"></canvas>
+                </div>
             </div>
         </div>
 
         <div class="saas-card">
             <div class="saas-card-header">
                 <div class="flex items-center justify-between">
-                    <h3 class="saas-card-title">Your Analyses</h3>
-                    <i class="fas fa-history text-2xl text-brand-purple"></i>
+                    <h3 class="saas-card-title">Market Overview</h3>
+                    <i class="fas fa-globe text-2xl text-brand-purple"></i>
                 </div>
             </div>
             <div class="saas-card-content">
-                <div class="text-3xl font-bold text-gray-800 mb-2">12</div>
-                <div class="text-blue-600 font-medium">
-                    <i class="fas fa-plus mr-1"></i>3 this week
+                <div class="text-3xl font-bold text-gray-800 mb-2" id="spx-value">S&P 5,985</div>
+                <div class="text-green-600 font-medium" id="spx-change">
+                    <i class="fas fa-arrow-up mr-1"></i>+1.24%
                 </div>
-                <p class="text-gray-600 text-sm mt-2">Stocks analyzed recently</p>
+                <div class="mt-4 h-32">
+                    <canvas id="market-chart"></canvas>
+                </div>
             </div>
         </div>
 
@@ -94,7 +98,7 @@
                     </div>
                 </a>
 
-                <a href="/backtest" class="flex items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                <a href="/backtest" class="flex items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors" id="quick-backtest">
                     <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mr-4">
                         <i class="fas fa-chart-bar text-purple-600"></i>
                     </div>
@@ -117,7 +121,7 @@
                     </div>
                 </div>
 
-                <div class="flex items-center p-4 bg-gray-50 rounded-lg opacity-75 cursor-not-allowed">
+                <div class="flex items-center p-4 bg-gray-50 rounded-lg opacity-75 cursor-not-allowed" id="quick-portfolio">
                     <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mr-4">
                         <i class="fas fa-briefcase text-green-600"></i>
                     </div>
@@ -141,36 +145,83 @@
         </div>
         <div class="saas-card-content">
             <div class="space-y-4">
-                <div class="flex items-start gap-4 p-4 bg-gray-50 rounded-lg">
-                    <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                        <i class="fas fa-chart-line text-blue-600"></i>
+                <div id="recent-analyses">
+                    <div class="flex items-start gap-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer" onclick="SearchManager.performSearch('AAPL')">
+                        <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-chart-line text-blue-600"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="font-semibold text-gray-800 mb-1">AAPL - Apple Inc.</div>
+                            <p class="text-gray-600 text-sm mb-2">Strong AI momentum with iPhone 16 Pro driving revenues higher.</p>
+                            <div class="text-xs text-gray-500">2 hours ago</div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-sm font-medium text-green-600">BUY</div>
+                            <div class="text-xs text-gray-500">85% confidence</div>
+                        </div>
                     </div>
-                    <div>
-                        <div class="font-semibold text-gray-800 mb-1">Tech Stocks Rally</div>
-                        <p class="text-gray-600 text-sm mb-2">Major technology stocks showing strong momentum with AI sector leading gains.</p>
-                        <div class="text-xs text-gray-500">2 hours ago</div>
-                    </div>
-                </div>
 
-                <div class="flex items-start gap-4 p-4 bg-gray-50 rounded-lg">
-                    <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
-                        <i class="fas fa-dollar-sign text-green-600"></i>
-                    </div>
-                    <div>
-                        <div class="font-semibold text-gray-800 mb-1">Market Analysis Complete</div>
-                        <p class="text-gray-600 text-sm mb-2">Weekly market analysis shows continued strength in key sectors.</p>
-                        <div class="text-xs text-gray-500">1 day ago</div>
+                    <div class="flex items-start gap-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer" onclick="SearchManager.performSearch('TSLA')">
+                        <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-bolt text-green-600"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="font-semibold text-gray-800 mb-1">TSLA - Tesla, Inc.</div>
+                            <p class="text-gray-600 text-sm mb-2">Electric vehicle market expansion with autonomous driving progress.</p>
+                            <div class="text-xs text-gray-500">1 day ago</div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-sm font-medium text-yellow-600">HOLD</div>
+                            <div class="text-xs text-gray-500">72% confidence</div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Upgrade Modal -->
+    <div id="upgrade-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg p-8 max-w-md w-full mx-4">
+            <div class="text-center">
+                <div class="w-16 h-16 bg-gradient-to-r from-brand-blue to-brand-purple rounded-2xl mx-auto mb-4 flex items-center justify-center">
+                    <i class="fas fa-crown text-white text-2xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-800 mb-2">Upgrade to Pro</h3>
+                <p class="text-gray-600 mb-6">Unlock advanced features and unlimited analysis</p>
+                
+                <div class="space-y-3 mb-6 text-left">
+                    <div class="flex items-center gap-3">
+                        <i class="fas fa-check text-green-600"></i>
+                        <span class="text-sm text-gray-700">Unlimited stock analysis</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <i class="fas fa-check text-green-600"></i>
+                        <span class="text-sm text-gray-700">Portfolio backtesting</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <i class="fas fa-check text-green-600"></i>
+                        <span class="text-sm text-gray-700">Peer comparison tools</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <i class="fas fa-check text-green-600"></i>
+                        <span class="text-sm text-gray-700">Advanced AI insights</span>
+                    </div>
+                </div>
+                
+                <div class="flex gap-3">
+                    <button onclick="closeUpgradeModal()" class="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+                        Maybe Later
+                    </button>
+                    <a href="/premium/upgrade" class="flex-1 px-4 py-2 bg-gradient-to-r from-brand-blue to-brand-purple text-white rounded-lg hover:shadow-lg">
+                        Upgrade Now - $29.99/mo
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
 {% endblock %}
-            <!-- Dashboard Header -->
-            <div class="saas-dashboard-header">
-                <div class="flex items-center justify-between mb-2">
-                    <h1 class="saas-heading-1">Dashboard</h1>
-                    <button id="sidebar-toggle" class="md:hidden saas-button-secondary">
                         <i class="fas fa-bars"></i>
                     </button>
                 </div>

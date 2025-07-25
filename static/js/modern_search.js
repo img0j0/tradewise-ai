@@ -1,674 +1,515 @@
 /**
  * Modern Search JavaScript
- * Handles autocomplete, search functionality, and result display
+ * Enhanced search functionality with autocomplete and real-time results
  */
 
-class ModernSearch {
-    constructor() {
-        this.autocompleteTimeout = null;
-        this.selectedIndex = -1;
-        this.suggestions = [];
-        this.recentSearches = [];
-        this.starredStocks = [];
-        
-        this.init();
-    }
-    
-    init() {
-        this.initEventListeners();
-        this.loadUserData();
-        this.initTheme();
-    }
-    
-    initEventListeners() {
-        const searchInput = document.getElementById('stock-search-input');
-        const searchButton = document.getElementById('search-button');
-        
-        if (searchInput) {
-            searchInput.addEventListener('input', (e) => this.handleSearchInput(e));
-            searchInput.addEventListener('keydown', (e) => this.handleKeyDown(e));
-            searchInput.addEventListener('focus', () => this.showAutocomplete());
-            searchInput.addEventListener('blur', () => this.hideAutocompleteDelayed());
-        }
-        
-        if (searchButton) {
-            searchButton.addEventListener('click', () => this.performSearch());
-        }
-        
-        // Theme toggle
-        const themeToggle = document.getElementById('theme-toggle');
-        if (themeToggle) {
-            themeToggle.addEventListener('click', () => this.toggleTheme());
-        }
-        
-        // User menu
-        const userMenuBtn = document.getElementById('user-menu-btn');
-        if (userMenuBtn) {
-            userMenuBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                // Handle user menu
-            });
-        }
-        
-        // Close autocomplete when clicking outside
-        document.addEventListener('click', (e) => {
-            if (!e.target.closest('#stock-search-input') && !e.target.closest('#autocomplete-dropdown')) {
-                this.hideAutocomplete();
-            }
-        });
-    }
-    
-    initTheme() {
-        const isDarkMode = localStorage.getItem('theme') === 'dark';
-        const html = document.documentElement;
-        const themeIcon = document.getElementById('theme-icon');
-        
-        if (isDarkMode) {
-            html.setAttribute('data-theme', 'dark');
-            html.classList.add('dark');
-            if (themeIcon) {
-                themeIcon.className = 'fas fa-sun';
-            }
-        } else {
-            html.setAttribute('data-theme', 'light');
-            html.classList.remove('dark');
-            if (themeIcon) {
-                themeIcon.className = 'fas fa-moon';
-            }
-        }
-    }
-    
-    toggleTheme() {
-        const isDarkMode = localStorage.getItem('theme') !== 'dark';
-        localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
-        this.initTheme();
-    }
-    
-    async handleSearchInput(e) {
-        const query = e.target.value.trim();
-        
-        if (this.autocompleteTimeout) {
-            clearTimeout(this.autocompleteTimeout);
-        }
-        
-        if (query.length >= 1) {
-            this.autocompleteTimeout = setTimeout(() => {
-                this.fetchAutocomplete(query);
-            }, 300);
-        } else {
-            this.hideAutocomplete();
-        }
-    }
-    
-    handleKeyDown(e) {
-        const dropdown = document.getElementById('autocomplete-dropdown');
-        
-        if (!dropdown || dropdown.classList.contains('hidden')) {
-            if (e.key === 'Enter') {
-                this.performSearch();
-            }
-            return;
-        }
-        
-        switch (e.key) {
-            case 'ArrowDown':
-                e.preventDefault();
-                this.selectedIndex = Math.min(this.selectedIndex + 1, this.suggestions.length - 1);
-                this.updateSelection();
-                break;
-            case 'ArrowUp':
-                e.preventDefault();
-                this.selectedIndex = Math.max(this.selectedIndex - 1, -1);
-                this.updateSelection();
-                break;
-            case 'Enter':
-                e.preventDefault();
-                if (this.selectedIndex >= 0) {
-                    this.selectSuggestion(this.suggestions[this.selectedIndex]);
-                } else {
-                    this.performSearch();
-                }
-                break;
-            case 'Escape':
-                this.hideAutocomplete();
-                break;
-        }
-    }
-    
-    async fetchAutocomplete(query) {
-        try {
-            const response = await fetch(`/api/search/autocomplete?q=${encodeURIComponent(query)}&limit=8`);
-            const data = await response.json();
-            
-            if (data.success && data.suggestions) {
-                this.suggestions = data.suggestions;
-                this.displayAutocomplete();
-                this.selectedIndex = -1;
-            }
-        } catch (error) {
-            console.error('Autocomplete error:', error);
-            // Fallback to basic autocomplete
-            this.fallbackAutocomplete(query);
-        }
-    }
-    
-    async fallbackAutocomplete(query) {
-        try {
-            const response = await fetch(`/api/search/autocomplete?q=${encodeURIComponent(query)}&limit=8`);
-            const data = await response.json();
-            
-            if (data.success && data.suggestions) {
-                this.suggestions = data.suggestions;
-                this.displayAutocomplete();
-                this.selectedIndex = -1;
-            }
-        } catch (error) {
-            console.error('Fallback autocomplete error:', error);
-        }
-    }
-    
-    displayAutocomplete() {
-        const dropdown = document.getElementById('autocomplete-dropdown');
-        const resultsContainer = document.getElementById('autocomplete-results');
-        
-        if (!dropdown || !resultsContainer) return;
-        
-        if (this.suggestions.length === 0) {
-            this.hideAutocomplete();
-            return;
-        }
-        
-        resultsContainer.innerHTML = this.suggestions.map((suggestion, index) => `
-            <div class="autocomplete-item p-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0 ${index === this.selectedIndex ? 'bg-blue-50' : ''}" 
-                 data-index="${index}"
-                 onclick="window.searchManager.selectSuggestion(${JSON.stringify(suggestion).replace(/"/g, '&quot;')})">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-3">
-                        ${suggestion.logo_url ? 
-                            `<img src="${suggestion.logo_url}" alt="${suggestion.symbol}" class="w-8 h-8 rounded-lg object-cover">` :
-                            `<div class="w-8 h-8 bg-gradient-to-r from-brand-blue to-brand-purple rounded-lg flex items-center justify-center text-white text-xs font-bold">
-                                ${suggestion.symbol.substring(0, 2)}
-                            </div>`
-                        }
-                        <div>
-                            <div class="font-semibold text-gray-800">${suggestion.symbol}</div>
-                            <div class="text-sm text-gray-600">${suggestion.name}</div>
-                            ${suggestion.sector ? `<div class="text-xs text-gray-500">${suggestion.sector}</div>` : ''}
-                        </div>
-                    </div>
-                    <div class="text-right flex flex-col items-end gap-1">
-                        <div class="flex items-center gap-2">
-                            ${this.getMarketStatusIndicator(suggestion.market_status)}
-                            ${suggestion.trend ? `<div class="text-xs ${suggestion.trend === 'up' ? 'status-positive' : suggestion.trend === 'down' ? 'status-negative' : 'status-neutral'}">
-                                <i class="fas fa-arrow-${suggestion.trend === 'up' ? 'up' : suggestion.trend === 'down' ? 'down' : 'right'}"></i>
-                            </div>` : ''}
-                        </div>
-                        ${suggestion.match_type ? `<div class="text-xs px-2 py-1 rounded-full ${this.getMatchTypeBadge(suggestion.match_type)}">${this.getMatchTypeLabel(suggestion.match_type)}</div>` : ''}
-                    </div>
-                </div>
-            </div>
-        `).join('');
-        
-        dropdown.classList.remove('hidden');
-        this.showAutocomplete();
-    }
-    
-    updateSelection() {
-        const items = document.querySelectorAll('.autocomplete-item');
-        items.forEach((item, index) => {
-            if (index === this.selectedIndex) {
-                item.classList.add('bg-blue-50');
-            } else {
-                item.classList.remove('bg-blue-50');
-            }
-        });
-    }
-    
-    selectSuggestion(suggestion) {
-        const searchInput = document.getElementById('stock-search-input');
-        if (searchInput) {
-            searchInput.value = suggestion.symbol;
-        }
-        
-        // Record selection for ML improvement
-        this.recordSelection(searchInput.value, suggestion.symbol);
-        
-        this.hideAutocomplete();
-        this.performSearch();
-    }
-    
-    async recordSelection(query, selectedSymbol) {
-        try {
-            await fetch('/api/search/record-selection', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    query: query,
-                    symbol: selectedSymbol
-                })
-            });
-        } catch (error) {
-            console.log('Could not record selection:', error);
-        }
-    }
-    
-    getMarketStatusIndicator(status) {
-        const indicators = {
-            'open': '<div class="w-2 h-2 bg-green-500 rounded-full" title="Market Open"></div>',
-            'closed': '<div class="w-2 h-2 bg-red-500 rounded-full" title="Market Closed"></div>',
-            'pre_market': '<div class="w-2 h-2 bg-yellow-500 rounded-full" title="Pre-Market"></div>',
-            'after_hours': '<div class="w-2 h-2 bg-orange-500 rounded-full" title="After Hours"></div>',
-            'unknown': '<div class="w-2 h-2 bg-gray-400 rounded-full" title="Unknown"></div>'
-        };
-        return indicators[status] || indicators['unknown'];
-    }
-    
-    getMatchTypeBadge(matchType) {
-        const badges = {
-            'exact_symbol': 'bg-green-100 text-green-800',
-            'fuzzy_symbol': 'bg-blue-100 text-blue-800', 
-            'fuzzy_company': 'bg-purple-100 text-purple-800',
-            'trending': 'bg-yellow-100 text-yellow-800'
-        };
-        return badges[matchType] || 'bg-gray-100 text-gray-800';
-    }
-    
-    getMatchTypeLabel(matchType) {
-        const labels = {
-            'exact_symbol': 'Exact',
-            'fuzzy_symbol': 'Symbol',
-            'fuzzy_company': 'Name',
-            'trending': 'Trending'
-        };
-        return labels[matchType] || 'Match';
-    }
-    
-    showAutocomplete() {
-        const dropdown = document.getElementById('autocomplete-dropdown');
-        if (dropdown && this.suggestions.length > 0) {
-            dropdown.classList.remove('hidden');
-        }
-    }
-    
-    hideAutocomplete() {
-        const dropdown = document.getElementById('autocomplete-dropdown');
-        if (dropdown) {
-            dropdown.classList.add('hidden');
-        }
-    }
-    
-    hideAutocompleteDelayed() {
-        setTimeout(() => this.hideAutocomplete(), 150);
-    }
-    
-    async performSearch() {
-        const searchInput = document.getElementById('stock-search-input');
-        const query = searchInput ? searchInput.value.trim() : '';
-        
-        if (!query) {
-            this.showError('Please enter a stock symbol or company name');
-            return;
-        }
-        
-        this.showLoading();
-        this.hideAutocomplete();
-        
-        try {
-            // Add to recent searches
-            await this.addToRecentSearches(query);
-            
-            // Perform analysis
-            const response = await fetch('/api/stock-analysis', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ symbol: query })
-            });
-            
-            const data = await response.json();
-            
-            if (data.success) {
-                this.displayResults(data);
-            } else {
-                this.showError(data.error || 'Analysis failed. Please try again.');
-            }
-        } catch (error) {
-            console.error('Search error:', error);
-            this.showError('Unable to perform analysis. Please check your connection and try again.');
-        } finally {
-            this.hideLoading();
-        }
-    }
-    
-    showLoading() {
-        const loadingState = document.getElementById('loading-state');
-        const searchResults = document.getElementById('search-results');
-        
-        if (loadingState) {
-            loadingState.classList.remove('hidden');
-        }
-        
-        if (searchResults) {
-            searchResults.classList.add('hidden');
-        }
-    }
-    
-    hideLoading() {
-        const loadingState = document.getElementById('loading-state');
-        if (loadingState) {
-            loadingState.classList.add('hidden');
-        }
-    }
-    
-    displayResults(data) {
-        const searchResults = document.getElementById('search-results');
-        const analysisContent = document.getElementById('analysis-content');
-        
-        if (!searchResults || !analysisContent) return;
-        
-        const analysis = data.analysis || {};
-        const stockInfo = data.stock_info || {};
-        
-        analysisContent.innerHTML = `
-            <div class="space-y-6">
-                <!-- Stock Header -->
-                <div class="flex items-center justify-between p-6 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl border border-blue-200">
-                    <div class="flex items-center gap-4">
-                        <div class="w-16 h-16 bg-gradient-to-r from-brand-blue to-brand-purple rounded-2xl flex items-center justify-center text-white text-xl font-bold">
-                            ${(stockInfo.symbol || '').substring(0, 2)}
-                        </div>
-                        <div>
-                            <h2 class="text-2xl font-bold text-gray-800">${stockInfo.symbol || 'N/A'}</h2>
-                            <p class="text-gray-600">${stockInfo.company_name || 'Company Name'}</p>
-                            <p class="text-sm text-gray-500">${stockInfo.sector || 'Unknown Sector'}</p>
-                        </div>
-                    </div>
-                    <div class="text-right">
-                        <div class="text-3xl font-bold text-gray-800">
-                            $${typeof stockInfo.price === 'number' ? stockInfo.price.toFixed(2) : '0.00'}
-                        </div>
-                        <div class="text-lg ${(stockInfo.change || 0) >= 0 ? 'status-positive' : 'status-negative'}">
-                            ${(stockInfo.change || 0) >= 0 ? '+' : ''}${typeof stockInfo.change === 'number' ? stockInfo.change.toFixed(2) : '0.00'}
-                            (${(stockInfo.change_percent || 0) >= 0 ? '+' : ''}${typeof stockInfo.change_percent === 'number' ? stockInfo.change_percent.toFixed(2) : '0.00'}%)
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- AI Recommendation -->
-                <div class="p-6 bg-white border border-gray-200 rounded-xl">
-                    <div class="flex items-center gap-3 mb-4">
-                        <i class="fas fa-brain text-brand-blue text-xl"></i>
-                        <h3 class="text-xl font-semibold text-gray-800">AI Recommendation</h3>
-                    </div>
-                    <div class="flex items-center gap-4 mb-4">
-                        <div class="px-4 py-2 bg-gradient-to-r from-brand-blue to-brand-purple text-white rounded-lg font-semibold text-lg">
-                            ${analysis.recommendation || 'HOLD'}
-                        </div>
-                        <div class="text-gray-600">
-                            Confidence: <span class="font-semibold">${analysis.confidence || 65}%</span>
-                        </div>
-                    </div>
-                    <p class="text-gray-700 leading-relaxed">
-                        ${analysis.reasoning || 'Comprehensive analysis based on technical indicators, fundamental metrics, and market sentiment.'}
-                    </p>
-                </div>
-                
-                <!-- Key Metrics -->
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div class="metric-card">
-                        <div class="metric-value">${typeof stockInfo.pe_ratio === 'number' ? stockInfo.pe_ratio.toFixed(2) : 'N/A'}</div>
-                        <div class="metric-label">P/E Ratio</div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="metric-value">${typeof stockInfo.market_cap === 'number' ? this.formatLargeNumber(stockInfo.market_cap) : 'N/A'}</div>
-                        <div class="metric-label">Market Cap</div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="metric-value">${typeof stockInfo.volume === 'number' ? this.formatLargeNumber(stockInfo.volume) : 'N/A'}</div>
-                        <div class="metric-label">Volume</div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="metric-value">${typeof stockInfo.beta === 'number' ? stockInfo.beta.toFixed(2) : 'N/A'}</div>
-                        <div class="metric-label">Beta</div>
-                    </div>
-                </div>
-                
-                <!-- Action Buttons -->
-                <div class="flex gap-4 pt-4">
-                    <button onclick="window.searchManager.addToWatchlist('${stockInfo.symbol}')" class="saas-button-secondary">
-                        <i class="fas fa-star mr-2"></i>
-                        Add to Watchlist
-                    </button>
-                    <button onclick="window.searchManager.handlePremiumFeature('/peer-comparison/${stockInfo.symbol}')" class="saas-button-primary">
-                        <i class="fas fa-balance-scale mr-2"></i>
-                        Peer Comparison
-                        <span class="premium-indicator ml-2">
-                            <i class="fas fa-lock premium-lock-icon"></i>
-                            Pro
-                        </span>
-                    </button>
-                </div>
-            </div>
-        `;
-        
-        searchResults.classList.remove('hidden');
-        searchResults.scrollIntoView({ behavior: 'smooth' });
-    }
-    
-    formatLargeNumber(num) {
-        if (num >= 1e12) return (num / 1e12).toFixed(1) + 'T';
-        if (num >= 1e9) return (num / 1e9).toFixed(1) + 'B';
-        if (num >= 1e6) return (num / 1e6).toFixed(1) + 'M';
-        if (num >= 1e3) return (num / 1e3).toFixed(1) + 'K';
-        return num.toString();
-    }
-    
-    showError(message) {
-        const notification = document.createElement('div');
-        notification.className = 'fixed top-4 right-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg shadow-lg z-50';
-        notification.innerHTML = `
-            <div class="flex items-center gap-2">
-                <i class="fas fa-exclamation-triangle"></i>
-                <span>${message}</span>
-                <button onclick="this.parentElement.parentElement.remove()" class="ml-2 text-red-500 hover:text-red-700">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-        `;
-        
-        document.body.appendChild(notification);
-        
-        setTimeout(() => {
-            if (notification.parentElement) {
-                notification.remove();
-            }
-        }, 5000);
-    }
-    
-    async loadUserData() {
-        try {
-            // Load recent searches
-            const recentResponse = await fetch('/api/search/recent');
-            if (recentResponse.ok) {
-                const recentData = await recentResponse.json();
-                if (recentData.success) {
-                    this.displayRecentSearches(recentData.recent_searches || []);
-                }
-            }
-            
-            // Load starred stocks
-            const starredResponse = await fetch('/api/search/starred');
-            if (starredResponse.ok) {
-                const starredData = await starredResponse.json();
-                if (starredData.success) {
-                    this.displayStarredStocks(starredData.starred_symbols || []);
-                }
-            }
-        } catch (error) {
-            console.log('User data not available');
-        }
-    }
-    
-    displayRecentSearches(searches) {
-        const container = document.getElementById('recent-searches');
-        if (!container) return;
-        
-        if (searches.length === 0) {
-            container.innerHTML = '<div class="text-sm text-gray-500 text-center py-4">No recent searches yet</div>';
-            return;
-        }
-        
-        container.innerHTML = searches.map(search => `
-            <button onclick="searchStock('${search.symbol}')" class="w-full flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors">
-                <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 bg-gradient-to-r from-brand-blue to-brand-purple rounded-lg flex items-center justify-center text-white text-xs font-bold">
-                        ${search.symbol.substring(0, 2)}
-                    </div>
-                    <div class="text-left">
-                        <div class="font-semibold text-gray-800">${search.symbol}</div>
-                        <div class="text-sm text-gray-600">${search.name || 'Unknown'}</div>
-                    </div>
-                </div>
-                <div class="text-xs text-gray-500">
-                    ${search.timestamp ? new Date(search.timestamp).toLocaleDateString() : ''}
-                </div>
-            </button>
-        `).join('');
-    }
-    
-    displayStarredStocks(starred) {
-        const container = document.getElementById('starred-stocks');
-        if (!container) return;
-        
-        if (starred.length === 0) {
-            container.innerHTML = '<div class="text-sm text-gray-500 text-center py-4">No starred stocks yet</div>';
-            return;
-        }
-        
-        container.innerHTML = starred.map(stock => `
-            <button onclick="searchStock('${stock.symbol}')" class="w-full flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors">
-                <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 bg-gradient-to-r from-brand-blue to-brand-purple rounded-lg flex items-center justify-center text-white text-xs font-bold">
-                        ${stock.symbol.substring(0, 2)}
-                    </div>
-                    <div class="text-left">
-                        <div class="font-semibold text-gray-800">${stock.symbol}</div>
-                        <div class="text-sm text-gray-600">${stock.name || 'Unknown'}</div>
-                    </div>
-                </div>
-                <button onclick="event.stopPropagation(); window.searchManager.removeFromStarred('${stock.symbol}')" 
-                        class="text-yellow-500 hover:text-yellow-700 p-1">
-                    <i class="fas fa-star"></i>
-                </button>
-            </button>
-        `).join('');
-    }
-    
-    async addToRecentSearches(symbol) {
-        try {
-            await fetch('/api/search/add-recent', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    symbol: symbol.toUpperCase(),
-                    name: '',
-                    sector: ''
-                })
-            });
-        } catch (error) {
-            console.log('Could not add to recent searches');
-        }
-    }
-    
-    async addToWatchlist(symbol) {
-        try {
-            const response = await fetch('/api/search/starred', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ symbol: symbol })
-            });
-            
-            if (response.ok) {
-                const data = await response.json();
-                if (data.success) {
-                    this.showSuccess(`${symbol} ${data.action} watchlist`);
-                    this.loadUserData(); // Refresh the starred stocks display
-                }
-            }
-        } catch (error) {
-            console.error('Could not update watchlist:', error);
-        }
-    }
-    
-    async removeFromStarred(symbol) {
-        // Toggle starred status (same endpoint)
-        await this.addToWatchlist(symbol);
-    }
-    
-    handlePremiumFeature(url) {
-        // Check if user has premium access (simplified check)
-        const isPremium = false; // This would come from user data
-        
-        if (!isPremium) {
-            this.showUpgradeModal();
-            return;
-        }
-        
-        window.location.href = url;
-    }
-    
-    showUpgradeModal() {
-        // Create modal or redirect to upgrade page
-        window.location.href = '/premium/upgrade';
-    }
-    
-    showSuccess(message) {
-        const notification = document.createElement('div');
-        notification.className = 'fixed top-4 right-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg shadow-lg z-50';
-        notification.innerHTML = `
-            <div class="flex items-center gap-2">
-                <i class="fas fa-check-circle"></i>
-                <span>${message}</span>
-                <button onclick="this.parentElement.parentElement.remove()" class="ml-2 text-green-500 hover:text-green-700">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-        `;
-        
-        document.body.appendChild(notification);
-        
-        setTimeout(() => {
-            if (notification.parentElement) {
-                notification.remove();
-            }
-        }, 3000);
-    }
-}
+// Global search variables
+let searchTimeout = null;
+let autocompleteVisible = false;
+let selectedIndex = -1;
+let searchResults = [];
 
-// Global functions
-function searchStock(symbol) {
-    const searchInput = document.getElementById('stock-search-input');
-    if (searchInput) {
-        searchInput.value = symbol;
-    }
-    window.searchManager.performSearch();
-}
-
-function closeResults() {
-    const searchResults = document.getElementById('search-results');
-    if (searchResults) {
-        searchResults.classList.add('hidden');
-    }
-}
-
-// Initialize search manager when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
-    window.searchManager = new ModernSearch();
+// Initialize search functionality
+document.addEventListener('DOMContentLoaded', function() {
+    initializeSearch();
+    setupSearchEventListeners();
+    loadRecentSearches();
+    loadStarredStocks();
 });
+
+// Initialize search components
+function initializeSearch() {
+    const globalSearchInput = document.getElementById('global-search-input');
+    const mobileSearchInput = document.getElementById('mobile-search-input');
+    
+    if (globalSearchInput) {
+        setupAutocomplete(globalSearchInput, 'global-autocomplete-results');
+    }
+    
+    if (mobileSearchInput) {
+        setupAutocomplete(mobileSearchInput, 'mobile-autocomplete-results');
+    }
+    
+    // Handle URL parameters for direct search
+    const urlParams = new URLSearchParams(window.location.search);
+    const searchQuery = urlParams.get('q');
+    if (searchQuery) {
+        performSearch(searchQuery);
+    }
+}
+
+// Setup autocomplete functionality
+function setupAutocomplete(inputElement, resultsId) {
+    inputElement.addEventListener('input', function(e) {
+        const query = e.target.value.trim();
+        if (query.length >= 2) {
+            handleSearchInput(query, resultsId);
+        } else {
+            hideAutocomplete(resultsId);
+        }
+    });
+    
+    inputElement.addEventListener('keydown', function(e) {
+        handleSearchKeyDown(e, resultsId);
+    });
+    
+    inputElement.addEventListener('focus', function(e) {
+        const query = e.target.value.trim();
+        if (query.length >= 2) {
+            handleSearchInput(query, resultsId);
+        }
+    });
+    
+    // Hide autocomplete when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!inputElement.contains(e.target) && !document.getElementById(resultsId).contains(e.target)) {
+            hideAutocomplete(resultsId);
+        }
+    });
+}
+
+// Handle search input with debouncing
+function handleSearchInput(query, resultsId) {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+        fetchAutocomplete(query, resultsId);
+    }, 200);
+}
+
+// Fetch autocomplete suggestions
+async function fetchAutocomplete(query, resultsId) {
+    try {
+        const response = await fetch(`/api/search/autocomplete?q=${encodeURIComponent(query)}`);
+        if (response.ok) {
+            const data = await response.json();
+            if (data.success && data.suggestions) {
+                displayAutocomplete(data.suggestions, resultsId);
+            }
+        }
+    } catch (error) {
+        console.error('Error fetching autocomplete:', error);
+    }
+}
+
+// Display autocomplete suggestions
+function displayAutocomplete(suggestions, resultsId) {
+    const resultsContainer = document.getElementById(resultsId);
+    if (!resultsContainer) return;
+    
+    if (suggestions.length === 0) {
+        hideAutocomplete(resultsId);
+        return;
+    }
+    
+    const html = suggestions.map((suggestion, index) => `
+        <div class="autocomplete-item flex items-center p-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0"
+             data-index="${index}" onclick="selectSuggestion('${suggestion.symbol}', '${resultsId}')">
+            <div class="flex-shrink-0 w-10 h-10 bg-gradient-to-r from-brand-blue to-brand-purple rounded-lg flex items-center justify-center text-white font-bold text-sm mr-3">
+                ${suggestion.symbol.charAt(0)}
+            </div>
+            <div class="flex-1">
+                <div class="font-semibold text-gray-800">${suggestion.symbol}</div>
+                <div class="text-sm text-gray-600">${suggestion.company_name}</div>
+                ${suggestion.sector ? `<div class="text-xs text-gray-500">${suggestion.sector}</div>` : ''}
+            </div>
+            <div class="text-right">
+                ${suggestion.price ? `<div class="font-medium text-gray-800">$${suggestion.price}</div>` : ''}
+                ${suggestion.change ? `<div class="text-sm ${suggestion.change >= 0 ? 'text-green-600' : 'text-red-600'}">${suggestion.change >= 0 ? '+' : ''}${suggestion.change}%</div>` : ''}
+            </div>
+        </div>
+    `).join('');
+    
+    resultsContainer.innerHTML = html;
+    resultsContainer.classList.remove('hidden');
+    autocompleteVisible = true;
+    selectedIndex = -1;
+}
+
+// Hide autocomplete dropdown
+function hideAutocomplete(resultsId) {
+    const resultsContainer = document.getElementById(resultsId);
+    if (resultsContainer) {
+        resultsContainer.classList.add('hidden');
+        autocompleteVisible = false;
+        selectedIndex = -1;
+    }
+}
+
+// Handle keyboard navigation in search
+function handleSearchKeyDown(e, resultsId) {
+    const resultsContainer = document.getElementById(resultsId);
+    const items = resultsContainer.querySelectorAll('.autocomplete-item');
+    
+    switch (e.key) {
+        case 'ArrowDown':
+            e.preventDefault();
+            if (autocompleteVisible && items.length > 0) {
+                selectedIndex = Math.min(selectedIndex + 1, items.length - 1);
+                updateSelection(items);
+            }
+            break;
+            
+        case 'ArrowUp':
+            e.preventDefault();
+            if (autocompleteVisible && items.length > 0) {
+                selectedIndex = Math.max(selectedIndex - 1, -1);
+                updateSelection(items);
+            }
+            break;
+            
+        case 'Enter':
+            e.preventDefault();
+            if (selectedIndex >= 0 && items[selectedIndex]) {
+                const symbol = items[selectedIndex].querySelector('.font-semibold').textContent;
+                selectSuggestion(symbol, resultsId);
+            } else {
+                const query = e.target.value.trim();
+                if (query) {
+                    performSearch(query);
+                }
+            }
+            break;
+            
+        case 'Escape':
+            hideAutocomplete(resultsId);
+            e.target.blur();
+            break;
+    }
+}
+
+// Update visual selection in autocomplete
+function updateSelection(items) {
+    items.forEach((item, index) => {
+        if (index === selectedIndex) {
+            item.classList.add('bg-blue-50');
+        } else {
+            item.classList.remove('bg-blue-50');
+        }
+    });
+}
+
+// Select autocomplete suggestion
+function selectSuggestion(symbol, resultsId) {
+    hideAutocomplete(resultsId);
+    performSearch(symbol);
+}
+
+// Perform stock search and analysis
+async function performSearch(query) {
+    if (!query.trim()) return;
+    
+    // Show loading state
+    showLoadingState();
+    
+    // Save to recent searches
+    saveRecentSearch(query);
+    
+    try {
+        const response = await fetch('/api/stock-analysis', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ query: query })
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            displaySearchResults(data);
+        } else {
+            const errorData = await response.json();
+            displaySearchError(errorData.error || 'Search failed');
+        }
+    } catch (error) {
+        console.error('Search error:', error);
+        displaySearchError('Connection error occurred');
+    } finally {
+        hideLoadingState();
+    }
+}
+
+// Show loading state
+function showLoadingState() {
+    const loadingDiv = document.getElementById('loading-state');
+    const resultsDiv = document.getElementById('search-results');
+    
+    if (loadingDiv) loadingDiv.classList.remove('hidden');
+    if (resultsDiv) resultsDiv.classList.add('hidden');
+}
+
+// Hide loading state
+function hideLoadingState() {
+    const loadingDiv = document.getElementById('loading-state');
+    if (loadingDiv) loadingDiv.classList.add('hidden');
+}
+
+// Display search results
+function displaySearchResults(data) {
+    const resultsContainer = document.getElementById('search-results');
+    const analysisContent = document.getElementById('analysis-content');
+    
+    if (!resultsContainer || !analysisContent) return;
+    
+    // Generate comprehensive analysis display
+    const html = generateAnalysisHTML(data);
+    analysisContent.innerHTML = html;
+    
+    resultsContainer.classList.remove('hidden');
+    
+    // Scroll to results
+    resultsContainer.scrollIntoView({ behavior: 'smooth' });
+}
+
+// Generate analysis HTML
+function generateAnalysisHTML(data) {
+    const analysis = data.analysis || data;
+    const stockInfo = data.stock_info || data;
+    
+    return `
+        <div class="space-y-6">
+            <!-- Stock Header -->
+            <div class="flex items-start justify-between bg-gradient-to-r from-blue-50 to-purple-50 p-6 rounded-lg">
+                <div class="flex items-center gap-4">
+                    <div class="w-16 h-16 bg-gradient-to-r from-brand-blue to-brand-purple rounded-xl flex items-center justify-center text-white font-bold text-xl">
+                        ${analysis.symbol?.charAt(0) || 'S'}
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-800">${analysis.symbol || 'N/A'}</h2>
+                        <p class="text-gray-600">${analysis.company_name || 'Company Name'}</p>
+                        <div class="flex items-center gap-4 mt-2">
+                            <span class="text-3xl font-bold text-gray-800">$${typeof analysis.current_price === 'number' ? analysis.current_price.toFixed(2) : '0.00'}</span>
+                            <span class="px-3 py-1 rounded-full text-sm font-medium ${(analysis.day_change || 0) >= 0 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                                ${(analysis.day_change || 0) >= 0 ? '+' : ''}${typeof analysis.day_change === 'number' ? analysis.day_change.toFixed(2) : '0.00'}%
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <button onclick="toggleStarred('${analysis.symbol}')" class="p-2 text-gray-400 hover:text-yellow-500">
+                    <i class="fas fa-star text-xl"></i>
+                </button>
+            </div>
+            
+            <!-- AI Recommendation -->
+            <div class="bg-gradient-to-r from-green-50 to-blue-50 p-6 rounded-lg">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-10 h-10 bg-gradient-to-r from-brand-blue to-brand-purple rounded-lg flex items-center justify-center">
+                        <i class="fas fa-brain text-white"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800">AI Analysis</h3>
+                </div>
+                <div class="grid md:grid-cols-3 gap-4">
+                    <div class="text-center">
+                        <div class="text-2xl font-bold ${getRecommendationColor(analysis.recommendation)}">${analysis.recommendation || 'HOLD'}</div>
+                        <div class="text-sm text-gray-600">Recommendation</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-blue-600">${analysis.confidence || 75}%</div>
+                        <div class="text-sm text-gray-600">Confidence</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-purple-600">$${typeof analysis.target_price === 'number' ? analysis.target_price.toFixed(2) : '0.00'}</div>
+                        <div class="text-sm text-gray-600">Target Price</div>
+                    </div>
+                </div>
+                <div class="mt-4 p-4 bg-white rounded-lg">
+                    <p class="text-gray-700">${analysis.ai_explanation || 'AI analysis provides comprehensive insights based on market data, technical indicators, and fundamental analysis.'}</p>
+                </div>
+            </div>
+            
+            <!-- Key Metrics -->
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+                ${generateMetricsHTML(analysis)}
+            </div>
+            
+            <!-- Analysis Sections -->
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="saas-card">
+                    <div class="saas-card-header">
+                        <h4 class="saas-card-title">Technical Analysis</h4>
+                    </div>
+                    <div class="saas-card-content">
+                        <div class="space-y-3">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">RSI (14)</span>
+                                <span class="font-medium">${analysis.rsi || 'N/A'}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Moving Avg (50)</span>
+                                <span class="font-medium">$${typeof analysis.ma_50 === 'number' ? analysis.ma_50.toFixed(2) : 'N/A'}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Support Level</span>
+                                <span class="font-medium">$${typeof analysis.support_level === 'number' ? analysis.support_level.toFixed(2) : 'N/A'}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Resistance Level</span>
+                                <span class="font-medium">$${typeof analysis.resistance_level === 'number' ? analysis.resistance_level.toFixed(2) : 'N/A'}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="saas-card">
+                    <div class="saas-card-header">
+                        <h4 class="saas-card-title">Risk Assessment</h4>
+                    </div>
+                    <div class="saas-card-content">
+                        <div class="space-y-3">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Volatility</span>
+                                <span class="font-medium">${analysis.volatility || 'Medium'}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Risk Score</span>
+                                <span class="font-medium">${analysis.risk_score || '6/10'}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Beta</span>
+                                <span class="font-medium">${analysis.beta || 'N/A'}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Sector Risk</span>
+                                <span class="font-medium">${analysis.sector_risk || 'Moderate'}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// Generate metrics HTML
+function generateMetricsHTML(analysis) {
+    const metrics = [
+        { label: 'Market Cap', value: analysis.market_cap ? `$${analysis.market_cap}B` : 'N/A' },
+        { label: 'P/E Ratio', value: analysis.pe_ratio || 'N/A' },
+        { label: '52W High', value: analysis.week_52_high ? `$${analysis.week_52_high}` : 'N/A' },
+        { label: '52W Low', value: analysis.week_52_low ? `$${analysis.week_52_low}` : 'N/A' }
+    ];
+    
+    return metrics.map(metric => `
+        <div class="saas-card text-center">
+            <div class="saas-card-content">
+                <div class="text-2xl font-bold text-gray-800">${metric.value}</div>
+                <div class="text-sm text-gray-600">${metric.label}</div>
+            </div>
+        </div>
+    `).join('');
+}
+
+// Get recommendation color class
+function getRecommendationColor(recommendation) {
+    switch (recommendation) {
+        case 'BUY': return 'text-green-600';
+        case 'SELL': return 'text-red-600';
+        case 'HOLD': return 'text-yellow-600';
+        default: return 'text-gray-600';
+    }
+}
+
+// Display search error
+function displaySearchError(errorMessage) {
+    const resultsContainer = document.getElementById('search-results');
+    const analysisContent = document.getElementById('analysis-content');
+    
+    if (!resultsContainer || !analysisContent) return;
+    
+    analysisContent.innerHTML = `
+        <div class="text-center py-12">
+            <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-exclamation-triangle text-red-600 text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-800 mb-2">Search Error</h3>
+            <p class="text-gray-600">${errorMessage}</p>
+            <button onclick="closeResults()" class="mt-4 saas-btn-secondary">Try Again</button>
+        </div>
+    `;
+    
+    resultsContainer.classList.remove('hidden');
+}
+
+// Close search results
+function closeResults() {
+    const resultsContainer = document.getElementById('search-results');
+    if (resultsContainer) {
+        resultsContainer.classList.add('hidden');
+    }
+}
+
+// Toggle starred status
+function toggleStarred(symbol) {
+    // Implementation for starring/unstarring stocks
+    console.log('Toggle starred:', symbol);
+}
+
+// Save recent search
+function saveRecentSearch(query) {
+    let recentSearches = JSON.parse(localStorage.getItem('recentSearches') || '[]');
+    recentSearches = recentSearches.filter(search => search !== query);
+    recentSearches.unshift(query);
+    recentSearches = recentSearches.slice(0, 10); // Keep only last 10
+    localStorage.setItem('recentSearches', JSON.stringify(recentSearches));
+    updateRecentSearchesDisplay();
+}
+
+// Load and display recent searches
+function loadRecentSearches() {
+    updateRecentSearchesDisplay();
+}
+
+// Update recent searches display
+function updateRecentSearchesDisplay() {
+    const container = document.getElementById('recent-searches');
+    if (!container) return;
+    
+    const recentSearches = JSON.parse(localStorage.getItem('recentSearches') || '[]');
+    
+    if (recentSearches.length === 0) {
+        container.innerHTML = '<div class="text-sm text-gray-500 text-center py-4">No recent searches yet</div>';
+        return;
+    }
+    
+    container.innerHTML = recentSearches.map(search => `
+        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer" onclick="performSearch('${search}')">
+            <div class="flex items-center gap-3">
+                <i class="fas fa-clock text-gray-400"></i>
+                <span class="text-gray-800">${search}</span>
+            </div>
+        </div>
+    `).join('');
+}
+
+// Load starred stocks
+function loadStarredStocks() {
+    // Implementation for loading starred stocks
+}
+
+// Setup search event listeners
+function setupSearchEventListeners() {
+    // Global search enter key
+    document.addEventListener('keydown', function(e) {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+            e.preventDefault();
+            const searchInput = document.getElementById('global-search-input');
+            if (searchInput) {
+                searchInput.focus();
+            }
+        }
+    });
+    
+    // Trending stock buttons
+    document.querySelectorAll('[onclick^="searchStock"]').forEach(button => {
+        button.addEventListener('click', function() {
+            const symbol = this.getAttribute('onclick').match(/'([^']+)'/)[1];
+            performSearch(symbol);
+        });
+    });
+}
+
+// Export for external use
+window.SearchManager = {
+    performSearch,
+    closeResults,
+    toggleStarred
+};

@@ -5,9 +5,15 @@
 {% block nav_search %}active{% endblock %}
 
 {% block content %}
-    <!-- Search Content (Navigation is handled by base.html) -->
-                <div class="saas-logo-icon">
-                    <i class="fas fa-chart-line"></i>
+    <!-- Search Hero Section -->
+    <div class="text-center mb-12">
+        <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mb-6">
+            <span class="bg-gradient-to-r from-brand-blue to-brand-purple bg-clip-text text-transparent">Smart Stock Search</span>
+        </h1>
+        <p class="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+            Get instant AI-powered analysis on any stock with real-time data and professional insights.
+        </p>
+    </div>
         <div class="grid md:grid-cols-2 gap-6 mb-12 max-w-4xl mx-auto">
             <!-- Recent Searches -->
             <div class="saas-card">
@@ -86,34 +92,31 @@
             </div>
             
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <button onclick="searchStock('AAPL')" class="p-4 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors text-left">
+                <button onclick="SearchManager.performSearch('AAPL')" class="p-4 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors text-left">
                     <div class="font-semibold text-gray-800">AAPL</div>
                     <div class="text-sm text-gray-600">Apple Inc.</div>
-                    <div class="text-sm status-positive">+2.4%</div>
+                    <div class="text-sm text-green-600">+2.4%</div>
                 </button>
                 
-                <button onclick="searchStock('TSLA')" class="p-4 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors text-left">
+                <button onclick="SearchManager.performSearch('TSLA')" class="p-4 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors text-left">
                     <div class="font-semibold text-gray-800">TSLA</div>
                     <div class="text-sm text-gray-600">Tesla, Inc.</div>
-                    <div class="text-sm status-positive">+5.1%</div>
+                    <div class="text-sm text-green-600">+5.1%</div>
                 </button>
                 
-                <button onclick="searchStock('NVDA')" class="p-4 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors text-left">
+                <button onclick="SearchManager.performSearch('NVDA')" class="p-4 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors text-left">
                     <div class="font-semibold text-gray-800">NVDA</div>
                     <div class="text-sm text-gray-600">NVIDIA Corp.</div>
-                    <div class="text-sm status-positive">+3.8%</div>
+                    <div class="text-sm text-green-600">+3.8%</div>
                 </button>
                 
-                <button onclick="searchStock('MSFT')" class="p-4 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors text-left">
+                <button onclick="SearchManager.performSearch('MSFT')" class="p-4 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors text-left">
                     <div class="font-semibold text-gray-800">MSFT</div>
                     <div class="text-sm text-gray-600">Microsoft Corp.</div>
-                    <div class="text-sm status-positive">+1.9%</div>
+                    <div class="text-sm text-green-600">+1.9%</div>
                 </button>
             </div>
         </div>
     </div>
-
-    <!-- JavaScript -->
-    <script src="{{ url_for('static', filename='js/modern_search.js') }}"></script>
-</body>
-</html>
+    
+{% endblock %}

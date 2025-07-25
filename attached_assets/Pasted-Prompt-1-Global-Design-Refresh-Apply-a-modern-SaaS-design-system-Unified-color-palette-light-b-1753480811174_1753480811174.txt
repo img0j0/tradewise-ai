@@ -1,0 +1,92 @@
+Prompt:
+
+1. Global Design Refresh
+Apply a modern SaaS design system:
+
+Unified color palette: light background, deep blue/purple accents, premium highlight color (gold/teal) for CTAs.
+
+Typography: Google Fonts (Inter or Manrope), base font size 16–18px, clear hierarchy (H1–H3 spacing).
+
+Replace all legacy CSS with modern_saas_theme.css and ensure consistent spacing & buttons.
+
+Add SignalStackDev branding:
+
+Logo in NavBar and footer.
+
+Footer link to signalstack.dev.
+
+2. Navigation & Layout
+NavBar:
+
+Persistent top NavBar with logo, Dashboard, Search, Backtest, Peer Comparison links.
+
+User menu on right (profile, settings, logout).
+
+Clear "Upgrade" button (for Free users) using premium accent color.
+
+Sidebar:
+
+Collapsible sidebar (icons + tooltips) for quick navigation on larger screens.
+
+Sidebar collapses automatically on mobile.
+
+3. Dashboard Redesign
+At-a-glance Cards:
+
+Portfolio Value summary card with graph.
+
+Latest AI Insights card with clickable links to details.
+
+Market Highlights (top movers, sector snapshot).
+
+Charts & Visuals:
+
+Use Recharts or Chart.js for interactive charts.
+
+Replace static tables with sortable tables or visual cards.
+
+Action Shortcuts:
+
+Buttons for Search, Backtest, Peer Comparison directly on dashboard.
+
+4. Search Experience (Unified & Enhanced)
+Move search bar to NavBar (accessible on all pages).
+
+Implement autocomplete dropdown:
+
+Show symbol, company name, sector, and small company logo.
+
+Support partial matches, fuzzy search (RapidFuzz), and typo handling.
+
+Cache popular queries in Redis for <100ms response time.
+
+Replace all old search templates & JS with one clean system: modern_search.html, modern_search.js, and enhanced_search.css.
+
+5. Premium Feature Indicators
+Add lock icons + tooltips to Pro/Enterprise-only features.
+
+When Free users click a locked feature:
+
+Show an upsell modal with feature preview and upgrade CTA (link to Stripe upgrade flow).
+
+Display user’s plan status in NavBar (badge: Free, Pro, Enterprise).
+
+6. Mobile Responsiveness & UX
+All pages fully responsive:
+
+Sidebar collapses, cards stack vertically, larger touch targets.
+
+Add dark mode toggle in user menu (store preference in local storage).
+
+Improved empty states with icons and guidance text.
+
+7. Deliverables
+Updated templates:
+
+base.html, modern_dashboard.html, modern_search.html, modern_backtest.html, premium_upgrade_new.html.
+
+New CSS & JS:
+
+Single modern_saas_theme.css and component JS files (modern_dashboard.js, modern_search.js).
+
+Complete regression test to ensure no broken functionality.

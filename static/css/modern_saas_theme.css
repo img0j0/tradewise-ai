@@ -85,6 +85,26 @@
   --gray-800: #f3f4f6;
   --gray-900: #f9fafb;
   
+  --gradient-card: linear-gradient(135deg, #1f2937, #111827);
+  --gradient-subtle: linear-gradient(135deg, #1f2937, #374151);
+}
+
+/* Global Styles */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: var(--font-size-base);
+  line-height: 1.6;
+  color: var(--gray-800);
+  background-color: var(--gray-50);
+  margin: 0;
+  padding: 0;
+}
+  --gray-900: #f9fafb;
+  
   --gradient-subtle: linear-gradient(135deg, #1f2937, #111827);
   --gradient-card: linear-gradient(135deg, #1f2937, #374151);
 }

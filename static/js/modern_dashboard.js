@@ -1,372 +1,322 @@
 /**
  * Modern Dashboard JavaScript
- * Handles UI interactions, charts, and premium features
+ * Handles dashboard interactions, charts, and user engagement
  */
 
-class ModernDashboard {
-    constructor() {
-        this.sidebarCollapsed = false;
-        this.isDarkMode = localStorage.getItem('theme') === 'dark';
-        this.portfolioChart = null;
-        
-        this.init();
+// Global variables
+let portfolioChart = null;
+let marketChart = null;
+
+// Initialize dashboard when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    initializeDashboard();
+    loadDashboardData();
+    setupEventListeners();
+});
+
+// Initialize dashboard components
+function initializeDashboard() {
+    // Initialize charts if Chart.js is available
+    if (typeof Chart !== 'undefined') {
+        initializePortfolioChart();
+        initializeMarketChart();
     }
     
-    init() {
-        this.initEventListeners();
-        this.initTheme();
-        this.initCharts();
-        this.loadDashboardData();
-    }
+    // Setup dark mode
+    initializeDarkMode();
     
-    initEventListeners() {
-        // Sidebar toggle
-        const sidebarToggle = document.getElementById('sidebar-toggle');
-        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-        
-        if (sidebarToggle) {
-            sidebarToggle.addEventListener('click', () => this.toggleSidebar());
-        }
-        
-        if (mobileMenuBtn) {
-            mobileMenuBtn.addEventListener('click', () => this.toggleMobileSidebar());
-        }
-        
-        // Theme toggle
-        const themeToggle = document.getElementById('theme-toggle');
-        if (themeToggle) {
-            themeToggle.addEventListener('click', () => this.toggleTheme());
-        }
-        
-        // User menu dropdown
-        const userMenuBtn = document.getElementById('user-menu-btn');
-        const userDropdown = document.getElementById('user-dropdown');
-        
-        if (userMenuBtn && userDropdown) {
-            userMenuBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                userDropdown.classList.toggle('hidden');
-            });
-            
-            // Close dropdown when clicking outside
-            document.addEventListener('click', () => {
-                userDropdown.classList.add('hidden');
-            });
-        }
-        
-        // Premium modal close on background click
-        document.addEventListener('click', (e) => {
-            const modal = document.getElementById('premium-modal');
-            if (e.target === modal) {
-                this.closeUpgradeModal();
-            }
-        });
-    }
+    // Setup sidebar collapse
+    setupSidebarToggle();
+}
+
+// Portfolio performance chart
+function initializePortfolioChart() {
+    const ctx = document.getElementById('portfolio-chart');
+    if (!ctx) return;
     
-    initTheme() {
-        const html = document.documentElement;
-        const themeIcon = document.getElementById('theme-icon');
-        
-        if (this.isDarkMode) {
-            html.setAttribute('data-theme', 'dark');
-            html.classList.add('dark');
-            if (themeIcon) {
-                themeIcon.className = 'fas fa-sun';
-            }
-        } else {
-            html.setAttribute('data-theme', 'light');
-            html.classList.remove('dark');
-            if (themeIcon) {
-                themeIcon.className = 'fas fa-moon';
-            }
-        }
-    }
-    
-    toggleTheme() {
-        this.isDarkMode = !this.isDarkMode;
-        localStorage.setItem('theme', this.isDarkMode ? 'dark' : 'light');
-        this.initTheme();
-        
-        // Reinitialize charts with new theme colors
-        if (this.portfolioChart) {
-            this.updateChartTheme();
-        }
-    }
-    
-    toggleSidebar() {
-        const sidebar = document.getElementById('sidebar');
-        const mainContent = document.getElementById('main-content');
-        
-        this.sidebarCollapsed = !this.sidebarCollapsed;
-        
-        if (sidebar) {
-            sidebar.classList.toggle('collapsed', this.sidebarCollapsed);
-        }
-        
-        if (mainContent) {
-            mainContent.classList.toggle('sidebar-collapsed', this.sidebarCollapsed);
-        }
-    }
-    
-    toggleMobileSidebar() {
-        const sidebar = document.getElementById('sidebar');
-        if (sidebar) {
-            sidebar.classList.toggle('mobile-open');
-        }
-    }
-    
-    initCharts() {
-        this.initPortfolioChart();
-    }
-    
-    initPortfolioChart() {
-        const ctx = document.getElementById('portfolioChart');
-        if (!ctx) return;
-        
-        const isDark = this.isDarkMode;
-        const textColor = isDark ? '#e5e7eb' : '#374151';
-        const gridColor = isDark ? '#374151' : '#e5e7eb';
-        
-        // Sample portfolio data
-        const data = {
-            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+    portfolioChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
             datasets: [{
                 label: 'Portfolio Value',
-                data: [100000, 105000, 98000, 112000, 118000, 125000, 125847],
-                borderColor: '#3b82f6',
-                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                data: [10000, 10500, 10200, 11000, 10800, 11500],
+                borderColor: '#1e40af',
+                backgroundColor: 'rgba(30, 64, 175, 0.1)',
                 borderWidth: 3,
                 fill: true,
                 tension: 0.4
             }]
-        };
-        
-        const config = {
-            type: 'line',
-            data: data,
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: false
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: false,
+                    grid: {
+                        color: 'rgba(0,0,0,0.1)'
                     }
                 },
-                scales: {
-                    x: {
-                        ticks: {
-                            color: textColor
-                        },
-                        grid: {
-                            color: gridColor
-                        }
-                    },
-                    y: {
-                        ticks: {
-                            color: textColor,
-                            callback: function(value) {
-                                return '$' + (value / 1000) + 'K';
-                            }
-                        },
-                        grid: {
-                            color: gridColor
-                        }
+                x: {
+                    grid: {
+                        display: false
                     }
                 }
             }
-        };
-        
-        this.portfolioChart = new Chart(ctx, config);
-    }
-    
-    updateChartTheme() {
-        if (!this.portfolioChart) return;
-        
-        const isDark = this.isDarkMode;
-        const textColor = isDark ? '#e5e7eb' : '#374151';
-        const gridColor = isDark ? '#374151' : '#e5e7eb';
-        
-        this.portfolioChart.options.scales.x.ticks.color = textColor;
-        this.portfolioChart.options.scales.x.grid.color = gridColor;
-        this.portfolioChart.options.scales.y.ticks.color = textColor;
-        this.portfolioChart.options.scales.y.grid.color = gridColor;
-        
-        this.portfolioChart.update();
-    }
-    
-    async loadDashboardData() {
-        try {
-            // Load portfolio data
-            await this.loadPortfolioData();
-            
-            // Load AI insights
-            await this.loadAIInsights();
-            
-            // Load market data
-            await this.loadMarketData();
-            
-        } catch (error) {
-            console.error('Error loading dashboard data:', error);
-            this.showErrorMessage('Unable to load dashboard data. Please refresh the page.');
         }
-    }
+    });
+}
+
+// Market overview chart
+function initializeMarketChart() {
+    const ctx = document.getElementById('market-chart');
+    if (!ctx) return;
     
-    async loadPortfolioData() {
-        try {
-            const response = await fetch('/api/portfolio/summary');
-            if (response.ok) {
-                const data = await response.json();
-                if (data.success) {
-                    this.updatePortfolioMetrics(data.portfolio);
+    marketChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Technology', 'Healthcare', 'Finance', 'Energy', 'Consumer'],
+            datasets: [{
+                data: [35, 20, 18, 12, 15],
+                backgroundColor: [
+                    '#1e40af',
+                    '#7c3aed', 
+                    '#059669',
+                    '#dc2626',
+                    '#d97706'
+                ],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        usePointStyle: true,
+                        padding: 15
+                    }
                 }
             }
-        } catch (error) {
-            console.log('Portfolio data not available - using demo data');
-            // Keep demo data displayed
         }
-    }
-    
-    async loadAIInsights() {
-        try {
-            const response = await fetch('/api/ai/dashboard-insights');
-            if (response.ok) {
-                const data = await response.json();
-                if (data.success) {
-                    this.updateAIInsights(data.insights);
-                }
-            }
-        } catch (error) {
-            console.log('AI insights not available - using demo insights');
-            // Keep demo insights displayed
-        }
-    }
-    
-    async loadMarketData() {
-        try {
-            const response = await fetch('/api/market/overview');
-            if (response.ok) {
-                const data = await response.json();
-                if (data.success) {
-                    this.updateMarketOverview(data.market);
-                }
-            }
-        } catch (error) {
-            console.log('Market data not available - using demo data');
-            // Keep demo market data displayed
-        }
-    }
-    
-    updatePortfolioMetrics(portfolio) {
-        const valueElement = document.getElementById('portfolio-value');
-        const returnElement = document.getElementById('portfolio-return');
-        const positionsElement = document.getElementById('portfolio-positions');
-        
-        if (valueElement && portfolio.total_value) {
-            valueElement.textContent = this.formatCurrency(portfolio.total_value);
+    });
+}
+
+// Load dashboard data from API
+async function loadDashboardData() {
+    try {
+        // Load portfolio data
+        const portfolioResponse = await fetch('/api/portfolio/summary');
+        if (portfolioResponse.ok) {
+            const portfolioData = await portfolioResponse.json();
+            updatePortfolioCard(portfolioData);
         }
         
-        if (returnElement && portfolio.total_return) {
-            const returnValue = portfolio.total_return;
-            returnElement.textContent = this.formatPercentage(returnValue);
-            returnElement.className = `metric-value ${returnValue >= 0 ? 'status-positive' : 'status-negative'}`;
+        // Load market data
+        const marketResponse = await fetch('/api/market/overview');
+        if (marketResponse.ok) {
+            const marketData = await marketResponse.json();
+            updateMarketCard(marketData);
         }
         
-        if (positionsElement && portfolio.positions_count) {
-            positionsElement.textContent = portfolio.positions_count;
+        // Load recent analyses
+        const analysesResponse = await fetch('/api/analyses/recent');
+        if (analysesResponse.ok) {
+            const analysesData = await analysesResponse.json();
+            updateRecentAnalyses(analysesData);
         }
+        
+    } catch (error) {
+        console.error('Error loading dashboard data:', error);
+    }
+}
+
+// Update portfolio card with real data
+function updatePortfolioCard(data) {
+    const valueElement = document.getElementById('portfolio-value');
+    const changeElement = document.getElementById('portfolio-change');
+    
+    if (valueElement && data.totalValue) {
+        valueElement.textContent = `$${data.totalValue.toLocaleString()}`;
     }
     
-    updateAIInsights(insights) {
-        // Update AI insights section with real data
-        console.log('AI Insights updated:', insights);
+    if (changeElement && data.dayChange) {
+        const isPositive = data.dayChange >= 0;
+        changeElement.textContent = `${isPositive ? '+' : ''}${data.dayChange.toFixed(2)}%`;
+        changeElement.className = `font-medium ${isPositive ? 'text-green-600' : 'text-red-600'}`;
+    }
+}
+
+// Update market card with real data
+function updateMarketCard(data) {
+    const spxElement = document.getElementById('spx-value');
+    const spxChangeElement = document.getElementById('spx-change');
+    
+    if (spxElement && data.spx) {
+        spxElement.textContent = data.spx.value;
     }
     
-    updateMarketOverview(market) {
-        // Update market overview with real data
-        console.log('Market data updated:', market);
-    }
-    
-    formatCurrency(value) {
-        return new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: 'USD',
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 0
-        }).format(value);
-    }
-    
-    formatPercentage(value) {
-        const sign = value >= 0 ? '+' : '';
-        return `${sign}${value.toFixed(1)}%`;
-    }
-    
-    showErrorMessage(message) {
-        // Create and show error notification
-        const notification = document.createElement('div');
-        notification.className = 'fixed top-4 right-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg shadow-lg z-50';
-        notification.innerHTML = `
-            <div class="flex items-center gap-2">
-                <i class="fas fa-exclamation-triangle"></i>
-                <span>${message}</span>
-                <button onclick="this.parentElement.parentElement.remove()" class="ml-2 text-red-500 hover:text-red-700">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
+    if (spxChangeElement && data.spx) {
+        const isPositive = data.spx.change >= 0;
+        spxChangeElement.innerHTML = `
+            <i class="fas fa-arrow-${isPositive ? 'up' : 'down'} mr-1"></i>
+            ${isPositive ? '+' : ''}${data.spx.change}%
         `;
-        
-        document.body.appendChild(notification);
-        
-        // Auto remove after 5 seconds
-        setTimeout(() => {
-            if (notification.parentElement) {
-                notification.remove();
-            }
-        }, 5000);
+        spxChangeElement.className = `font-medium ${isPositive ? 'text-green-600' : 'text-red-600'}`;
     }
 }
 
-// Premium Feature Handlers
-function handlePremiumFeature(feature) {
-    // Check if user has premium access
-    const userTier = getUserTier();
+// Update recent analyses section
+function updateRecentAnalyses(data) {
+    const container = document.getElementById('recent-analyses');
+    if (!container || !data.analyses) return;
     
-    if (userTier === 'free') {
-        showUpgradeModal();
-        return;
-    }
-    
-    // Redirect to feature
-    window.location.href = feature;
+    container.innerHTML = data.analyses.map(analysis => `
+        <div class="flex items-start gap-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer" 
+             onclick="viewAnalysis('${analysis.symbol}')">
+            <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                <i class="fas fa-chart-line text-blue-600"></i>
+            </div>
+            <div class="flex-1">
+                <div class="font-semibold text-gray-800 mb-1">${analysis.symbol} - ${analysis.company}</div>
+                <p class="text-gray-600 text-sm mb-2">${analysis.summary}</p>
+                <div class="text-xs text-gray-500">${formatDate(analysis.timestamp)}</div>
+            </div>
+            <div class="text-right">
+                <div class="text-sm font-medium ${analysis.recommendation === 'BUY' ? 'text-green-600' : 
+                    analysis.recommendation === 'SELL' ? 'text-red-600' : 'text-yellow-600'}">
+                    ${analysis.recommendation}
+                </div>
+                <div class="text-xs text-gray-500">${analysis.confidence}% confidence</div>
+            </div>
+        </div>
+    `).join('');
 }
 
+// Setup event listeners
+function setupEventListeners() {
+    // Quick action buttons
+    document.getElementById('quick-search')?.addEventListener('click', () => {
+        window.location.href = '/search';
+    });
+    
+    document.getElementById('quick-backtest')?.addEventListener('click', () => {
+        window.location.href = '/backtest';
+    });
+    
+    document.getElementById('quick-portfolio')?.addEventListener('click', () => {
+        window.location.href = '/portfolio';
+    });
+    
+    // Upgrade modal
+    document.getElementById('show-upgrade')?.addEventListener('click', showUpgradeModal);
+    document.getElementById('close-upgrade')?.addEventListener('click', closeUpgradeModal);
+}
+
+// Dark mode functionality
+function initializeDarkMode() {
+    const darkModeToggle = document.getElementById('dark-mode-toggle');
+    const isDark = localStorage.getItem('darkMode') === 'true';
+    
+    if (isDark) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+    }
+    
+    darkModeToggle?.addEventListener('click', toggleDarkMode);
+}
+
+function toggleDarkMode() {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    const newTheme = isDark ? 'light' : 'dark';
+    
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('darkMode', newTheme === 'dark');
+}
+
+// Sidebar toggle functionality
+function setupSidebarToggle() {
+    const sidebarToggle = document.getElementById('sidebar-toggle');
+    const sidebar = document.getElementById('sidebar');
+    
+    sidebarToggle?.addEventListener('click', () => {
+        sidebar?.classList.toggle('collapsed');
+    });
+    
+    // Auto-collapse on mobile
+    if (window.innerWidth <= 768) {
+        sidebar?.classList.add('collapsed');
+    }
+}
+
+// Upgrade modal functions
 function showUpgradeModal() {
-    const modal = document.getElementById('premium-modal');
+    const modal = document.getElementById('upgrade-modal');
     if (modal) {
-        modal.classList.add('active');
+        modal.classList.remove('hidden');
         document.body.style.overflow = 'hidden';
     }
 }
 
 function closeUpgradeModal() {
-    const modal = document.getElementById('premium-modal');
+    const modal = document.getElementById('upgrade-modal');
     if (modal) {
-        modal.classList.remove('active');
+        modal.classList.add('hidden');
         document.body.style.overflow = 'auto';
     }
 }
 
-function getUserTier() {
-    // Check user tier - could be from a data attribute or API call
-    const tierElement = document.querySelector('[data-user-tier]');
-    return tierElement ? tierElement.dataset.userTier : 'free';
+// Navigate to analysis
+function viewAnalysis(symbol) {
+    window.location.href = `/search?q=${symbol}`;
 }
 
-// Initialize dashboard when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
-    window.dashboard = new ModernDashboard();
+// Utility functions
+function formatDate(timestamp) {
+    const date = new Date(timestamp);
+    const now = new Date();
+    const diffTime = Math.abs(now - date);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    
+    if (diffDays === 1) return '1 day ago';
+    if (diffDays < 7) return `${diffDays} days ago`;
+    return date.toLocaleDateString();
+}
+
+// Search functionality
+function performQuickSearch() {
+    const searchInput = document.getElementById('global-search-input');
+    if (searchInput && searchInput.value.trim()) {
+        window.location.href = `/search?q=${encodeURIComponent(searchInput.value.trim())}`;
+    }
+}
+
+// Keyboard shortcuts
+document.addEventListener('keydown', function(e) {
+    // Ctrl/Cmd + K for search focus
+    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        const searchInput = document.getElementById('global-search-input');
+        searchInput?.focus();
+    }
+    
+    // Esc to close modals
+    if (e.key === 'Escape') {
+        closeUpgradeModal();
+    }
 });
 
-// Global functions for template access
-window.showUpgradeModal = showUpgradeModal;
-window.closeUpgradeModal = closeUpgradeModal;
-window.handlePremiumFeature = handlePremiumFeature;
+// Export for external use
+window.DashboardManager = {
+    showUpgradeModal,
+    closeUpgradeModal,
+    performQuickSearch,
+    toggleDarkMode
+};

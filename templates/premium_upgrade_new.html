@@ -1,867 +1,297 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Upgrade to TradeWise AI Premium</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        body {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            min-height: 100vh;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            color: white;
-        }
-        
-        .premium-container {
-            padding: 2rem 1rem;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        
-        .demo-section {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        
-        .demo-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-            margin-top: 2rem;
-        }
-        
-        .demo-card {
-            background: rgba(255, 255, 255, 0.15);
-            border-radius: 15px;
-            padding: 1.5rem;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-        
-        .demo-card:hover {
-            transform: translateY(-5px);
-            background: rgba(255, 255, 255, 0.2);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        }
-        
-        .demo-icon {
-            font-size: 2rem;
-            margin-bottom: 1rem;
-            display: block;
-        }
-        
-        .demo-title {
-            font-size: 1.2rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            color: #ffd700;
-        }
-        
-        .demo-description {
-            opacity: 0.9;
-            line-height: 1.5;
-            font-size: 0.9rem;
-        }
-        
-        .back-home {
-            position: fixed;
-            top: 30px;
-            left: 30px;
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(15px);
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            width: 55px;
-            height: 55px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            z-index: 10001;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-        }
-        
-        .back-home:hover {
-            background: rgba(139, 92, 246, 0.4);
-            border-color: rgba(139, 92, 246, 0.6);
-            transform: scale(1.1);
-            color: white;
-            box-shadow: 0 12px 35px rgba(139, 92, 246, 0.4);
-        }
+{% extends "base.html" %}
 
-        .hero-section {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 3rem 2rem;
-            text-align: center;
-            margin-bottom: 3rem;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        
-        .hero-section h1 {
-            font-size: 3rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            background: linear-gradient(45deg, #ffd700, #ffed4a);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        .pricing-card {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            padding: 2.5rem;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            border: 2px solid #ffd700;
-            position: relative;
-            overflow: hidden;
-            transition: transform 0.3s ease;
-            color: #333;
-        }
-        
-        .pricing-card:hover {
-            transform: translateY(-10px);
-        }
-        
-        .pricing-card::before {
-            content: "PREMIUM";
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background: linear-gradient(45deg, #ffd700, #ffed4a);
-            color: #333;
-            padding: 5px 20px;
-            font-size: 0.8rem;
-            font-weight: bold;
-            transform: rotate(45deg);
-            transform-origin: center;
-        }
-        
-        .price-section {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-        
-        .price {
-            font-size: 3rem;
-            font-weight: 700;
-            color: #333;
-            margin-bottom: 0.5rem;
-        }
-        
-        .feature-list {
-            list-style: none;
-            padding: 0;
-        }
-        
-        .feature-list li {
-            padding: 0.8rem 0;
-            display: flex;
-            align-items: center;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-        }
-        
-        .feature-icon {
-            background: linear-gradient(45deg, #8b5cf6, #06b6d4);
-            color: white;
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 1rem;
-            font-size: 1rem;
-        }
-        
-        .feature-text {
-            flex: 1;
-        }
-        
-        .feature-title {
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 0.3rem;
-        }
-        
-        .feature-desc {
-            color: #666;
-            font-size: 0.9rem;
-            line-height: 1.4;
-        }
-        
-        .upgrade-btn {
-            background: linear-gradient(45deg, #8b5cf6, #06b6d4);
-            color: white;
-            border: none;
-            padding: 1rem 2rem;
-            border-radius: 10px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            width: 100%;
-            margin-top: 2rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .upgrade-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(139, 92, 246, 0.3);
-        }
+{% block title %}Upgrade to Pro - TradeWise AI{% endblock %}
 
-        /* Analysis Overlay Styles */
-        .analysis-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            backdrop-filter: blur(10px);
-            display: none;
-            z-index: 9999;
-            overflow-y: auto;
-        }
+{% block extra_css %}
+<style>
+    .pricing-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .pricing-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    }
+    
+    .feature-check {
+        color: var(--success);
+    }
+    
+    .popular-badge {
+        background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple));
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 9999px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        position: absolute;
+        top: -0.5rem;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+</style>
+{% endblock %}
 
-        .analysis-content {
-            max-width: 900px;
-            margin: 50px auto;
-            padding: 20px;
-            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
-            color: white;
-            position: relative;
-        }
-
-        .stock-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            margin-bottom: 25px;
-        }
-
-        .stock-name {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: white;
-        }
-
-        .stock-symbol {
-            font-size: 1rem;
-            opacity: 0.7;
-            margin-top: 5px;
-        }
-
-        .analysis-section {
-            margin: 25px 0;
-            line-height: 1.6;
-        }
-
-        .analysis-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .analysis-badge {
-            background: linear-gradient(45deg, #8b5cf6, #06b6d4);
-            color: white;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .metrics-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            margin: 20px 0;
-        }
-
-        .metric-item {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 15px;
-            text-align: center;
-        }
-
-        .metric-label {
-            font-size: 0.9rem;
-            opacity: 0.8;
-            margin-bottom: 8px;
-        }
-
-        .metric-value {
-            font-size: 1.4rem;
-            font-weight: 700;
-        }
+{% block content %}
+    <!-- Pricing Hero -->
+    <div class="text-center mb-16">
+        <h1 class="text-4xl md:text-6xl font-bold text-gray-800 mb-6">
+            Choose Your <span class="bg-gradient-to-r from-brand-blue to-brand-purple bg-clip-text text-transparent">Trading Edge</span>
+        </h1>
+        <p class="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
+            From free analysis to institutional-grade insights. Scale your investment research with plans designed for every trader.
+        </p>
         
-        @media (max-width: 768px) {
-            .premium-container {
-                padding: 1rem 0.75rem;
-            }
-            
-            .demo-section {
-                padding: 1.5rem;
-                margin-bottom: 1.5rem;
-            }
-            
-            .demo-grid {
-                grid-template-columns: 1fr;
-                gap: 1rem;
-            }
-            
-            .demo-card {
-                padding: 1.25rem;
-                min-height: 140px;
-            }
-            
-            .demo-icon {
-                font-size: 1.8rem;
-                margin-bottom: 0.75rem;
-            }
-            
-            .demo-title {
-                font-size: 1.1rem;
-                margin-bottom: 0.5rem;
-            }
-            
-            .demo-description {
-                font-size: 0.85rem;
-                line-height: 1.4;
-            }
-            
-            .hero-section {
-                padding: 2rem 1.5rem;
-                margin-bottom: 2rem;
-            }
-            
-            .hero-section h1 {
-                font-size: 2rem;
-                margin-bottom: 0.75rem;
-            }
-            
-            .hero-section .lead {
-                font-size: 1rem;
-            }
-            
-            .pricing-card {
-                padding: 1.5rem;
-                margin: 0 0.5rem;
-            }
-            
-            .price {
-                font-size: 2.5rem;
-            }
-            
-            .feature-list li {
-                padding: 0.75rem 0;
-            }
-            
-            .feature-icon {
-                width: 32px;
-                height: 32px;
-                font-size: 0.9rem;
-                margin-right: 0.75rem;
-            }
-            
-            .feature-title {
-                font-size: 1rem;
-                margin-bottom: 0.25rem;
-            }
-            
-            .feature-desc {
-                font-size: 0.85rem;
-            }
-            
-            .upgrade-btn {
-                padding: 1rem 1.5rem;
-                font-size: 1rem;
-                margin-top: 1.5rem;
-            }
-            
-            .back-home {
-                top: 20px;
-                left: 20px;
-                width: 50px;
-                height: 50px;
-                z-index: 10002;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .premium-container {
-                padding: 0.75rem 0.5rem;
-            }
-            
-            .demo-section {
-                padding: 1rem;
-            }
-            
-            .demo-card {
-                padding: 1rem;
-                min-height: 120px;
-            }
-            
-            .demo-icon {
-                font-size: 1.6rem;
-                margin-bottom: 0.5rem;
-            }
-            
-            .demo-title {
-                font-size: 1rem;
-            }
-            
-            .demo-description {
-                font-size: 0.8rem;
-            }
-            
-            .hero-section {
-                padding: 1.5rem 1rem;
-            }
-            
-            .hero-section h1 {
-                font-size: 1.6rem;
-            }
-            
-            .pricing-card {
-                padding: 1.25rem;
-                margin: 0 0.25rem;
-            }
-            
-            .price {
-                font-size: 2.2rem;
-            }
-            
-            .feature-icon {
-                width: 28px;
-                height: 28px;
-                font-size: 0.8rem;
-                margin-right: 0.6rem;
-            }
-            
-            .feature-title {
-                font-size: 0.95rem;
-            }
-            
-            .feature-desc {
-                font-size: 0.8rem;
-            }
-            
-            .back-home {
-                top: 15px;
-                left: 15px;
-                width: 45px;
-                height: 45px;
-                font-size: 0.9rem;
-                z-index: 10002;
-            }
-        }
-        
-        /* Touch-friendly improvements */
-        @media (pointer: coarse) {
-            .demo-card,
-            .upgrade-btn,
-            .back-home {
-                min-height: 44px;
-                cursor: pointer;
-                -webkit-tap-highlight-color: rgba(139, 92, 246, 0.3);
-            }
-            
-            .demo-card:active {
-                transform: translateY(-2px) scale(0.98);
-            }
-            
-            .upgrade-btn:active {
-                transform: translateY(-1px) scale(0.98);
-            }
-        }
-    </style>
-</head>
-<body>
-    <a href="/" class="back-home" title="Back to TradeWise AI">
-        <i class="fas fa-arrow-left"></i>
-    </a>
-
-    <div class="premium-container">
-        <!-- AI Trading Copilot Demos Section -->
-        <div class="demo-section">
-            <h2 style="text-align: center; margin-bottom: 1rem; color: #ffd700;">
-                <i class="fas fa-robot"></i> Try AI Trading Copilot Demos
-            </h2>
-            <p style="text-align: center; opacity: 0.9; margin-bottom: 2rem;">
-                Experience the power of our premium AI tools with interactive demos
-            </p>
-            
-            <div class="demo-grid">
-                <div class="demo-card" onclick="openAIPortfolioOptimizer()">
-                    <span class="demo-icon">🚀</span>
-                    <div class="demo-title">AI Portfolio Optimizer</div>
-                    <div class="demo-description">
-                        ML-powered portfolio analysis with risk scoring, diversification insights, and optimization recommendations.
-                    </div>
-                </div>
-                
-                <div class="demo-card" onclick="openMarketScanner()">
-                    <span class="demo-icon">📡</span>
-                    <div class="demo-title">Market Scanner</div>
-                    <div class="demo-description">
-                        Real-time opportunity finder that identifies breakout stocks, unusual volume, and momentum plays.
-                    </div>
-                </div>
-                
-                <div class="demo-card" onclick="openDCFCalculator()">
-                    <span class="demo-icon">💰</span>
-                    <div class="demo-title">DCF Calculator</div>
-                    <div class="demo-description">
-                        Professional valuation tool with discounted cash flow modeling and fair value estimates.
-                    </div>
-                </div>
-                
-                <div class="demo-card" onclick="openEarningsPredictor()">
-                    <span class="demo-icon">🎯</span>
-                    <div class="demo-title">Earnings Predictor</div>
-                    <div class="demo-description">
-                        AI-powered earnings forecasting with confidence scores and analyst consensus comparison.
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="hero-section">
-            <h1><i class="fas fa-crown"></i> TradeWise AI Premium</h1>
-            <p class="lead">Unlock the full power of AI-driven stock analysis</p>
-        </div>
-
-        <!-- Pricing Card -->
-        <div class="row justify-content-center">
-            <div class="col-lg-6 col-md-8">
-                <div class="pricing-card">
-                    <div class="price-section">
-                        <div class="price">$10<span style="font-size: 1.5rem; color: #666;">/month</span></div>
-                        <div style="color: #666; font-size: 1rem;">7-day free trial • Cancel anytime</div>
-                    </div>
-
-                    <ul class="feature-list">
-                        <li>
-                            <div class="feature-icon">🚀</div>
-                            <div class="feature-text">
-                                <div class="feature-title">AI Portfolio Optimization</div>
-                                <div class="feature-desc">Monthly AI-recommended portfolio adjustments with risk analysis</div>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="feature-icon">🔔</div>
-                            <div class="feature-text">
-                                <div class="feature-title">Unlimited Smart Alerts</div>
-                                <div class="feature-desc">Price, volume, and technical indicator notifications</div>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="feature-icon">📊</div>
-                            <div class="feature-text">
-                                <div class="feature-title">Market Scanner</div>
-                                <div class="feature-desc">Real-time screening for breakouts and opportunities</div>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="feature-icon">💰</div>
-                            <div class="feature-text">
-                                <div class="feature-title">DCF Calculator</div>
-                                <div class="feature-desc">Professional-grade discounted cash flow valuation</div>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="feature-icon">📈</div>
-                            <div class="feature-text">
-                                <div class="feature-title">10-Year Historical Data</div>
-                                <div class="feature-desc">Extended historical analysis and backtesting</div>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="feature-icon">🌐</div>
-                            <div class="feature-text">
-                                <div class="feature-title">Global Markets</div>
-                                <div class="feature-desc">International stocks and real-time data</div>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="feature-icon">🎯</div>
-                            <div class="feature-text">
-                                <div class="feature-title">Earnings Predictions</div>
-                                <div class="feature-desc">AI-powered quarterly earnings forecasts</div>
-                            </div>
-                        </li>
-                    </ul>
-
-                    <form action="/create-checkout-session" method="POST">
-                        <button type="submit" class="upgrade-btn">
-                            <i class="fas fa-crown"></i> Start 7-Day Free Trial
-                        </button>
-                    </form>
-                </div>
-            </div>
+        <!-- Toggle -->
+        <div class="flex items-center justify-center gap-4 mb-8">
+            <span class="text-gray-600">Monthly</span>
+            <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" id="billing-toggle" class="sr-only peer">
+                <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-brand-blue peer-checked:to-brand-purple"></div>
+            </label>
+            <span class="text-gray-600">Annual <span class="text-green-600 font-medium">(Save 20%)</span></span>
         </div>
     </div>
 
-    <!-- Analysis Overlay -->
-    <div id="analysis-overlay" class="analysis-overlay">
-        <div class="analysis-content">
-            <div id="analysis-results">
-                <!-- Results will be populated here -->
+    <!-- Pricing Cards -->
+    <div class="grid md:grid-cols-3 gap-8 mb-16">
+        <!-- Free Plan -->
+        <div class="pricing-card bg-white rounded-2xl p-8 border border-gray-200">
+            <div class="text-center mb-8">
+                <h3 class="text-2xl font-bold text-gray-800 mb-2">Free</h3>
+                <div class="text-5xl font-bold text-gray-800 mb-2">$0</div>
+                <div class="text-gray-600">Forever free</div>
+            </div>
+            
+            <ul class="space-y-4 mb-8">
+                <li class="flex items-center gap-3">
+                    <i class="fas fa-check feature-check"></i>
+                    <span class="text-gray-700">5 stock analyses per month</span>
+                </li>
+                <li class="flex items-center gap-3">
+                    <i class="fas fa-check feature-check"></i>
+                    <span class="text-gray-700">Basic AI insights</span>
+                </li>
+                <li class="flex items-center gap-3">
+                    <i class="fas fa-check feature-check"></i>
+                    <span class="text-gray-700">Real-time market data</span>
+                </li>
+                <li class="flex items-center gap-3">
+                    <i class="fas fa-check feature-check"></i>
+                    <span class="text-gray-700">Email support</span>
+                </li>
+            </ul>
+            
+            <button class="w-full py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
+                Current Plan
+            </button>
+        </div>
+
+        <!-- Pro Plan -->
+        <div class="pricing-card bg-white rounded-2xl p-8 border-2 border-brand-blue relative">
+            <div class="popular-badge">Most Popular</div>
+            
+            <div class="text-center mb-8">
+                <h3 class="text-2xl font-bold text-gray-800 mb-2">Pro</h3>
+                <div class="text-5xl font-bold text-gray-800 mb-2">
+                    <span id="pro-price">$29.99</span>
+                </div>
+                <div class="text-gray-600">
+                    <span id="pro-period">per month</span>
+                </div>
+            </div>
+            
+            <ul class="space-y-4 mb-8">
+                <li class="flex items-center gap-3">
+                    <i class="fas fa-check feature-check"></i>
+                    <span class="text-gray-700">Unlimited stock analyses</span>
+                </li>
+                <li class="flex items-center gap-3">
+                    <i class="fas fa-check feature-check"></i>
+                    <span class="text-gray-700">Advanced AI insights</span>
+                </li>
+                <li class="flex items-center gap-3">
+                    <i class="fas fa-check feature-check"></i>
+                    <span class="text-gray-700">Portfolio backtesting</span>
+                </li>
+                <li class="flex items-center gap-3">
+                    <i class="fas fa-check feature-check"></i>
+                    <span class="text-gray-700">Peer comparison tools</span>
+                </li>
+                <li class="flex items-center gap-3">
+                    <i class="fas fa-check feature-check"></i>
+                    <span class="text-gray-700">Smart alerts</span>
+                </li>
+                <li class="flex items-center gap-3">
+                    <i class="fas fa-check feature-check"></i>
+                    <span class="text-gray-700">Priority support</span>
+                </li>
+            </ul>
+            
+            <button onclick="upgradeToPro()" class="w-full py-3 bg-gradient-to-r from-brand-blue to-brand-purple text-white rounded-lg hover:shadow-lg transition-all">
+                Upgrade to Pro
+            </button>
+        </div>
+
+        <!-- Enterprise Plan -->
+        <div class="pricing-card bg-white rounded-2xl p-8 border border-gray-200">
+            <div class="text-center mb-8">
+                <h3 class="text-2xl font-bold text-gray-800 mb-2">Enterprise</h3>
+                <div class="text-5xl font-bold text-gray-800 mb-2">
+                    <span id="enterprise-price">$99.99</span>
+                </div>
+                <div class="text-gray-600">
+                    <span id="enterprise-period">per month</span>
+                </div>
+            </div>
+            
+            <ul class="space-y-4 mb-8">
+                <li class="flex items-center gap-3">
+                    <i class="fas fa-check feature-check"></i>
+                    <span class="text-gray-700">Everything in Pro</span>
+                </li>
+                <li class="flex items-center gap-3">
+                    <i class="fas fa-check feature-check"></i>
+                    <span class="text-gray-700">Team management (up to 10 users)</span>
+                </li>
+                <li class="flex items-center gap-3">
+                    <i class="fas fa-check feature-check"></i>
+                    <span class="text-gray-700">Custom AI models</span>
+                </li>
+                <li class="flex items-center gap-3">
+                    <i class="fas fa-check feature-check"></i>
+                    <span class="text-gray-700">API access</span>
+                </li>
+                <li class="flex items-center gap-3">
+                    <i class="fas fa-check feature-check"></i>
+                    <span class="text-gray-700">White-label options</span>
+                </li>
+                <li class="flex items-center gap-3">
+                    <i class="fas fa-check feature-check"></i>
+                    <span class="text-gray-700">Dedicated support</span>
+                </li>
+            </ul>
+            
+            <button onclick="upgradeToEnterprise()" class="w-full py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
+                Contact Sales
+            </button>
+        </div>
+    </div>
+
+    <!-- Feature Comparison -->
+    <div class="bg-white rounded-2xl p-8 border border-gray-200 mb-16">
+        <h3 class="text-2xl font-bold text-gray-800 mb-8 text-center">Feature Comparison</h3>
+        
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead>
+                    <tr class="border-b border-gray-200">
+                        <th class="text-left py-4 px-6 font-semibold text-gray-800">Features</th>
+                        <th class="text-center py-4 px-6 font-semibold text-gray-800">Free</th>
+                        <th class="text-center py-4 px-6 font-semibold text-gray-800">Pro</th>
+                        <th class="text-center py-4 px-6 font-semibold text-gray-800">Enterprise</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                    <tr>
+                        <td class="py-4 px-6 text-gray-700">Stock Analyses</td>
+                        <td class="py-4 px-6 text-center">5/month</td>
+                        <td class="py-4 px-6 text-center">Unlimited</td>
+                        <td class="py-4 px-6 text-center">Unlimited</td>
+                    </tr>
+                    <tr>
+                        <td class="py-4 px-6 text-gray-700">AI Insights</td>
+                        <td class="py-4 px-6 text-center">Basic</td>
+                        <td class="py-4 px-6 text-center">Advanced</td>
+                        <td class="py-4 px-6 text-center">Custom</td>
+                    </tr>
+                    <tr>
+                        <td class="py-4 px-6 text-gray-700">Portfolio Backtesting</td>
+                        <td class="py-4 px-6 text-center">❌</td>
+                        <td class="py-4 px-6 text-center">✅</td>
+                        <td class="py-4 px-6 text-center">✅</td>
+                    </tr>
+                    <tr>
+                        <td class="py-4 px-6 text-gray-700">Peer Comparison</td>
+                        <td class="py-4 px-6 text-center">❌</td>
+                        <td class="py-4 px-6 text-center">✅</td>
+                        <td class="py-4 px-6 text-center">✅</td>
+                    </tr>
+                    <tr>
+                        <td class="py-4 px-6 text-gray-700">Team Management</td>
+                        <td class="py-4 px-6 text-center">❌</td>
+                        <td class="py-4 px-6 text-center">❌</td>
+                        <td class="py-4 px-6 text-center">Up to 10 users</td>
+                    </tr>
+                    <tr>
+                        <td class="py-4 px-6 text-gray-700">API Access</td>
+                        <td class="py-4 px-6 text-center">❌</td>
+                        <td class="py-4 px-6 text-center">❌</td>
+                        <td class="py-4 px-6 text-center">✅</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- FAQ Section -->
+    <div class="mb-16">
+        <h3 class="text-2xl font-bold text-gray-800 mb-8 text-center">Frequently Asked Questions</h3>
+        
+        <div class="max-w-3xl mx-auto space-y-6">
+            <div class="bg-white rounded-lg border border-gray-200 p-6">
+                <h4 class="font-semibold text-gray-800 mb-2">Can I change plans anytime?</h4>
+                <p class="text-gray-600">Yes, you can upgrade, downgrade, or cancel your subscription at any time. Changes take effect at the next billing cycle.</p>
+            </div>
+            
+            <div class="bg-white rounded-lg border border-gray-200 p-6">
+                <h4 class="font-semibold text-gray-800 mb-2">Is there a free trial for Pro?</h4>
+                <p class="text-gray-600">We offer a 7-day free trial for new Pro subscribers. No credit card required.</p>
+            </div>
+            
+            <div class="bg-white rounded-lg border border-gray-200 p-6">
+                <h4 class="font-semibold text-gray-800 mb-2">What payment methods do you accept?</h4>
+                <p class="text-gray-600">We accept all major credit cards, PayPal, and bank transfers for Enterprise plans.</p>
+            </div>
+            
+            <div class="bg-white rounded-lg border border-gray-200 p-6">
+                <h4 class="font-semibold text-gray-800 mb-2">Do you offer refunds?</h4>
+                <p class="text-gray-600">Yes, we offer a 30-day money-back guarantee for all paid plans.</p>
             </div>
         </div>
     </div>
 
     <script>
-        // Demo Functions (imported from main page)
-        function showAnalysisOverlay() {
-            document.getElementById('analysis-overlay').style.display = 'block';
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeAnalysis() {
-            document.getElementById('analysis-overlay').style.display = 'none';
-            document.body.style.overflow = 'auto';
-        }
-
-        // Click outside to close
-        document.getElementById('analysis-overlay').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeAnalysis();
+        // Billing toggle functionality
+        const billingToggle = document.getElementById('billing-toggle');
+        const proPrice = document.getElementById('pro-price');
+        const proPeriod = document.getElementById('pro-period');
+        const enterprisePrice = document.getElementById('enterprise-price');
+        const enterprisePeriod = document.getElementById('enterprise-period');
+        
+        billingToggle.addEventListener('change', function() {
+            if (this.checked) {
+                // Annual billing
+                proPrice.textContent = '$23.99';
+                proPeriod.textContent = 'per month (billed annually)';
+                enterprisePrice.textContent = '$79.99';
+                enterprisePeriod.textContent = 'per month (billed annually)';
+            } else {
+                // Monthly billing
+                proPrice.textContent = '$29.99';
+                proPeriod.textContent = 'per month';
+                enterprisePrice.textContent = '$99.99';
+                enterprisePeriod.textContent = 'per month';
             }
         });
-
-        // ESC key to close
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                closeAnalysis();
-            }
-        });
-
-        // Premium feature handlers
-        function openAIPortfolioOptimizer() {
-            showAnalysisOverlay();
-            displayPremiumDemo('🚀 AI Portfolio Optimizer', 'portfolio');
+        
+        // Upgrade functions
+        function upgradeToPro() {
+            window.location.href = '/api/billing/create-checkout-session?plan=pro';
         }
         
-        function openMarketScanner() {
-            showAnalysisOverlay(); 
-            displayPremiumDemo('📊 AI Market Scanner', 'scanner');
-        }
-        
-        function openDCFCalculator() {
-            showAnalysisOverlay();
-            displayPremiumDemo('💰 DCF Calculator', 'dcf');
-        }
-
-        function openEarningsPredictor() {
-            showAnalysisOverlay();
-            displayPremiumDemo('🎯 Earnings Predictor', 'earnings');
-        }
-        
-        function displayPremiumDemo(title, featureType) {
-            let content = `
-                <div class="stock-header">
-                    <div>
-                        <div class="stock-name">${title}</div>
-                        <div class="stock-symbol">Premium Feature Demo</div>
-                    </div>
-                    <button onclick="closeAnalysis()" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; font-size: 18px;">×</button>
-                </div>
-            `;
-            
-            if (featureType === 'portfolio') {
-                content += `
-                    <div class="analysis-section">
-                        <div class="analysis-header">
-                            <div class="analysis-badge">PORTFOLIO ANALYSIS</div>
-                        </div>
-                        <p>AI-powered portfolio optimization analysis for a sample $100,000 portfolio:</p>
-                        
-                        <div class="metrics-grid">
-                            <div class="metric-item">
-                                <div class="metric-label">Portfolio Risk Score</div>
-                                <div class="metric-value" style="color: #10b981;">49.8/100</div>
-                            </div>
-                            <div class="metric-item">
-                                <div class="metric-label">Diversification Score</div>
-                                <div class="metric-value" style="color: #8b5cf6;">73/100</div>
-                            </div>
-                            <div class="metric-item">
-                                <div class="metric-label">Volatility</div>
-                                <div class="metric-value" style="color: #f59e0b;">18.2%</div>
-                            </div>
-                            <div class="metric-item">
-                                <div class="metric-label">Beta</div>
-                                <div class="metric-value" style="color: #06b6d4;">1.14</div>
-                            </div>
-                        </div>
-                        
-                        <div style="margin: 20px 0; padding: 20px; background: rgba(16, 185, 129, 0.1); border-left: 4px solid #10b981; border-radius: 10px;">
-                            <h4 style="color: #10b981; margin-bottom: 10px;">✅ AI Recommendation</h4>
-                            <p style="margin: 0; line-height: 1.6;">Consider reducing tech sector exposure from 45% to 35% and adding defensive sectors. This could lower portfolio beta to 1.05 while maintaining growth potential.</p>
-                        </div>
-                    </div>
-                `;
-            } else if (featureType === 'scanner') {
-                content += `
-                    <div class="analysis-section">
-                        <div class="analysis-header">
-                            <div class="analysis-badge">MARKET OPPORTUNITIES</div>
-                        </div>
-                        <p>Real-time market scanner identifying breakout opportunities:</p>
-                        
-                        <div style="display: grid; gap: 15px; margin: 20px 0;">
-                            <div style="background: rgba(16, 185, 129, 0.1); border-left: 4px solid #10b981; padding: 15px; border-radius: 10px;">
-                                <div style="display: flex; justify-content: space-between; align-items: center;">
-                                    <div>
-                                        <strong>NVDA</strong> - NVIDIA Corp.
-                                        <div style="font-size: 0.9rem; opacity: 0.8;">Breakout above resistance</div>
-                                    </div>
-                                    <div style="text-align: right;">
-                                        <div style="color: #10b981; font-weight: 600;">+2.8%</div>
-                                        <div style="font-size: 0.8rem; opacity: 0.8;">Volume: 3.2x avg</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div style="background: rgba(139, 92, 246, 0.1); border-left: 4px solid #8b5cf6; padding: 15px; border-radius: 10px;">
-                                <div style="display: flex; justify-content: space-between; align-items: center;">
-                                    <div>
-                                        <strong>AAPL</strong> - Apple Inc.
-                                        <div style="font-size: 0.9rem; opacity: 0.8;">RSI oversold reversal</div>
-                                    </div>
-                                    <div style="text-align: right;">
-                                        <div style="color: #8b5cf6; font-weight: 600;">+1.4%</div>
-                                        <div style="font-size: 0.8rem; opacity: 0.8;">RSI: 28 → 45</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            } else if (featureType === 'dcf') {
-                content += `
-                    <div class="analysis-section">
-                        <div class="analysis-header">
-                            <div class="analysis-badge">DCF VALUATION</div>
-                        </div>
-                        <p>Professional discounted cash flow analysis for AAPL:</p>
-                        
-                        <div class="metrics-grid">
-                            <div class="metric-item">
-                                <div class="metric-label">Fair Value</div>
-                                <div class="metric-value" style="color: #10b981;">$195.50</div>
-                            </div>
-                            <div class="metric-item">
-                                <div class="metric-label">Current Price</div>
-                                <div class="metric-value" style="color: #f59e0b;">$189.25</div>
-                            </div>
-                            <div class="metric-item">
-                                <div class="metric-label">Upside</div>
-                                <div class="metric-value" style="color: #8b5cf6;">+3.3%</div>
-                            </div>
-                            <div class="metric-item">
-                                <div class="metric-label">WACC</div>
-                                <div class="metric-value" style="color: #06b6d4;">8.2%</div>
-                            </div>
-                        </div>
-                        
-                        <div style="margin: 20px 0; padding: 20px; background: rgba(139, 92, 246, 0.1); border-left: 4px solid #8b5cf6; border-radius: 10px;">
-                            <h4 style="color: #8b5cf6; margin-bottom: 10px;">📊 DCF Assumptions</h4>
-                            <ul style="margin: 0; padding-left: 20px; line-height: 1.8;">
-                                <li>Revenue growth: 5.2% (5-year avg)</li>
-                                <li>Terminal growth: 2.5%</li>
-                                <li>Discount rate: 8.2%</li>
-                                <li>Free cash flow margin: 28.1%</li>
-                            </ul>
-                        </div>
-                    </div>
-                `;
-            } else if (featureType === 'earnings') {
-                content += `
-                    <div class="analysis-section">
-                        <div class="analysis-header">
-                            <div class="analysis-badge">EARNINGS FORECAST</div>
-                        </div>
-                        <p>AI-powered earnings prediction for GOOGL (Next Quarter):</p>
-                        
-                        <div class="metrics-grid">
-                            <div class="metric-item">
-                                <div class="metric-label">AI Prediction</div>
-                                <div class="metric-value" style="color: #10b981;">$1.68</div>
-                            </div>
-                            <div class="metric-item">
-                                <div class="metric-label">Analyst Consensus</div>
-                                <div class="metric-value" style="color: #f59e0b;">$1.65</div>
-                            </div>
-                            <div class="metric-item">
-                                <div class="metric-label">Confidence Score</div>
-                                <div class="metric-value" style="color: #8b5cf6;">87%</div>
-                            </div>
-                            <div class="metric-item">
-                                <div class="metric-label">Surprise Potential</div>
-                                <div class="metric-value" style="color: #06b6d4;">+1.8%</div>
-                            </div>
-                        </div>
-                        
-                        <div style="margin: 20px 0; padding: 20px; background: rgba(6, 182, 212, 0.1); border-left: 4px solid #06b6d4; border-radius: 10px;">
-                            <h4 style="color: #06b6d4; margin-bottom: 10px;">🎯 Key Factors</h4>
-                            <ul style="margin: 0; padding-left: 20px; line-height: 1.8;">
-                                <li>Cloud revenue acceleration (+28% YoY)</li>
-                                <li>YouTube advertising recovery</li>
-                                <li>Search market share stability</li>
-                                <li>AI investments driving efficiency</li>
-                            </ul>
-                        </div>
-                    </div>
-                `;
-            }
-            
-            content += `
-                <div style="background: linear-gradient(45deg, rgba(255, 215, 0, 0.1), rgba(255, 237, 74, 0.1)); border: 1px solid rgba(255, 215, 0, 0.3); border-radius: 15px; padding: 20px; margin: 20px 0;">
-                    <div style="color: #ffd700; font-weight: 600; margin-bottom: 10px;">This is a Premium Feature Demo</div>
-                    <div style="color: rgba(255, 255, 255, 0.9); line-height: 1.6; text-align: left;">
-                        Get access to real-time AI-powered tools:<br>
-                        • Portfolio optimization with risk analysis<br>
-                        • Market scanner with breakout detection<br>
-                        • DCF calculator with fair value estimates<br>
-                        • Earnings predictions with confidence scores
-                    </div>
-                    <div style="text-align: center; margin-top: 15px;">
-                        <a href="#pricing" onclick="closeAnalysis(); document.querySelector('.pricing-card').scrollIntoView({behavior: 'smooth'});" style="background: linear-gradient(45deg, #8b5cf6, #06b6d4); color: white; padding: 12px 25px; border-radius: 10px; text-decoration: none; font-weight: 600; display: inline-block;">
-                            🚀 Upgrade to Premium - $10/month
-                        </a>
-                    </div>
-                </div>
-                
-                <div style="text-align: center; margin-top: 20px;">
-                    <button onclick="closeAnalysis()" style="padding: 10px 25px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 15px; cursor: pointer; font-weight: 600; font-size: 14px;">Close Demo</button>
-                </div>
-            `;
-            
-            document.getElementById('analysis-results').innerHTML = content;
+        function upgradeToEnterprise() {
+            window.location.href = '/contact?plan=enterprise';
         }
     </script>
-</body>
-</html>
+{% endblock %}
