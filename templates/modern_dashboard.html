@@ -6,134 +6,194 @@
 {% block sidebar_dashboard %}active{% endblock %}
 
 {% block content %}
-    <!-- Dashboard Main Content -->
-    <div class="dashboard-hero mb-12">
-        <div class="text-center">
-            <h1 class="text-4xl md:text-6xl font-bold text-gray-800 mb-6">
-                Welcome to <span class="bg-gradient-to-r from-brand-blue to-brand-purple bg-clip-text text-transparent">TradeWise AI</span>
-            </h1>
-            <p class="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-                Professional stock analysis platform delivering institutional-grade insights with retail-friendly pricing.
-            </p>
-            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                <a href="/search" class="saas-btn-primary" id="quick-search">
-                    <i class="fas fa-search mr-2"></i>Start Analyzing Stocks
-                </a>
-                <a href="/premium/upgrade" class="saas-btn-secondary" id="show-upgrade">
-                    <i class="fas fa-crown mr-2"></i>Upgrade to Pro
-                </a>
-            </div>
-        </div>
+    <!-- Dashboard Header -->
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900">
+            Welcome back, <span class="text-brand-blue">John</span>
+        </h1>
+        <p class="text-gray-600 mt-2">Here's your portfolio overview and market insights</p>
     </div>
 
-    <!-- Dashboard Stats Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-        <div class="saas-card">
-            <div class="saas-card-header">
+    <!-- Main Dashboard Cards -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        <!-- Portfolio Overview Card -->
+        <div class="dashboard-card">
+            <div class="dashboard-card-header">
                 <div class="flex items-center justify-between">
-                    <h3 class="saas-card-title">Portfolio Performance</h3>
-                    <i class="fas fa-chart-line text-2xl text-brand-blue"></i>
+                    <h3 class="dashboard-card-title">
+                        <i class="fas fa-chart-pie text-brand-blue mr-2"></i>
+                        Portfolio Overview
+                    </h3>
+                    <div class="text-right">
+                        <div id="portfolio-value" class="text-2xl font-bold text-gray-900">$0</div>
+                        <div id="portfolio-change" class="text-sm font-medium">+$0 (0%)</div>
+                    </div>
                 </div>
             </div>
-            <div class="saas-card-content">
-                <div class="text-3xl font-bold text-gray-800 mb-2" id="portfolio-value">$12,450</div>
-                <div class="text-green-600 font-medium" id="portfolio-change">
-                    <i class="fas fa-arrow-up mr-1"></i>+2.3%
+            <div class="dashboard-card-content">
+                <div class="mb-4">
+                    <canvas id="portfolio-chart" height="120"></canvas>
                 </div>
-                <div class="mt-4 h-32">
-                    <canvas id="portfolio-chart"></canvas>
+                <div class="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                        <div class="text-gray-500">Today's Gain/Loss</div>
+                        <div id="daily-change" class="font-semibold">$0 (0%)</div>
+                    </div>
+                    <div>
+                        <div class="text-gray-500">Total Return</div>
+                        <div id="total-return" class="font-semibold">$0 (0%)</div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="saas-card">
-            <div class="saas-card-header">
+        <!-- AI Insights Card -->
+        <div class="dashboard-card">
+            <div class="dashboard-card-header">
                 <div class="flex items-center justify-between">
-                    <h3 class="saas-card-title">Market Overview</h3>
-                    <i class="fas fa-globe text-2xl text-brand-purple"></i>
+                    <h3 class="dashboard-card-title">
+                        <i class="fas fa-brain text-brand-purple mr-2"></i>
+                        AI Insights
+                    </h3>
+                    <a href="/search" class="text-brand-blue hover:text-brand-purple text-sm font-medium">View All</a>
                 </div>
             </div>
-            <div class="saas-card-content">
-                <div class="text-3xl font-bold text-gray-800 mb-2" id="spx-value">S&P 5,985</div>
-                <div class="text-green-600 font-medium" id="spx-change">
-                    <i class="fas fa-arrow-up mr-1"></i>+1.24%
-                </div>
-                <div class="mt-4 h-32">
-                    <canvas id="market-chart"></canvas>
+            <div class="dashboard-card-content">
+                <div id="ai-insights" class="space-y-3">
+                    <div class="flex items-start gap-3 p-3 bg-green-50 rounded-lg border border-green-100">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-arrow-up text-green-600"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="font-semibold text-green-800 text-sm">Strong Buy Signal</div>
+                            <div class="text-green-600 text-xs mt-1">NVDA showing bullish momentum with strong earnings</div>
+                            <a href="/search?symbol=NVDA" class="text-green-700 hover:text-green-800 text-xs font-medium mt-1 inline-block">Analyze →</a>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start gap-3 p-3 bg-yellow-50 rounded-lg border border-yellow-100">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-exclamation-triangle text-yellow-600"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="font-semibold text-yellow-800 text-sm">Risk Alert</div>
+                            <div class="text-yellow-600 text-xs mt-1">Tech sector volatility increasing - monitor positions</div>
+                            <a href="/search?sector=technology" class="text-yellow-700 hover:text-yellow-800 text-xs font-medium mt-1 inline-block">Analyze →</a>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-3 p-3 bg-blue-50 rounded-lg border border-blue-100">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-lightbulb text-blue-600"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="font-semibold text-blue-800 text-sm">Opportunity</div>
+                            <div class="text-blue-600 text-xs mt-1">Dividend aristocrats showing value opportunities</div>
+                            <a href="/search?strategy=dividend" class="text-blue-700 hover:text-blue-800 text-xs font-medium mt-1 inline-block">Analyze →</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="saas-card">
-            <div class="saas-card-header">
+        <!-- Market Highlights Card -->
+        <div class="dashboard-card">
+            <div class="dashboard-card-header">
                 <div class="flex items-center justify-between">
-                    <h3 class="saas-card-title">Plan Status</h3>
-                    <i class="fas fa-crown text-2xl text-amber-500"></i>
+                    <h3 class="dashboard-card-title">
+                        <i class="fas fa-globe text-brand-blue mr-2"></i>
+                        Market Highlights
+                    </h3>
+                    <div class="text-xs text-gray-500">Live</div>
                 </div>
             </div>
-            <div class="saas-card-content">
-                <div class="text-3xl font-bold text-gray-800 mb-2">Free</div>
-                <div class="text-amber-600 font-medium">
-                    <i class="fas fa-star mr-1"></i>5 analyses left
+            <div class="dashboard-card-content">
+                <!-- Market Indices -->
+                <div class="mb-4">
+                    <h4 class="text-sm font-semibold text-gray-700 mb-2">Major Indices</h4>
+                    <div id="market-indices" class="space-y-2">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm">S&P 500</span>
+                            <span class="text-green-600 font-medium text-sm">+0.8%</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm">NASDAQ</span>
+                            <span class="text-green-600 font-medium text-sm">+1.2%</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm">Dow Jones</span>
+                            <span class="text-red-600 font-medium text-sm">-0.3%</span>
+                        </div>
+                    </div>
                 </div>
-                <p class="text-gray-600 text-sm mt-2">Upgrade for unlimited access</p>
+
+                <!-- Top Movers -->
+                <div class="mb-4">
+                    <h4 class="text-sm font-semibold text-gray-700 mb-2">Top Movers</h4>
+                    <div id="top-movers" class="space-y-2">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm font-medium">NVDA</span>
+                            <span class="text-green-600 font-medium text-sm">+5.2%</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm font-medium">TSLA</span>
+                            <span class="text-red-600 font-medium text-sm">-3.1%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sector Performance Chart -->
+                <div>
+                    <h4 class="text-sm font-semibold text-gray-700 mb-2">Sector Performance</h4>
+                    <canvas id="sector-chart" height="120"></canvas>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- Quick Actions -->
-    <div class="saas-card mb-12">
-        <div class="saas-card-header">
-            <h3 class="saas-card-title">Quick Actions</h3>
-            <p class="text-gray-600">Get started with these popular features</p>
+    <div class="dashboard-card">
+        <div class="dashboard-card-header">
+            <h3 class="dashboard-card-title">
+                <i class="fas fa-bolt text-brand-blue mr-2"></i>
+                Quick Actions
+            </h3>
+            <p class="text-gray-600">Access your most-used features</p>
         </div>
-        <div class="saas-card-content">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <a href="/search" class="flex items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
-                        <i class="fas fa-search text-blue-600"></i>
+        <div class="dashboard-card-content">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <a href="/search" class="quick-action-button group">
+                    <div class="quick-action-icon bg-gradient-to-r from-blue-500 to-blue-600">
+                        <i class="fas fa-search text-white text-xl"></i>
                     </div>
-                    <div>
-                        <div class="font-semibold text-gray-800">Stock Search</div>
-                        <div class="text-sm text-gray-600">Analyze any stock</div>
+                    <div class="flex-1">
+                        <div class="font-bold text-gray-900 group-hover:text-brand-blue">Stock Search</div>
+                        <div class="text-sm text-gray-600">AI-powered analysis</div>
                     </div>
+                    <i class="fas fa-arrow-right text-gray-400 group-hover:text-brand-blue transition-colors"></i>
                 </a>
 
-                <a href="/backtest" class="flex items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors" id="quick-backtest">
-                    <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mr-4">
-                        <i class="fas fa-chart-bar text-purple-600"></i>
+                <a href="/backtest" class="quick-action-button group">
+                    <div class="quick-action-icon bg-gradient-to-r from-purple-500 to-purple-600">
+                        <i class="fas fa-chart-bar text-white text-xl"></i>
                     </div>
-                    <div>
-                        <div class="font-semibold text-gray-800">Backtesting</div>
+                    <div class="flex-1">
+                        <div class="font-bold text-gray-900 group-hover:text-brand-purple">Backtesting</div>
                         <div class="text-sm text-gray-600">Test strategies</div>
                     </div>
+                    <i class="fas fa-arrow-right text-gray-400 group-hover:text-brand-purple transition-colors"></i>
                 </a>
 
-                <div class="flex items-center p-4 bg-gray-50 rounded-lg opacity-75 cursor-not-allowed">
-                    <div class="w-12 h-12 bg-amber-100 rounded-lg flex items-center justify-center mr-4">
-                        <i class="fas fa-users text-amber-600"></i>
+                <a href="/peer-comparison" class="quick-action-button group">
+                    <div class="quick-action-icon bg-gradient-to-r from-green-500 to-green-600">
+                        <i class="fas fa-balance-scale text-white text-xl"></i>
                     </div>
-                    <div>
-                        <div class="font-semibold text-gray-800 flex items-center">
-                            Peer Comparison 
-                            <i class="fas fa-lock ml-2 text-amber-500 text-xs"></i>
-                        </div>
+                    <div class="flex-1">
+                        <div class="font-bold text-gray-900 group-hover:text-brand-blue">Peer Analysis</div>
                         <div class="text-sm text-gray-600">Compare stocks</div>
                     </div>
-                </div>
-
-                <div class="flex items-center p-4 bg-gray-50 rounded-lg opacity-75 cursor-not-allowed" id="quick-portfolio">
-                    <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mr-4">
-                        <i class="fas fa-briefcase text-green-600"></i>
-                    </div>
-                    <div>
-                        <div class="font-semibold text-gray-800 flex items-center">
-                            Portfolio Tracker
-                            <i class="fas fa-lock ml-2 text-amber-500 text-xs"></i>
-                        </div>
-                        <div class="text-sm text-gray-600">Track performance</div>
-                    </div>
-                </div>
+                    <i class="fas fa-arrow-right text-gray-400 group-hover:text-brand-blue transition-colors"></i>
+                </a>
             </div>
         </div>
     </div>
@@ -222,6 +282,10 @@
         </div>
     </div>
 
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ url_for('static', filename='js/modern_dashboard.js') }}"></script>
 {% endblock %}
                         <i class="fas fa-bars"></i>
                     </button>

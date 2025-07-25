@@ -1,322 +1,366 @@
-/**
- * Modern Dashboard JavaScript
- * Handles dashboard interactions, charts, and user engagement
- */
+// Modern Dashboard JavaScript with Chart.js Integration
+// Real-time data loading and chart management
 
-// Global variables
-let portfolioChart = null;
-let marketChart = null;
-
-// Initialize dashboard when DOM is loaded
-document.addEventListener('DOMContentLoaded', function() {
-    initializeDashboard();
-    loadDashboardData();
-    setupEventListeners();
-});
-
-// Initialize dashboard components
-function initializeDashboard() {
-    // Initialize charts if Chart.js is available
-    if (typeof Chart !== 'undefined') {
-        initializePortfolioChart();
-        initializeMarketChart();
+class DashboardManager {
+    constructor() {
+        this.portfolioChart = null;
+        this.sectorChart = null;
+        this.isInitialized = false;
+        this.updateInterval = null;
     }
-    
-    // Setup dark mode
-    initializeDarkMode();
-    
-    // Setup sidebar collapse
-    setupSidebarToggle();
-}
 
-// Portfolio performance chart
-function initializePortfolioChart() {
-    const ctx = document.getElementById('portfolio-chart');
-    if (!ctx) return;
-    
-    portfolioChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-            datasets: [{
-                label: 'Portfolio Value',
-                data: [10000, 10500, 10200, 11000, 10800, 11500],
-                borderColor: '#1e40af',
-                backgroundColor: 'rgba(30, 64, 175, 0.1)',
-                borderWidth: 3,
-                fill: true,
-                tension: 0.4
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false
-                }
+    async init() {
+        if (this.isInitialized) return;
+        
+        try {
+            await this.loadChartJS();
+            await this.initializeCharts();
+            await this.loadDashboardData();
+            this.startRealTimeUpdates();
+            this.isInitialized = true;
+            console.log('Dashboard initialized successfully');
+        } catch (error) {
+            console.error('Dashboard initialization error:', error);
+            this.showError('Failed to initialize dashboard');
+        }
+    }
+
+    async loadChartJS() {
+        return new Promise((resolve, reject) => {
+            if (typeof Chart !== 'undefined') {
+                resolve();
+                return;
+            }
+
+            const script = document.createElement('script');
+            script.src = 'https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js';
+            script.onload = resolve;
+            script.onerror = reject;
+            document.head.appendChild(script);
+        });
+    }
+
+    async initializeCharts() {
+        await this.createPortfolioChart();
+        await this.createSectorChart();
+    }
+
+    async createPortfolioChart() {
+        const ctx = document.getElementById('portfolio-chart');
+        if (!ctx) return;
+
+        // Generate sample portfolio data for the past 30 days
+        const portfolioData = this.generatePortfolioData();
+        
+        this.portfolioChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: portfolioData.labels,
+                datasets: [{
+                    label: 'Portfolio Value',
+                    data: portfolioData.values,
+                    borderColor: '#3b82f6',
+                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 0,
+                    pointHoverRadius: 6,
+                    pointHoverBackgroundColor: '#3b82f6',
+                    pointHoverBorderColor: '#ffffff',
+                    pointHoverBorderWidth: 2
+                }]
             },
-            scales: {
-                y: {
-                    beginAtZero: false,
-                    grid: {
-                        color: 'rgba(0,0,0,0.1)'
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        titleColor: '#ffffff',
+                        bodyColor: '#ffffff',
+                        borderColor: '#3b82f6',
+                        borderWidth: 1,
+                        cornerRadius: 8,
+                        displayColors: false,
+                        callbacks: {
+                            label: function(context) {
+                                return `$${context.parsed.y.toLocaleString()}`;
+                            }
+                        }
                     }
                 },
-                x: {
-                    grid: {
+                scales: {
+                    x: {
+                        display: false,
+                        grid: {
+                            display: false
+                        }
+                    },
+                    y: {
+                        display: false,
+                        grid: {
+                            display: false
+                        }
+                    }
+                },
+                interaction: {
+                    intersect: false,
+                    mode: 'index'
+                },
+                elements: {
+                    line: {
+                        borderJoinStyle: 'round'
+                    }
+                }
+            }
+        });
+    }
+
+    async createSectorChart() {
+        const ctx = document.getElementById('sector-chart');
+        if (!ctx) return;
+
+        const sectorData = [
+            { name: 'Technology', performance: 2.3, color: '#3b82f6' },
+            { name: 'Healthcare', performance: 1.1, color: '#10b981' },
+            { name: 'Financial', performance: -0.5, color: '#ef4444' },
+            { name: 'Energy', performance: 0.8, color: '#f59e0b' },
+            { name: 'Consumer', performance: 1.8, color: '#8b5cf6' }
+        ];
+
+        this.sectorChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: sectorData.map(s => s.name),
+                datasets: [{
+                    data: sectorData.map(s => s.performance),
+                    backgroundColor: sectorData.map(s => s.color),
+                    borderRadius: 4,
+                    borderSkipped: false,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
                         display: false
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        titleColor: '#ffffff',
+                        bodyColor: '#ffffff',
+                        borderColor: '#374151',
+                        borderWidth: 1,
+                        cornerRadius: 8,
+                        displayColors: false,
+                        callbacks: {
+                            label: function(context) {
+                                const value = context.parsed.y;
+                                const sign = value >= 0 ? '+' : '';
+                                return `${sign}${value.toFixed(1)}%`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            font: {
+                                size: 11
+                            },
+                            maxRotation: 0
+                        }
+                    },
+                    y: {
+                        display: false,
+                        grid: {
+                            display: false
+                        }
                     }
                 }
             }
-        }
-    });
-}
+        });
+    }
 
-// Market overview chart
-function initializeMarketChart() {
-    const ctx = document.getElementById('market-chart');
-    if (!ctx) return;
-    
-    marketChart = new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-            labels: ['Technology', 'Healthcare', 'Finance', 'Energy', 'Consumer'],
-            datasets: [{
-                data: [35, 20, 18, 12, 15],
-                backgroundColor: [
-                    '#1e40af',
-                    '#7c3aed', 
-                    '#059669',
-                    '#dc2626',
-                    '#d97706'
-                ],
-                borderWidth: 0
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'bottom',
-                    labels: {
-                        usePointStyle: true,
-                        padding: 15
-                    }
-                }
+    generatePortfolioData() {
+        const days = 30;
+        const labels = [];
+        const values = [];
+        const baseValue = 12450;
+        
+        for (let i = days; i >= 0; i--) {
+            const date = new Date();
+            date.setDate(date.getDate() - i);
+            labels.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+            
+            // Generate realistic portfolio fluctuation
+            const randomChange = (Math.random() - 0.5) * 0.03; // ±1.5% daily
+            const previousValue = values[values.length - 1] || baseValue;
+            const newValue = previousValue * (1 + randomChange);
+            values.push(Math.round(newValue));
+        }
+        
+        return { labels, values };
+    }
+
+    async loadDashboardData() {
+        try {
+            // Load portfolio data
+            await this.updatePortfolioData();
+            
+            // Load AI insights
+            await this.updateAIInsights();
+            
+            // Load market data
+            await this.updateMarketData();
+            
+        } catch (error) {
+            console.error('Error loading dashboard data:', error);
+        }
+    }
+
+    async updatePortfolioData() {
+        // Simulate portfolio data - in production this would fetch from API
+        const portfolioValue = 12450;
+        const dailyChange = 287;
+        const dailyChangePercent = 2.3;
+        const totalReturn = 1850;
+        const totalReturnPercent = 17.5;
+
+        // Update UI elements
+        this.updateElement('portfolio-value', `$${portfolioValue.toLocaleString()}`);
+        this.updateElement('portfolio-change', 
+            `+$${dailyChange} (+${dailyChangePercent}%)`, 
+            dailyChange >= 0 ? 'text-green-600' : 'text-red-600'
+        );
+        this.updateElement('daily-change', 
+            `$${dailyChange} (${dailyChangePercent}%)`,
+            dailyChange >= 0 ? 'text-green-600' : 'text-red-600'
+        );
+        this.updateElement('total-return', 
+            `$${totalReturn} (${totalReturnPercent}%)`,
+            totalReturn >= 0 ? 'text-green-600' : 'text-red-600'
+        );
+    }
+
+    async updateAIInsights() {
+        // In production, this would fetch real AI insights from the backend
+        try {
+            const response = await fetch('/api/dashboard/ai-insights');
+            if (response.ok) {
+                const insights = await response.json();
+                this.renderAIInsights(insights);
+            }
+        } catch (error) {
+            console.log('Using default AI insights');
+        }
+    }
+
+    async updateMarketData() {
+        try {
+            // Fetch real market data
+            const response = await fetch('/api/market/indices');
+            if (response.ok) {
+                const marketData = await response.json();
+                this.renderMarketData(marketData);
+            }
+        } catch (error) {
+            console.log('Using default market data');
+        }
+    }
+
+    renderAIInsights(insights) {
+        const container = document.getElementById('ai-insights');
+        if (!container || !insights) return;
+
+        // This would render dynamic AI insights from the backend
+        // For now, the template contains static examples
+    }
+
+    renderMarketData(marketData) {
+        const indicesContainer = document.getElementById('market-indices');
+        const moversContainer = document.getElementById('top-movers');
+        
+        if (marketData && marketData.indices) {
+            // Update market indices with real data
+            // Implementation would update the DOM elements
+        }
+    }
+
+    updateElement(id, content, className = '') {
+        const element = document.getElementById(id);
+        if (element) {
+            element.textContent = content;
+            if (className) {
+                element.className = element.className.replace(/text-(green|red)-600/g, '') + ' ' + className;
             }
         }
-    });
-}
+    }
 
-// Load dashboard data from API
-async function loadDashboardData() {
-    try {
-        // Load portfolio data
-        const portfolioResponse = await fetch('/api/portfolio/summary');
-        if (portfolioResponse.ok) {
-            const portfolioData = await portfolioResponse.json();
-            updatePortfolioCard(portfolioData);
+    startRealTimeUpdates() {
+        // Update every 5 minutes
+        this.updateInterval = setInterval(() => {
+            this.loadDashboardData();
+        }, 5 * 60 * 1000);
+    }
+
+    stopRealTimeUpdates() {
+        if (this.updateInterval) {
+            clearInterval(this.updateInterval);
+            this.updateInterval = null;
+        }
+    }
+
+    showError(message) {
+        console.error('Dashboard Error:', message);
+        // Could show a toast notification here
+    }
+
+    destroy() {
+        this.stopRealTimeUpdates();
+        
+        if (this.portfolioChart) {
+            this.portfolioChart.destroy();
+            this.portfolioChart = null;
         }
         
-        // Load market data
-        const marketResponse = await fetch('/api/market/overview');
-        if (marketResponse.ok) {
-            const marketData = await marketResponse.json();
-            updateMarketCard(marketData);
+        if (this.sectorChart) {
+            this.sectorChart.destroy();
+            this.sectorChart = null;
         }
         
-        // Load recent analyses
-        const analysesResponse = await fetch('/api/analyses/recent');
-        if (analysesResponse.ok) {
-            const analysesData = await analysesResponse.json();
-            updateRecentAnalyses(analysesData);
-        }
-        
-    } catch (error) {
-        console.error('Error loading dashboard data:', error);
+        this.isInitialized = false;
     }
 }
 
-// Update portfolio card with real data
-function updatePortfolioCard(data) {
-    const valueElement = document.getElementById('portfolio-value');
-    const changeElement = document.getElementById('portfolio-change');
-    
-    if (valueElement && data.totalValue) {
-        valueElement.textContent = `$${data.totalValue.toLocaleString()}`;
-    }
-    
-    if (changeElement && data.dayChange) {
-        const isPositive = data.dayChange >= 0;
-        changeElement.textContent = `${isPositive ? '+' : ''}${data.dayChange.toFixed(2)}%`;
-        changeElement.className = `font-medium ${isPositive ? 'text-green-600' : 'text-red-600'}`;
-    }
-}
+// Initialize dashboard when DOM is ready
+let dashboardManager = null;
 
-// Update market card with real data
-function updateMarketCard(data) {
-    const spxElement = document.getElementById('spx-value');
-    const spxChangeElement = document.getElementById('spx-change');
-    
-    if (spxElement && data.spx) {
-        spxElement.textContent = data.spx.value;
-    }
-    
-    if (spxChangeElement && data.spx) {
-        const isPositive = data.spx.change >= 0;
-        spxChangeElement.innerHTML = `
-            <i class="fas fa-arrow-${isPositive ? 'up' : 'down'} mr-1"></i>
-            ${isPositive ? '+' : ''}${data.spx.change}%
-        `;
-        spxChangeElement.className = `font-medium ${isPositive ? 'text-green-600' : 'text-red-600'}`;
-    }
-}
-
-// Update recent analyses section
-function updateRecentAnalyses(data) {
-    const container = document.getElementById('recent-analyses');
-    if (!container || !data.analyses) return;
-    
-    container.innerHTML = data.analyses.map(analysis => `
-        <div class="flex items-start gap-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer" 
-             onclick="viewAnalysis('${analysis.symbol}')">
-            <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                <i class="fas fa-chart-line text-blue-600"></i>
-            </div>
-            <div class="flex-1">
-                <div class="font-semibold text-gray-800 mb-1">${analysis.symbol} - ${analysis.company}</div>
-                <p class="text-gray-600 text-sm mb-2">${analysis.summary}</p>
-                <div class="text-xs text-gray-500">${formatDate(analysis.timestamp)}</div>
-            </div>
-            <div class="text-right">
-                <div class="text-sm font-medium ${analysis.recommendation === 'BUY' ? 'text-green-600' : 
-                    analysis.recommendation === 'SELL' ? 'text-red-600' : 'text-yellow-600'}">
-                    ${analysis.recommendation}
-                </div>
-                <div class="text-xs text-gray-500">${analysis.confidence}% confidence</div>
-            </div>
-        </div>
-    `).join('');
-}
-
-// Setup event listeners
-function setupEventListeners() {
-    // Quick action buttons
-    document.getElementById('quick-search')?.addEventListener('click', () => {
-        window.location.href = '/search';
-    });
-    
-    document.getElementById('quick-backtest')?.addEventListener('click', () => {
-        window.location.href = '/backtest';
-    });
-    
-    document.getElementById('quick-portfolio')?.addEventListener('click', () => {
-        window.location.href = '/portfolio';
-    });
-    
-    // Upgrade modal
-    document.getElementById('show-upgrade')?.addEventListener('click', showUpgradeModal);
-    document.getElementById('close-upgrade')?.addEventListener('click', closeUpgradeModal);
-}
-
-// Dark mode functionality
-function initializeDarkMode() {
-    const darkModeToggle = document.getElementById('dark-mode-toggle');
-    const isDark = localStorage.getItem('darkMode') === 'true';
-    
-    if (isDark) {
-        document.documentElement.setAttribute('data-theme', 'dark');
-    }
-    
-    darkModeToggle?.addEventListener('click', toggleDarkMode);
-}
-
-function toggleDarkMode() {
-    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-    const newTheme = isDark ? 'light' : 'dark';
-    
-    document.documentElement.setAttribute('data-theme', newTheme);
-    localStorage.setItem('darkMode', newTheme === 'dark');
-}
-
-// Sidebar toggle functionality
-function setupSidebarToggle() {
-    const sidebarToggle = document.getElementById('sidebar-toggle');
-    const sidebar = document.getElementById('sidebar');
-    
-    sidebarToggle?.addEventListener('click', () => {
-        sidebar?.classList.toggle('collapsed');
-    });
-    
-    // Auto-collapse on mobile
-    if (window.innerWidth <= 768) {
-        sidebar?.classList.add('collapsed');
-    }
-}
-
-// Upgrade modal functions
-function showUpgradeModal() {
-    const modal = document.getElementById('upgrade-modal');
-    if (modal) {
-        modal.classList.remove('hidden');
-        document.body.style.overflow = 'hidden';
-    }
-}
-
-function closeUpgradeModal() {
-    const modal = document.getElementById('upgrade-modal');
-    if (modal) {
-        modal.classList.add('hidden');
-        document.body.style.overflow = 'auto';
-    }
-}
-
-// Navigate to analysis
-function viewAnalysis(symbol) {
-    window.location.href = `/search?q=${symbol}`;
-}
-
-// Utility functions
-function formatDate(timestamp) {
-    const date = new Date(timestamp);
-    const now = new Date();
-    const diffTime = Math.abs(now - date);
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    
-    if (diffDays === 1) return '1 day ago';
-    if (diffDays < 7) return `${diffDays} days ago`;
-    return date.toLocaleDateString();
-}
-
-// Search functionality
-function performQuickSearch() {
-    const searchInput = document.getElementById('global-search-input');
-    if (searchInput && searchInput.value.trim()) {
-        window.location.href = `/search?q=${encodeURIComponent(searchInput.value.trim())}`;
-    }
-}
-
-// Keyboard shortcuts
-document.addEventListener('keydown', function(e) {
-    // Ctrl/Cmd + K for search focus
-    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-        e.preventDefault();
-        const searchInput = document.getElementById('global-search-input');
-        searchInput?.focus();
-    }
-    
-    // Esc to close modals
-    if (e.key === 'Escape') {
-        closeUpgradeModal();
+document.addEventListener('DOMContentLoaded', function() {
+    if (document.getElementById('portfolio-chart')) {
+        dashboardManager = new DashboardManager();
+        dashboardManager.init();
     }
 });
 
-// Export for external use
-window.DashboardManager = {
-    showUpgradeModal,
-    closeUpgradeModal,
-    performQuickSearch,
-    toggleDarkMode
-};
+// Cleanup on page unload
+window.addEventListener('beforeunload', function() {
+    if (dashboardManager) {
+        dashboardManager.destroy();
+    }
+});
+
+// Export for use in other modules
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = DashboardManager;
+}

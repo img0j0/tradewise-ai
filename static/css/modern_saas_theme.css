@@ -546,6 +546,37 @@ body {
   @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-full;
 }
 
+/* Dashboard Card Styles */
+.dashboard-card {
+  @apply bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-all duration-200;
+}
+
+.dashboard-card-header {
+  @apply p-6 pb-4;
+}
+
+.dashboard-card-title {
+  @apply text-lg font-semibold text-gray-900 flex items-center;
+}
+
+.dashboard-card-content {
+  @apply px-6 pb-6;
+}
+
+/* Quick Action Buttons */
+.quick-action-button {
+  @apply flex items-center gap-4 p-6 bg-white border-2 border-gray-100 rounded-xl hover:border-brand-blue hover:shadow-lg transition-all duration-200 cursor-pointer;
+}
+
+.quick-action-icon {
+  @apply w-14 h-14 rounded-xl flex items-center justify-center shadow-sm;
+}
+
+/* Chart Container Styling */
+.chart-container {
+  @apply bg-gray-50 rounded-lg p-4;
+}
+
 .status-neutral {
   color: var(--gray-500);
 }
