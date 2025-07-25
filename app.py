@@ -160,6 +160,10 @@ with app.app_context():
     from user_engagement_routes import engagement_bp
     app.register_blueprint(engagement_bp)
     
+    # Register modern UI routes
+    from modern_ui_routes import modern_ui_bp
+    app.register_blueprint(modern_ui_bp)
+    
     # Initialize OAuth blueprints
     try:
         create_oauth_blueprints(app)

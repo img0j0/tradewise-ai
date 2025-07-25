@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TradeWise AI - Portfolio Backtesting</title>
+    
+    <!-- Modern SaaS Theme -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/modern_saas_theme.css') }}">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Chart.js for Data Visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'brand-blue': '#1e40af',
+                        'brand-purple': '#7c3aed',
+                        'accent-blue': '#3b82f6',
+                        'accent-purple': '#8b5cf6'
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'ui-sans-serif', 'system-ui']
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gradient-to-br from-slate-50 to-slate-100 min-h-screen">
+    <!-- Navigation Bar -->
+    <nav class="saas-navbar">
+        <div class="saas-navbar-content">
+            <a href="/dashboard" class="saas-logo">
+                <div class="saas-logo-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                TradeWise AI
+            </a>
+            
+            <div class="flex items-center gap-4">
+                <!-- Desktop Navigation -->
+                <ul class="saas-nav-links hidden md:flex">
+                    <li><a href="/dashboard" class="saas-nav-link">Dashboard</a></li>
+                    <li><a href="/portfolio" class="saas-nav-link">Portfolio</a></li>
+                    <li><a href="/backtest" class="saas-nav-link active">Backtesting</a></li>
+                    <li><a href="/scanner" class="saas-nav-link">Scanner</a></li>
+                </ul>
+                
+                <!-- User Menu -->
+                <div class="flex items-center gap-3">
+                    <button id="theme-toggle" class="p-2 text-gray-600 hover:text-gray-800 transition-colors">
+                        <i class="fas fa-moon" id="theme-icon"></i>
+                    </button>
+                    
+                    <div class="relative">
+                        <button class="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 transition-colors">
+                            <div class="w-8 h-8 bg-gradient-to-r from-brand-blue to-brand-purple rounded-lg flex items-center justify-center text-white text-sm font-semibold">
+                                U
+                            </div>
+                            <i class="fas fa-chevron-down text-xs text-gray-500"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="mb-8">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="saas-heading-1 mb-2">Portfolio Backtesting</h1>
+                    <p class="saas-text-lg">Test your investment strategies with historical data</p>
+                </div>
+                <div class="premium-indicator">
+                    <i class="fas fa-crown premium-lock-icon"></i>
+                    Pro Feature
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <!-- Parameter Inputs Sidebar -->
+            <div class="lg:col-span-1">
+                <div class="saas-card sticky top-24">
+                    <div class="saas-card-header">
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-cog saas-card-icon"></i>
+                            <h3 class="saas-card-title">Parameters</h3>
+                        </div>
+                        <button id="collapse-params" class="text-gray-400 hover:text-gray-600">
+                            <i class="fas fa-chevron-up" id="collapse-icon"></i>
+                        </button>
+                    </div>
+                    
+                    <div id="params-content" class="space-y-6">
+                        <!-- Portfolio Setup -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-3">Portfolio Holdings</label>
+                            <div id="portfolio-holdings" class="space-y-2">
+                                <div class="flex gap-2">
+                                    <input type="text" placeholder="Symbol" class="saas-input text-sm flex-1" value="AAPL">
+                                    <input type="number" placeholder="%" class="saas-input text-sm w-20" value="40">
+                                    <button class="text-red-500 hover:text-red-700 p-2">
+                                        <i class="fas fa-trash text-sm"></i>
+                                    </button>
+                                </div>
+                                <div class="flex gap-2">
+                                    <input type="text" placeholder="Symbol" class="saas-input text-sm flex-1" value="GOOGL">
+                                    <input type="number" placeholder="%" class="saas-input text-sm w-20" value="35">
+                                    <button class="text-red-500 hover:text-red-700 p-2">
+                                        <i class="fas fa-trash text-sm"></i>
+                                    </button>
+                                </div>
+                                <div class="flex gap-2">
+                                    <input type="text" placeholder="Symbol" class="saas-input text-sm flex-1" value="MSFT">
+                                    <input type="number" placeholder="%" class="saas-input text-sm w-20" value="25">
+                                    <button class="text-red-500 hover:text-red-700 p-2">
+                                        <i class="fas fa-trash text-sm"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <button id="add-holding" class="w-full mt-2 saas-button-secondary text-sm">
+                                <i class="fas fa-plus mr-2"></i>Add Holding
+                            </button>
+                        </div>
+
+                        <!-- Strategy Selection -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Strategy</label>
+                            <select class="saas-input text-sm">
+                                <option value="buy_and_hold">Buy & Hold</option>
+                                <option value="momentum_60">Momentum (60-day)</option>
+                                <option value="mean_reversion_20">Mean Reversion (20-day)</option>
+                            </select>
+                        </div>
+
+                        <!-- Time Period -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Backtest Period</label>
+                            <select class="saas-input text-sm">
+                                <option value="1y">1 Year</option>
+                                <option value="2y">2 Years</option>
+                                <option value="3y" selected>3 Years</option>
+                                <option value="5y">5 Years</option>
+                            </select>
+                        </div>
+
+                        <!-- Benchmark -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Benchmark</label>
+                            <select class="saas-input text-sm">
+                                <option value="SPY" selected>S&P 500 (SPY)</option>
+                                <option value="QQQ">NASDAQ 100 (QQQ)</option>
+                                <option value="VTI">Total Stock Market (VTI)</option>
+                                <option value="IWM">Russell 2000 (IWM)</option>
+                            </select>
+                        </div>
+
+                        <!-- Rebalancing -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Rebalancing</label>
+                            <select class="saas-input text-sm">
+                                <option value="never">Never</option>
+                                <option value="monthly" selected>Monthly</option>
+                                <option value="quarterly">Quarterly</option>
+                                <option value="annually">Annually</option>
+                            </select>
+                        </div>
+
+                        <!-- Run Backtest Button -->
+                        <button id="run-backtest" class="w-full saas-button-primary">
+                            <i class="fas fa-play mr-2"></i>
+                            Run Backtest
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Area -->
+            <div class="lg:col-span-3">
+                <!-- Performance Overview -->
+                <div class="saas-card mb-6">
+                    <div class="saas-card-header">
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-chart-line saas-card-icon"></i>
+                            <h3 class="saas-card-title">Performance Overview</h3>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                        <div class="metric-card">
+                            <div class="metric-value status-positive" id="total-return">+24.7%</div>
+                            <div class="metric-label">Total Return</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value" id="sharpe-ratio">1.34</div>
+                            <div class="metric-label">Sharpe Ratio</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value status-negative" id="max-drawdown">-12.3%</div>
+                            <div class="metric-label">Max Drawdown</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value" id="volatility">16.2%</div>
+                            <div class="metric-label">Volatility</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Equity Curve Chart -->
+                <div class="saas-card mb-6">
+                    <div class="saas-card-header">
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-chart-area saas-card-icon"></i>
+                            <h3 class="saas-card-title">Equity Curve</h3>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-container" style="height: 400px;">
+                        <canvas id="equityCurveChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Drawdown Chart -->
+                <div class="saas-card mb-6">
+                    <div class="saas-card-header">
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-chart-line saas-card-icon"></i>
+                            <h3 class="saas-card-title">Drawdown Analysis</h3>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-container" style="height: 300px;">
+                        <canvas id="drawdownChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Monthly Returns -->
+                <div class="saas-card">
+                    <div class="saas-card-header">
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-calendar saas-card-icon"></i>
+                            <h3 class="saas-card-title">Monthly Returns Heatmap</h3>
+                        </div>
+                    </div>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead>
+                                <tr class="border-b border-gray-200">
+                                    <th class="text-left p-2 font-semibold text-gray-700">Year</th>
+                                    <th class="text-center p-2 font-semibold text-gray-700">Jan</th>
+                                    <th class="text-center p-2 font-semibold text-gray-700">Feb</th>
+                                    <th class="text-center p-2 font-semibold text-gray-700">Mar</th>
+                                    <th class="text-center p-2 font-semibold text-gray-700">Apr</th>
+                                    <th class="text-center p-2 font-semibold text-gray-700">May</th>
+                                    <th class="text-center p-2 font-semibold text-gray-700">Jun</th>
+                                    <th class="text-center p-2 font-semibold text-gray-700">Jul</th>
+                                    <th class="text-center p-2 font-semibold text-gray-700">Aug</th>
+                                    <th class="text-center p-2 font-semibold text-gray-700">Sep</th>
+                                    <th class="text-center p-2 font-semibold text-gray-700">Oct</th>
+                                    <th class="text-center p-2 font-semibold text-gray-700">Nov</th>
+                                    <th class="text-center p-2 font-semibold text-gray-700">Dec</th>
+                                </tr>
+                            </thead>
+                            <tbody id="monthly-returns">
+                                <!-- Monthly returns will be populated here -->
+                                <tr>
+                                    <td class="p-2 font-semibold text-gray-700">2024</td>
+                                    <td class="text-center p-2 bg-green-100 text-green-800">2.1%</td>
+                                    <td class="text-center p-2 bg-red-100 text-red-800">-1.4%</td>
+                                    <td class="text-center p-2 bg-green-100 text-green-800">3.2%</td>
+                                    <td class="text-center p-2 bg-green-100 text-green-800">1.8%</td>
+                                    <td class="text-center p-2 bg-red-100 text-red-800">-2.1%</td>
+                                    <td class="text-center p-2 bg-green-100 text-green-800">4.5%</td>
+                                    <td class="text-center p-2 bg-green-100 text-green-800">2.7%</td>
+                                    <td class="text-center p-2 bg-gray-100 text-gray-500">-</td>
+                                    <td class="text-center p-2 bg-gray-100 text-gray-500">-</td>
+                                    <td class="text-center p-2 bg-gray-100 text-gray-500">-</td>
+                                    <td class="text-center p-2 bg-gray-100 text-gray-500">-</td>
+                                    <td class="text-center p-2 bg-gray-100 text-gray-500">-</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="{{ url_for('static', filename='js/modern_backtest.js') }}"></script>
+</body>
+</html>
