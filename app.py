@@ -52,6 +52,26 @@ cache = Cache(app, config={
 from performance_monitor import monitor
 monitor.init_app(app)
 
+# Initialize optimization services after app setup
+def initialize_optimization_services():
+    """Initialize pre-computation and async task services"""
+    try:
+        from ai_precomputation_service import precomputation_service
+        from async_task_queue import task_queue
+        
+        # Start background services
+        precomputation_service.start_background_service()
+        task_queue.start_workers()
+        
+        print("✅ Optimization services initialized successfully")
+        
+    except Exception as e:
+        print(f"⚠️ Error initializing optimization services: {e}")
+
+# Start optimization services in background
+import threading
+threading.Thread(target=initialize_optimization_services, daemon=True).start()
+
 # Initialize compression - temporarily disabled for debugging
 # compress = Compress(app)
 

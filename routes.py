@@ -177,7 +177,6 @@ def strategy_demo():
 
 @main_bp.route('/api/stock-analysis', methods=['GET', 'POST'])
 @simple_rate_limit(max_requests=30, window=60)
-@stock_cache(timeout=180)  # Cache stock analysis for 3 minutes
 @performance_optimized()
 def stock_analysis_api():
     """AI-powered stock analysis API for comprehensive investment research - OPTIMIZED"""
@@ -196,6 +195,22 @@ def stock_analysis_api():
         
         if not original_query:
             return jsonify({'error': 'Query or symbol parameter required. Please provide a stock symbol or company name.'}), 400
+        
+        # Check for async parameter
+        async_mode = request.args.get('async', 'false').lower() == 'true'
+        
+        # Get user strategy
+        user_strategy = simple_personalization.get_user_strategy()
+        
+        # Import pre-computation and async services
+        from ai_precomputation_service import precomputation_service
+        from async_task_queue import task_queue
+        
+        # Check for pre-computed analysis first
+        precomputed = precomputation_service.get_precomputed_analysis(original_query.upper(), user_strategy)
+        if precomputed:
+            logger.info(f"Returning pre-computed analysis for {original_query}")
+            return jsonify(precomputed)
         
         # Comprehensive symbol mapping with fallback search
         from symbol_mapper import normalize_symbol, validate_symbol, create_comprehensive_fallback_search
@@ -257,10 +272,37 @@ def stock_analysis_api():
             stock_data = None
         
         if not stock_data:
+            # If async mode and no stock data, still return error
+            if async_mode:
+                return jsonify({
+                    'error': 'Stock not found',
+                    'message': f'No data found for "{query}"',
+                    'async_mode': True
+                }), 404
             return jsonify({
                 'error': 'Stock not found',
                 'message': f'No data found for "{query}"'
             }), 404
+        
+        # Check enhanced cache for recent analysis
+        enhanced_cache_key = f"enhanced_analysis:{query}:{user_strategy}"
+        cached_analysis = cache.get(enhanced_cache_key)
+        
+        if cached_analysis:
+            logger.info(f"Returning enhanced cached analysis for {query}")
+            return jsonify(cached_analysis)
+        
+        # If async mode requested, queue the task
+        if async_mode:
+            task_id = task_queue.submit_analysis_task(query, user_strategy)
+            return jsonify({
+                'success': True,
+                'async_mode': True,
+                'task_id': task_id,
+                'status_url': f'/api/stock-analysis/status/{task_id}',
+                'estimated_completion': '2-5 seconds',
+                'message': f'Analysis queued for {query}. Use status_url to check progress.'
+            })
         
         # Get comprehensive AI analysis insights
         ai_engine = AIInsightsEngine()
@@ -430,6 +472,64 @@ def add_to_analysis_watchlist():
     except Exception as e:
         logger.error(f'Error adding to analysis watchlist: {e}')
         return jsonify({'success': False, 'error': str(e)}), 500
+
+# NEW ASYNC TASK AND OPTIMIZATION ENDPOINTS
+@main_bp.route('/api/stock-analysis/status/<task_id>')
+@performance_optimized()
+def get_task_status(task_id):
+    """Get status of async analysis task"""
+    try:
+        from async_task_queue import task_queue
+        
+        status = task_queue.get_task_status(task_id)
+        return jsonify(status)
+        
+    except Exception as e:
+        logger.error(f"Error getting task status: {e}")
+        return jsonify({'error': 'Failed to get task status', 'task_id': task_id}), 500
+
+@main_bp.route('/api/task-queue/stats')
+@performance_optimized()
+def get_task_queue_stats():
+    """Get task queue statistics and health"""
+    try:
+        from async_task_queue import task_queue
+        from ai_precomputation_service import precomputation_service
+        
+        queue_stats = task_queue.get_queue_stats()
+        precomp_stats = precomputation_service.get_service_stats()
+        
+        return jsonify({
+            'success': True,
+            'task_queue': queue_stats,
+            'precomputation_service': precomp_stats,
+            'timestamp': datetime.now().isoformat()
+        })
+        
+    except Exception as e:
+        logger.error(f"Error getting task queue stats: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@main_bp.route('/api/precomputation/trigger')
+@performance_optimized()
+def trigger_precomputation():
+    """Manually trigger pre-computation for testing"""
+    try:
+        from ai_precomputation_service import precomputation_service
+        
+        # Start the service if not running
+        if not precomputation_service.is_running:
+            precomputation_service.start_background_service()
+        
+        return jsonify({
+            'success': True,
+            'message': 'Pre-computation service triggered',
+            'service_running': precomputation_service.is_running
+        })
+        
+    except Exception as e:
+        logger.error(f"Error triggering pre-computation: {e}")
+        return jsonify({'error': str(e)}), 500
 
 @main_bp.route('/api/watchlist')
 def get_watchlist():
