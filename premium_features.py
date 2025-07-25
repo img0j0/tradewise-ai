@@ -23,7 +23,7 @@ def premium_required(f):
             return jsonify({'success': False, 'error': 'Authentication required', 'premium_required': True}), 401
         
         user = User.query.get(user_id)
-        if not user or not user.is_premium_active():
+        if not user or not hasattr(user, 'is_premium_active') or not user.is_premium_active():
             return jsonify({
                 'success': False, 
                 'error': 'Premium subscription required',

@@ -1,0 +1,77 @@
+{
+  "timestamp": "2025-07-25T20:50:39.530551",
+  "summary": {
+    "total_tests": 13,
+    "passed": 13,
+    "failed": 0,
+    "skipped": 0,
+    "results": [
+      {
+        "test_name": "Application Health Check",
+        "status": "PASS",
+        "details": "Application is running"
+      },
+      {
+        "test_name": "Enhanced Search Autocomplete",
+        "status": "PASS",
+        "details": "Found 1 suggestions, Apple included: True"
+      },
+      {
+        "test_name": "Recent Searches",
+        "status": "PASS",
+        "details": "Retrieved 0 recent searches"
+      },
+      {
+        "test_name": "Starred Symbols",
+        "status": "PASS",
+        "details": "Starred symbols: 0, TSLA action: added"
+      },
+      {
+        "test_name": "Add Recent Search",
+        "status": "PASS",
+        "details": "Successfully added NVDA to recent searches"
+      },
+      {
+        "test_name": "Search Analytics",
+        "status": "PASS",
+        "details": "Analytics: 5 trending, 4 sectors, 5 tags"
+      },
+      {
+        "test_name": "Available Sectors",
+        "status": "PASS",
+        "details": "Found 8 sectors, Technology included: True"
+      },
+      {
+        "test_name": "Peer Comparison Access Control",
+        "status": "PASS",
+        "details": "Correctly requires premium authentication"
+      },
+      {
+        "test_name": "Sector Benchmark Access Control",
+        "status": "PASS",
+        "details": "Correctly requires premium authentication"
+      },
+      {
+        "test_name": "Available Benchmarks",
+        "status": "PASS",
+        "details": "Found 4 benchmarks, SPY included: True"
+      },
+      {
+        "test_name": "Portfolio Validation",
+        "status": "PASS",
+        "details": "Portfolio valid, 2 holdings normalized"
+      },
+      {
+        "test_name": "Portfolio Backtest Access Control",
+        "status": "PASS",
+        "details": "Correctly requires premium authentication"
+      },
+      {
+        "test_name": "Engagement Metrics",
+        "status": "PASS",
+        "details": "Metrics: 0 recent searches, 0 starred"
+      }
+    ]
+  },
+  "success_rate": 100.0
+}

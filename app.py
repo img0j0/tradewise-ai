@@ -156,6 +156,10 @@ with app.app_context():
     from missing_api_endpoints import missing_api_bp
     app.register_blueprint(missing_api_bp)
     
+    # Register user engagement features
+    from user_engagement_routes import engagement_bp
+    app.register_blueprint(engagement_bp)
+    
     # Initialize OAuth blueprints
     try:
         create_oauth_blueprints(app)

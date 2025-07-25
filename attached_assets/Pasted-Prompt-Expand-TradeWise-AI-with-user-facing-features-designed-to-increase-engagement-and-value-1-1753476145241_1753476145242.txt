@@ -1,0 +1,78 @@
+Prompt:
+
+Expand TradeWise AI with user-facing features designed to increase engagement and value.
+
+1. Enhanced Search Autocomplete
+Extend premium_search_engine.py and routes_enhanced_search.py to add:
+
+Real-time typeahead for stock symbols, names, sectors, and tags.
+
+Recent searches (last 10 searches stored per user).
+
+Starred symbols (user can favorite a stock and see it prioritized in search results).
+
+Use AI ranking (from ai_insights.py) to reorder suggestions based on popularity and relevance.
+
+Update frontend templates with a dynamic search bar.
+
+2. Peer Comparison & Sector Benchmarking
+Build new endpoints in routes.py or premium_routes.py:
+
+/api/peer-comparison/<symbol> → returns financial metrics of direct competitors.
+
+/api/sector-benchmark/<sector> → returns sector-wide performance benchmarks.
+
+Data sources:
+
+Extend intelligent_stock_analyzer.py and market_data_collector.py to aggregate peer and sector data from Yahoo Finance and/or precomputed AI insights.
+
+UI templates:
+
+Add a comparison chart (competitor performance vs target stock).
+
+Add sector ranking tables with filters.
+
+Restrict Peer Comparison and Sector Benchmarking to Pro & Enterprise plans.
+
+3. Portfolio Backtesting
+Create new endpoint /api/portfolio/backtest:
+
+Accepts user portfolio and strategy parameters (date range, investment style).
+
+Leverages strategy_builder.py and historical data in market_data_collector.py.
+
+Return metrics: total return, volatility, Sharpe ratio, drawdown.
+
+Implement caching for repeated backtests with the same parameters.
+
+UI:
+
+Add a Portfolio Backtesting page with charts (equity curve, drawdowns) and metrics.
+
+Pro/Enterprise-only feature.
+
+4. Deliverables
+Fully functional enhanced search bar with autocomplete and personalization.
+
+Peer Comparison & Sector Benchmarking endpoints and UI.
+
+Portfolio Backtesting feature with metrics and visualizations.
+
+Updated premium_features.py to enforce plan-based access.
+
+Automated tests for each new endpoint.
+
+Update DEPLOYMENT_GUIDE.md with instructions for new features.
+
+5. Validation
+Run a test suite to confirm:
+
+Search suggestions are accurate and personalized.
+
+Peer Comparison and Sector Benchmarking data loads correctly.
+
+Portfolio Backtesting runs within <1s for typical portfolios.
+
+Free users see upgrade prompts for premium-only features.
+
+Generate a Feature Expansion Report summarizing tests and user-facing changes.
