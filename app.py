@@ -164,6 +164,10 @@ with app.app_context():
     from modern_ui_routes import modern_ui_bp
     app.register_blueprint(modern_ui_bp)
     
+    # Register enhanced search routes
+    from enhanced_search_routes import enhanced_search_bp
+    app.register_blueprint(enhanced_search_bp)
+    
     # Initialize OAuth blueprints
     try:
         create_oauth_blueprints(app)

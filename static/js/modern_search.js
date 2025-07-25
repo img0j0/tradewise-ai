@@ -147,6 +147,23 @@ class ModernSearch {
             }
         } catch (error) {
             console.error('Autocomplete error:', error);
+            // Fallback to basic autocomplete
+            this.fallbackAutocomplete(query);
+        }
+    }
+    
+    async fallbackAutocomplete(query) {
+        try {
+            const response = await fetch(`/api/search/autocomplete?q=${encodeURIComponent(query)}&limit=8`);
+            const data = await response.json();
+            
+            if (data.success && data.suggestions) {
+                this.suggestions = data.suggestions;
+                this.displayAutocomplete();
+                this.selectedIndex = -1;
+            }
+        } catch (error) {
+            console.error('Fallback autocomplete error:', error);
         }
     }
     
@@ -167,19 +184,26 @@ class ModernSearch {
                  onclick="window.searchManager.selectSuggestion(${JSON.stringify(suggestion).replace(/"/g, '&quot;')})">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 bg-gradient-to-r from-brand-blue to-brand-purple rounded-lg flex items-center justify-center text-white text-xs font-bold">
-                            ${suggestion.symbol.substring(0, 2)}
-                        </div>
+                        ${suggestion.logo_url ? 
+                            `<img src="${suggestion.logo_url}" alt="${suggestion.symbol}" class="w-8 h-8 rounded-lg object-cover">` :
+                            `<div class="w-8 h-8 bg-gradient-to-r from-brand-blue to-brand-purple rounded-lg flex items-center justify-center text-white text-xs font-bold">
+                                ${suggestion.symbol.substring(0, 2)}
+                            </div>`
+                        }
                         <div>
                             <div class="font-semibold text-gray-800">${suggestion.symbol}</div>
                             <div class="text-sm text-gray-600">${suggestion.name}</div>
+                            ${suggestion.sector ? `<div class="text-xs text-gray-500">${suggestion.sector}</div>` : ''}
                         </div>
                     </div>
-                    <div class="text-right">
-                        ${suggestion.sector ? `<div class="text-xs text-gray-500">${suggestion.sector}</div>` : ''}
-                        ${suggestion.trend ? `<div class="text-xs ${suggestion.trend === 'up' ? 'status-positive' : suggestion.trend === 'down' ? 'status-negative' : 'status-neutral'}">
-                            <i class="fas fa-arrow-${suggestion.trend === 'up' ? 'up' : suggestion.trend === 'down' ? 'down' : 'right'}"></i>
-                        </div>` : ''}
+                    <div class="text-right flex flex-col items-end gap-1">
+                        <div class="flex items-center gap-2">
+                            ${this.getMarketStatusIndicator(suggestion.market_status)}
+                            ${suggestion.trend ? `<div class="text-xs ${suggestion.trend === 'up' ? 'status-positive' : suggestion.trend === 'down' ? 'status-negative' : 'status-neutral'}">
+                                <i class="fas fa-arrow-${suggestion.trend === 'up' ? 'up' : suggestion.trend === 'down' ? 'down' : 'right'}"></i>
+                            </div>` : ''}
+                        </div>
+                        ${suggestion.match_type ? `<div class="text-xs px-2 py-1 rounded-full ${this.getMatchTypeBadge(suggestion.match_type)}">${this.getMatchTypeLabel(suggestion.match_type)}</div>` : ''}
                     </div>
                 </div>
             </div>
@@ -206,8 +230,59 @@ class ModernSearch {
             searchInput.value = suggestion.symbol;
         }
         
+        // Record selection for ML improvement
+        this.recordSelection(searchInput.value, suggestion.symbol);
+        
         this.hideAutocomplete();
         this.performSearch();
+    }
+    
+    async recordSelection(query, selectedSymbol) {
+        try {
+            await fetch('/api/search/record-selection', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    query: query,
+                    symbol: selectedSymbol
+                })
+            });
+        } catch (error) {
+            console.log('Could not record selection:', error);
+        }
+    }
+    
+    getMarketStatusIndicator(status) {
+        const indicators = {
+            'open': '<div class="w-2 h-2 bg-green-500 rounded-full" title="Market Open"></div>',
+            'closed': '<div class="w-2 h-2 bg-red-500 rounded-full" title="Market Closed"></div>',
+            'pre_market': '<div class="w-2 h-2 bg-yellow-500 rounded-full" title="Pre-Market"></div>',
+            'after_hours': '<div class="w-2 h-2 bg-orange-500 rounded-full" title="After Hours"></div>',
+            'unknown': '<div class="w-2 h-2 bg-gray-400 rounded-full" title="Unknown"></div>'
+        };
+        return indicators[status] || indicators['unknown'];
+    }
+    
+    getMatchTypeBadge(matchType) {
+        const badges = {
+            'exact_symbol': 'bg-green-100 text-green-800',
+            'fuzzy_symbol': 'bg-blue-100 text-blue-800', 
+            'fuzzy_company': 'bg-purple-100 text-purple-800',
+            'trending': 'bg-yellow-100 text-yellow-800'
+        };
+        return badges[matchType] || 'bg-gray-100 text-gray-800';
+    }
+    
+    getMatchTypeLabel(matchType) {
+        const labels = {
+            'exact_symbol': 'Exact',
+            'fuzzy_symbol': 'Symbol',
+            'fuzzy_company': 'Name',
+            'trending': 'Trending'
+        };
+        return labels[matchType] || 'Match';
     }
     
     showAutocomplete() {
