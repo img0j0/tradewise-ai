@@ -1,168 +1,125 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Login - TradeWise AI</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <style>
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, sans-serif; 
-            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); 
-            color: white; 
-            margin: 0; 
-            padding: 20px; 
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .login-container { 
-            max-width: 400px; 
-            width: 100%;
-            background: linear-gradient(135deg, #2a2a2a 0%, #1e1e1e 100%); 
-            border-radius: 20px; 
-            padding: 40px; 
-            border: 2px solid #333;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-        }
-        .header { text-align: center; margin-bottom: 30px; }
-        .header h1 { 
-            font-size: 2rem; 
-            margin-bottom: 10px; 
-            background: linear-gradient(135deg, #6366f1, #8b5cf6); 
-            -webkit-background-clip: text; 
-            -webkit-text-fill-color: transparent; 
-        }
-        .oauth-buttons { margin-bottom: 30px; }
-        .oauth-btn { 
-            width: 100%; 
-            padding: 12px 20px; 
-            margin-bottom: 10px; 
-            border: 2px solid #333; 
-            border-radius: 10px; 
-            background: #333; 
-            color: white; 
-            text-decoration: none; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            gap: 10px; 
-            transition: all 0.3s ease;
-        }
-        .oauth-btn:hover { 
-            border-color: #6366f1; 
-            background: #6366f1; 
-        }
-        .google-btn { border-color: #4285f4; }
-        .google-btn:hover { background: #4285f4; }
-        .github-btn { border-color: #333; }
-        .github-btn:hover { background: #333; }
-        .divider { 
-            text-align: center; 
-            margin: 20px 0; 
-            position: relative; 
-            color: #666;
-        }
-        .divider::before { 
-            content: ''; 
-            position: absolute; 
-            top: 50%; 
-            left: 0; 
-            right: 0; 
-            height: 1px; 
-            background: #333; 
-        }
-        .divider span { 
-            background: #1e1e1e; 
-            padding: 0 15px; 
-        }
-        .form-group { margin-bottom: 20px; }
-        .form-group label { 
-            display: block; 
-            margin-bottom: 5px; 
-            color: #ccc; 
-        }
-        .form-group input { 
-            width: 100%; 
-            padding: 12px; 
-            border: 2px solid #333; 
-            border-radius: 8px; 
-            background: #2a2a2a; 
-            color: white; 
-            font-size: 1rem;
-        }
-        .form-group input:focus { 
-            outline: none; 
-            border-color: #6366f1; 
-        }
-        .login-btn { 
-            width: 100%; 
-            padding: 12px; 
-            background: linear-gradient(135deg, #6366f1, #8b5cf6); 
-            color: white; 
-            border: none; 
-            border-radius: 8px; 
-            font-size: 1rem; 
-            font-weight: bold; 
-            cursor: pointer; 
-            transition: all 0.3s ease;
-        }
-        .login-btn:hover { 
-            background: linear-gradient(135deg, #5855eb, #7c3aed); 
-            transform: translateY(-2px); 
-        }
-        .signup-link { 
-            text-align: center; 
-            margin-top: 20px; 
-            color: #ccc; 
-        }
-        .signup-link a { 
-            color: #6366f1; 
-            text-decoration: none; 
-        }
-        .signup-link a:hover { 
-            text-decoration: underline; 
-        }
-    </style>
-</head>
-<body>
+{% extends "base.html" %}
+
+{% block title %}Login - TradeWise AI{% endblock %}
+
+{% block extra_css %}
+<style>
+    .login-container {
+        background: linear-gradient(135deg, var(--brand-blue), var(--brand-purple));
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .login-card {
+        background: white;
+        border-radius: 16px;
+        padding: 3rem;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 400px;
+    }
+    
+    .login-input {
+        width: 100%;
+        padding: 1rem;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        font-size: 1rem;
+        transition: border-color 0.2s;
+    }
+    
+    .login-input:focus {
+        outline: none;
+        border-color: var(--brand-blue);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+    
+    .login-button {
+        width: 100%;
+        padding: 1rem;
+        background: linear-gradient(135deg, var(--brand-blue), var(--brand-purple));
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.2s;
+    }
+    
+    .login-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
     <div class="login-container">
-        <div class="header">
-            <h1>Welcome Back</h1>
-            <p>Sign in to TradeWise AI</p>
-        </div>
-        
-        <div class="oauth-buttons">
-            <a href="/auth/google" class="oauth-btn google-btn">
-                <span>📧</span>
-                Continue with Google
-            </a>
-            <a href="/auth/github" class="oauth-btn github-btn">
-                <span>🐙</span>
-                Continue with GitHub
-            </a>
-        </div>
-        
-        <div class="divider">
-            <span>or</span>
-        </div>
-        
-        <form method="POST">
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" required>
+        <div class="login-card">
+            <div class="text-center mb-8">
+                <div class="w-16 h-16 bg-gradient-to-r from-brand-blue to-brand-purple rounded-2xl mx-auto mb-4 flex items-center justify-center">
+                    <i class="fas fa-chart-line text-white text-2xl"></i>
+                </div>
+                <h1 class="text-2xl font-bold text-gray-800 mb-2">Welcome Back</h1>
+                <p class="text-gray-600">Sign in to your TradeWise AI account</p>
             </div>
             
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" required>
+            <form id="login-form">
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                    <input type="email" class="login-input" placeholder="Enter your email" required>
+                </div>
+                
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                    <input type="password" class="login-input" placeholder="Enter your password" required>
+                </div>
+                
+                <div class="flex items-center justify-between mb-6">
+                    <label class="flex items-center">
+                        <input type="checkbox" class="rounded border-gray-300 text-brand-blue">
+                        <span class="ml-2 text-sm text-gray-600">Remember me</span>
+                    </label>
+                    <a href="#" class="text-sm text-brand-blue hover:underline">Forgot password?</a>
+                </div>
+                
+                <button type="submit" class="login-button">
+                    Sign In
+                </button>
+            </form>
+            
+            <div class="mt-8 text-center">
+                <div class="relative">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-gray-300"></div>
+                    </div>
+                    <div class="relative flex justify-center text-sm">
+                        <span class="px-2 bg-white text-gray-500">Or continue with</span>
+                    </div>
+                </div>
+                
+                <div class="mt-6 grid grid-cols-2 gap-3">
+                    <button class="flex justify-center items-center px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                        <i class="fab fa-google text-red-500 mr-2"></i>
+                        Google
+                    </button>
+                    <button class="flex justify-center items-center px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                        <i class="fab fa-github text-gray-800 mr-2"></i>
+                        GitHub
+                    </button>
+                </div>
             </div>
             
-            <button type="submit" class="login-btn">Sign In</button>
-        </form>
-        
-        <div class="signup-link">
-            Don't have an account? <a href="/register">Sign up</a>
+            <div class="mt-8 text-center">
+                <p class="text-sm text-gray-600">
+                    Don't have an account? 
+                    <a href="/register" class="text-brand-blue hover:underline font-medium">Sign up</a>
+                </p>
+            </div>
         </div>
     </div>
-</body>
-</html>
+{% endblock %}

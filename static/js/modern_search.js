@@ -507,9 +507,11 @@ function setupSearchEventListeners() {
     });
 }
 
-// Export for external use
+// Export for external use (not as constructor)
 window.SearchManager = {
     performSearch,
     closeResults,
-    toggleStarred
+    toggleStarred,
+    // Helper function for inline onclick calls
+    search: performSearch
 };

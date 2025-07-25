@@ -1,274 +1,203 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Investment Strategy Demo</title>
-    <style>
-        body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            margin: 0;
-            padding: 20px;
-            min-height: 100vh;
-        }
-        
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
-        .strategy-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 15px;
-            margin: 20px 0;
-        }
-        
-        .strategy-card {
-            padding: 20px;
-            border-radius: 15px;
-            border: 2px solid rgba(255,255,255,0.2);
-            background: rgba(255,255,255,0.1);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-align: center;
-        }
-        
-        .strategy-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-        }
-        
-        .strategy-card.active {
-            border-color: #10b981;
-            background: rgba(16, 185, 129, 0.2);
-            box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
-        }
-        
-        .strategy-icon {
-            font-size: 2rem;
-            margin-bottom: 10px;
-        }
-        
-        .strategy-name {
-            font-weight: 700;
-            margin-bottom: 8px;
-        }
-        
-        .strategy-desc {
-            font-size: 0.9rem;
-            opacity: 0.8;
-        }
-        
-        .test-section {
-            background: rgba(255,255,255,0.1);
-            border-radius: 15px;
-            padding: 20px;
-            margin: 20px 0;
-        }
-        
-        .analysis-result {
-            background: rgba(0,0,0,0.2);
-            border-radius: 10px;
-            padding: 15px;
-            margin: 10px 0;
-        }
-        
-        button {
-            background: linear-gradient(45deg, #10b981, #059669);
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.2s;
-        }
-        
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
-        }
-        
-        .result-indicator {
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            margin: 5px;
-            display: inline-block;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>🎯 Investment Strategy Personalization Demo</h1>
-        <p>Select different investment strategies and see how they change AI analysis results for the same stock:</p>
-        
-        <div class="strategy-grid">
-            <div class="strategy-card" onclick="selectStrategy('growth_investor')">
-                <div class="strategy-icon">🚀</div>
-                <div class="strategy-name">Growth Investor</div>
-                <div class="strategy-desc">Focus on high-growth potential companies</div>
+{% extends "base.html" %}
+
+{% block title %}Investment Strategy - TradeWise AI{% endblock %}
+
+{% block extra_css %}
+<style>
+    .strategy-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        cursor: pointer;
+    }
+    
+    .strategy-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+    
+    .strategy-card.selected {
+        border-color: var(--brand-blue);
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.05), rgba(147, 51, 234, 0.05));
+    }
+    
+    .strategy-icon {
+        width: 4rem;
+        height: 4rem;
+        border-radius: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        margin: 0 auto 1rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+    <div class="max-w-4xl mx-auto">
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-gray-800 mb-4">
+                Choose Your <span class="bg-gradient-to-r from-brand-blue to-brand-purple bg-clip-text text-transparent">Investment Strategy</span>
+            </h1>
+            <p class="text-xl text-gray-600 mb-8">
+                Select your preferred investment approach to get personalized AI analysis and recommendations.
+            </p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-6 mb-8">
+            <!-- Growth Strategy -->
+            <div class="strategy-card bg-white rounded-2xl p-8 border-2 border-gray-200" data-strategy="growth">
+                <div class="strategy-icon bg-gradient-to-r from-blue-500 to-purple-600 text-white">
+                    🚀
+                </div>
+                <h3 class="text-2xl font-bold text-gray-800 mb-3 text-center">Growth Investor</h3>
+                <p class="text-gray-600 mb-4 text-center">
+                    Focus on companies with strong growth potential and expanding market share.
+                </p>
+                <ul class="space-y-2 text-sm text-gray-700">
+                    <li class="flex items-center gap-2">
+                        <i class="fas fa-check text-green-600"></i>
+                        High revenue growth stocks
+                    </li>
+                    <li class="flex items-center gap-2">
+                        <i class="fas fa-check text-green-600"></i>
+                        Technology and innovation focus
+                    </li>
+                    <li class="flex items-center gap-2">
+                        <i class="fas fa-check text-green-600"></i>
+                        Future potential over current profits
+                    </li>
+                </ul>
             </div>
-            
-            <div class="strategy-card" onclick="selectStrategy('value_investor')">
-                <div class="strategy-icon">💎</div>
-                <div class="strategy-name">Value Investor</div>
-                <div class="strategy-desc">Seek undervalued stocks with strong fundamentals</div>
+
+            <!-- Value Strategy -->
+            <div class="strategy-card bg-white rounded-2xl p-8 border-2 border-gray-200" data-strategy="value">
+                <div class="strategy-icon bg-gradient-to-r from-emerald-500 to-teal-600 text-white">
+                    💎
+                </div>
+                <h3 class="text-2xl font-bold text-gray-800 mb-3 text-center">Value Investor</h3>
+                <p class="text-gray-600 mb-4 text-center">
+                    Find undervalued companies trading below their intrinsic worth.
+                </p>
+                <ul class="space-y-2 text-sm text-gray-700">
+                    <li class="flex items-center gap-2">
+                        <i class="fas fa-check text-green-600"></i>
+                        Low P/E and P/B ratios
+                    </li>
+                    <li class="flex items-center gap-2">
+                        <i class="fas fa-check text-green-600"></i>
+                        Strong fundamentals
+                    </li>
+                    <li class="flex items-center gap-2">
+                        <i class="fas fa-check text-green-600"></i>
+                        Margin of safety approach
+                    </li>
+                </ul>
             </div>
-            
-            <div class="strategy-card" onclick="selectStrategy('dividend_investor')">
-                <div class="strategy-icon">💰</div>
-                <div class="strategy-name">Dividend Investor</div>
-                <div class="strategy-desc">Prioritize steady income from dividends</div>
+
+            <!-- Dividend Strategy -->
+            <div class="strategy-card bg-white rounded-2xl p-8 border-2 border-gray-200" data-strategy="dividend">
+                <div class="strategy-icon bg-gradient-to-r from-orange-500 to-red-600 text-white">
+                    💰
+                </div>
+                <h3 class="text-2xl font-bold text-gray-800 mb-3 text-center">Dividend Investor</h3>
+                <p class="text-gray-600 mb-4 text-center">
+                    Build wealth through steady income from dividend-paying stocks.
+                </p>
+                <ul class="space-y-2 text-sm text-gray-700">
+                    <li class="flex items-center gap-2">
+                        <i class="fas fa-check text-green-600"></i>
+                        High dividend yield stocks
+                    </li>
+                    <li class="flex items-center gap-2">
+                        <i class="fas fa-check text-green-600"></i>
+                        Consistent payout history
+                    </li>
+                    <li class="flex items-center gap-2">
+                        <i class="fas fa-check text-green-600"></i>
+                        Income-focused portfolio
+                    </li>
+                </ul>
             </div>
-            
-            <div class="strategy-card" onclick="selectStrategy('momentum_trader')">
-                <div class="strategy-icon">⚡</div>
-                <div class="strategy-name">Momentum Trader</div>
-                <div class="strategy-desc">Capitalize on trending stocks and technical signals</div>
+
+            <!-- Momentum Strategy -->
+            <div class="strategy-card bg-white rounded-2xl p-8 border-2 border-gray-200" data-strategy="momentum">
+                <div class="strategy-icon bg-gradient-to-r from-yellow-500 to-orange-600 text-white">
+                    ⚡
+                </div>
+                <h3 class="text-2xl font-bold text-gray-800 mb-3 text-center">Momentum Trader</h3>
+                <p class="text-gray-600 mb-4 text-center">
+                    Capitalize on trending stocks with strong price momentum.
+                </p>
+                <ul class="space-y-2 text-sm text-gray-700">
+                    <li class="flex items-center gap-2">
+                        <i class="fas fa-check text-green-600"></i>
+                        Technical analysis focus
+                    </li>
+                    <li class="flex items-center gap-2">
+                        <i class="fas fa-check text-green-600"></i>
+                        Trend-following approach
+                    </li>
+                    <li class="flex items-center gap-2">
+                        <i class="fas fa-check text-green-600"></i>
+                        Short to medium-term trades
+                    </li>
+                </ul>
             </div>
         </div>
-        
-        <div class="test-section">
-            <h3>🧪 Test Analysis Changes</h3>
-            <p>Current Strategy: <strong id="currentStrategy">Growth Investor 🚀</strong></p>
-            <button onclick="testAnalysis('AAPL')">Test AAPL Analysis</button>
-            <button onclick="testAnalysis('MSFT')">Test MSFT Analysis</button>
-            
-            <div id="analysisResults"></div>
+
+        <div class="text-center">
+            <button id="confirm-strategy" class="px-8 py-3 bg-gradient-to-r from-brand-blue to-brand-purple text-white rounded-lg hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                Continue with Selected Strategy
+            </button>
+            <p class="text-sm text-gray-600 mt-4">
+                You can change your strategy anytime in account settings
+            </p>
         </div>
     </div>
 
     <script>
-        let currentStrategy = 'growth_investor';
-        
-        function selectStrategy(strategy) {
-            // Update UI
-            document.querySelectorAll('.strategy-card').forEach(card => {
-                card.classList.remove('active');
+        document.addEventListener('DOMContentLoaded', function() {
+            const strategyCards = document.querySelectorAll('.strategy-card');
+            const confirmButton = document.getElementById('confirm-strategy');
+            let selectedStrategy = null;
+
+            strategyCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    // Remove selection from all cards
+                    strategyCards.forEach(c => c.classList.remove('selected'));
+                    
+                    // Add selection to clicked card
+                    this.classList.add('selected');
+                    selectedStrategy = this.dataset.strategy;
+                    
+                    // Enable confirm button
+                    confirmButton.disabled = false;
+                });
             });
-            event.target.closest('.strategy-card').classList.add('active');
-            
-            // Update strategy
-            currentStrategy = strategy;
-            updateCurrentStrategyDisplay();
-            
-            // Set strategy via API
-            fetch('/api/investment-strategy', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    strategy: strategy
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    showNotification(`Strategy updated to ${strategy.replace('_', ' ')}`);
+
+            confirmButton.addEventListener('click', function() {
+                if (selectedStrategy) {
+                    // Save strategy to session/backend
+                    fetch('/api/set-strategy', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ strategy: selectedStrategy })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            window.location.href = '/';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        // Fallback: redirect anyway
+                        window.location.href = '/';
+                    });
                 }
             });
-        }
-        
-        function updateCurrentStrategyDisplay() {
-            const strategies = {
-                'growth_investor': '🚀 Growth Investor',
-                'value_investor': '💎 Value Investor',
-                'dividend_investor': '💰 Dividend Investor',
-                'momentum_trader': '⚡ Momentum Trader'
-            };
-            document.getElementById('currentStrategy').textContent = strategies[currentStrategy];
-        }
-        
-        function testAnalysis(symbol) {
-            const resultsDiv = document.getElementById('analysisResults');
-            resultsDiv.innerHTML = `<div style="text-align: center; padding: 20px;">Analyzing ${symbol} with ${currentStrategy.replace('_', ' ')} strategy...</div>`;
-            
-            fetch('/api/stock-analysis', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    query: symbol
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                displayResults(symbol, data);
-            })
-            .catch(error => {
-                resultsDiv.innerHTML = `<div style="color: #ef4444;">Error: ${error.message}</div>`;
-            });
-        }
-        
-        function displayResults(symbol, data) {
-            const analysis = data.analysis || {};
-            const strategy = analysis.strategy_applied || {};
-            const impact = analysis.strategy_impact || {};
-            
-            const resultsDiv = document.getElementById('analysisResults');
-            
-            let html = `
-                <div class="analysis-result">
-                    <h4>${symbol} Analysis Results</h4>
-                    <div style="display: flex; gap: 15px; flex-wrap: wrap; margin: 15px 0;">
-                        <div class="result-indicator" style="background: #3b82f620; border: 1px solid #3b82f6; color: #3b82f6;">
-                            ${strategy.icon} ${strategy.name}
-                        </div>
-                        <div class="result-indicator" style="background: ${data.recommendation === 'BUY' ? '#10b98120' : '#f59e0b20'}; border: 1px solid ${data.recommendation === 'BUY' ? '#10b981' : '#f59e0b'}; color: ${data.recommendation === 'BUY' ? '#10b981' : '#f59e0b'};">
-                            ${data.recommendation} (${data.confidence}%)
-                        </div>`;
-            
-            if (impact && impact.changed) {
-                html += `
-                        <div class="result-indicator" style="background: #10b98120; border: 1px solid #10b981; color: #10b981;">
-                            🔄 Changed from ${impact.original_recommendation} (${impact.original_confidence}%)
-                        </div>`;
-            }
-            
-            html += `</div>`;
-            
-            if (analysis.strategy_note) {
-                html += `<div style="margin-top: 10px; padding: 10px; background: rgba(255,255,255,0.1); border-radius: 8px;">
-                    <strong>Strategy Note:</strong> ${analysis.strategy_note}
-                </div>`;
-            }
-            
-            if (analysis.momentum_note) {
-                html += `<div style="margin-top: 10px; padding: 10px; background: rgba(239, 68, 68, 0.1); border-radius: 8px;">
-                    <strong>Momentum Note:</strong> ${analysis.momentum_note}
-                </div>`;
-            }
-            
-            html += `</div>`;
-            resultsDiv.innerHTML = html;
-        }
-        
-        function showNotification(message) {
-            const notification = document.createElement('div');
-            notification.style.cssText = `
-                position: fixed; top: 20px; right: 20px; z-index: 10000;
-                background: linear-gradient(135deg, #10b981, #059669);
-                color: white; padding: 12px 20px; border-radius: 10px;
-                box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-            `;
-            notification.textContent = message;
-            document.body.appendChild(notification);
-            
-            setTimeout(() => notification.remove(), 3000);
-        }
-        
-        // Initialize
-        document.addEventListener('DOMContentLoaded', function() {
-            document.querySelector('.strategy-card').classList.add('active');
         });
     </script>
-</body>
-</html>
+{% endblock %}
