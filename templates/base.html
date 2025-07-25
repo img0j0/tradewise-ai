@@ -56,7 +56,10 @@
                 <div class="saas-logo-icon">
                     <i class="fas fa-chart-line"></i>
                 </div>
-                TradeWise AI
+                <div class="flex flex-col">
+                    <span class="text-xl font-bold">TradeWise AI</span>
+                    <span class="text-xs text-gray-500 -mt-1">by SignalStackDev</span>
+                </div>
             </a>
             
             <!-- Integrated Search Bar -->
@@ -82,10 +85,18 @@
             <div class="flex items-center gap-4">
                 <!-- Desktop Navigation -->
                 <ul class="saas-nav-links hidden lg:flex">
-                    <li><a href="/dashboard" class="saas-nav-link {% block nav_dashboard %}{% endblock %}">Dashboard</a></li>
-                    <li><a href="/search" class="saas-nav-link {% block nav_search %}{% endblock %}">Search</a></li>
-                    <li><a href="/backtest" class="saas-nav-link {% block nav_backtest %}{% endblock %}">Backtest</a></li>
-                    <li><a href="/portfolio" class="saas-nav-link {% block nav_portfolio %}{% endblock %}">Portfolio</a></li>
+                    <li><a href="/" class="saas-nav-link {% block nav_dashboard %}{% endblock %}">
+                        <i class="fas fa-tachometer-alt mr-2"></i>Dashboard
+                    </a></li>
+                    <li><a href="/search" class="saas-nav-link {% block nav_search %}{% endblock %}">
+                        <i class="fas fa-search mr-2"></i>Search
+                    </a></li>
+                    <li><a href="/backtest" class="saas-nav-link {% block nav_backtest %}{% endblock %}">
+                        <i class="fas fa-chart-bar mr-2"></i>Backtest
+                    </a></li>
+                    <li><a href="/peer-comparison" class="saas-nav-link {% block nav_peer %}{% endblock %}">
+                        <i class="fas fa-balance-scale mr-2"></i>Peer Analysis
+                    </a></li>
                 </ul>
                 
                 <!-- Plan Status & Upgrade Button -->
@@ -108,16 +119,23 @@
                     </button>
                     
                     <!-- Dropdown Menu -->
-                    <div id="user-menu-dropdown" class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50 hidden">
-                        <a href="/account" class="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-50">
-                            <i class="fas fa-user mr-3 text-gray-400"></i>Account Settings
+                    <div id="user-menu-dropdown" class="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-200 py-2 z-50 hidden">
+                        <div class="px-4 py-3 border-b border-gray-100">
+                            <p class="text-sm font-medium text-gray-800">John Doe</p>
+                            <p class="text-xs text-gray-500">Free Plan</p>
+                        </div>
+                        <a href="/settings" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 transition-colors">
+                            <i class="fas fa-cog mr-3 w-4 text-gray-400"></i>Account Settings
                         </a>
-                        <a href="/billing" class="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-50">
-                            <i class="fas fa-credit-card mr-3 text-gray-400"></i>Billing
+                        <a href="/premium/upgrade" class="flex items-center px-4 py-3 text-gray-700 hover:bg-yellow-50 transition-colors">
+                            <i class="fas fa-crown mr-3 w-4 text-yellow-500"></i>Upgrade Plan
+                        </a>
+                        <a href="/help" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 transition-colors">
+                            <i class="fas fa-question-circle mr-3 w-4 text-gray-400"></i>Help & Support
                         </a>
                         <div class="border-t border-gray-200 my-1"></div>
-                        <a href="/logout" class="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-50">
-                            <i class="fas fa-sign-out-alt mr-3 text-gray-400"></i>Sign Out
+                        <a href="/logout" class="flex items-center px-4 py-3 text-red-600 hover:bg-red-50 transition-colors">
+                            <i class="fas fa-sign-out-alt mr-3 w-4"></i>Sign Out
                         </a>
                     </div>
                 </div>
@@ -151,11 +169,32 @@
                 </div>
                 
                 <!-- Mobile Nav Links -->
-                <div class="space-y-2">
-                    <a href="/dashboard" class="block px-3 py-2 text-gray-700 hover:bg-gray-50 rounded-lg">Dashboard</a>
-                    <a href="/search" class="block px-3 py-2 text-gray-700 hover:bg-gray-50 rounded-lg">Search</a>
-                    <a href="/backtest" class="block px-3 py-2 text-gray-700 hover:bg-gray-50 rounded-lg">Backtest</a>
-                    <a href="/portfolio" class="block px-3 py-2 text-gray-700 hover:bg-gray-50 rounded-lg">Portfolio</a>
+                <div class="space-y-1">
+                    <a href="/" class="flex items-center px-3 py-3 text-gray-700 hover:bg-gray-50 rounded-lg font-medium">
+                        <i class="fas fa-tachometer-alt mr-3 w-5"></i>Dashboard
+                    </a>
+                    <a href="/search" class="flex items-center px-3 py-3 text-gray-700 hover:bg-gray-50 rounded-lg font-medium">
+                        <i class="fas fa-search mr-3 w-5"></i>Search
+                    </a>
+                    <a href="/backtest" class="flex items-center px-3 py-3 text-gray-700 hover:bg-gray-50 rounded-lg font-medium">
+                        <i class="fas fa-chart-bar mr-3 w-5"></i>Backtest
+                    </a>
+                    <a href="/peer-comparison" class="flex items-center px-3 py-3 text-gray-700 hover:bg-gray-50 rounded-lg font-medium">
+                        <i class="fas fa-balance-scale mr-3 w-5"></i>Peer Analysis
+                    </a>
+                    
+                    <hr class="my-4">
+                    
+                    <!-- User Menu Items -->
+                    <a href="/settings" class="flex items-center px-3 py-3 text-gray-700 hover:bg-gray-50 rounded-lg">
+                        <i class="fas fa-cog mr-3 w-5"></i>Settings
+                    </a>
+                    <a href="/help" class="flex items-center px-3 py-3 text-gray-700 hover:bg-gray-50 rounded-lg">
+                        <i class="fas fa-question-circle mr-3 w-5"></i>Help & Support
+                    </a>
+                    <a href="/logout" class="flex items-center px-3 py-3 text-red-600 hover:bg-red-50 rounded-lg">
+                        <i class="fas fa-sign-out-alt mr-3 w-5"></i>Sign Out
+                    </a>
                 </div>
                 
                 <!-- Mobile Upgrade Button -->
@@ -168,13 +207,40 @@
         </div>
     </nav>
 
-    <!-- Main Content -->
-    <main class="{% block main_class %}container mx-auto px-4 py-8{% endblock %}">
-        {% block content %}{% endblock %}
+    <!-- Optional Desktop Sidebar for Large Screens -->
+    <aside id="desktop-sidebar" class="hidden xl:block fixed left-0 top-16 bottom-0 w-20 bg-white border-r border-gray-200 z-40">
+        <div class="flex flex-col items-center py-6 space-y-6">
+            <a href="/" class="sidebar-icon {% block sidebar_dashboard %}{% endblock %}" title="Dashboard">
+                <i class="fas fa-tachometer-alt text-xl"></i>
+            </a>
+            <a href="/search" class="sidebar-icon {% block sidebar_search %}{% endblock %}" title="Search">
+                <i class="fas fa-search text-xl"></i>
+            </a>
+            <a href="/backtest" class="sidebar-icon {% block sidebar_backtest %}{% endblock %}" title="Backtest">
+                <i class="fas fa-chart-bar text-xl"></i>
+            </a>
+            <a href="/peer-comparison" class="sidebar-icon {% block sidebar_peer %}{% endblock %}" title="Peer Analysis">
+                <i class="fas fa-balance-scale text-xl"></i>
+            </a>
+            
+            <div class="flex-1"></div>
+            
+            <!-- Bottom Icons -->
+            <a href="/settings" class="sidebar-icon" title="Settings">
+                <i class="fas fa-cog text-xl"></i>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content with Desktop-First Layout -->
+    <main class="{% block main_class %}xl:ml-20 pt-16{% endblock %}">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            {% block content %}{% endblock %}
+        </div>
     </main>
 
     <!-- Modern SaaS Footer -->
-    <footer class="bg-white border-t border-gray-200 py-12 mt-20">
+    <footer class="xl:ml-20 bg-white border-t border-gray-200 py-12 mt-20">
         <div class="container mx-auto px-4">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
                 <div class="md:col-span-2">

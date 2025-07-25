@@ -524,6 +524,28 @@ body {
   color: var(--error);
 }
 
+/* Desktop Sidebar Styles */
+.sidebar-icon {
+  @apply w-12 h-12 flex items-center justify-center text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-200;
+}
+
+.sidebar-icon.active {
+  @apply text-blue-600 bg-blue-50 shadow-sm;
+}
+
+.sidebar-icon:hover {
+  @apply transform scale-105;
+}
+
+/* Navigation Bar Fixed Positioning */
+.saas-navbar {
+  @apply fixed top-0 left-0 right-0 bg-white border-b border-gray-200 z-50 h-16;
+}
+
+.saas-navbar-content {
+  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-full;
+}
+
 .status-neutral {
   color: var(--gray-500);
 }
