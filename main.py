@@ -1,4 +1,8 @@
-from app import app  # noqa: F401
+from app import app
+from search_routes import search_bp
+
+# Register blueprints
+app.register_blueprint(search_bp)  # noqa: F401
 from prometheus_metrics import prometheus_metrics
 
 # Initialize Prometheus metrics
