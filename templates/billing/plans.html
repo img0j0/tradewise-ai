@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Subscription Plans - TradeWise AI</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif; 
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); 
+            color: white; 
+            margin: 0; 
+            padding: 20px; 
+        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .header { text-align: center; margin-bottom: 50px; }
+        .header h1 { font-size: 3rem; margin-bottom: 15px; background: linear-gradient(135deg, #6366f1, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .header p { font-size: 1.2rem; color: #ccc; }
+        .plans-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px; margin-bottom: 40px; }
+        .plan-card { 
+            background: linear-gradient(135deg, #2a2a2a 0%, #1e1e1e 100%); 
+            border-radius: 20px; 
+            padding: 40px 30px; 
+            border: 2px solid #333; 
+            transition: all 0.3s ease; 
+            position: relative;
+            overflow: hidden;
+        }
+        .plan-card:hover { transform: translateY(-5px); border-color: #6366f1; box-shadow: 0 20px 40px rgba(99, 102, 241, 0.1); }
+        .plan-card.popular::before {
+            content: 'MOST POPULAR';
+            position: absolute;
+            top: 20px;
+            right: -30px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+            padding: 5px 40px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            transform: rotate(30deg);
+        }
+        .plan-header { text-align: center; margin-bottom: 30px; }
+        .plan-name { font-size: 1.5rem; font-weight: bold; margin-bottom: 10px; }
+        .plan-price { font-size: 3rem; font-weight: bold; color: #6366f1; margin-bottom: 5px; }
+        .plan-price .currency { font-size: 1.5rem; }
+        .plan-price .period { font-size: 1rem; color: #ccc; }
+        .plan-description { color: #ccc; margin-bottom: 30px; }
+        .features-list { margin-bottom: 30px; }
+        .feature { 
+            display: flex; 
+            align-items: center; 
+            margin-bottom: 12px; 
+            padding: 8px 0;
+        }
+        .feature-icon { 
+            color: #10b981; 
+            margin-right: 12px; 
+            font-size: 1.2rem;
+            min-width: 20px;
+        }
+        .feature-text { flex: 1; }
+        .limits { 
+            background: rgba(255, 255, 255, 0.05); 
+            border-radius: 10px; 
+            padding: 15px; 
+            margin-bottom: 30px; 
+        }
+        .limits h4 { margin: 0 0 10px 0; color: #6366f1; }
+        .limit-item { 
+            display: flex; 
+            justify-content: space-between; 
+            margin-bottom: 5px; 
+            font-size: 0.9rem;
+        }
+        .subscribe-btn { 
+            width: 100%; 
+            padding: 15px; 
+            background: linear-gradient(135deg, #6366f1, #8b5cf6); 
+            color: white; 
+            border: none; 
+            border-radius: 10px; 
+            font-size: 1.1rem; 
+            font-weight: bold; 
+            cursor: pointer; 
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+        .subscribe-btn:hover { background: linear-gradient(135deg, #5855eb, #7c3aed); transform: translateY(-2px); }
+        .subscribe-btn.current { background: #10b981; cursor: default; }
+        .subscribe-btn.current:hover { background: #10b981; transform: none; }
+        .billing-toggle { 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            margin-bottom: 40px; 
+            gap: 20px;
+        }
+        .toggle-label { color: #ccc; }
+        .toggle-switch { 
+            position: relative; 
+            width: 60px; 
+            height: 30px; 
+            background: #333; 
+            border-radius: 15px; 
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        .toggle-switch.active { background: #6366f1; }
+        .toggle-slider { 
+            position: absolute; 
+            top: 3px; 
+            left: 3px; 
+            width: 24px; 
+            height: 24px; 
+            background: white; 
+            border-radius: 50%; 
+            transition: transform 0.3s ease;
+        }
+        .toggle-switch.active .toggle-slider { transform: translateX(30px); }
+        .current-plan { 
+            text-align: center; 
+            margin-bottom: 30px; 
+            padding: 20px; 
+            background: rgba(16, 185, 129, 0.1); 
+            border-radius: 10px; 
+            border: 1px solid #10b981;
+        }
+        .enterprise-contact { 
+            text-align: center; 
+            margin-top: 40px; 
+            padding: 30px; 
+            background: rgba(99, 102, 241, 0.1); 
+            border-radius: 15px; 
+            border: 1px solid #6366f1;
+        }
+        .enterprise-contact h3 { color: #6366f1; margin-bottom: 15px; }
+        .contact-btn { 
+            display: inline-block; 
+            padding: 12px 30px; 
+            background: #6366f1; 
+            color: white; 
+            text-decoration: none; 
+            border-radius: 8px; 
+            font-weight: bold;
+            transition: background 0.3s ease;
+        }
+        .contact-btn:hover { background: #5855eb; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Choose Your Plan</h1>
+            <p>Unlock the full power of AI-driven trading intelligence</p>
+        </div>
+        
+        {% if current_user_plan and current_user_plan != 'free' %}
+        <div class="current-plan">
+            <h3>✨ Current Plan: {{ current_user_plan.title() }}</h3>
+            <p>You're currently subscribed to the {{ current_user_plan.title() }} plan. You can upgrade anytime!</p>
+        </div>
+        {% endif %}
+        
+        <div class="billing-toggle">
+            <span class="toggle-label">Monthly</span>
+            <div class="toggle-switch" id="billingToggle">
+                <div class="toggle-slider"></div>
+            </div>
+            <span class="toggle-label">Annual <span style="color: #10b981;">(Save 20%)</span></span>
+        </div>
+        
+        <div class="plans-grid">
+            {% for plan in plans %}
+            <div class="plan-card {% if plan.name == 'pro' %}popular{% endif %}">
+                <div class="plan-header">
+                    <div class="plan-name">{{ plan.display_name }}</div>
+                    <div class="plan-price">
+                        <span class="currency">$</span>
+                        <span class="price-amount" data-monthly="{{ plan.monthly_price }}" data-annual="{{ plan.annual_price }}">
+                            {{ plan.monthly_price }}
+                        </span>
+                        <span class="period">/month</span>
+                    </div>
+                    <div class="plan-description">{{ plan.description }}</div>
+                </div>
+                
+                <div class="features-list">
+                    {% for feature_key, enabled in plan.features.items() %}
+                        {% if enabled %}
+                        <div class="feature">
+                            <span class="feature-icon">✓</span>
+                            <span class="feature-text">{{ feature_key.replace('_', ' ').title() }}</span>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                
+                <div class="limits">
+                    <h4>Plan Limits</h4>
+                    <div class="limit-item">
+                        <span>API Requests/Day</span>
+                        <span>{{ plan.limits.api_requests_per_day }}</span>
+                    </div>
+                    <div class="limit-item">
+                        <span>Smart Alerts</span>
+                        <span>{{ plan.limits.max_alerts }}</span>
+                    </div>
+                    <div class="limit-item">
+                        <span>Watchlist Items</span>
+                        <span>{{ plan.limits.max_watchlist_items }}</span>
+                    </div>
+                    <div class="limit-item">
+                        <span>Team Seats</span>
+                        <span>{{ plan.limits.team_seats }}</span>
+                    </div>
+                </div>
+                
+                {% if plan.is_current %}
+                    <button class="subscribe-btn current">Current Plan</button>
+                {% elif plan.name == 'free' %}
+                    <button class="subscribe-btn" style="background: #666; cursor: default;">Free Forever</button>
+                {% else %}
+                    <a href="{{ url_for('billing.subscribe_to_plan', plan_type=plan.name) }}?billing=monthly" 
+                       class="subscribe-btn subscribe-link" 
+                       data-plan="{{ plan.name }}">
+                        {% if plan.can_upgrade %}Upgrade to {{ plan.display_name }}{% else %}Get {{ plan.display_name }}{% endif %}
+                    </a>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="enterprise-contact">
+            <h3>🏢 Need Enterprise Features?</h3>
+            <p>Custom integrations, dedicated support, and enterprise-grade security</p>
+            <a href="mailto:enterprise@tradewise.ai" class="contact-btn">Contact Sales</a>
+        </div>
+    </div>
+    
+    <script>
+        // Billing toggle functionality
+        const billingToggle = document.getElementById('billingToggle');
+        const priceAmounts = document.querySelectorAll('.price-amount');
+        const periodTexts = document.querySelectorAll('.period');
+        const subscribeLinks = document.querySelectorAll('.subscribe-link');
+        
+        let isAnnual = false;
+        
+        billingToggle.addEventListener('click', function() {
+            isAnnual = !isAnnual;
+            billingToggle.classList.toggle('active', isAnnual);
+            
+            // Update prices
+            priceAmounts.forEach(element => {
+                const monthly = parseFloat(element.dataset.monthly);
+                const annual = parseFloat(element.dataset.annual);
+                
+                if (isAnnual && annual > 0) {
+                    element.textContent = (annual / 12).toFixed(2);
+                } else {
+                    element.textContent = monthly.toFixed(2);
+                }
+            });
+            
+            // Update period text
+            periodTexts.forEach(element => {
+                element.textContent = isAnnual ? '/month (billed annually)' : '/month';
+            });
+            
+            // Update subscribe links
+            subscribeLinks.forEach(link => {
+                const url = new URL(link.href);
+                url.searchParams.set('billing', isAnnual ? 'annual' : 'monthly');
+                link.href = url.toString();
+            });
+        });
+        
+        // Add loading state to subscribe buttons
+        subscribeLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                this.textContent = 'Redirecting to Checkout...';
+                this.style.background = '#666';
+            });
+        });
+    </script>
+</body>
+</html>

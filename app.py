@@ -142,11 +142,30 @@ with app.app_context():
     # Register blueprints after database setup
     from routes import main_bp
     from premium_routes import premium_bp
-    # Comprehensive endpoints removed - focusing on competitive features
+    from comprehensive_billing_routes import billing_bp
+    from oauth_auth import oauth_bp, create_oauth_blueprints
+    from two_factor_auth import twofa_bp
     
     app.register_blueprint(main_bp)
     app.register_blueprint(premium_bp)
-    # Comprehensive blueprint removed - streamlined for competitive focus
+    app.register_blueprint(billing_bp)
+    app.register_blueprint(oauth_bp)
+    app.register_blueprint(twofa_bp)
+    
+    # Initialize OAuth blueprints
+    try:
+        create_oauth_blueprints(app)
+        logging.info("OAuth blueprints initialized successfully")
+    except Exception as e:
+        logging.warning(f"OAuth initialization failed: {e}")
+    
+    # Initialize billing system
+    try:
+        from enhanced_stripe_billing import billing_manager
+        billing_manager.initialize_plan_configurations()
+        logging.info("Billing system initialized successfully")
+    except Exception as e:
+        logging.warning(f"Billing initialization failed: {e}")
     
     # Global error handlers for professional error pages
     @app.errorhandler(404)

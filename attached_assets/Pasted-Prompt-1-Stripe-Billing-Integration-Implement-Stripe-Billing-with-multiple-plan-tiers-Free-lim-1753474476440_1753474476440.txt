@@ -1,0 +1,102 @@
+Prompt:
+
+1. Stripe Billing Integration
+Implement Stripe Billing with multiple plan tiers:
+
+Free (limited features)
+
+Pro (monthly/annual)
+
+Enterprise (custom pricing)
+
+Create subscription plans in Stripe and integrate with the app:
+
+@premium_required decorator enforces plan limits (Free → limited usage, Pro/Enterprise → full access).
+
+Build a self-service billing portal:
+
+Users can manage subscriptions, payment methods, invoices.
+
+Support trial periods (7–14 days) with automatic upgrade or cancellation.
+
+Update premium_routes.py to support:
+
+Plan selection and upgrade flow.
+
+Webhooks for payment success/failure and subscription lifecycle events (cancellations, renewals).
+
+Store subscription details in the User model:
+
+plan_type, subscription_status, trial_end_date.
+
+2. User Management & Authentication
+
+Improve onboarding flow:
+
+Collect user preferences during sign-up (preferred markets, alert types).
+
+Provide guided tour of key features.
+
+Add OAuth support (Google, Microsoft, GitHub) using flask-dance or authlib.
+
+Implement optional Two-Factor Authentication (2FA):
+
+Time-based OTP (Google Authenticator).
+
+SMS or email backup codes.
+
+Add team accounts for Enterprise plans:
+
+Invite teammates via email.
+
+Assign roles (Admin, Analyst, Viewer).
+
+Limit seat count based on plan.
+
+3. UI/UX Enhancements
+
+Update front-end templates:
+
+Display user plan status and usage limits.
+
+Provide upgrade/downgrade options directly from user settings.
+
+Add notifications for:
+
+Trial ending soon.
+
+Payment issues.
+
+Plan upgrades.
+
+4. Backend & Data Model Updates
+
+Update models.py to support:
+
+User roles and team memberships.
+
+Subscription details synced with Stripe.
+
+Extend premium_features.py to enforce plan-based feature restrictions:
+
+API request limits for Free users.
+
+Unlock advanced AI features for Pro/Enterprise.
+
+Secure all webhook endpoints (verify Stripe signatures).
+
+5. Deliverables
+
+Fully functional SaaS subscription model with:
+
+Stripe-powered billing and user plan management.
+
+Self-service portal for subscription and payment management.
+
+Role-based user management with optional 2FA and OAuth.
+
+Updated DEPLOYMENT_GUIDE.md with:
+
+Steps for managing plans in Stripe.
+
+User management and team onboarding procedures.

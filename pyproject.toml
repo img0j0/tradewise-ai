@@ -41,4 +41,6 @@ dependencies = [
     "beautifulsoup4>=4.13.4",
     "prometheus-client>=0.22.1",
     "setuptools>=80.9.0",
+    "pyotp>=2.9.0",
+    "qrcode>=8.2",
 ]

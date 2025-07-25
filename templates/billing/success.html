@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Payment Successful - TradeWise AI</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif; 
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); 
+            color: white; 
+            margin: 0; 
+            padding: 20px; 
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .success-container { 
+            max-width: 600px; 
+            text-align: center; 
+            background: linear-gradient(135deg, #2a2a2a 0%, #1e1e1e 100%); 
+            border-radius: 20px; 
+            padding: 60px 40px; 
+            border: 2px solid #10b981;
+            box-shadow: 0 20px 40px rgba(16, 185, 129, 0.1);
+        }
+        .success-icon { 
+            font-size: 4rem; 
+            color: #10b981; 
+            margin-bottom: 30px; 
+            animation: checkmark 0.6s ease-in-out;
+        }
+        @keyframes checkmark {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        .success-title { 
+            font-size: 2.5rem; 
+            font-weight: bold; 
+            margin-bottom: 20px; 
+            background: linear-gradient(135deg, #10b981, #06d6a0); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+        }
+        .success-message { 
+            font-size: 1.2rem; 
+            color: #ccc; 
+            margin-bottom: 40px; 
+            line-height: 1.6;
+        }
+        .session-info { 
+            background: rgba(16, 185, 129, 0.1); 
+            border-radius: 10px; 
+            padding: 20px; 
+            margin-bottom: 40px; 
+            border: 1px solid #10b981;
+        }
+        .session-info h4 { 
+            color: #10b981; 
+            margin: 0 0 10px 0; 
+        }
+        .session-id { 
+            font-family: monospace; 
+            font-size: 0.9rem; 
+            color: #fff; 
+            word-break: break-all;
+        }
+        .next-steps { 
+            background: rgba(99, 102, 241, 0.1); 
+            border-radius: 10px; 
+            padding: 25px; 
+            margin-bottom: 40px; 
+            border: 1px solid #6366f1;
+            text-align: left;
+        }
+        .next-steps h4 { 
+            color: #6366f1; 
+            margin: 0 0 15px 0; 
+            text-align: center;
+        }
+        .step { 
+            display: flex; 
+            align-items: center; 
+            margin-bottom: 12px; 
+            padding: 8px 0;
+        }
+        .step-number { 
+            background: #6366f1; 
+            color: white; 
+            width: 24px; 
+            height: 24px; 
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 0.9rem; 
+            font-weight: bold; 
+            margin-right: 15px;
+            min-width: 24px;
+        }
+        .step-text { flex: 1; }
+        .action-buttons { 
+            display: flex; 
+            gap: 20px; 
+            justify-content: center; 
+            flex-wrap: wrap;
+        }
+        .btn { 
+            padding: 15px 30px; 
+            border-radius: 10px; 
+            text-decoration: none; 
+            font-weight: bold; 
+            font-size: 1.1rem; 
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        .btn-primary { 
+            background: linear-gradient(135deg, #6366f1, #8b5cf6); 
+            color: white; 
+        }
+        .btn-primary:hover { 
+            background: linear-gradient(135deg, #5855eb, #7c3aed); 
+            transform: translateY(-2px);
+        }
+        .btn-secondary { 
+            background: transparent; 
+            color: #6366f1; 
+            border-color: #6366f1;
+        }
+        .btn-secondary:hover { 
+            background: #6366f1; 
+            color: white;
+        }
+        .features-activated { 
+            background: rgba(139, 92, 246, 0.1); 
+            border-radius: 10px; 
+            padding: 20px; 
+            margin-bottom: 30px; 
+            border: 1px solid #8b5cf6;
+        }
+        .features-activated h4 { 
+            color: #8b5cf6; 
+            margin: 0 0 15px 0; 
+        }
+        .feature-item { 
+            display: flex; 
+            align-items: center; 
+            margin-bottom: 8px;
+        }
+        .feature-icon { 
+            color: #10b981; 
+            margin-right: 10px; 
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="success-container">
+        <div class="success-icon">✅</div>
+        <h1 class="success-title">Payment Successful!</h1>
+        <p class="success-message">
+            Welcome to TradeWise AI Premium! Your subscription has been activated and you now have access to all premium features.
+        </p>
+        
+        {% if session_id %}
+        <div class="session-info">
+            <h4>Payment Confirmation</h4>
+            <div class="session-id">{{ session_id }}</div>
+        </div>
+        {% endif %}
+        
+        <div class="features-activated">
+            <h4>🚀 Features Now Activated</h4>
+            <div class="feature-item">
+                <span class="feature-icon">✓</span>
+                <span>AI-Powered Portfolio Optimization</span>
+            </div>
+            <div class="feature-item">
+                <span class="feature-icon">✓</span>
+                <span>Advanced Market Scanner</span>
+            </div>
+            <div class="feature-item">
+                <span class="feature-icon">✓</span>
+                <span>Unlimited Smart Alerts</span>
+            </div>
+            <div class="feature-item">
+                <span class="feature-icon">✓</span>
+                <span>Earnings Predictions</span>
+            </div>
+            <div class="feature-item">
+                <span class="feature-icon">✓</span>
+                <span>Priority Support</span>
+            </div>
+        </div>
+        
+        <div class="next-steps">
+            <h4>🎯 Get Started</h4>
+            <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-text">Explore the AI Market Scanner for new opportunities</div>
+            </div>
+            <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-text">Set up advanced portfolio optimization alerts</div>
+            </div>
+            <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-text">Access earnings predictions for your watchlist</div>
+            </div>
+            <div class="step">
+                <div class="step-number">4</div>
+                <div class="step-text">Configure your premium dashboard preferences</div>
+            </div>
+        </div>
+        
+        <div class="action-buttons">
+            <a href="{{ url_for('main.dashboard') }}" class="btn btn-primary">Go to Dashboard</a>
+            <a href="{{ url_for('billing.manage_subscription') }}" class="btn btn-secondary">Manage Subscription</a>
+        </div>
+    </div>
+    
+    <script>
+        // Auto-redirect after 10 seconds if user doesn't click anything
+        setTimeout(function() {
+            if (confirm('Ready to explore your new premium features?')) {
+                window.location.href = "{{ url_for('main.dashboard') }}";
+            }
+        }, 10000);
+        
+        // Confetti animation (simple version)
+        function createConfetti() {
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.style.cssText = `
+                    position: fixed;
+                    width: 6px;
+                    height: 6px;
+                    background: ${['#6366f1', '#8b5cf6', '#10b981', '#06d6a0'][Math.floor(Math.random() * 4)]};
+                    left: ${Math.random() * 100}%;
+                    top: -10px;
+                    z-index: 1000;
+                    border-radius: 50%;
+                    animation: confetti-fall ${2 + Math.random() * 3}s linear forwards;
+                `;
+                document.body.appendChild(confetti);
+                
+                setTimeout(() => confetti.remove(), 5000);
+            }
+        }
+        
+        // Add confetti CSS animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes confetti-fall {
+                to {
+                    transform: translateY(100vh) rotate(360deg);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Trigger confetti on page load
+        createConfetti();
+    </script>
+</body>
+</html>
