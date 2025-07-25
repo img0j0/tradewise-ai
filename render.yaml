@@ -1,0 +1,94 @@
+services:
+  # Main API Service
+  - type: web
+    name: tradewise-ai-api
+    env: python
+    buildCommand: pip install --upgrade pip && pip install -r requirements.txt
+    startCommand: gunicorn --bind 0.0.0.0:$PORT --workers 2 --timeout 120 --keepalive 5 --max-requests 1000 --max-requests-jitter 100 main:app
+    plan: starter_plus
+    region: oregon
+    scaling:
+      minInstances: 1
+      maxInstances: 3
+      targetCPUPercent: 70
+      targetMemoryPercent: 80
+    healthCheckPath: /api/health
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11"
+      - key: PYTHONUNBUFFERED
+        value: "1"
+      - key: FLASK_ENV
+        value: "production"
+      - key: REPLIT_DEPLOYMENT
+        value: "render"
+      - key: DEBUG
+        value: "False"
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: tradewise-ai-postgres
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          name: tradewise-ai-redis
+          type: redis
+          property: connectionString
+    domains:
+      - tradewiseai.com
+      - www.tradewiseai.com
+
+  # Background Worker Service
+  - type: worker
+    name: tradewise-ai-worker
+    env: python
+    buildCommand: pip install --upgrade pip && pip install -r requirements.txt
+    startCommand: python -c "
+      import sys
+      sys.path.append('.')
+      from async_task_queue import TaskQueueWorker
+      from app import app
+      with app.app_context():
+          worker = TaskQueueWorker()
+          worker.start_worker()
+      "
+    plan: starter
+    region: oregon
+    scaling:
+      minInstances: 1
+      maxInstances: 2
+      targetCPUPercent: 80
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11"
+      - key: PYTHONUNBUFFERED
+        value: "1"
+      - key: WORKER_MODE
+        value: "true"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: tradewise-ai-postgres
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          name: tradewise-ai-redis
+          type: redis
+          property: connectionString
+
+  # Redis Cache Service
+  - type: redis
+    name: tradewise-ai-redis
+    plan: starter
+    region: oregon
+    maxmemoryPolicy: allkeys-lru
+    ipAllowList: []
+
+databases:
+  # PostgreSQL Database
+  - name: tradewise-ai-postgres
+    databaseName: tradewise_ai_production
+    user: tradewise_admin
+    plan: starter
+    region: oregon
+    postgresMajorVersion: 15
