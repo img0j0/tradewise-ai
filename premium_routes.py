@@ -16,12 +16,14 @@ logger = logging.getLogger(__name__)
 premium_bp = Blueprint('premium', __name__, url_prefix='/premium')
 
 @premium_bp.route('/upgrade')
+@premium_required
 def upgrade_page():
     """Premium upgrade page"""
     canceled = request.args.get('canceled') == 'true'
     return render_template('premium_upgrade.html', payment_canceled=canceled)
 
 @premium_bp.route('/purchase', methods=['POST'])
+@premium_required
 def create_checkout_session():
     """Create Stripe checkout session for premium subscription"""
     try:
@@ -72,6 +74,41 @@ def payment_success():
                              subscription_id=result.get('subscription_id'))
     else:
         return redirect(url_for('premium.upgrade_page', error='payment_verification_failed'))
+
+@premium_bp.route('/webhook', methods=['POST'])
+def stripe_webhook():
+    """Handle Stripe webhooks with signature verification"""
+    payload = request.get_data()
+    signature = request.headers.get('Stripe-Signature')
+    endpoint_secret = os.environ.get('STRIPE_WEBHOOK_SECRET')
+    
+    if not endpoint_secret:
+        logger.error("Stripe webhook secret not configured")
+        return jsonify({'error': 'Webhook not configured'}), 400
+    
+    # Verify webhook signature
+    result = payment_processor.verify_webhook_signature(payload, signature, endpoint_secret)
+    
+    if not result['success']:
+        return jsonify({'error': result['error']}), 400
+    
+    event = result['event']
+    
+    # Handle different event types
+    if event['type'] == 'checkout.session.completed':
+        session = event['data']['object']
+        # TODO: Update user subscription status in database
+        logger.info(f"Checkout completed for session: {session['id']}")
+        
+    elif event['type'] == 'invoice.payment_succeeded':
+        invoice = event['data']['object']
+        logger.info(f"Payment succeeded for invoice: {invoice['id']}")
+        
+    elif event['type'] == 'customer.subscription.deleted':
+        subscription = event['data']['object']
+        logger.info(f"Subscription canceled: {subscription['id']}")
+    
+    return jsonify({'status': 'success'}), 200
 
 @premium_bp.route('/cancel')
 def payment_cancel():

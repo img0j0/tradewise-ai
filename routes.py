@@ -11,10 +11,12 @@ from educational_insights import get_educational_insights
 from simple_personalization import simple_personalization
 from ai_capability_enhancer import enhance_analysis, get_live_opportunities, generate_deep_insights
 import yfinance as yf
+import pandas as pd
 import logging
 import json
 import time
 from functools import wraps
+from flask import session
 
 logger = logging.getLogger(__name__)
 

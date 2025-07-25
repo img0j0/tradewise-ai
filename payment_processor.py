@@ -77,6 +77,54 @@ class PaymentProcessor:
             }
     
     def verify_session(self, session_id):
+        """Verify a Stripe checkout session with enhanced security"""
+        try:
+            session = stripe.checkout.Session.retrieve(session_id)
+            
+            if session.payment_status == 'paid':
+                return {
+                    'success': True,
+                    'customer_email': session.customer_details.email,
+                    'customer_id': session.customer,
+                    'subscription_id': session.subscription
+                }
+            else:
+                return {
+                    'success': False,
+                    'error': 'Payment not completed'
+                }
+                
+        except StripeError as e:
+            logging.error(f"Session verification error: {str(e)}")
+            return {
+                'success': False,
+                'error': 'Session verification failed'
+            }
+    
+    def verify_webhook_signature(self, payload, signature, endpoint_secret):
+        """Verify Stripe webhook signature for security"""
+        try:
+            event = stripe.Webhook.construct_event(
+                payload, signature, endpoint_secret
+            )
+            return {
+                'success': True,
+                'event': event
+            }
+        except ValueError as e:
+            logging.error(f"Invalid payload: {e}")
+            return {
+                'success': False,
+                'error': 'Invalid payload'
+            }
+        except stripe.SignatureVerificationError as e:
+            logging.error(f"Invalid signature: {e}")
+            return {
+                'success': False,
+                'error': 'Invalid signature'
+            }
+    
+    def verify_session(self, session_id):
         """Verify a completed Stripe checkout session"""
         try:
             session = stripe.checkout.Session.retrieve(session_id)

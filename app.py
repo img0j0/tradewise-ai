@@ -19,9 +19,9 @@ db = SQLAlchemy(model_class=Base)
 # create the app
 app = Flask(__name__)
 app.secret_key = os.environ.get("SESSION_SECRET", "dev-secret-key-change-in-production")
-app.config['SESSION_COOKIE_SECURE'] = False  # Allow cookies over HTTP
+app.config['SESSION_COOKIE_SECURE'] = True if os.environ.get('REPLIT_DEPLOYMENT') else False
 app.config['SESSION_COOKIE_HTTPONLY'] = True
-app.config['SESSION_COOKIE_SAMESITE'] = None  # Allow cross-origin in Replit
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'  # Enhanced security for production
 app.config['SESSION_COOKIE_NAME'] = 'session'
 app.config['PERMANENT_SESSION_LIFETIME'] = 86400  # 24 hours
 app.config['SESSION_COOKIE_PATH'] = '/'

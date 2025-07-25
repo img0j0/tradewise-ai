@@ -97,7 +97,7 @@ def get_trending_searches():
         week_ago = datetime.now() - timedelta(days=7)
         
         trending_stocks = db.session.query(SearchHistory.symbol, db.func.count(SearchHistory.id).label('count'))\
-                                  .filter(SearchHistory.searched_at >= week_ago)\
+                                  .filter(SearchHistory.timestamp >= week_ago)\
                                   .group_by(SearchHistory.symbol)\
                                   .order_by(db.func.count(SearchHistory.id).desc())\
                                   .limit(10).all()
