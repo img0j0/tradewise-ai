@@ -1,0 +1,34 @@
+# ConfigMap for TradeWise AI Configuration
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tradewise-config
+  namespace: tradewise-ai
+  labels:
+    app: tradewise-ai
+data:
+  # Application configuration
+  FLASK_ENV: "production"
+  PYTHONPATH: "/app"
+  PYTHONUNBUFFERED: "1"
+  PYTHONDONTWRITEBYTECODE: "1"
+  
+  # Database configuration
+  POSTGRES_DB: "tradewise"
+  POSTGRES_USER: "tradewise_user"
+  
+  # Redis configuration
+  REDIS_DB: "0"
+  
+  # Performance settings
+  GUNICORN_WORKERS: "4"
+  GUNICORN_TIMEOUT: "120"
+  GUNICORN_KEEPALIVE: "2"
+  GUNICORN_MAX_REQUESTS: "1000"
+  
+  # Application settings
+  CACHE_DEFAULT_TIMEOUT: "300"
+  PERFORMANCE_MONITORING: "true"
+  SESSION_COOKIE_SECURE: "true"
+  SESSION_COOKIE_HTTPONLY: "true"
+  SESSION_COOKIE_SAMESITE: "Strict"

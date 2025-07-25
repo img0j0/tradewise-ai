@@ -1,0 +1,110 @@
+# Git files
+.git
+.gitignore
+.gitattributes
+
+# Documentation
+*.md
+docs/
+README*
+
+# Development files
+.env
+.env.local
+.env.development
+*.log
+*.pid
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Test files
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+.coverage.*
+pytest.ini
+.pytest_cache
+
+# Jupyter notebooks
+.ipynb_checkpoints
+
+# Development containers
+docker-compose.override.yml
+docker-compose.dev.yml
+
+# Backup files
+*.bak
+*.backup
+*.sql.gz
+backups/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.temp
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Archive folder
+archive/
+
+# Node modules (if any)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Dependency audit reports
+dependency_audit_report_*.json
+
+# Performance logs
+performance.log*
+
+# Security reports
+*_audit.md
+*_AUDIT.md

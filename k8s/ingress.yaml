@@ -1,0 +1,139 @@
+# Kubernetes Ingress for TradeWise AI
+# HTTPS termination and load balancing
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: tradewise-ingress
+  namespace: tradewise-ai
+  labels:
+    app: tradewise-ai
+  annotations:
+    # NGINX Ingress Controller annotations
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    
+    # Rate limiting
+    nginx.ingress.kubernetes.io/rate-limit: "30"
+    nginx.ingress.kubernetes.io/rate-limit-window: "1m"
+    nginx.ingress.kubernetes.io/rate-limit-connections: "10"
+    
+    # Security headers
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      add_header X-Frame-Options DENY;
+      add_header X-Content-Type-Options nosniff;
+      add_header X-XSS-Protection "1; mode=block";
+      add_header Strict-Transport-Security "max-age=31536000; includeSubDomains";
+      add_header Referrer-Policy "strict-origin-when-cross-origin";
+    
+    # Load balancing
+    nginx.ingress.kubernetes.io/upstream-hash-by: "$binary_remote_addr"
+    nginx.ingress.kubernetes.io/load-balance: "round_robin"
+    
+    # Timeouts
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "10"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "120"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "120"
+    
+    # SSL configuration
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/ssl-protocols: "TLSv1.2 TLSv1.3"
+    nginx.ingress.kubernetes.io/ssl-ciphers: "ECDHE-ECDSA-AES128-GCM-SHA256,ECDHE-RSA-AES128-GCM-SHA256,ECDHE-ECDSA-AES256-GCM-SHA384,ECDHE-RSA-AES256-GCM-SHA384"
+    
+    # Enable session affinity for better performance
+    nginx.ingress.kubernetes.io/affinity: "cookie"
+    nginx.ingress.kubernetes.io/session-cookie-name: "tradewise-affinity"
+    nginx.ingress.kubernetes.io/session-cookie-expires: "3600"
+    nginx.ingress.kubernetes.io/session-cookie-max-age: "3600"
+    nginx.ingress.kubernetes.io/session-cookie-path: "/"
+
+spec:
+  tls:
+  - hosts:
+    - tradewise-ai.com
+    - www.tradewise-ai.com
+    - api.tradewise-ai.com
+    secretName: tradewise-tls-secret
+  
+  rules:
+  # Main application domain
+  - host: tradewise-ai.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: tradewise-api-service
+            port:
+              number: 80
+  
+  # WWW redirect
+  - host: www.tradewise-ai.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: tradewise-api-service
+            port:
+              number: 80
+  
+  # API subdomain with special rate limiting
+  - host: api.tradewise-ai.com
+    http:
+      paths:
+      - path: /api/health
+        pathType: Exact
+        backend:
+          service:
+            name: tradewise-api-service
+            port:
+              number: 80
+      - path: /api/
+        pathType: Prefix
+        backend:
+          service:
+            name: tradewise-api-service
+            port:
+              number: 80
+
+---
+# Additional Ingress for health checks (no rate limiting)
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: tradewise-health-ingress
+  namespace: tradewise-ai
+  labels:
+    app: tradewise-ai
+    component: health
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/rate-limit: "0"  # No rate limiting for health checks
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      access_log off;
+spec:
+  rules:
+  - host: tradewise-ai.com
+    http:
+      paths:
+      - path: /api/health
+        pathType: Exact
+        backend:
+          service:
+            name: tradewise-api-service
+            port:
+              number: 80
+  - host: api.tradewise-ai.com
+    http:
+      paths:
+      - path: /api/health
+        pathType: Exact
+        backend:
+          service:
+            name: tradewise-api-service
+            port:
+              number: 80

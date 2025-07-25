@@ -1,0 +1,152 @@
+# Docker Compose for TradeWise AI Local Development and Testing
+# Provides full application stack with database, cache, and services
+
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: tradewise-postgres
+    environment:
+      POSTGRES_DB: tradewise
+      POSTGRES_USER: tradewise_user
+      POSTGRES_PASSWORD: tradewise_secure_password
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backups:/backups
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tradewise_user -d tradewise"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - tradewise-network
+
+  # Redis Cache (Optional - for enhanced caching)
+  redis:
+    image: redis:7-alpine
+    container_name: tradewise-redis
+    command: redis-server --appendonly yes --requirepass tradewise_redis_password
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    networks:
+      - tradewise-network
+
+  # Main API Application
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: tradewise-api
+    environment:
+      - SESSION_SECRET=development-session-secret-change-in-production
+      - DATABASE_URL=postgresql://tradewise_user:tradewise_secure_password@postgres:5432/tradewise
+      - STRIPE_SECRET_KEY=sk_test_your_stripe_test_key_here
+      - REDIS_URL=redis://:tradewise_redis_password@redis:6379/0
+      - FLASK_ENV=development
+      - PYTHONPATH=/app
+    volumes:
+      - ./logs:/app/logs
+      - ./backups:/app/backups
+    ports:
+      - "5000:5000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
+    networks:
+      - tradewise-network
+
+  # Async Task Workers
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.worker
+    container_name: tradewise-worker
+    environment:
+      - SESSION_SECRET=development-session-secret-change-in-production
+      - DATABASE_URL=postgresql://tradewise_user:tradewise_secure_password@postgres:5432/tradewise
+      - REDIS_URL=redis://:tradewise_redis_password@redis:6379/0
+      - PYTHONPATH=/app
+    volumes:
+      - ./logs:/app/logs
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - tradewise-network
+
+  # AI Pre-computation Service
+  precompute:
+    build:
+      context: .
+      dockerfile: Dockerfile.worker
+    container_name: tradewise-precompute
+    environment:
+      - SESSION_SECRET=development-session-secret-change-in-production
+      - DATABASE_URL=postgresql://tradewise_user:tradewise_secure_password@postgres:5432/tradewise
+      - REDIS_URL=redis://:tradewise_redis_password@redis:6379/0
+      - PYTHONPATH=/app
+    volumes:
+      - ./logs:/app/logs
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: ["python", "-c", "from ai_precomputation_service import precomputation_service; precomputation_service.start_background_service(); import time; time.sleep(float('inf'))"]
+    restart: unless-stopped
+    networks:
+      - tradewise-network
+
+  # Nginx Load Balancer (Optional for local testing)
+  nginx:
+    image: nginx:alpine
+    container_name: tradewise-nginx
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - api
+    restart: unless-stopped
+    networks:
+      - tradewise-network
+
+# Volumes for persistent data
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+
+# Networks
+networks:
+  tradewise-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

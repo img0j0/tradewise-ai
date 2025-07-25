@@ -1,0 +1,137 @@
+# TradeWise AI API Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tradewise-api-deployment
+  namespace: tradewise-ai
+  labels:
+    app: tradewise-api
+    tier: api
+    component: web
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: tradewise-api
+      tier: api
+      component: web
+  template:
+    metadata:
+      labels:
+        app: tradewise-api
+        tier: api
+        component: web
+    spec:
+      containers:
+      - name: tradewise-api
+        image: tradewise-ai:latest
+        env:
+        - name: SESSION_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: tradewise-secrets
+              key: SESSION_SECRET
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: tradewise-secrets
+              key: DATABASE_URL
+        - name: STRIPE_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: tradewise-secrets
+              key: STRIPE_SECRET_KEY
+        - name: REDIS_URL
+          valueFrom:
+            secretKeyRef:
+              name: tradewise-secrets
+              key: REDIS_URL
+        - name: FLASK_ENV
+          valueFrom:
+            configMapKeyRef:
+              name: tradewise-config
+              key: FLASK_ENV
+        - name: PYTHONPATH
+          valueFrom:
+            configMapKeyRef:
+              name: tradewise-config
+              key: PYTHONPATH
+        - name: PYTHONUNBUFFERED
+          valueFrom:
+            configMapKeyRef:
+              name: tradewise-config
+              key: PYTHONUNBUFFERED
+        - name: REPLIT_DEPLOYMENT
+          value: "1"
+        ports:
+        - containerPort: 5000
+          name: http
+          protocol: TCP
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+          limits:
+            memory: "2Gi"
+            cpu: "1000m"
+        livenessProbe:
+          httpGet:
+            path: /api/health
+            port: 5000
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          timeoutSeconds: 10
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /api/health
+            port: 5000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        volumeMounts:
+        - name: app-data
+          mountPath: /app/logs
+          subPath: logs
+        - name: app-data
+          mountPath: /app/backups
+          subPath: backups
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 1000
+          runAsGroup: 1000
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: false
+          capabilities:
+            drop:
+            - ALL
+      volumes:
+      - name: app-data
+        persistentVolumeClaim:
+          claimName: app-data-pvc
+      restartPolicy: Always
+      securityContext:
+        fsGroup: 1000
+
+---
+# API Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: tradewise-api-service
+  namespace: tradewise-ai
+  labels:
+    app: tradewise-api
+    tier: api
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 5000
+    protocol: TCP
+    name: http
+  selector:
+    app: tradewise-api
+    tier: api
+    component: web

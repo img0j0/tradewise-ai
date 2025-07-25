@@ -1,0 +1,167 @@
+# TradeWise AI Worker Deployments
+# Async Task Workers
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tradewise-worker-deployment
+  namespace: tradewise-ai
+  labels:
+    app: tradewise-worker
+    tier: worker
+    component: async
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: tradewise-worker
+      tier: worker
+      component: async
+  template:
+    metadata:
+      labels:
+        app: tradewise-worker
+        tier: worker
+        component: async
+    spec:
+      containers:
+      - name: tradewise-worker
+        image: tradewise-ai-worker:latest
+        env:
+        - name: SESSION_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: tradewise-secrets
+              key: SESSION_SECRET
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: tradewise-secrets
+              key: DATABASE_URL
+        - name: REDIS_URL
+          valueFrom:
+            secretKeyRef:
+              name: tradewise-secrets
+              key: REDIS_URL
+        - name: PYTHONPATH
+          valueFrom:
+            configMapKeyRef:
+              name: tradewise-config
+              key: PYTHONPATH
+        - name: PYTHONUNBUFFERED
+          valueFrom:
+            configMapKeyRef:
+              name: tradewise-config
+              key: PYTHONUNBUFFERED
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+        volumeMounts:
+        - name: app-data
+          mountPath: /app/logs
+          subPath: logs
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 1000
+          runAsGroup: 1000
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: false
+          capabilities:
+            drop:
+            - ALL
+      volumes:
+      - name: app-data
+        persistentVolumeClaim:
+          claimName: app-data-pvc
+      restartPolicy: Always
+      securityContext:
+        fsGroup: 1000
+
+---
+# AI Pre-computation Service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tradewise-precompute-deployment
+  namespace: tradewise-ai
+  labels:
+    app: tradewise-precompute
+    tier: worker
+    component: precompute
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tradewise-precompute
+      tier: worker
+      component: precompute
+  template:
+    metadata:
+      labels:
+        app: tradewise-precompute
+        tier: worker
+        component: precompute
+    spec:
+      containers:
+      - name: tradewise-precompute
+        image: tradewise-ai-worker:latest
+        command:
+        - python
+        - -c
+        - "from ai_precomputation_service import precomputation_service; precomputation_service.start_background_service(); import time; time.sleep(float('inf'))"
+        env:
+        - name: SESSION_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: tradewise-secrets
+              key: SESSION_SECRET
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: tradewise-secrets
+              key: DATABASE_URL
+        - name: REDIS_URL
+          valueFrom:
+            secretKeyRef:
+              name: tradewise-secrets
+              key: REDIS_URL
+        - name: PYTHONPATH
+          valueFrom:
+            configMapKeyRef:
+              name: tradewise-config
+              key: PYTHONPATH
+        - name: PYTHONUNBUFFERED
+          valueFrom:
+            configMapKeyRef:
+              name: tradewise-config
+              key: PYTHONUNBUFFERED
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "300m"
+          limits:
+            memory: "1.5Gi"
+            cpu: "750m"
+        volumeMounts:
+        - name: app-data
+          mountPath: /app/logs
+          subPath: logs
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 1000
+          runAsGroup: 1000
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: false
+          capabilities:
+            drop:
+            - ALL
+      volumes:
+      - name: app-data
+        persistentVolumeClaim:
+          claimName: app-data-pvc
+      restartPolicy: Always
+      securityContext:
+        fsGroup: 1000

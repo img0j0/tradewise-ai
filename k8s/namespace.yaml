@@ -1,0 +1,8 @@
+# Kubernetes Namespace for TradeWise AI
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: tradewise-ai
+  labels:
+    app: tradewise-ai
+    environment: production
