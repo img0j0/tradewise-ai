@@ -42,7 +42,15 @@ db.init_app(app)
 socketio = None
 
 # Initialize caching for better performance
-cache = Cache(app, config={'CACHE_TYPE': 'simple'})
+cache = Cache(app, config={
+    'CACHE_TYPE': 'simple',
+    'CACHE_DEFAULT_TIMEOUT': 300,  # 5 minutes default
+    'CACHE_THRESHOLD': 1000  # Maximum cached items
+})
+
+# Initialize performance monitoring
+from performance_monitor import monitor
+monitor.init_app(app)
 
 # Initialize compression - temporarily disabled for debugging
 # compress = Compress(app)

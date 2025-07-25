@@ -17,6 +17,8 @@ import json
 import time
 from functools import wraps
 from flask import session
+from cache_optimizer import market_cache, ai_cache, search_cache, stock_cache
+from performance_monitor import performance_optimized
 
 logger = logging.getLogger(__name__)
 
@@ -124,6 +126,7 @@ def save_analysis_to_history(symbol, stock_data, insights):
         logger.error(f"Error saving analysis to history: {e}")
 
 @main_bp.route('/api/health')
+@market_cache(timeout=60)  # Cache health status for 1 minute
 def health_check():
     """Health check endpoint for production monitoring"""
     try:
@@ -174,6 +177,8 @@ def strategy_demo():
 
 @main_bp.route('/api/stock-analysis', methods=['GET', 'POST'])
 @simple_rate_limit(max_requests=30, window=60)
+@stock_cache(timeout=180)  # Cache stock analysis for 3 minutes
+@performance_optimized()
 def stock_analysis_api():
     """AI-powered stock analysis API for comprehensive investment research - OPTIMIZED"""
     try:
@@ -1381,6 +1386,7 @@ def demo_upgrade():
         return jsonify({'success': False, 'error': 'Upgrade failed'}), 500
 
 @main_bp.route('/api/search/suggestions')
+@search_cache(timeout=60)  # Cache search suggestions for 1 minute
 def search_suggestions():
     """Get real-time search suggestions for autocomplete with history integration"""
     query = request.args.get('q', '').strip().lower()
@@ -1665,6 +1671,8 @@ def clear_performance_cache():
 
 @main_bp.route('/api/ai/live-opportunities')
 @simple_rate_limit()
+@ai_cache(timeout=60)  # Cache AI opportunities for 1 minute
+@performance_optimized()
 def get_ai_opportunities():
     """Get real-time AI-powered investment opportunities"""
     try:
@@ -1691,6 +1699,8 @@ def get_ai_opportunities():
 
 @main_bp.route('/api/ai/enhanced-analysis', methods=['POST'])
 @simple_rate_limit()
+@ai_cache(timeout=60)  # Cache enhanced AI analysis for 1 minute
+@performance_optimized()
 def get_enhanced_ai_analysis():
     """Get enhanced AI analysis with all advanced capabilities"""
     try:
