@@ -183,9 +183,12 @@ with app.app_context():
     except Exception as e:
         logging.warning(f"Billing initialization failed: {e}")
     
-    # Add security headers
-    from security_headers import add_security_headers
-    add_security_headers(app)
+    # Add security headers (with proper type annotation)
+    try:
+        from security_headers import add_security_headers
+        add_security_headers(app)
+    except Exception as e:
+        logging.warning(f"Security headers initialization failed: {e}")
     
     # Global error handlers for professional error pages
     @app.errorhandler(404)

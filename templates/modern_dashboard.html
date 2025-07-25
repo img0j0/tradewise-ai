@@ -1,188 +1,171 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="light">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TradeWise AI - Dashboard</title>
-    
-    <!-- Modern SaaS Theme -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/modern_saas_theme.css') }}">
-    
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Chart.js for Data Visualization -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
-    <!-- Font Awesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Inter Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <script>
-        // Tailwind CSS Configuration
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'brand-blue': '#1e40af',
-                        'brand-purple': '#7c3aed',
-                        'accent-blue': '#3b82f6',
-                        'accent-purple': '#8b5cf6'
-                    },
-                    fontFamily: {
-                        'sans': ['Inter', 'ui-sans-serif', 'system-ui']
-                    }
-                }
-            }
-        }
-    </script>
-</head>
-<body class="bg-gradient-to-br from-slate-50 to-slate-100 min-h-screen">
-    <!-- Navigation Bar -->
-    <nav class="saas-navbar">
-        <div class="saas-navbar-content">
-            <a href="/" class="saas-logo">
-                <div class="saas-logo-icon">
-                    <i class="fas fa-chart-line"></i>
+{% extends "base.html" %}
+
+{% block title %}TradeWise AI - Dashboard{% endblock %}
+
+{% block nav_dashboard %}active{% endblock %}
+
+{% block content %}
+    <!-- Dashboard Main Content -->
+    <div class="dashboard-hero mb-12">
+        <div class="text-center">
+            <h1 class="text-4xl md:text-6xl font-bold text-gray-800 mb-6">
+                Welcome to <span class="bg-gradient-to-r from-brand-blue to-brand-purple bg-clip-text text-transparent">TradeWise AI</span>
+            </h1>
+            <p class="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
+                Professional stock analysis platform delivering institutional-grade insights with retail-friendly pricing.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <a href="/search" class="saas-btn-primary">
+                    <i class="fas fa-search mr-2"></i>Start Analyzing Stocks
+                </a>
+                <a href="/premium/upgrade" class="saas-btn-secondary">
+                    <i class="fas fa-crown mr-2"></i>Upgrade to Pro
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+        <div class="saas-card">
+            <div class="saas-card-header">
+                <div class="flex items-center justify-between">
+                    <h3 class="saas-card-title">Market Overview</h3>
+                    <i class="fas fa-chart-line text-2xl text-brand-blue"></i>
                 </div>
-                TradeWise AI
-            </a>
-            
-            <div class="flex items-center gap-4">
-                <!-- Mobile Menu Button -->
-                <button id="mobile-menu-btn" class="md:hidden p-2 text-gray-600 hover:text-gray-800">
-                    <i class="fas fa-bars text-lg"></i>
-                </button>
-                
-                <!-- Desktop Navigation -->
-                <ul class="saas-nav-links hidden md:flex">
-                    <li><a href="/dashboard" class="saas-nav-link active">Dashboard</a></li>
-                    <li><a href="/portfolio" class="saas-nav-link">Portfolio</a></li>
-                    <li><a href="/backtest" class="saas-nav-link">Backtesting</a></li>
-                    <li><a href="/scanner" class="saas-nav-link">Scanner</a></li>
-                </ul>
-                
-                <!-- User Menu -->
-                <div class="flex items-center gap-3">
-                    <!-- Dark Mode Toggle -->
-                    <button id="theme-toggle" class="p-2 text-gray-600 hover:text-gray-800 transition-colors">
-                        <i class="fas fa-moon" id="theme-icon"></i>
-                    </button>
-                    
-                    <!-- User Avatar -->
-                    <div class="relative">
-                        <button id="user-menu-btn" class="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 transition-colors">
-                            <div class="w-8 h-8 bg-gradient-to-r from-brand-blue to-brand-purple rounded-lg flex items-center justify-center text-white text-sm font-semibold">
-                                {{ current_user.username[0].upper() if current_user.is_authenticated else 'U' }}
-                            </div>
-                            <i class="fas fa-chevron-down text-xs text-gray-500"></i>
-                        </button>
-                        
-                        <!-- Dropdown Menu -->
-                        <div id="user-dropdown" class="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-200 py-2 hidden">
-                            <a href="/settings" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
-                                <i class="fas fa-cog mr-2"></i>Settings
-                            </a>
-                            <a href="/billing" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
-                                <i class="fas fa-credit-card mr-2"></i>Billing
-                            </a>
-                            <hr class="my-2">
-                            <a href="/logout" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
-                                <i class="fas fa-sign-out-alt mr-2"></i>Sign Out
-                            </a>
+            </div>
+            <div class="saas-card-content">
+                <div class="text-3xl font-bold text-gray-800 mb-2">S&P 500</div>
+                <div class="text-green-600 font-medium">
+                    <i class="fas fa-arrow-up mr-1"></i>+1.24%
+                </div>
+                <p class="text-gray-600 text-sm mt-2">Market performing well today</p>
+            </div>
+        </div>
+
+        <div class="saas-card">
+            <div class="saas-card-header">
+                <div class="flex items-center justify-between">
+                    <h3 class="saas-card-title">Your Analyses</h3>
+                    <i class="fas fa-history text-2xl text-brand-purple"></i>
+                </div>
+            </div>
+            <div class="saas-card-content">
+                <div class="text-3xl font-bold text-gray-800 mb-2">12</div>
+                <div class="text-blue-600 font-medium">
+                    <i class="fas fa-plus mr-1"></i>3 this week
+                </div>
+                <p class="text-gray-600 text-sm mt-2">Stocks analyzed recently</p>
+            </div>
+        </div>
+
+        <div class="saas-card">
+            <div class="saas-card-header">
+                <div class="flex items-center justify-between">
+                    <h3 class="saas-card-title">Plan Status</h3>
+                    <i class="fas fa-crown text-2xl text-amber-500"></i>
+                </div>
+            </div>
+            <div class="saas-card-content">
+                <div class="text-3xl font-bold text-gray-800 mb-2">Free</div>
+                <div class="text-amber-600 font-medium">
+                    <i class="fas fa-star mr-1"></i>5 analyses left
+                </div>
+                <p class="text-gray-600 text-sm mt-2">Upgrade for unlimited access</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="saas-card mb-12">
+        <div class="saas-card-header">
+            <h3 class="saas-card-title">Quick Actions</h3>
+            <p class="text-gray-600">Get started with these popular features</p>
+        </div>
+        <div class="saas-card-content">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <a href="/search" class="flex items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
+                        <i class="fas fa-search text-blue-600"></i>
+                    </div>
+                    <div>
+                        <div class="font-semibold text-gray-800">Stock Search</div>
+                        <div class="text-sm text-gray-600">Analyze any stock</div>
+                    </div>
+                </a>
+
+                <a href="/backtest" class="flex items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                    <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mr-4">
+                        <i class="fas fa-chart-bar text-purple-600"></i>
+                    </div>
+                    <div>
+                        <div class="font-semibold text-gray-800">Backtesting</div>
+                        <div class="text-sm text-gray-600">Test strategies</div>
+                    </div>
+                </a>
+
+                <div class="flex items-center p-4 bg-gray-50 rounded-lg opacity-75 cursor-not-allowed">
+                    <div class="w-12 h-12 bg-amber-100 rounded-lg flex items-center justify-center mr-4">
+                        <i class="fas fa-users text-amber-600"></i>
+                    </div>
+                    <div>
+                        <div class="font-semibold text-gray-800 flex items-center">
+                            Peer Comparison 
+                            <i class="fas fa-lock ml-2 text-amber-500 text-xs"></i>
                         </div>
+                        <div class="text-sm text-gray-600">Compare stocks</div>
+                    </div>
+                </div>
+
+                <div class="flex items-center p-4 bg-gray-50 rounded-lg opacity-75 cursor-not-allowed">
+                    <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mr-4">
+                        <i class="fas fa-briefcase text-green-600"></i>
+                    </div>
+                    <div>
+                        <div class="font-semibold text-gray-800 flex items-center">
+                            Portfolio Tracker
+                            <i class="fas fa-lock ml-2 text-amber-500 text-xs"></i>
+                        </div>
+                        <div class="text-sm text-gray-600">Track performance</div>
                     </div>
                 </div>
             </div>
         </div>
-    </nav>
+    </div>
 
-    <div class="flex">
-        <!-- Sidebar -->
-        <aside id="sidebar" class="saas-sidebar">
-            <!-- Plan Status Card -->
-            <div class="mb-6 p-4 bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-xl">
-                <div class="flex items-center justify-between mb-2">
-                    <span class="text-sm font-semibold text-gray-700">Current Plan</span>
-                    {% if not (current_user.is_authenticated and current_user.subscription_tier != 'free') %}
-                    <span class="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-full">FREE</span>
-                    {% else %}
-                    <span class="text-xs bg-gradient-to-r from-brand-blue to-brand-purple text-white px-2 py-1 rounded-full">{{ current_user.subscription_tier.upper() }}</span>
-                    {% endif %}
+    <!-- Recent Market Updates -->
+    <div class="saas-card">
+        <div class="saas-card-header">
+            <h3 class="saas-card-title">Market Updates</h3>
+            <p class="text-gray-600">Latest insights and analysis</p>
+        </div>
+        <div class="saas-card-content">
+            <div class="space-y-4">
+                <div class="flex items-start gap-4 p-4 bg-gray-50 rounded-lg">
+                    <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-chart-line text-blue-600"></i>
+                    </div>
+                    <div>
+                        <div class="font-semibold text-gray-800 mb-1">Tech Stocks Rally</div>
+                        <p class="text-gray-600 text-sm mb-2">Major technology stocks showing strong momentum with AI sector leading gains.</p>
+                        <div class="text-xs text-gray-500">2 hours ago</div>
+                    </div>
                 </div>
-                {% if not (current_user.is_authenticated and current_user.subscription_tier != 'free') %}
-                <button onclick="showUpgradeModal()" class="w-full bg-gradient-to-r from-brand-blue to-brand-purple text-white py-2 px-4 rounded-lg text-sm font-medium hover:opacity-90 transition-opacity">
-                    Upgrade to Pro
-                </button>
-                {% endif %}
-            </div>
-            
-            <!-- Navigation Sections -->
-            <div class="saas-sidebar-section">
-                <div class="saas-sidebar-title">Overview</div>
-                <a href="/dashboard" class="saas-sidebar-link active">
-                    <i class="fas fa-chart-pie saas-sidebar-icon"></i>
-                    Dashboard
-                </a>
-                <a href="/portfolio" class="saas-sidebar-link">
-                    <i class="fas fa-wallet saas-sidebar-icon"></i>
-                    Portfolio
-                </a>
-                <a href="/watchlist" class="saas-sidebar-link">
-                    <i class="fas fa-star saas-sidebar-icon"></i>
-                    Watchlist
-                </a>
-            </div>
-            
-            <div class="saas-sidebar-section">
-                <div class="saas-sidebar-title">Analysis</div>
-                <a href="/search" class="saas-sidebar-link">
-                    <i class="fas fa-search saas-sidebar-icon"></i>
-                    Stock Search
-                </a>
-                <a href="/peer-comparison" class="saas-sidebar-link">
-                    <i class="fas fa-balance-scale saas-sidebar-icon"></i>
-                    Peer Comparison
-                    <span class="premium-indicator">
-                        <i class="fas fa-lock premium-lock-icon"></i>
-                        Pro
-                    </span>
-                </a>
-                <a href="/sector-analysis" class="saas-sidebar-link">
-                    <i class="fas fa-industry saas-sidebar-icon"></i>
-                    Sector Analysis
-                    <span class="premium-indicator">
-                        <i class="fas fa-lock premium-lock-icon"></i>
-                        Pro
-                    </span>
-                </a>
-            </div>
-            
-            <div class="saas-sidebar-section">
-                <div class="saas-sidebar-title">Tools</div>
-                <a href="/backtest" class="saas-sidebar-link">
-                    <i class="fas fa-chart-line saas-sidebar-icon"></i>
-                    Portfolio Backtesting
-                    <span class="premium-indicator">
-                        <i class="fas fa-lock premium-lock-icon"></i>
-                        Pro
-                    </span>
-                </a>
-                <a href="/scanner" class="saas-sidebar-link">
-                    <i class="fas fa-radar saas-sidebar-icon"></i>
-                    Market Scanner
-                </a>
-                <a href="/alerts" class="saas-sidebar-link">
-                    <i class="fas fa-bell saas-sidebar-icon"></i>
-                    Smart Alerts
-                </a>
-            </div>
-        </aside>
 
-        <!-- Main Content -->
-        <main class="saas-dashboard" id="main-content">
+                <div class="flex items-start gap-4 p-4 bg-gray-50 rounded-lg">
+                    <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-dollar-sign text-green-600"></i>
+                    </div>
+                    <div>
+                        <div class="font-semibold text-gray-800 mb-1">Market Analysis Complete</div>
+                        <p class="text-gray-600 text-sm mb-2">Weekly market analysis shows continued strength in key sectors.</p>
+                        <div class="text-xs text-gray-500">1 day ago</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
             <!-- Dashboard Header -->
             <div class="saas-dashboard-header">
                 <div class="flex items-center justify-between mb-2">

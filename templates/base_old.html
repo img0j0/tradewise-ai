@@ -167,129 +167,112 @@
             </div>
         </div>
     </nav>
-
-    <!-- Main Content -->
-    <main class="{% block main_class %}container mx-auto px-4 py-8{% endblock %}">
-        {% block content %}{% endblock %}
-    </main>
-
-    <!-- Modern SaaS Footer -->
-    <footer class="bg-white border-t border-gray-200 py-12 mt-20">
-        <div class="container mx-auto px-4">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-                <div class="md:col-span-2">
-                    <div class="flex items-center gap-2 mb-4">
-                        <div class="w-8 h-8 bg-gradient-to-r from-brand-blue to-brand-purple rounded-lg flex items-center justify-center">
-                            <i class="fas fa-chart-line text-white text-sm"></i>
-                        </div>
-                        <span class="text-xl font-bold text-gray-800">TradeWise AI</span>
-                    </div>
-                    <p class="text-gray-600 mb-4">Professional stock analysis platform delivering institutional-grade insights with retail-friendly pricing.</p>
-                    <div class="flex items-center gap-4">
-                        <a href="#" class="text-gray-400 hover:text-brand-blue">
-                            <i class="fab fa-twitter text-lg"></i>
-                        </a>
-                        <a href="#" class="text-gray-400 hover:text-brand-blue">
-                            <i class="fab fa-linkedin text-lg"></i>
-                        </a>
-                        <a href="#" class="text-gray-400 hover:text-brand-blue">
-                            <i class="fab fa-github text-lg"></i>
-                        </a>
-                    </div>
-                </div>
-                
-                <div>
-                    <h4 class="font-semibold text-gray-800 mb-4">Product</h4>
-                    <ul class="space-y-2">
-                        <li><a href="/search" class="text-gray-600 hover:text-brand-blue">Stock Analysis</a></li>
-                        <li><a href="/backtest" class="text-gray-600 hover:text-brand-blue">Backtesting</a></li>
-                        <li><a href="/portfolio" class="text-gray-600 hover:text-brand-blue">Portfolio Tracker</a></li>
-                        <li><a href="/premium" class="text-gray-600 hover:text-brand-blue">Premium Features</a></li>
-                    </ul>
-                </div>
-                
-                <div>
-                    <h4 class="font-semibold text-gray-800 mb-4">Support</h4>
-                    <ul class="space-y-2">
-                        <li><a href="/help" class="text-gray-600 hover:text-brand-blue">Help Center</a></li>
-                        <li><a href="/contact" class="text-gray-600 hover:text-brand-blue">Contact Us</a></li>
-                        <li><a href="/privacy" class="text-gray-600 hover:text-brand-blue">Privacy Policy</a></li>
-                        <li><a href="/terms" class="text-gray-600 hover:text-brand-blue">Terms of Service</a></li>
-                    </ul>
-                </div>
-            </div>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{{ url_for('index') }}">
+                <i class="fas fa-chart-line me-2"></i>Trading Analytics
+            </a>
             
-            <div class="border-t border-gray-200 mt-8 pt-8 text-center">
-                <p class="text-gray-600">&copy; 2025 TradeWise AI. All rights reserved.</p>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    {% if request.endpoint not in ['login', 'register'] %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="#dashboard" onclick="showSection('dashboard')">
+                            <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#stocks" onclick="showSection('stocks')">
+                            <i class="fas fa-chart-area me-1"></i>Stocks
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#alerts" onclick="showSection('alerts')">
+                            <i class="fas fa-bell me-1"></i>Alerts
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#portfolio" onclick="showSection('portfolio')">
+                            <i class="fas fa-briefcase me-1"></i>Portfolio
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#advanced" onclick="showSection('advanced')">
+                            <i class="fas fa-rocket me-1"></i>Advanced
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+                
+                <div class="navbar-nav">
+                    {% if request.endpoint not in ['login', 'register'] %}
+                    <button class="btn btn-outline-light btn-sm me-2" onclick="toggleTheme()" style="border: 2px solid rgba(255,255,255,0.8); font-weight: 600;">
+                        <i class="fas fa-moon" id="theme-icon"></i>
+                    </button>
+                    {% endif %}
+                    {% if current_user.is_authenticated %}
+                        <a class="btn btn-outline-light btn-sm" href="{{ url_for('logout') }}">
+                            <i class="fas fa-sign-out-alt me-1"></i>Logout
+                        </a>
+                    {% endif %}
+                </div>
             </div>
         </div>
-    </footer>
+    </nav>
+    {% endif %}
+    
+    <main class="container-fluid py-4">
+        {% block content %}{% endblock %}
+    </main>
+    
+    <!-- AI Team Chat Widget -->
+    {% include 'ai_team_chat_widget.html' %}
+    
 
-    <!-- Modern JavaScript -->
-    <script src="{{ url_for('static', filename='js/modern_search.js') }}?v={{ range(1000, 9999) | random }}"></script>
-    <script src="{{ url_for('static', filename='js/mobile_optimization.js') }}?v={{ range(1000, 9999) | random }}"></script>
     
-    <!-- Page-specific JavaScript -->
-    {% block extra_js %}{% endblock %}
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
-    <!-- Global Navigation JavaScript -->
+    <!-- Socket.IO for real-time updates -->
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    
+    <!-- Chart.js for advanced charting -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    
+    <!-- Inline script to handle navigation before dashboard.js loads -->
     <script>
-        // Global search functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialize global search
-            if (typeof window.SearchManager !== 'undefined') {
-                window.globalSearch = new SearchManager('global-search-input', 'global-autocomplete-results');
-                window.mobileSearch = new SearchManager('mobile-search-input', 'mobile-autocomplete-results');
+        // Define showSection early to prevent errors
+        if (typeof showSection === 'undefined') {
+            window.showSection = function(sectionName) {
+                // Store the section to show after page loads
+                window.pendingSection = sectionName;
             }
-            
-            // User menu toggle
-            const userMenuBtn = document.getElementById('user-menu-btn');
-            const userMenuDropdown = document.getElementById('user-menu-dropdown');
-            
-            if (userMenuBtn && userMenuDropdown) {
-                userMenuBtn.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    userMenuDropdown.classList.toggle('hidden');
-                });
-                
-                document.addEventListener('click', function() {
-                    userMenuDropdown.classList.add('hidden');
-                });
-            }
-            
-            // Mobile menu toggle
-            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-            const mobileMenu = document.getElementById('mobile-menu');
-            
-            if (mobileMenuBtn && mobileMenu) {
-                mobileMenuBtn.addEventListener('click', function() {
-                    mobileMenu.classList.toggle('hidden');
-                });
-            }
-            
-            // Theme toggle
-            const themeToggle = document.getElementById('theme-toggle');
-            if (themeToggle) {
-                themeToggle.addEventListener('click', function() {
-                    const html = document.documentElement;
-                    const currentTheme = html.getAttribute('data-theme');
-                    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-                    
-                    html.setAttribute('data-theme', newTheme);
-                    localStorage.setItem('theme', newTheme);
-                    
-                    // Update icon
-                    const icon = themeToggle.querySelector('i');
-                    icon.className = newTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
-                });
-                
-                // Load saved theme
-                const savedTheme = localStorage.getItem('theme') || 'light';
-                document.documentElement.setAttribute('data-theme', savedTheme);
-                const icon = themeToggle.querySelector('i');
-                icon.className = savedTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
-            }
-        });
+        }
     </script>
+    
+    <!-- Core application scripts -->
+    <script src="{{ url_for('static', filename='js/micro_interactions_simple.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/notifications.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/analytics.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/mobile_optimization.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/iphone_optimization.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/advanced_chart.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/realtime_updates.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/portfolio_analytics.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/smart_assistant.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/error_recovery.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/init.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/ai_stock_search.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/ai_autocomplete_enhanced.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/premium.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/ai_team_chat.js') }}"></script>
+    
+    <!-- Scripts -->
+    {% block scripts %}{% endblock %}
 </body>
 </html>

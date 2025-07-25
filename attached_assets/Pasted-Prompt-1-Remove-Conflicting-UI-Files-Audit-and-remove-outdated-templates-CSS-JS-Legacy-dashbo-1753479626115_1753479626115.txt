@@ -1,0 +1,87 @@
+Prompt:
+
+1. Remove Conflicting UI Files
+Audit and remove outdated templates & CSS/JS:
+
+Legacy dashboards: desktop_dashboard.html, simple_main.html, test_clean.html, test_simple.html.
+
+Legacy premium upgrade templates: premium_upgrade.html (keep premium_upgrade_new.html).
+
+Redundant search templates: clean_chatgpt_search.html, ai_demo.html, robot_fixed_v2.html.
+
+Old CSS: style.css, layout_fix.css, text_readability_fix.css, institutional_ui_optimization.css, and duplicates in .gz.
+
+Legacy JS: ai_stock_search.js, ai_stock_search_clean.js, ai_stock_search_optimized.js (consolidate into one modern search JS).
+
+Keep only one core CSS theme: modern_saas_theme.css and clean up unused selectors.
+
+2. Unified Modern SaaS Design
+Standardize all pages with base.html layout:
+
+NavBar: SignalStackDev branding, plan status, upgrade button, user menu.
+
+Footer: Consistent links and social icons.
+
+Update templates:
+
+Dashboard → use modern_dashboard.html as the base.
+
+Search → use modern_search.html and integrate improved search UI.
+
+Backtesting → use modern_backtest.html.
+
+Premium Upgrade → keep premium_upgrade_new.html.
+
+Ensure all pages use the modern SaaS theme (modern_saas_theme.css) and Tailwind-like utility classes for consistency.
+
+3. Enhanced Search Experience
+Replace current search logic with intuitive, fuzzy search:
+
+Support partial matches, company names, symbols, and typos (use RapidFuzz or similar).
+
+Autocomplete dropdown:
+
+Show symbol, company name, sector with logos if available.
+
+AI-powered relevance ranking (reuse premium_search_engine.py).
+
+Keyboard navigation (arrow keys, Enter).
+
+Cache popular queries in Redis for <100ms responses.
+
+Frontend:
+
+Single JS file modern_search.js for all search functionality.
+
+Replace all old search CSS with enhanced_search.css.
+
+Integrate search bar into NavBar across all pages.
+
+4. Premium Indicators & Upgrade Flow
+Consistently mark Pro/Enterprise-only features with lock icons + tooltip.
+
+Free users who click premium features → modal with preview & upgrade CTA.
+
+Direct Free → Pro/Enterprise upgrades flow to premium_upgrade_new.html.
+
+5. Mobile-Responsive & UX Enhancements
+Use modern_saas_theme.css + Flex/Grid layouts for full mobile responsiveness.
+
+Collapsible sidebar/dashboard for smaller screens.
+
+Dark mode toggle in NavBar.
+
+6. Deliverables
+One clean, unified UI system:
+
+Updated templates: base.html, modern_dashboard.html, modern_search.html, modern_backtest.html, premium_upgrade_new.html, account_settings.html, billing/*.
+
+CSS: modern_saas_theme.css only (remove unused styles).
+
+JS: modern_dashboard.js, modern_search.js, modern_backtest.js.
+
+Enhanced search working with accurate autocomplete.
+
+Removed all redundant templates, CSS, and JS files.
+
+Complete regression test to ensure no functionality is broken.

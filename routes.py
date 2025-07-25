@@ -164,16 +164,16 @@ def health_check():
 
 @main_bp.route('/')
 def index():
-    """Enhanced AI Analysis Platform with Professional Search Interface"""
+    """Modern SaaS Dashboard - Main Entry Point"""
     try:
-        response = make_response(render_template('clean_chatgpt_search.html'))
+        response = make_response(render_template('modern_dashboard.html'))
         response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
         response.headers['Pragma'] = 'no-cache'
         response.headers['Expires'] = '0'
         return response
     except Exception as e:
-        logger.error(f"Error loading enhanced search interface: {e}")
-        return jsonify({'error': 'Enhanced search interface loading error'}), 500
+        logger.error(f"Error loading dashboard: {e}")
+        return jsonify({'error': 'Dashboard loading error'}), 500
 
 @main_bp.route('/strategy-demo')
 def strategy_demo():
