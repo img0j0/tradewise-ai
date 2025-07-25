@@ -1,0 +1,38 @@
+Systematically review and improve the IntelliTrader (TradeWise AI) application for security, structure, and production readiness. Follow these tasks step-by-step:
+
+1. App Flow & Endpoint Documentation
+	•	Analyze app.py and main.py to confirm the Flask initialization process.
+	•	Document all registered Blueprints and how they are loaded.
+	•	Map all endpoints from:
+	•	routes.py
+	•	premium_routes.py
+	•	routes_enhanced_search.py
+	•	Output a clear list of each endpoint with HTTP method(s) and authentication requirements.
+
+2. Premium & Security Enhancements
+	•	Secure sessions: Ensure SESSION_COOKIE_SECURE = True and SESSION_COOKIE_SAMESITE = 'Lax' (or Strict) in production.
+	•	Validate that all premium endpoints are decorated with @premium_required.
+	•	Remove duplicate premium endpoints from routes.py (keep only in premium_routes.py).
+	•	Confirm Stripe webhooks (if used) have proper signature verification with stripe.Webhook.construct_event. If missing, implement it in payment_processor.py.
+
+3. Remove Redundant Files
+	•	Delete or archive:
+	•	routes_search_enhancement.py (legacy duplicate of routes_enhanced_search.py).
+	•	test_advanced_search.html (unused test template).
+	•	Scan for other orphaned modules or unused imports.
+
+4. AI & Data Modules Validation
+	•	Validate ai_insights.py, intelligent_stock_analyzer.py, technical_indicators.py for errors and unused code.
+	•	Ensure that models trained in AIInsightsEngine and AIStrategyBuilder are persisted (e.g., saved to disk or database) so they are not lost on restart.
+
+5. Payment System Hardening
+	•	Review payment_processor.py to confirm proper error handling and secure redirect URLs.
+	•	Ensure users can only mark subscriptions active after Stripe confirms payment (no manual flagging).
+
+6. Documentation & Output
+	•	Generate a final report with:
+	•	Full endpoint map.
+	•	Issues found and fixed.
+	•	Security improvements made (sessions, Stripe, premium access).
+	•	Files removed or cleaned up.
+	•	Automatically apply all fixes and push updated code.
