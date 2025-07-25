@@ -29,6 +29,14 @@ ai_engine = AIInsightsEngine()
 # Create main blueprint
 main_bp = Blueprint('main', __name__)
 
+@main_bp.route('/login', methods=['GET', 'POST'])
+def login():
+    """Basic login page for Flask-Login compatibility"""
+    if request.method == 'POST':
+        # Handle basic login logic here if needed
+        return redirect(url_for('main.index'))
+    return render_template('login.html')
+
 # Simple demo watchlist for stock analysis tracking
 demo_watchlist = set(['AAPL', 'TSLA', 'GOOGL', 'MSFT', 'NVDA'])
 

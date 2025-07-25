@@ -125,7 +125,7 @@ threading.Thread(target=initialize_optimization_services, daemon=True).start()
 # Initialize Flask-Login
 login_manager = LoginManager()
 login_manager.init_app(app)
-login_manager.login_view = 'login_page'  # type: ignore
+login_manager.login_view = 'main.login'  # type: ignore
 login_manager.login_message = 'Please log in to access this page.'
 
 @login_manager.user_loader
@@ -152,6 +152,10 @@ with app.app_context():
     app.register_blueprint(oauth_bp)
     app.register_blueprint(twofa_bp)
     
+    # Register missing API endpoints
+    from missing_api_endpoints import missing_api_bp
+    app.register_blueprint(missing_api_bp)
+    
     # Initialize OAuth blueprints
     try:
         create_oauth_blueprints(app)
@@ -166,6 +170,10 @@ with app.app_context():
         logging.info("Billing system initialized successfully")
     except Exception as e:
         logging.warning(f"Billing initialization failed: {e}")
+    
+    # Add security headers
+    from security_headers import add_security_headers
+    add_security_headers(app)
     
     # Global error handlers for professional error pages
     @app.errorhandler(404)

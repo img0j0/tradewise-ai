@@ -55,8 +55,8 @@ class User(UserMixin, db.Model):
     watchlists = db.Column(db.Text)
     
     # Relationships
-    team = db.relationship('Team', back_populates='members', lazy='select')
-    team_invitations = db.relationship('TeamInvitation', back_populates='user', lazy='select')
+    team = db.relationship('Team', foreign_keys=[team_id], back_populates='members', lazy='select')
+    team_invitations = db.relationship('TeamInvitation', foreign_keys='TeamInvitation.user_id', back_populates='user', lazy='select')
     subscription_history = db.relationship('SubscriptionHistory', back_populates='user', lazy='select')
     
     def set_password(self, password):
@@ -283,7 +283,7 @@ class Team(db.Model):
             'created_at': self.created_at.isoformat(),
             'owner_id': self.owner_id,
             'max_seats': self.max_seats,
-            'current_members': len(self.members) if hasattr(self, '_members_loaded') and self.members else 0
+            'current_members': User.query.filter_by(team_id=self.id).count()
         }
     
     def can_add_member(self):

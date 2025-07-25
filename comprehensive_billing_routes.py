@@ -207,6 +207,8 @@ def api_get_plans():
         plans_data = []
         for plan in plans:
             plan_data = plan.to_dict()
+            # Ensure name field is present
+            plan_data['name'] = plan.plan_name or 'unknown'
             plan_data['is_current'] = current_user.is_authenticated and current_user.plan_type == plan.plan_name
             plans_data.append(plan_data)
         

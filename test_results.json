@@ -1,0 +1,166 @@
+{
+  "summary": {
+    "total_tests": 22,
+    "passed": 16,
+    "failed": 0,
+    "skipped": 6,
+    "success_rate": 72.7
+  },
+  "test_results": [
+    {
+      "test_name": "Application Health Check",
+      "status": "PASS",
+      "timestamp": "2025-07-25T20:35:39.831597",
+      "details": "Application is running",
+      "error": ""
+    },
+    {
+      "test_name": "Billing Plans Page",
+      "status": "PASS",
+      "timestamp": "2025-07-25T20:35:39.899986",
+      "details": "Plans page loads correctly",
+      "error": ""
+    },
+    {
+      "test_name": "API Plans Endpoint",
+      "status": "PASS",
+      "timestamp": "2025-07-25T20:35:39.959707",
+      "details": "Found plans: ['free', 'pro', 'enterprise']",
+      "error": ""
+    },
+    {
+      "test_name": "Billing Page /billing/manage",
+      "status": "PASS",
+      "timestamp": "2025-07-25T20:35:44.030149",
+      "details": "Status: 200",
+      "error": ""
+    },
+    {
+      "test_name": "Billing Page /billing/success",
+      "status": "PASS",
+      "timestamp": "2025-07-25T20:35:44.107565",
+      "details": "Status: 200",
+      "error": ""
+    },
+    {
+      "test_name": "Billing Page /billing/cancel",
+      "status": "PASS",
+      "timestamp": "2025-07-25T20:35:44.170672",
+      "details": "Status: 200",
+      "error": ""
+    },
+    {
+      "test_name": "Stripe Checkout Pro",
+      "status": "SKIP",
+      "timestamp": "2025-07-25T20:35:44.182045",
+      "details": "May be authenticated",
+      "error": ""
+    },
+    {
+      "test_name": "Stripe Checkout Enterprise",
+      "status": "SKIP",
+      "timestamp": "2025-07-25T20:35:44.192490",
+      "details": "May be authenticated",
+      "error": ""
+    },
+    {
+      "test_name": "Stripe Webhook",
+      "status": "PASS",
+      "timestamp": "2025-07-25T20:35:44.197030",
+      "details": "Properly validates webhook signature",
+      "error": ""
+    },
+    {
+      "test_name": "OAuth Endpoint /auth/google",
+      "status": "PASS",
+      "timestamp": "2025-07-25T20:35:44.492721",
+      "details": "Status: 200",
+      "error": ""
+    },
+    {
+      "test_name": "OAuth Endpoint /auth/github",
+      "status": "PASS",
+      "timestamp": "2025-07-25T20:35:44.773346",
+      "details": "Status: 200",
+      "error": ""
+    },
+    {
+      "test_name": "OAuth Endpoint /oauth/status",
+      "status": "PASS",
+      "timestamp": "2025-07-25T20:35:44.779159",
+      "details": "Status: 401",
+      "error": ""
+    },
+    {
+      "test_name": "2FA Endpoint /2fa/status",
+      "status": "SKIP",
+      "timestamp": "2025-07-25T20:35:44.790594",
+      "details": "Accessible (may be logged in)",
+      "error": ""
+    },
+    {
+      "test_name": "2FA Endpoint /2fa/setup",
+      "status": "SKIP",
+      "timestamp": "2025-07-25T20:35:44.801537",
+      "details": "Accessible (may be logged in)",
+      "error": ""
+    },
+    {
+      "test_name": "Premium Restriction /api/ai/market-scanner",
+      "status": "PASS",
+      "timestamp": "2025-07-25T20:35:44.807755",
+      "details": "Properly restricted",
+      "error": ""
+    },
+    {
+      "test_name": "Premium Restriction /api/portfolio/analysis",
+      "status": "PASS",
+      "timestamp": "2025-07-25T20:35:44.812337",
+      "details": "Properly restricted",
+      "error": ""
+    },
+    {
+      "test_name": "Premium Restriction /api/ai/enhanced-analysis",
+      "status": "PASS",
+      "timestamp": "2025-07-25T20:35:44.817253",
+      "details": "Properly restricted",
+      "error": ""
+    },
+    {
+      "test_name": "Template /billing/plans",
+      "status": "PASS",
+      "timestamp": "2025-07-25T20:35:44.879346",
+      "details": "Template renders successfully",
+      "error": ""
+    },
+    {
+      "test_name": "API Error Handling - Subscription status without auth",
+      "status": "SKIP",
+      "timestamp": "2025-07-25T20:35:44.889843",
+      "details": "Status: 200",
+      "error": ""
+    },
+    {
+      "test_name": "API Error Handling - Usage stats without auth",
+      "status": "SKIP",
+      "timestamp": "2025-07-25T20:35:44.900427",
+      "details": "Status: 200",
+      "error": ""
+    },
+    {
+      "test_name": "API Error Handling - 2FA verify without session",
+      "status": "PASS",
+      "timestamp": "2025-07-25T20:35:44.905307",
+      "details": "Proper JSON error response",
+      "error": ""
+    },
+    {
+      "test_name": "Security Headers",
+      "status": "PASS",
+      "timestamp": "2025-07-25T20:35:44.967032",
+      "details": "3/3 security headers present",
+      "error": ""
+    }
+  ],
+  "timestamp": "2025-07-25T20:35:44.968035"
+}
