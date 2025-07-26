@@ -725,6 +725,8 @@
 
         let autocompleteTimeout;
         let selectedIndex = -1;
+        let selectedSuggestionIndex = -1;
+        let currentSuggestions = [];
 
         function normalizeQuery(query) {
             return query.toUpperCase().trim();
@@ -745,9 +747,67 @@
             }
 
             autocompleteTimeout = setTimeout(() => {
-                const suggestions = getSuggestions(query);
-                displaySuggestions(suggestions);
+                fetchEnhancedAutocomplete(query);
             }, 200);
+        }
+        
+        function fetchEnhancedAutocomplete(query) {
+            const dropdown = document.getElementById('autocompleteDropdown');
+            dropdown.innerHTML = `
+                <div class="autocomplete-loading">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <span>Searching with smart matching...</span>
+                </div>
+            `;
+            dropdown.style.display = 'block';
+            
+            // Use enhanced fuzzy autocomplete endpoint
+            fetch(`/api/search/autocomplete-enhanced?q=${encodeURIComponent(query)}&limit=6`)
+                .then(response => response.json())
+                .then(data => {
+                    displayEnhancedAutocomplete(data, query);
+                })
+                .catch(error => {
+                    console.error('Enhanced autocomplete error:', error);
+                    // Fallback to basic suggestions
+                    const suggestions = getSuggestions(query);
+                    displaySuggestions(suggestions);
+                });
+        }
+
+        function displayEnhancedAutocomplete(data, query) {
+            const dropdown = document.getElementById('autocompleteDropdown');
+            selectedSuggestionIndex = -1;
+            currentSuggestions = data.suggestions || [];
+            
+            if (!data.success || currentSuggestions.length === 0) {
+                dropdown.innerHTML = '<div class="autocomplete-no-results">No matches found. Try a different search term.</div>';
+                return;
+            }
+            
+            const suggestionsHTML = currentSuggestions.map((stock, index) => `
+                <div class="autocomplete-item" data-index="${index}" onclick="selectSuggestion('${stock.symbol}')">
+                    <div class="autocomplete-logo">${stock.logo || '📈'}</div>
+                    <div class="autocomplete-content">
+                        <div class="autocomplete-header">
+                            <span class="autocomplete-symbol">${stock.symbol}</span>
+                            <span class="autocomplete-name">${stock.name}</span>
+                        </div>
+                        <div class="autocomplete-meta">
+                            <span class="autocomplete-sector">${stock.sector}</span>
+                            ${stock.match_score ? `<span class="match-score">${stock.match_score}% match</span>` : ''}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            
+            dropdown.innerHTML = suggestionsHTML + `
+                <div class="keyboard-hint">
+                    <span class="key-indicator">↑↓</span> Navigate
+                    <span class="key-indicator">Enter</span> Select
+                    <span class="key-indicator">Esc</span> Close
+                </div>
+            `;
         }
 
         function getSuggestions(query) {
@@ -783,9 +843,58 @@
             hideAutocomplete();
             searchStock({ preventDefault: () => {} });
         }
+        
+        // Enhanced keyboard navigation
+        function handleKeyboardNavigation(event) {
+            const dropdown = document.getElementById('autocompleteDropdown');
+            if (dropdown.style.display === 'none' || !currentSuggestions || currentSuggestions.length === 0) return;
+            
+            const items = dropdown.querySelectorAll('.autocomplete-item');
+            
+            switch(event.key) {
+                case 'ArrowDown':
+                    event.preventDefault();
+                    selectedSuggestionIndex = Math.min(selectedSuggestionIndex + 1, items.length - 1);
+                    updateSelectedItem(items);
+                    break;
+                    
+                case 'ArrowUp':
+                    event.preventDefault();
+                    selectedSuggestionIndex = Math.max(selectedSuggestionIndex - 1, -1);
+                    updateSelectedItem(items);
+                    break;
+                    
+                case 'Enter':
+                    event.preventDefault();
+                    if (selectedSuggestionIndex >= 0 && items[selectedSuggestionIndex] && currentSuggestions[selectedSuggestionIndex]) {
+                        const symbol = currentSuggestions[selectedSuggestionIndex].symbol;
+                        selectSuggestion(symbol);
+                    } else {
+                        searchStock(event);
+                    }
+                    break;
+                    
+                case 'Escape':
+                    hideAutocomplete();
+                    break;
+            }
+        }
+
+        function updateSelectedItem(items) {
+            // Remove previous selection
+            items.forEach(item => item.classList.remove('selected'));
+            
+            // Add selection to current item
+            if (selectedSuggestionIndex >= 0 && items[selectedSuggestionIndex]) {
+                items[selectedSuggestionIndex].classList.add('selected');
+                items[selectedSuggestionIndex].scrollIntoView({ block: 'nearest' });
+            }
+        }
 
         function hideAutocomplete() {
             document.getElementById('autocompleteDropdown').style.display = 'none';
+            selectedSuggestionIndex = -1;
+            currentSuggestions = [];
         }
 
         function hideAutocompleteDelayed() {
@@ -798,20 +907,34 @@
             let query = document.getElementById('stockQuery').value.trim();
             if (!query) return;
             
-            // Map company name to symbol if needed
-            const mappedSymbol = mapSymbol(query);
-            console.log(`Original query: "${query}" -> Mapped symbol: "${mappedSymbol}"`);
-            
             // Show loading state
             document.getElementById('loadingState').style.display = 'block';
             document.getElementById('resultsContainer').style.display = 'none';
             hideAutocomplete();
             
             try {
-                console.log('Sending analysis request for:', mappedSymbol);
+                // First try fuzzy search to get the correct symbol
+                console.log('Searching with fuzzy matching:', query);
+                
+                const fuzzyResponse = await fetch(`/api/search/fuzzy?q=${encodeURIComponent(query)}&limit=1`);
+                const fuzzyData = await fuzzyResponse.json();
+                
+                let symbolToAnalyze = query;
+                
+                // If fuzzy search found a match, use that symbol
+                if (fuzzyData.success && fuzzyData.results && fuzzyData.results.length > 0) {
+                    symbolToAnalyze = fuzzyData.results[0].symbol;
+                    console.log('Fuzzy search mapped "' + query + '" to "' + symbolToAnalyze + '"');
+                } else {
+                    // Fall back to basic symbol mapping
+                    symbolToAnalyze = mapSymbol(query);
+                    console.log('No fuzzy match, using basic mapping: "' + query + '" -> "' + symbolToAnalyze + '"');
+                }
+                
+                console.log('Sending analysis request for:', symbolToAnalyze);
                 
                 // Use direct analysis for immediate results
-                const response = await fetch(`/api/stock-analysis-direct/${mappedSymbol}`);
+                const response = await fetch(`/api/stock-analysis-direct/${symbolToAnalyze}`);
                 
                 console.log('Response status:', response.status);
                 
