@@ -1,180 +1,518 @@
-{% extends "base_new.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upgrade to Pro - TradeWise AI</title>
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-{% block title %}Upgrade to Pro - TradeWise AI{% endblock %}
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f5f5f7;
+            color: #1d1d1f;
+        }
 
-{% block extra_css %}
-<style>
-.pricing-card {
-    background: var(--surface);
-    border: 2px solid var(--gray-200);
-    border-radius: var(--radius-xl);
-    padding: 2rem;
-    position: relative;
-    transition: all 0.3s ease;
-}
+        /* Navigation Bar - Match Dashboard */
+        .navbar {
+            background-color: #1d3557;
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
 
-.pricing-card.popular {
-    border-color: var(--premium-500);
-    box-shadow: 0 0 0 4px rgb(168 85 247 / 0.1);
-}
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
 
-.pricing-card:hover {
-    box-shadow: var(--shadow-xl);
-    transform: translateY(-4px);
-}
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            color: white;
+        }
 
-.popular-badge {
-    position: absolute;
-    top: -12px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: linear-gradient(135deg, var(--premium-500), var(--secondary-500));
-    color: white;
-    padding: 0.5rem 1.5rem;
-    border-radius: var(--radius-full);
-    font-size: var(--font-size-sm);
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-}
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
 
-.plan-price {
-    font-size: 3rem;
-    font-weight: 800;
-    line-height: 1;
-    background: linear-gradient(135deg, var(--premium-600), var(--secondary-600));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+        }
 
-.plan-period {
-    color: var(--gray-500);
-    font-size: var(--font-size-lg);
-}
+        .nav-links a:hover {
+            opacity: 0.8;
+        }
 
-.feature-list {
-    list-style: none;
-    padding: 0;
-    margin: 2rem 0;
-}
+        /* Container - Match Dashboard Style */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
 
-.feature-list li {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-    padding: var(--space-3) 0;
-    border-bottom: 1px solid var(--gray-100);
-}
+        .header-section {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
 
-.feature-list li:last-child {
-    border-bottom: none;
-}
+        .header-section h1 {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #1d1d1f;
+            margin-bottom: 1rem;
+        }
 
-.feature-icon {
-    width: 1.5rem;
-    height: 1.5rem;
-    border-radius: var(--radius-md);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-}
+        .header-section p {
+            font-size: 1.25rem;
+            color: #6c6c70;
+            max-width: 600px;
+            margin: 0 auto;
+        }
 
-.feature-icon.included {
-    background: var(--success-100);
-    color: var(--success-600);
-}
+        /* Pricing Cards - Apple Style */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
 
-.feature-icon.excluded {
-    background: var(--gray-100);
-    color: var(--gray-400);
-}
+        .pricing-card {
+            background: white;
+            border-radius: 16px;
+            padding: 2.5rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            position: relative;
+            border: 1px solid #e5e5ea;
+        }
 
-.testimonial-card {
-    background: var(--gray-50);
-    border-radius: var(--radius-lg);
-    padding: 2rem;
-    text-align: center;
-}
+        .pricing-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+        }
 
-.testimonial-author {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: var(--space-3);
-    margin-top: 1.5rem;
-}
+        .pricing-card.popular {
+            border: 2px solid #007aff;
+            box-shadow: 0 4px 20px rgba(0,122,255,0.2);
+        }
 
-.author-avatar {
-    width: 3rem;
-    height: 3rem;
-    border-radius: var(--radius-full);
-    background: linear-gradient(135deg, var(--primary-500), var(--secondary-500));
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-weight: 600;
-}
+        .popular-badge {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #007aff, #5856d6);
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
 
-.faq-item {
-    border-bottom: 1px solid var(--gray-200);
-    padding: var(--space-4) 0;
-}
+        .plan-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
 
-.faq-question {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    cursor: pointer;
-    font-weight: 600;
-    color: var(--gray-900);
-}
+        .plan-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1d1d1f;
+            margin-bottom: 0.5rem;
+        }
 
-.faq-answer {
-    margin-top: var(--space-3);
-    color: var(--gray-600);
-    line-height: 1.6;
-    display: none;
-}
+        .plan-price {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #1d1d1f;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
 
-.faq-answer.open {
-    display: block;
-}
+        .plan-period {
+            color: #6c6c70;
+            font-size: 1.125rem;
+        }
 
-.faq-toggle {
-    transition: transform 0.3s ease;
-}
+        .plan-description {
+            color: #6c6c70;
+            margin-top: 1rem;
+            font-size: 1rem;
+        }
 
-.faq-toggle.open {
-    transform: rotate(180deg);
-}
-</style>
-{% endblock %}
+        /* Feature List - Clean Style */
+        .feature-list {
+            list-style: none;
+            padding: 0;
+            margin: 2rem 0;
+        }
 
-{% block content %}
-<!-- Hero Section -->
-<div class="text-center py-16">
-    <h1 class="text-display mb-4">Choose Your Plan</h1>
-    <p class="text-body-large text-gray-600 max-w-2xl mx-auto">
-        Unlock the full power of TradeWise AI with institutional-grade analysis tools and advanced features
-    </p>
-</div>
+        .feature-list li {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
 
-<!-- Pricing Cards -->
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-6xl mx-auto mb-16">
-    <!-- Free Plan -->
-    <div class="pricing-card">
-        <div class="text-center mb-6">
-            <h3 class="text-title mb-2">Free</h3>
-            <div class="plan-price">$0</div>
-            <div class="plan-period">forever</div>
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
+
+        .feature-icon {
+            width: 1.5rem;
+            height: 1.5rem;
+            color: #34c759;
+            flex-shrink: 0;
+        }
+
+        .feature-text {
+            font-size: 1rem;
+            color: #1d1d1f;
+            line-height: 1.4;
+        }
+
+        /* Action Buttons - Apple Style */
+        .action-btn {
+            width: 100%;
+            background: #007aff;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-size: 1.125rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            text-decoration: none;
+            text-align: center;
+            display: block;
+            margin-top: 2rem;
+        }
+
+        .action-btn:hover {
+            background: #0051d5;
+        }
+
+        .action-btn.secondary {
+            background: #f5f5f7;
+            color: #1d1d1f;
+            border: 1px solid #e5e5ea;
+        }
+
+        .action-btn.secondary:hover {
+            background: #e5e5ea;
+        }
+
+        /* FAQ Section */
+        .faq-section {
+            margin-top: 5rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .faq-title {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 600;
+            color: #1d1d1f;
+            margin-bottom: 3rem;
+        }
+
+        .faq-item {
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+            border: 1px solid #e5e5ea;
+        }
+
+        .faq-question {
+            padding: 1.5rem;
+            background: white;
+            border: none;
+            width: 100%;
+            text-align: left;
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #1d1d1f;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .faq-answer {
+            padding: 0 1.5rem 1.5rem;
+            color: #6c6c70;
+            line-height: 1.6;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 2rem 1rem;
+            }
+            
+            .header-section h1 {
+                font-size: 2rem;
+            }
+            
+            .pricing-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .navbar {
+                padding: 1rem;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <div class="navbar">
+        <div class="nav-left">
+            <a href="/" class="logo">
+                <i class="fas fa-chart-line"></i>
+                TradeWise AI
+            </a>
+            <ul class="nav-links">
+                <li><a href="/dashboard">Dashboard</a></li>
+                <li><a href="/search">Search</a></li>
+                <li><a href="/premium/upgrade">Upgrade</a></li>
+            </ul>
         </div>
-        
-        <ul class="feature-list">
-            <li>
-                <div class="feature-icon included">
+        <div class="nav-right">
+            <a href="/dashboard" class="action-btn secondary" style="display: inline-block; padding: 0.5rem 1rem; margin-top: 0;">
+                Back to Dashboard
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Header Section -->
+        <div class="header-section">
+            <h1>Upgrade to Pro</h1>
+            <p>Unlock advanced trading insights and institutional-grade analysis tools to enhance your investment strategy.</p>
+        </div>
+
+        <!-- Pricing Cards -->
+        <div class="pricing-grid">
+            <!-- Free Plan -->
+            <div class="pricing-card">
+                <div class="plan-header">
+                    <div class="plan-name">Free</div>
+                    <div class="plan-price">$0</div>
+                    <div class="plan-period">forever</div>
+                    <div class="plan-description">Perfect for getting started with basic stock analysis</div>
+                </div>
+                
+                <ul class="feature-list">
+                    <li>
+                        <i class="fas fa-check feature-icon"></i>
+                        <span class="feature-text">5 stock analyses per day</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check feature-icon"></i>
+                        <span class="feature-text">Basic AI insights</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check feature-icon"></i>
+                        <span class="feature-text">Real-time stock data</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check feature-icon"></i>
+                        <span class="feature-text">Strategy personalization</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check feature-icon"></i>
+                        <span class="feature-text">Email support</span>
+                    </li>
+                </ul>
+                
+                <a href="/dashboard" class="action-btn secondary">Current Plan</a>
+            </div>
+
+            <!-- Pro Plan -->
+            <div class="pricing-card popular">
+                <div class="popular-badge">Most Popular</div>
+                <div class="plan-header">
+                    <div class="plan-name">Pro</div>
+                    <div class="plan-price">$29.99</div>
+                    <div class="plan-period">per month</div>
+                    <div class="plan-description">Advanced features for serious investors and traders</div>
+                </div>
+                
+                <ul class="feature-list">
+                    <li>
+                        <i class="fas fa-check feature-icon"></i>
+                        <span class="feature-text">Unlimited stock analyses</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check feature-icon"></i>
+                        <span class="feature-text">Advanced AI insights & predictions</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check feature-icon"></i>
+                        <span class="feature-text">Portfolio optimization</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check feature-icon"></i>
+                        <span class="feature-text">Smart alerts & notifications</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check feature-icon"></i>
+                        <span class="feature-text">Market scanner</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check feature-icon"></i>
+                        <span class="feature-text">Advanced technical analysis</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check feature-icon"></i>
+                        <span class="feature-text">Priority support</span>
+                    </li>
+                </ul>
+                
+                <a href="/create-checkout-session" class="action-btn">Upgrade to Pro</a>
+            </div>
+
+            <!-- Enterprise Plan -->
+            <div class="pricing-card">
+                <div class="plan-header">
+                    <div class="plan-name">Enterprise</div>
+                    <div class="plan-price">$99.99</div>
+                    <div class="plan-period">per month</div>
+                    <div class="plan-description">For teams and institutional investors</div>
+                </div>
+                
+                <ul class="feature-list">
+                    <li>
+                        <i class="fas fa-check feature-icon"></i>
+                        <span class="feature-text">Everything in Pro</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check feature-icon"></i>
+                        <span class="feature-text">Team management (up to 10 users)</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check feature-icon"></i>
+                        <span class="feature-text">API access</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check feature-icon"></i>
+                        <span class="feature-text">Custom reporting</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check feature-icon"></i>
+                        <span class="feature-text">White-label options</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check feature-icon"></i>
+                        <span class="feature-text">Dedicated account manager</span>
+                    </li>
+                </ul>
+                
+                <a href="mailto:support@tradewise.ai" class="action-btn">Contact Sales</a>
+            </div>
+        </div>
+
+        <!-- FAQ Section -->
+        <div class="faq-section">
+            <h2 class="faq-title">Frequently Asked Questions</h2>
+            
+            <div class="faq-item">
+                <button class="faq-question">
+                    Can I cancel anytime?
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="faq-answer">
+                    Yes, you can cancel your subscription at any time. You'll continue to have access to Pro features until the end of your current billing period.
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <button class="faq-question">
+                    Is my financial data secure?
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="faq-answer">
+                    Absolutely. We use bank-grade encryption and never store your brokerage credentials. All data is processed securely and in compliance with financial privacy regulations.
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <button class="faq-question">
+                    Do you offer a free trial?
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="faq-answer">
+                    Our Free plan gives you access to basic features forever. You can upgrade to Pro at any time to unlock advanced features.
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <button class="faq-question">
+                    What payment methods do you accept?
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="faq-answer">
+                    We accept all major credit cards and debit cards through our secure Stripe payment processor.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // FAQ toggle functionality
+        document.querySelectorAll('.faq-question').forEach(button => {
+            button.addEventListener('click', () => {
+                const answer = button.nextElementSibling;
+                const icon = button.querySelector('.fa-chevron-down');
+                
+                if (answer.style.display === 'block') {
+                    answer.style.display = 'none';
+                    icon.style.transform = 'rotate(0deg)';
+                } else {
+                    answer.style.display = 'block';
+                    icon.style.transform = 'rotate(180deg)';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+        }
                     <i class="fas fa-check"></i>
                 </div>
                 <span>Basic stock search</span>
