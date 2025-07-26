@@ -93,8 +93,13 @@
             margin-bottom: 2rem;
         }
 
-        .search-input {
+        .search-input-container {
             flex: 1;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
             padding: 1rem;
             border: 2px solid #e5e5ea;
             border-radius: 12px;
@@ -232,6 +237,72 @@
             text-align: center;
         }
 
+        /* Autocomplete Styles */
+        .autocomplete-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #e5e5e7;
+            border-radius: 0 0 12px 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            z-index: 1000;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .autocomplete-item {
+            padding: 12px 16px;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: background-color 0.2s ease;
+        }
+
+        .autocomplete-item:hover,
+        .autocomplete-item.selected {
+            background-color: #f8f9fa;
+        }
+
+        .autocomplete-item:last-child {
+            border-bottom: none;
+        }
+
+        .autocomplete-symbol {
+            font-weight: bold;
+            color: #1d3557;
+            min-width: 60px;
+        }
+
+        .autocomplete-name {
+            color: #6c6c70;
+            flex: 1;
+        }
+
+        .autocomplete-sector {
+            font-size: 0.8rem;
+            color: #999;
+            background: #f0f0f0;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .autocomplete-loading {
+            padding: 16px;
+            text-align: center;
+            color: #6c6c70;
+        }
+
+        .autocomplete-no-results {
+            padding: 16px;
+            text-align: center;
+            color: #999;
+            font-style: italic;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .search-container {
@@ -286,13 +357,25 @@
         </div>
 
         <form class="search-form" onsubmit="searchStock(event)">
-            <input 
-                type="text" 
-                class="search-input" 
-                id="stockQuery"
-                placeholder="Enter stock symbol (AAPL) or company name (Apple)"
-                required
-            >
+            <div class="search-input-container">
+                <input 
+                    type="text" 
+                    class="search-input" 
+                    id="stockQuery"
+                    placeholder="Enter stock symbol (AAPL) or company name (Apple Inc)"
+                    autocomplete="off"
+                    oninput="showAutocomplete(this.value)"
+                    onfocus="showAutocomplete(this.value)"
+                    onblur="hideAutocompleteDelayed()"
+                    required
+                >
+                <!-- Autocomplete Dropdown -->
+                <div id="autocompleteDropdown" class="autocomplete-dropdown" style="display: none;">
+                    <div class="autocomplete-loading">
+                        <i class="fas fa-spinner fa-spin"></i> Searching...
+                    </div>
+                </div>
+            </div>
             <button type="submit" class="search-btn">
                 <i class="fas fa-search"></i>
                 Analyze
@@ -310,24 +393,130 @@
     </div>
 
     <script>
+        // Company name to symbol mapping
+        const SYMBOL_MAPPING = {
+            'APPLE': 'AAPL', 'APPLE INC': 'AAPL', 'APPLE COMPUTER': 'AAPL',
+            'MICROSOFT': 'MSFT', 'MICROSOFT CORP': 'MSFT', 'MICROSOFT CORPORATION': 'MSFT',
+            'GOOGLE': 'GOOGL', 'ALPHABET': 'GOOGL', 'ALPHABET INC': 'GOOGL',
+            'TESLA': 'TSLA', 'TESLA INC': 'TSLA', 'TESLA MOTORS': 'TSLA',
+            'AMAZON': 'AMZN', 'AMAZON.COM': 'AMZN',
+            'NVIDIA': 'NVDA', 'NVIDIA CORP': 'NVDA', 'NVIDIA CORPORATION': 'NVDA',
+            'META': 'META', 'FACEBOOK': 'META', 'META PLATFORMS': 'META',
+            'NETFLIX': 'NFLX', 'NETFLIX INC': 'NFLX',
+            'RIVIAN': 'RIVN', 'RIVIAN AUTOMOTIVE': 'RIVN',
+            'LUCID': 'LCID', 'LUCID MOTORS': 'LCID', 'LUCID GROUP': 'LCID',
+            'PALANTIR': 'PLTR', 'PALANTIR TECHNOLOGIES': 'PLTR',
+            'SNOWFLAKE': 'SNOW', 'COINBASE': 'COIN', 'ZOOM': 'ZM',
+            'AMD': 'AMD', 'ADVANCED MICRO DEVICES': 'AMD',
+            'INTEL': 'INTC', 'INTEL CORP': 'INTC', 'INTEL CORPORATION': 'INTC'
+        };
+
+        // Popular autocomplete suggestions
+        const POPULAR_STOCKS = [
+            { symbol: 'AAPL', name: 'Apple Inc', sector: 'Technology' },
+            { symbol: 'MSFT', name: 'Microsoft Corporation', sector: 'Technology' },
+            { symbol: 'GOOGL', name: 'Alphabet Inc', sector: 'Technology' },
+            { symbol: 'TSLA', name: 'Tesla Inc', sector: 'Automotive' },
+            { symbol: 'AMZN', name: 'Amazon.com Inc', sector: 'E-commerce' },
+            { symbol: 'NVDA', name: 'NVIDIA Corporation', sector: 'Technology' },
+            { symbol: 'META', name: 'Meta Platforms Inc', sector: 'Technology' },
+            { symbol: 'NFLX', name: 'Netflix Inc', sector: 'Media' },
+            { symbol: 'AMD', name: 'Advanced Micro Devices', sector: 'Technology' },
+            { symbol: 'RIVN', name: 'Rivian Automotive Inc', sector: 'Automotive' }
+        ];
+
+        let autocompleteTimeout;
+        let selectedIndex = -1;
+
+        function normalizeQuery(query) {
+            return query.toUpperCase().trim();
+        }
+
+        function mapSymbol(query) {
+            const normalized = normalizeQuery(query);
+            return SYMBOL_MAPPING[normalized] || query;
+        }
+
+        function showAutocomplete(query) {
+            clearTimeout(autocompleteTimeout);
+            const dropdown = document.getElementById('autocompleteDropdown');
+            
+            if (!query || query.length < 2) {
+                dropdown.style.display = 'none';
+                return;
+            }
+
+            autocompleteTimeout = setTimeout(() => {
+                const suggestions = getSuggestions(query);
+                displaySuggestions(suggestions);
+            }, 200);
+        }
+
+        function getSuggestions(query) {
+            const normalized = normalizeQuery(query);
+            return POPULAR_STOCKS.filter(stock => 
+                stock.symbol.includes(normalized) || 
+                stock.name.toUpperCase().includes(normalized) ||
+                stock.sector.toUpperCase().includes(normalized)
+            ).slice(0, 6);
+        }
+
+        function displaySuggestions(suggestions) {
+            const dropdown = document.getElementById('autocompleteDropdown');
+            
+            if (suggestions.length === 0) {
+                dropdown.innerHTML = '<div class="autocomplete-no-results">No matching stocks found</div>';
+            } else {
+                dropdown.innerHTML = suggestions.map((stock, index) => `
+                    <div class="autocomplete-item" data-index="${index}" onclick="selectSuggestion('${stock.symbol}', '${stock.name}')">
+                        <span class="autocomplete-symbol">${stock.symbol}</span>
+                        <span class="autocomplete-name">${stock.name}</span>
+                        <span class="autocomplete-sector">${stock.sector}</span>
+                    </div>
+                `).join('');
+            }
+            
+            dropdown.style.display = 'block';
+            selectedIndex = -1;
+        }
+
+        function selectSuggestion(symbol, name) {
+            document.getElementById('stockQuery').value = symbol;
+            hideAutocomplete();
+            searchStock({ preventDefault: () => {} });
+        }
+
+        function hideAutocomplete() {
+            document.getElementById('autocompleteDropdown').style.display = 'none';
+        }
+
+        function hideAutocompleteDelayed() {
+            setTimeout(hideAutocomplete, 200);
+        }
+
         async function searchStock(event) {
             event.preventDefault();
             
-            const query = document.getElementById('stockQuery').value.trim();
+            let query = document.getElementById('stockQuery').value.trim();
             if (!query) return;
+            
+            // Map company name to symbol if needed
+            const mappedSymbol = mapSymbol(query);
+            console.log(`Original query: "${query}" -> Mapped symbol: "${mappedSymbol}"`);
             
             // Show loading state
             document.getElementById('loadingState').style.display = 'block';
             document.getElementById('resultsContainer').style.display = 'none';
+            hideAutocomplete();
             
             try {
-                console.log('Sending analysis request for:', query);
+                console.log('Sending analysis request for:', mappedSymbol);
                 const response = await fetch('/api/stock-analysis', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ symbol: query })
+                    body: JSON.stringify({ symbol: mappedSymbol })
                 });
                 
                 console.log('Response status:', response.status);
