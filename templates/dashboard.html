@@ -127,6 +127,21 @@
             box-shadow: 0 8px 30px rgba(0,0,0,0.15);
         }
 
+        .clickable-card {
+            cursor: pointer;
+            position: relative;
+        }
+
+        .clickable-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.2);
+            border: 2px solid #007aff;
+        }
+
+        .clickable-card:active {
+            transform: translateY(-2px);
+        }
+
         .card-header {
             display: flex;
             align-items: center;
@@ -281,18 +296,26 @@
         <!-- Dashboard Grid -->
         <div class="dashboard-grid">
             <!-- Portfolio Overview -->
-            <div class="dashboard-card">
+            <div class="dashboard-card clickable-card" onclick="window.location.href='/portfolio'" style="cursor: pointer;">
                 <div class="card-header">
                     <div class="card-icon portfolio-icon">
                         <i class="fas fa-chart-pie"></i>
                     </div>
                     <h3 class="card-title">Portfolio Overview</h3>
+                    <button class="tool-launch-btn" 
+                            onclick="event.stopPropagation(); window.location.href='/portfolio'"
+                            title="Manage your portfolio">
+                        <i class="fas fa-external-link-alt"></i>
+                    </button>
                 </div>
                 <div class="card-content">
                     <div class="metric-value" id="portfolioValue">$32,174</div>
                     <div class="metric-change" id="portfolioChange">+3.12% (+$975) today</div>
                     <div class="chart-container">
                         <canvas id="portfolioChart"></canvas>
+                    </div>
+                    <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #e5e5ea; text-align: center;">
+                        <small style="color: #86868b;">Click to manage your portfolio</small>
                     </div>
                 </div>
             </div>
