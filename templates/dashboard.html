@@ -168,43 +168,89 @@
 
 <style>
 .tool-action-btn {
-    @apply relative flex flex-col items-center p-4 bg-white border border-gray-200 rounded-xl hover:border-gray-300 hover:shadow-sm transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    padding: 1rem;
+    background-color: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    outline: none;
+}
+
+.tool-action-btn:hover {
+    border-color: #d1d5db;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+}
+
+.tool-action-btn:focus {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
 }
 
 .tool-icon {
-    @apply w-12 h-12 rounded-xl flex items-center justify-center mb-2 transition-all duration-200;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.5rem;
+    transition: all 0.2s ease-in-out;
 }
 
 .tool-label {
-    @apply text-sm font-medium text-gray-700 text-center;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #374151;
+    text-align: center;
 }
 
 .premium-badge {
-    @apply absolute top-2 right-2 px-2 py-1 bg-gradient-to-r from-yellow-400 to-yellow-500 text-white text-xs font-bold rounded-full;
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    padding: 0.25rem 0.5rem;
+    background: linear-gradient(to right, #fbbf24, #f59e0b);
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 700;
+    border-radius: 9999px;
 }
 
 /* Loading state styles */
 .tool-action-btn.loading {
-    @apply opacity-70 cursor-not-allowed;
+    opacity: 0.7;
+    cursor: not-allowed;
 }
 
 .tool-action-btn.loading .tool-icon {
-    @apply animate-pulse;
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
 /* Success state styles */
 .tool-action-btn.success .tool-icon {
-    @apply bg-green-600 text-white;
+    background-color: #059669;
+    color: white;
 }
 
 /* Error state styles */
 .tool-action-btn.error .tool-icon {
-    @apply bg-red-600 text-white;
+    background-color: #dc2626;
+    color: white;
 }
 
 /* Dark mode support */
 .dark .tool-action-btn {
-    @apply bg-gray-800 border-gray-700 hover:border-gray-600;
+    background-color: #1f2937;
+    border-color: #374151;
+}
+
+.dark .tool-action-btn:hover {
+    border-color: #4b5563;
 }
 
 .dark .tool-label {

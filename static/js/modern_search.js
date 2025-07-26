@@ -377,18 +377,24 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // Export for external use
-window.SearchManager = {
-    search: function(symbol) {
+// Create SearchManager constructor for backward compatibility
+function SearchManager() {
+    this.search = function(symbol) {
         if (modernSearchManager) {
             modernSearchManager.search(symbol);
         }
-    },
-    focus: function() {
+    };
+    
+    this.focus = function() {
         if (modernSearchManager) {
             modernSearchManager.focusSearch();
         }
-    }
-};
+    };
+}
+
+// Also provide both the class and function on window
+window.SearchManager = SearchManager;
+window.ModernSearchManager = ModernSearchManager;
 
 // Export module
 if (typeof module !== 'undefined' && module.exports) {
