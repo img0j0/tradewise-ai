@@ -4,9 +4,19 @@
 
 TradeWise AI is a sophisticated stock analysis platform that provides AI-powered investment research, real-time market data, and comprehensive stock insights. The platform combines modern web technologies with machine learning capabilities to deliver institutional-grade analysis tools focused purely on investment research without trading capabilities.
 
-## Recent Changes (July 26, 2025) - COMPREHENSIVE SEARCH ENHANCEMENT & PAYMENT SYSTEM COMPLETE ✅
+## Recent Changes (July 26, 2025) - AI INSIGHTS TRANSFORMATION TO INSTITUTIONAL-GRADE INTELLIGENCE ✅
 
-### Complete Search System Enhancement & Payment Integration (July 26, 2025) ✅
+### Advanced AI Portfolio Intelligence Implementation (July 26, 2025) ✅
+- **CRITICAL ENHANCEMENT**: Transformed AI Insights from basic analysis to comprehensive portfolio intelligence
+- **Portfolio Impact Analysis**: Added correlation analysis, VaR contribution, optimal allocation recommendations, diversification metrics
+- **Market Intelligence Engine**: Macro environment analysis, interest rate sensitivity, sector rotation insights, institutional flow tracking
+- **Predictive Scenario Modeling**: Bull/base/bear case scenarios with probabilities, catalysts, timelines, and market conditions
+- **Institutional Intelligence**: Smart money flow tracking (hedge funds, pension funds, sovereign wealth), options intelligence, put/call ratios
+- **AI Strategic Guidance**: Advanced recommendation engine with portfolio fit analysis, time horizon guidance, risk/catalyst identification
+- **Professional UI Enhancement**: Added comprehensive CSS styling for institutional-grade presentation with responsive design
+- **Clear Value Differentiation**: AI Insights now provides significantly more value than basic search with institutional-level features
+
+### Previous Search System Enhancement & Payment Integration (July 26, 2025) ✅
 - **CRITICAL SUCCESS**: Massively enhanced search capability with comprehensive company name mapping for 80+ major companies
 - **Universal Stock Coverage**: Added intelligent symbol mapping for all major sectors (Tech, Automotive, Financial, Healthcare, Energy, etc.)
 - **Company Name Recognition**: Users can now search by company names like "Toyota" → TM, "Robinhood" → HOOD, "Apple" → AAPL
