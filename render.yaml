@@ -72,13 +72,13 @@ services:
 
   - type: redis
     name: tradewise-redis
-    plan: standard-0
+    plan: starter
     maxmemoryPolicy: allkeys-lru
     ipAllowList:
       - source: 0.0.0.0/0
 
 databases:
   - name: tradewise-db
-    plan: standard-0
+    plan: starter-plus
     ipAllowList:
       - source: 0.0.0.0/0
