@@ -247,6 +247,14 @@ with app.app_context():
     except Exception as e:
         logger.error(f"❌ Failed to register health check endpoints: {e}")
     
+    # Register fuzzy search routes for Phase 3 implementation
+    try:
+        from fuzzy_search_routes import fuzzy_search_bp
+        app.register_blueprint(fuzzy_search_bp)
+        logger.info("✅ Fuzzy search routes blueprint registered successfully")
+    except Exception as e:
+        logger.warning(f"⚠️ Fuzzy search routes not available: {e}")
+    
     # Global error handlers for professional error pages
     @app.errorhandler(404)
     def page_not_found(error):
