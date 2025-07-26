@@ -192,6 +192,19 @@ def search():
         logger.error(f"Error loading search page: {e}")
         return jsonify({'error': 'Search page loading error'}), 500
 
+@main_bp.route('/portfolio')
+def portfolio():
+    """Portfolio management page"""
+    try:
+        response = make_response(render_template('portfolio.html'))
+        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+        response.headers['Pragma'] = 'no-cache'
+        response.headers['Expires'] = '0'
+        return response
+    except Exception as e:
+        logger.error(f"Error loading portfolio page: {e}")
+        return jsonify({'error': 'Portfolio page loading error'}), 500
+
 @main_bp.route('/backtest')
 def backtest():
     """Portfolio Backtesting - Premium Feature"""

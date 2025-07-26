@@ -1,8 +1,12 @@
 from app import app
 from stock_search_direct import direct_search_bp
+from portfolio_routes import portfolio_bp
 
 # Register direct search blueprint for debugging
 app.register_blueprint(direct_search_bp)
+
+# Register portfolio management blueprint
+app.register_blueprint(portfolio_bp)
 
 # Comment out other blueprints temporarily to avoid conflicts
 # from search_routes import search_bp

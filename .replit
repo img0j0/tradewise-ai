@@ -2,7 +2,7 @@ modules = ["python-3.11", "postgresql-16", "python3", "nodejs-20"]
 
 [nix]
 channel = "stable-24_05"
-packages = ["cairo", "cargo", "ffmpeg-full", "freetype", "ghostscript", "glibcLocales", "gobject-introspection", "gtk3", "iana-etc", "libiconv", "libxcrypt", "openssl", "pkg-config", "postgresql", "qhull", "rapidfuzz-cpp", "rustc", "taskflow", "tcl", "tk", "xsimd", "redis"]
+packages = ["cairo", "cargo", "ffmpeg-full", "freetype", "ghostscript", "glibcLocales", "gobject-introspection", "gtk3", "iana-etc", "libiconv", "libxcrypt", "openssl", "pkg-config", "postgresql", "qhull", "rapidfuzz-cpp", "redis", "rustc", "taskflow", "tcl", "tk", "xsimd"]
 
 [deployment]
 deploymentTarget = "autoscale"
@@ -34,4 +34,4 @@ localPort = 5000
 externalPort = 80
 
 [agent]
-integrations = ["python_database==1.0.0", "flask_stripe==1.0.0", "web_scraper==1.0.0"]
+integrations = ["flask_stripe==1.0.0", "python_database==1.0.0", "python_log_in_with_replit==1.0.0", "web_scraper==1.0.0"]

@@ -263,6 +263,50 @@ class SearchHistory(db.Model):
             'access_count': self.access_count
         }
 
+class PortfolioHolding(db.Model):
+    """User portfolio holdings for personal stock tracking"""
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.String, nullable=False, index=True)  # Session-based user tracking
+    symbol = db.Column(db.String(10), nullable=False, index=True)
+    shares = db.Column(db.Float, nullable=False)
+    average_cost = db.Column(db.Float, nullable=False)
+    purchase_date = db.Column(db.DateTime, default=datetime.utcnow)
+    last_updated = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    # Additional metadata
+    company_name = db.Column(db.String(100))
+    sector = db.Column(db.String(50))
+    notes = db.Column(db.Text)  # User notes about the holding
+    
+    # Performance tracking
+    cost_basis = db.Column(db.Float)  # Total cost basis (shares * average_cost)
+    realized_gains = db.Column(db.Float, default=0)  # From partial sales
+    
+    # Constraints
+    __table_args__ = (
+        db.UniqueConstraint('user_id', 'symbol', name='unique_user_symbol'),
+        db.Index('idx_user_holdings', 'user_id'),
+        db.Index('idx_symbol_lookup', 'symbol'),
+    )
+    
+    def __repr__(self):
+        return f'<PortfolioHolding {self.symbol}: {self.shares} shares>'
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'symbol': self.symbol,
+            'shares': self.shares,
+            'average_cost': self.average_cost,
+            'purchase_date': self.purchase_date.isoformat() if self.purchase_date else None,
+            'last_updated': self.last_updated.isoformat() if self.last_updated else None,
+            'company_name': self.company_name,
+            'sector': self.sector,
+            'notes': self.notes,
+            'cost_basis': self.cost_basis,
+            'realized_gains': self.realized_gains
+        }
+
 class Team(db.Model):
     """Team model for Enterprise plan multi-user access"""
     id = db.Column(db.Integer, primary_key=True)
