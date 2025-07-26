@@ -1,8 +1,4 @@
 from app import app
-from simple_core_routes import simple_core_bp
-
-# Register simple core routes blueprint first
-app.register_blueprint(simple_core_bp)
 
 # Comment out other blueprints temporarily to avoid conflicts
 # from search_routes import search_bp

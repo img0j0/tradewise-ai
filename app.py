@@ -11,6 +11,7 @@ from flask_compress import Compress
 # Production logging configuration
 log_level = logging.INFO if os.environ.get('REPLIT_DEPLOYMENT') else logging.DEBUG
 logging.basicConfig(level=log_level, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
 class Base(DeclarativeBase):
     pass
@@ -140,18 +141,28 @@ with app.app_context():
     import models  # noqa: F401
     db.create_all()
     
-    # Register blueprints after database setup - DISABLED FOR SIMPLE ROUTING
-    # from routes import main_bp
-    # from premium_routes import premium_bp
-    # from comprehensive_billing_routes import billing_bp
-    # from oauth_auth import oauth_bp, create_oauth_blueprints
-    # from two_factor_auth import twofa_bp
+    # Register core blueprints for full functionality
+    try:
+        from routes import main_bp
+        app.register_blueprint(main_bp)
+        logger.info("✅ Main routes blueprint registered successfully")
+    except Exception as e:
+        logger.error(f"⚠️ Error registering main routes: {e}")
     
-    # app.register_blueprint(main_bp)
-    # app.register_blueprint(premium_bp)
-    # app.register_blueprint(billing_bp)
-    # app.register_blueprint(oauth_bp)
-    # app.register_blueprint(twofa_bp)
+    try:
+        from simple_core_routes import simple_core_bp
+        app.register_blueprint(simple_core_bp)
+        logger.info("✅ Simple core routes blueprint registered successfully")
+    except Exception as e:
+        logger.error(f"⚠️ Error registering simple core routes: {e}")
+    
+    # Premium features (optional - load if available)
+    try:
+        from premium_routes import premium_bp
+        app.register_blueprint(premium_bp)
+        logger.info("✅ Premium routes blueprint registered successfully")
+    except Exception as e:
+        logger.warning(f"⚠️ Premium routes not available: {e}")
     
     # Register missing API endpoints - DISABLED FOR SIMPLE ROUTING
     # from missing_api_endpoints import missing_api_bp
@@ -184,12 +195,13 @@ with app.app_context():
     # except Exception as e:
     #     logging.warning(f"Billing initialization failed: {e}")
     
-    # Add security headers (with proper type annotation)
+    # Add security headers
     try:
         from security_headers import add_security_headers
+        # Fix the type annotation issue
         add_security_headers(app)
     except Exception as e:
-        logging.warning(f"Security headers initialization failed: {e}")
+        logger.warning(f"Security headers initialization failed: {e}")
     
     # Global error handlers for professional error pages
     @app.errorhandler(404)

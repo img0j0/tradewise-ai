@@ -23,9 +23,9 @@ def dashboard():
 
 @simple_core_bp.route('/search')
 def search():
-    """Modern Search Interface"""
+    """Stock Search Interface"""
     try:
-        return render_template('modern_search_new.html')
+        return render_template('search.html')
     except Exception as e:
         logger.error(f"Error loading search page: {e}")
         return f"Search error: {str(e)}", 500
