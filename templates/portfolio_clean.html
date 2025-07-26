@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio Management - TradeWise AI</title>
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f5f5f7;
+            color: #1d1d1f;
+        }
+
+        /* Navigation Bar - Exact match to dashboard */
+        .navbar {
+            background-color: #1d3557;
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            color: white;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .nav-links a:hover {
+            opacity: 0.8;
+        }
+
+        .nav-links a.active {
+            border-bottom: 2px solid white;
+            padding-bottom: 0.25rem;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .upgrade-btn {
+            background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+
+        .upgrade-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        /* Portfolio Container */
+        .portfolio-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .portfolio-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .portfolio-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: #1d3557;
+            font-weight: 700;
+        }
+
+        .portfolio-header p {
+            font-size: 1.2rem;
+            color: #6c6c70;
+        }
+
+        /* Portfolio Grid - 3 Cards Layout like Dashboard */
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        @media (max-width: 768px) {
+            .portfolio-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Portfolio Cards - Apple Style like Dashboard */
+        .portfolio-card {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .portfolio-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+            border-color: #007AFF;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-icon {
+            width: 3rem;
+            height: 3rem;
+            background: linear-gradient(135deg, #007AFF, #5856D6);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.25rem;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1d1d1f;
+            margin: 0;
+        }
+
+        .card-subtitle {
+            font-size: 0.875rem;
+            color: #8e8e93;
+            margin: 0;
+        }
+
+        /* Holdings List */
+        .holdings-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .holding-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .holding-item:last-child {
+            border-bottom: none;
+        }
+
+        .holding-info h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1d1d1f;
+            margin: 0 0 0.25rem 0;
+        }
+
+        .holding-info p {
+            font-size: 0.875rem;
+            color: #8e8e93;
+            margin: 0;
+        }
+
+        .holding-value {
+            text-align: right;
+        }
+
+        .holding-value .price {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1d1d1f;
+        }
+
+        .holding-value .change {
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .positive {
+            color: #34C759;
+        }
+
+        .negative {
+            color: #FF3B30;
+        }
+
+        /* Add Holdings Form */
+        .add-holding-form {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #1d1d1f;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #007AFF;
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+        }
+
+        .btn {
+            background: #007AFF;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn:hover {
+            background: #0056CC;
+        }
+
+        .btn-secondary {
+            background: #8e8e93;
+        }
+
+        .btn-secondary:hover {
+            background: #6d6d70;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #8e8e93;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+            color: #1d1d1f;
+        }
+
+        .empty-state p {
+            font-size: 1rem;
+        }
+
+        /* Summary Stats */
+        .summary-stat {
+            text-align: center;
+            padding: 1rem 0;
+        }
+
+        .summary-stat .value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1d1d1f;
+            display: block;
+        }
+
+        .summary-stat .label {
+            font-size: 0.875rem;
+            color: #8e8e93;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-left">
+            <a href="/" class="logo">
+                <i class="fas fa-chart-line"></i>
+                TradeWise AI
+            </a>
+            <ul class="nav-links">
+                <li><a href="/">Dashboard</a></li>
+                <li><a href="/search">Search</a></li>
+                <li><a href="/portfolio" class="active">Portfolio</a></li>
+                <li><a href="/premium">Premium</a></li>
+            </ul>
+        </div>
+        <div class="nav-right">
+            <a href="/premium" class="upgrade-btn">Upgrade</a>
+        </div>
+    </nav>
+
+    <!-- Portfolio Container -->
+    <div class="portfolio-container">
+        <div class="portfolio-header">
+            <h1>Portfolio Management</h1>
+            <p>Track your investments and analyze performance</p>
+        </div>
+
+        <!-- Portfolio Grid -->
+        <div class="portfolio-grid">
+            <!-- Portfolio Summary Card -->
+            <div class="portfolio-card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="fas fa-chart-pie"></i>
+                    </div>
+                    <div>
+                        <h3 class="card-title">Portfolio Summary</h3>
+                        <p class="card-subtitle">Overall performance</p>
+                    </div>
+                </div>
+                <div id="portfolio-summary">
+                    <div class="summary-stat">
+                        <span class="value" id="total-value">$0.00</span>
+                        <span class="label">Total Value</span>
+                    </div>
+                    <div class="summary-stat">
+                        <span class="value" id="total-gain-loss">$0.00</span>
+                        <span class="label">Total Gain/Loss</span>
+                    </div>
+                    <div class="summary-stat">
+                        <span class="value" id="gain-loss-percent">0.00%</span>
+                        <span class="label">Performance</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Holdings List Card -->
+            <div class="portfolio-card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="fas fa-list-ul"></i>
+                    </div>
+                    <div>
+                        <h3 class="card-title">Holdings</h3>
+                        <p class="card-subtitle">Your investments</p>
+                    </div>
+                </div>
+                <div id="holdings-container">
+                    <div class="empty-state">
+                        <i class="fas fa-chart-line"></i>
+                        <h3>No Holdings Yet</h3>
+                        <p>Add your first investment to get started</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add Holdings Card -->
+            <div class="portfolio-card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="fas fa-plus"></i>
+                    </div>
+                    <div>
+                        <h3 class="card-title">Add Holding</h3>
+                        <p class="card-subtitle">Track new investment</p>
+                    </div>
+                </div>
+                <form id="add-holding-form" class="add-holding-form">
+                    <div class="form-group">
+                        <label for="symbol">Stock Symbol</label>
+                        <input type="text" id="symbol" name="symbol" placeholder="e.g., AAPL" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="shares">Shares</label>
+                        <input type="number" id="shares" name="shares" step="0.001" placeholder="100" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="purchase_price">Purchase Price</label>
+                        <input type="number" id="purchase_price" name="purchase_price" step="0.01" placeholder="150.00" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="purchase_date">Purchase Date</label>
+                        <input type="date" id="purchase_date" name="purchase_date">
+                    </div>
+                    <button type="submit" class="btn">Add Holding</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Portfolio Management JavaScript
+        class PortfolioManager {
+            constructor() {
+                this.loadPortfolioData();
+                this.setupEventListeners();
+            }
+
+            setupEventListeners() {
+                const form = document.getElementById('add-holding-form');
+                form.addEventListener('submit', (e) => this.handleAddHolding(e));
+            }
+
+            async loadPortfolioData() {
+                try {
+                    const response = await fetch('/api/portfolio/summary');
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        this.updatePortfolioSummary(data);
+                        this.updateHoldingsList(data.holdings || []);
+                    }
+                } catch (error) {
+                    console.error('Error loading portfolio data:', error);
+                }
+            }
+
+            updatePortfolioSummary(data) {
+                document.getElementById('total-value').textContent = 
+                    `$${(data.total_value || 0).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+                
+                const gainLoss = data.total_gain_loss || 0;
+                const gainLossElement = document.getElementById('total-gain-loss');
+                gainLossElement.textContent = 
+                    `${gainLoss >= 0 ? '+' : ''}$${Math.abs(gainLoss).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+                gainLossElement.className = `value ${gainLoss >= 0 ? 'positive' : 'negative'}`;
+                
+                const gainLossPercent = data.gain_loss_percent || 0;
+                const percentElement = document.getElementById('gain-loss-percent');
+                percentElement.textContent = 
+                    `${gainLossPercent >= 0 ? '+' : ''}${gainLossPercent.toFixed(2)}%`;
+                percentElement.className = `value ${gainLossPercent >= 0 ? 'positive' : 'negative'}`;
+            }
+
+            updateHoldingsList(holdings) {
+                const container = document.getElementById('holdings-container');
+                
+                if (!holdings || holdings.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-chart-line"></i>
+                            <h3>No Holdings Yet</h3>
+                            <p>Add your first investment to get started</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                const holdingsHTML = holdings.map(holding => {
+                    const gainLoss = holding.unrealized_gain_loss || 0;
+                    const gainLossPercent = holding.gain_loss_percent || 0;
+                    
+                    return `
+                        <div class="holding-item">
+                            <div class="holding-info">
+                                <h4>${holding.symbol}</h4>
+                                <p>${holding.shares} shares @ $${holding.average_cost.toFixed(2)}</p>
+                            </div>
+                            <div class="holding-value">
+                                <div class="price">$${(holding.market_value || 0).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
+                                <div class="change ${gainLoss >= 0 ? 'positive' : 'negative'}">
+                                    ${gainLoss >= 0 ? '+' : ''}$${Math.abs(gainLoss).toFixed(2)} (${gainLossPercent >= 0 ? '+' : ''}${gainLossPercent.toFixed(2)}%)
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                container.innerHTML = `<div class="holdings-list">${holdingsHTML}</div>`;
+            }
+
+            async handleAddHolding(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(e.target);
+                const holdingData = {
+                    symbol: formData.get('symbol').toUpperCase(),
+                    shares: parseFloat(formData.get('shares')),
+                    purchase_price: parseFloat(formData.get('purchase_price')),
+                    purchase_date: formData.get('purchase_date') || null
+                };
+
+                try {
+                    const response = await fetch('/api/portfolio/holdings', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(holdingData)
+                    });
+
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        // Reset form
+                        e.target.reset();
+                        // Reload portfolio data
+                        this.loadPortfolioData();
+                        // Show success message
+                        alert(`Successfully added ${holdingData.shares} shares of ${holdingData.symbol}`);
+                    } else {
+                        alert(`Error: ${result.message || 'Failed to add holding'}`);
+                    }
+                } catch (error) {
+                    console.error('Error adding holding:', error);
+                    alert('Error adding holding. Please try again.');
+                }
+            }
+        }
+
+        // Initialize Portfolio Manager when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new PortfolioManager();
+        });
+    </script>
+</body>
+</html>

@@ -196,7 +196,7 @@ def search():
 def portfolio():
     """Portfolio management page"""
     try:
-        response = make_response(render_template('portfolio.html'))
+        response = make_response(render_template('portfolio_clean.html'))
         response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
         response.headers['Pragma'] = 'no-cache'
         response.headers['Expires'] = '0'

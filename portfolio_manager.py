@@ -156,7 +156,8 @@ class PortfolioManager:
                     'holdings': [],
                     'sector_allocation': {},
                     'top_performers': [],
-                    'bottom_performers': []
+                    'bottom_performers': [],
+                    'last_updated': datetime.now().isoformat()
                 }
             
             portfolio_data = []
@@ -214,6 +215,9 @@ class PortfolioManager:
             total_gain_loss = total_value - total_cost_basis
             total_gain_loss_percent = (total_gain_loss / total_cost_basis) * 100 if total_cost_basis > 0 else 0
             
+            # Get most recent last_updated from holdings
+            last_updated = max([h.last_updated for h in holdings]) if holdings else datetime.now()
+            
             return {
                 'success': True,
                 'total_holdings': len(holdings),
@@ -223,9 +227,9 @@ class PortfolioManager:
                 'gain_loss_percent': total_gain_loss_percent,
                 'holdings': portfolio_data,
                 'sector_allocation': sector_allocation,
+                'last_updated': last_updated.isoformat(),
                 'top_performers': top_performers,
-                'bottom_performers': bottom_performers,
-                'last_updated': datetime.now().isoformat()
+                'bottom_performers': bottom_performers
             }
             
         except Exception as e:
