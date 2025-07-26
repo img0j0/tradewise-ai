@@ -1,5 +1,4 @@
 services:
-  # Web Service - TradeWise AI Application
   - type: web
     name: tradewise-ai
     env: python
@@ -48,7 +47,6 @@ services:
       - key: ASYNC_WORKER_COUNT
         value: 3
 
-  # Background Worker Service
   - type: worker
     name: tradewise-worker
     env: python
@@ -72,17 +70,15 @@ services:
       - key: LOG_LEVEL
         value: INFO
 
-  # Redis Service for Caching and Task Queue
   - type: redis
     name: tradewise-redis
-    plan: starter
+    plan: standard-0
     maxmemoryPolicy: allkeys-lru
     ipAllowList:
-      - source: 0.0.0.0/0   # Allow all IPs for now
+      - source: 0.0.0.0/0
 
 databases:
-  # PostgreSQL Database
   - name: tradewise-db
-    plan: starter
+    plan: standard-0
     ipAllowList:
-      - source: 0.0.0.0/0   # Allow all IPs for now
+      - source: 0.0.0.0/0
