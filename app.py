@@ -8,10 +8,15 @@ from flask_login import LoginManager
 from flask_caching import Cache
 from flask_compress import Compress
 
-# Production logging configuration
+# Import error handler first to setup logging
+from error_handler import ErrorHandler, setup_logging
+
+# Setup centralized logging
+logger = setup_logging()
+
+# Production logging configuration  
 log_level = logging.INFO if os.environ.get('REPLIT_DEPLOYMENT') else logging.DEBUG
-logging.basicConfig(level=log_level, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-logger = logging.getLogger(__name__)
+logger.setLevel(log_level)
 
 class Base(DeclarativeBase):
     pass
@@ -219,6 +224,10 @@ with app.app_context():
         add_security_headers(app)
     except Exception as e:
         logger.warning(f"Security headers initialization failed: {e}")
+    
+    # Initialize centralized error handler
+    error_handler = ErrorHandler(app)
+    logger.info("✅ Centralized error handler initialized successfully")
     
     # Global error handlers for professional error pages
     @app.errorhandler(404)

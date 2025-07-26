@@ -29,7 +29,10 @@ from ai_insights import AIInsightsEngine
 from simple_personalization import SimplePersonalization
 from external_api_optimizer import yahoo_optimizer
 from performance_monitor import performance_optimized
+from error_handler import TradeWiseError, handle_redis_error
 
+# Setup worker-specific logging
+worker_logger = logging.getLogger('worker')
 logger = logging.getLogger(__name__)
 
 class TaskStatus(Enum):
