@@ -247,8 +247,10 @@ class ToolFeedbackManager {
         
         // Get parameters from data attributes
         Object.keys(button.dataset).forEach(key => {
-            if (key !== 'tool') {
-                params[key] = button.dataset[key];
+            if (key !== 'tool' && key !== 'endpoint') {
+                // Convert camelCase to snake_case for API
+                const apiKey = key.replace(/([A-Z])/g, '_$1').toLowerCase();
+                params[apiKey] = button.dataset[key];
             }
         });
         
