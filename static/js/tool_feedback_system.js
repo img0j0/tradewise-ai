@@ -8,6 +8,9 @@ class ToolFeedbackManager {
         this.activePolls = new Map();
         this.pollInterval = 2500; // 2.5 seconds
         this.maxPollAttempts = 120; // 5 minutes max
+        this.retryAttempts = new Map(); // Track retry attempts per task
+        this.maxRetries = 2; // Maximum automatic retries
+        this.activeBanners = new Map(); // Track active task banners
         this.init();
     }
 
@@ -320,22 +323,54 @@ class ToolFeedbackManager {
                     message = `Queue position: ${statusData.queue_position}`;
                 }
                 
+                // Show task banner if not already shown
+                this.showTaskBanner(taskId, toolName, statusData.status);
+                
                 this.updateNotification(notificationId, { message });
                 
-                // Check if completed
                 if (statusData.status === 'completed') {
                     clearInterval(pollId);
                     this.activePolls.delete(taskId);
+                    this.hideTaskBanner(taskId);
                     this.handleToolSuccess(statusData.result, notificationId, button, toolName);
                 } else if (statusData.status === 'failed') {
                     clearInterval(pollId);
                     this.activePolls.delete(taskId);
-                    this.handleToolError(statusData.error || 'Task failed', notificationId, button);
+                    this.hideTaskBanner(taskId);
+                    
+                    // Check if we should retry
+                    const retryCount = this.retryAttempts.get(taskId) || 0;
+                    if (retryCount < this.maxRetries) {
+                        this.retryAttempts.set(taskId, retryCount + 1);
+                        this.updateNotification(notificationId, {
+                            type: 'warning',
+                            message: `Task failed. Retrying... (${retryCount + 1}/${this.maxRetries})`
+                        });
+                        
+                        setTimeout(async () => {
+                            try {
+                                const retryResponse = await this.callToolEndpoint(toolName, this.getToolParameters(button));
+                                if (retryResponse.task_id) {
+                                    this.pollTaskStatus(retryResponse.task_id, notificationId, button, toolName);
+                                }
+                            } catch (error) {
+                                this.handleToolError(`Retry failed: ${error.message}`, notificationId, button);
+                            }
+                        }, 2000);
+                    } else {
+                        this.retryAttempts.delete(taskId);
+                        this.handleToolError(statusData.error || 'Task failed after retries', notificationId, button);
+                    }
                 }
-                
             } catch (error) {
-                console.error('Polling error:', error);
-                // Continue polling on network errors
+                console.error('Status poll error:', error);
+                // Continue polling unless it's a critical error
+                if (error.message.includes('NetworkError') || error.message.includes('fetch')) {
+                    this.updateNotification(notificationId, {
+                        type: 'warning',
+                        message: 'Connection issue, retrying...'
+                    });
+                }
             }
         }, this.pollInterval);
         
@@ -357,60 +392,19 @@ class ToolFeedbackManager {
         }
     }
 
-    handleToolSuccess(result, notificationId, button, toolName) {
-        this.setButtonLoading(button, false);
-        
-        this.updateNotification(notificationId, {
-            type: 'success',
-            title: `${this.getToolDisplayName(toolName)} Complete`,
-            message: 'Analysis completed successfully!',
-            showProgress: false,
-            autoClose: 5000
-        });
-        
-        // Display results based on tool type
-        this.displayToolResults(result, toolName, button);
-        
-        // Add success indicator to button
-        this.showButtonSuccess(button);
-    }
-
-    handleToolError(error, notificationId, button) {
-        this.setButtonLoading(button, false);
-        
-        const userFriendlyError = this.getUserFriendlyError(error);
-        
-        this.updateNotification(notificationId, {
-            type: 'error',
-            title: 'Analysis Failed',
-            message: userFriendlyError,
-            showProgress: false,
-            autoClose: 8000
-        });
-        
-        // Add error indicator to button
-        this.showButtonError(button);
-    }
-
-    getUserFriendlyError(error) {
-        const errorMap = {
-            'symbol not found': 'Invalid stock symbol. Please check the symbol and try again.',
-            'api timeout': 'Request timed out. Please try again in a moment.',
-            'rate limit': 'Too many requests. Please wait a moment before trying again.',
-            'premium required': 'This feature requires a premium subscription.',
-            'invalid input': 'Please check your input parameters and try again.',
-            'market closed': 'Market data is not available while markets are closed.',
-            'network error': 'Network connection issue. Please check your connection and try again.'
-        };
-        
-        const errorLower = error.toLowerCase();
-        for (const [key, message] of Object.entries(errorMap)) {
-            if (errorLower.includes(key)) {
-                return message;
-            }
+    calculateProgress(status, pollCount) {
+        switch (status) {
+            case 'pending':
+                return Math.min(10 + (pollCount * 2), 25);
+            case 'processing':
+                return Math.min(30 + (pollCount * 3), 85);
+            case 'completed':
+                return 100;
+            case 'failed':
+                return 0;
+            default:
+                return Math.min(pollCount * 2, 20);
         }
-        
-        return `Analysis failed: ${error}. Please try again.`;
     }
 
     setButtonLoading(button, loading) {
@@ -454,6 +448,240 @@ class ToolFeedbackManager {
             'enhanced_analysis': 'Enhanced Analysis'
         };
         return names[toolName] || toolName;
+    }
+
+    showTaskBanner(taskId, toolName, status) {
+        if (this.activeBanners.has(taskId)) return;
+        
+        const banner = document.createElement('div');
+        banner.id = `task-banner-${taskId}`;
+        banner.className = 'task-banner';
+        banner.innerHTML = `
+            <div class="task-banner-content">
+                <div class="spinner"></div>
+                <span class="task-banner-text">
+                    <strong>${this.getToolDisplayName(toolName)}</strong> running... 
+                    <span class="task-id">(Task ID: ${taskId.substring(0, 8)}...)</span>
+                </span>
+            </div>
+            <button class="task-banner-close" onclick="window.toolFeedback.hideTaskBanner('${taskId}')">&times;</button>
+            <style>
+                .task-banner {
+                    position: fixed;
+                    top: 0;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+                    color: white;
+                    padding: 12px 20px;
+                    border-radius: 0 0 8px 8px;
+                    box-shadow: 0 4px 12px rgba(0,123,255,0.3);
+                    z-index: 1060;
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    min-width: 300px;
+                    max-width: 500px;
+                    animation: slideDown 0.3s ease-out;
+                }
+                .task-banner-content {
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                }
+                .task-banner-text {
+                    font-size: 14px;
+                }
+                .task-id {
+                    font-size: 12px;
+                    opacity: 0.8;
+                    font-weight: normal;
+                }
+                .task-banner-close {
+                    background: none;
+                    border: none;
+                    color: white;
+                    font-size: 18px;
+                    cursor: pointer;
+                    padding: 0;
+                    width: 20px;
+                    height: 20px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+                @keyframes slideDown {
+                    from {
+                        transform: translateX(-50%) translateY(-100%);
+                        opacity: 0;
+                    }
+                    to {
+                        transform: translateX(-50%) translateY(0);
+                        opacity: 1;
+                    }
+                }
+                @media (max-width: 768px) {
+                    .task-banner {
+                        left: 10px;
+                        right: 10px;
+                        transform: none;
+                        min-width: auto;
+                        max-width: none;
+                    }
+                }
+            </style>
+        `;
+        
+        document.body.appendChild(banner);
+        this.activeBanners.set(taskId, banner);
+    }
+
+    hideTaskBanner(taskId) {
+        const banner = this.activeBanners.get(taskId);
+        if (banner) {
+            banner.style.animation = 'slideUp 0.3s ease-out forwards';
+            setTimeout(() => {
+                if (banner.parentNode) {
+                    banner.parentNode.removeChild(banner);
+                }
+            }, 300);
+            this.activeBanners.delete(taskId);
+        }
+    }
+
+    handleToolSuccess(result, notificationId, button, toolName) {
+        this.setButtonLoading(button, false);
+        
+        // Show success notification with action buttons
+        this.updateNotification(notificationId, {
+            type: 'success',
+            title: `${this.getToolDisplayName(toolName)} Complete`,
+            message: 'Analysis completed successfully!',
+            persistent: false,
+            duration: 8000,
+            actions: this.getSuccessActions(result, toolName)
+        });
+        
+        // Handle specific tool results
+        this.handleToolResult(result, toolName);
+    }
+
+    handleToolError(error, notificationId, button) {
+        this.setButtonLoading(button, false);
+        
+        // Convert technical errors to user-friendly messages
+        const userMessage = this.getUserFriendlyError(error);
+        
+        this.updateNotification(notificationId, {
+            type: 'error',
+            title: 'Analysis Failed',
+            message: userMessage,
+            persistent: false,
+            duration: 10000,
+            actions: [{
+                text: 'Try Again',
+                action: () => {
+                    this.handleToolClick(button);
+                }
+            }]
+        });
+    }
+
+    getUserFriendlyError(error) {
+        const errorMap = {
+            'timeout': 'The analysis took too long to complete. Please try again.',
+            'network': 'Connection error. Please check your internet connection.',
+            'auth': 'Authentication required. Please log in again.',
+            'quota': 'Daily limit reached. Please upgrade your plan.',
+            'server': 'Server error. Our team has been notified.',
+            'data': 'Unable to fetch market data. Please try again later.'
+        };
+        
+        // Check for common error patterns
+        for (const [key, message] of Object.entries(errorMap)) {
+            if (error.toLowerCase().includes(key)) {
+                return message;
+            }
+        }
+        
+        // Default user-friendly message
+        return 'Could not complete the analysis. Please try again.';
+    }
+
+    getSuccessActions(result, toolName) {
+        const actions = [];
+        
+        // Add view results action
+        actions.push({
+            text: 'View Results',
+            action: () => {
+                this.displayResults(result, toolName);
+            }
+        });
+        
+        // Add download action if applicable
+        if (this.canDownload(result, toolName)) {
+            actions.push({
+                text: 'Download Report',
+                action: () => {
+                    this.downloadResults(result, toolName);
+                }
+            });
+        }
+        
+        return actions;
+    }
+
+    canDownload(result, toolName) {
+        // Tools that support downloading
+        const downloadableTools = ['backtest', 'peer_comparison', 'market_scanner', 'stock_analysis'];
+        return downloadableTools.includes(toolName) && result;
+    }
+
+    downloadResults(result, toolName) {
+        try {
+            const reportData = this.formatResultsForDownload(result, toolName);
+            const blob = new Blob([reportData], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${toolName}_analysis_${new Date().toISOString().split('T')[0]}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            this.showNotification({
+                type: 'success',
+                title: 'Download Complete',
+                message: 'Analysis report downloaded successfully',
+                duration: 3000
+            });
+        } catch (error) {
+            console.error('Download error:', error);
+            this.showNotification({
+                type: 'error',
+                title: 'Download Failed',
+                message: 'Could not download the report. Please try again.',
+                duration: 5000
+            });
+        }
+    }
+
+    formatResultsForDownload(result, toolName) {
+        const timestamp = new Date().toLocaleString();
+        let content = `TradeWise AI - ${this.getToolDisplayName(toolName)} Report\n`;
+        content += `Generated: ${timestamp}\n`;
+        content += `${'='.repeat(50)}\n\n`;
+        
+        if (typeof result === 'object') {
+            content += JSON.stringify(result, null, 2);
+        } else {
+            content += result.toString();
+        }
+        
+        return content;
     }
 
     showNotification({ type = 'info', title, message, persistent = false, autoClose = 5000, showProgress = false }) {
