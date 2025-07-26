@@ -76,7 +76,7 @@ services:
     networks:
       - tradewise-network
 
-  # Async Task Workers
+  # Async Task Workers - RQ/Celery Workers
   worker:
     build:
       context: .
@@ -86,6 +86,8 @@ services:
       - SESSION_SECRET=development-session-secret-change-in-production
       - DATABASE_URL=postgresql://tradewise_user:tradewise_secure_password@postgres:5432/tradewise
       - REDIS_URL=redis://:tradewise_redis_password@redis:6379/0
+      - ASYNC_WORKERS_ENABLED=true
+      - ASYNC_WORKER_COUNT=3
       - PYTHONPATH=/app
     volumes:
       - ./logs:/app/logs
@@ -94,6 +96,7 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+    command: ["python", "-c", "from async_task_queue import task_queue; task_queue.start_workers(); import time; time.sleep(float('inf'))"]
     restart: unless-stopped
     networks:
       - tradewise-network

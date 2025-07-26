@@ -258,8 +258,21 @@ def check_external_services() -> Dict:
     except Exception as e:
         services['yahoo_finance'] = {'status': 'unhealthy', 'error': str(e), 'type': 'data_source'}
     
-    # Check async workers (placeholder - would check actual worker queues)
-    services['async_workers'] = {'status': 'not_implemented', 'type': 'background_processing'}
+    # Check async workers
+    try:
+        from async_task_queue import task_queue
+        stats = task_queue.get_queue_stats()
+        if stats['queue_running'] and stats['active_workers'] > 0:
+            services['async_workers'] = {
+                'status': 'healthy', 
+                'type': 'background_processing',
+                'active_workers': stats['active_workers'],
+                'queue_length': stats['queue_length']
+            }
+        else:
+            services['async_workers'] = {'status': 'unhealthy', 'type': 'background_processing'}
+    except Exception as e:
+        services['async_workers'] = {'status': 'error', 'error': str(e), 'type': 'background_processing'}
     
     all_healthy = all(s['status'] == 'healthy' for s in services.values() 
                      if s['status'] not in ['not_available', 'not_implemented'])
@@ -359,3 +372,74 @@ def initialize_tools_registry():
     logger.info(f"Tools registry initialized: {healthy_count}/{total_count} tools healthy")
     
     return tools_registry
+
+@tools_bp.route('/worker-status')
+def worker_status():
+    """Get comprehensive worker health and status"""
+    try:
+        from async_task_queue import task_queue
+        
+        stats = task_queue.get_queue_stats()
+        return jsonify({
+            'success': True,
+            'worker_health': {
+                'queue_running': stats['queue_running'],
+                'redis_enabled': stats['redis_enabled'],
+                'redis_connected': stats['redis_connected'],
+                'total_workers': stats['worker_count'],
+                'active_workers': stats['active_workers'],
+                'healthy_workers': stats['healthy_workers']
+            },
+            'queue_status': {
+                'pending_tasks': stats['task_counts']['pending'],
+                'processing_tasks': stats['task_counts']['processing'],
+                'queue_length': stats['queue_length']
+            },
+            'performance_metrics': {
+                'average_processing_time_ms': stats['performance']['average_processing_time_ms'],
+                'success_rate_percent': stats['performance']['success_rate'],
+                'total_completed': stats['task_counts']['completed'],
+                'total_failed': stats['task_counts']['failed']
+            },
+            'worker_details': stats['worker_stats'],
+            'timestamp': datetime.utcnow().isoformat()
+        })
+        
+    except Exception as e:
+        logger.error(f"Error getting worker status: {e}")
+        return jsonify({
+            'success': False,
+            'error': 'Failed to get worker status',
+            'details': str(e)
+        }), 500
+
+@tools_bp.route('/task-status/<task_id>')
+def task_status(task_id: str):
+    """Get status of a specific task"""
+    try:
+        from async_task_queue import task_queue
+        
+        status = task_queue.get_task_status(task_id)
+        
+        if 'error' in status:
+            return jsonify({
+                'success': False,
+                'task_id': task_id,
+                'error': status['error'],
+                'details': status.get('details', '')
+            }), 404
+        
+        return jsonify({
+            'success': True,
+            'task_status': status,
+            'timestamp': datetime.utcnow().isoformat()
+        })
+        
+    except Exception as e:
+        logger.error(f"Error getting task status for {task_id}: {e}")
+        return jsonify({
+            'success': False,
+            'task_id': task_id,
+            'error': 'Failed to get task status',
+            'details': str(e)
+        }), 500
