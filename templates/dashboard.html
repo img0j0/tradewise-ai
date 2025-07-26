@@ -375,11 +375,7 @@
                 <i class="fas fa-search"></i>
                 Analyze Stock
             </a>
-            <button class="action-btn secondary tool-action-btn" 
-                    onclick="showAIInsightsModal()">
-                <i class="fas fa-chart-pie"></i>
-                AI Insights
-            </button>
+
             <button class="action-btn secondary tool-action-btn" 
                     onclick="showSmartAlertsModal()">
                 <i class="fas fa-bell"></i>
@@ -392,35 +388,7 @@
         </div>
     </div>
 
-    <!-- AI Insights Modal -->
-    <div id="aiInsightsModal" class="tool-modal" style="display: none;">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3><i class="fas fa-chart-pie"></i> AI Insights</h3>
-                <button class="modal-close" onclick="closeModal('aiInsightsModal')">&times;</button>
-            </div>
-            <div class="modal-body">
-                <p>Get comprehensive AI-powered analysis for any stock</p>
-                <div class="input-group">
-                    <label for="aiInsightsSymbol">Stock Symbol or Company Name:</label>
-                    <input type="text" id="aiInsightsSymbol" placeholder="e.g., AAPL, Apple, Tesla, NVDA" 
-                           class="tool-input" autocomplete="off">
-                    <div class="input-examples">
-                        <span class="example-tag" onclick="setInputValue('aiInsightsSymbol', 'AAPL')">AAPL</span>
-                        <span class="example-tag" onclick="setInputValue('aiInsightsSymbol', 'Tesla')">Tesla</span>
-                        <span class="example-tag" onclick="setInputValue('aiInsightsSymbol', 'Microsoft')">Microsoft</span>
-                        <span class="example-tag" onclick="setInputValue('aiInsightsSymbol', 'NVDA')">NVDA</span>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn-secondary" onclick="closeModal('aiInsightsModal')">Cancel</button>
-                <button class="btn-primary" onclick="launchAIInsights()">
-                    <i class="fas fa-rocket"></i> Get AI Insights
-                </button>
-            </div>
-        </div>
-    </div>
+
 
     <!-- Smart Alerts Modal -->
     <div id="smartAlertsModal" class="tool-modal" style="display: none;">
@@ -1002,11 +970,6 @@
         }
 
         // Modal Functions
-        function showAIInsightsModal() {
-            document.getElementById('aiInsightsModal').style.display = 'flex';
-            document.getElementById('aiInsightsSymbol').focus();
-        }
-
         function showSmartAlertsModal() {
             document.getElementById('smartAlertsModal').style.display = 'flex';
             document.getElementById('smartAlertsSymbol').focus();
@@ -1018,26 +981,6 @@
 
         function setInputValue(inputId, value) {
             document.getElementById(inputId).value = value;
-        }
-
-        function launchAIInsights() {
-            const symbol = document.getElementById('aiInsightsSymbol').value.trim();
-            if (!symbol) {
-                alert('Please enter a stock symbol or company name');
-                return;
-            }
-            
-            closeModal('aiInsightsModal');
-            
-            // Create a temporary button with the correct data attributes
-            const tempButton = document.createElement('button');
-            tempButton.setAttribute('data-tool', 'ai_insights');
-            tempButton.setAttribute('data-endpoint', '/tools/ai/insights');
-            tempButton.setAttribute('data-symbol', symbol);
-            
-            if (window.toolFeedback) {
-                window.toolFeedback.handleToolClick(tempButton);
-            }
         }
 
         function launchSmartAlerts() {
@@ -1073,9 +1016,7 @@
         // Handle Enter key in inputs
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
-                if (e.target.id === 'aiInsightsSymbol') {
-                    launchAIInsights();
-                } else if (e.target.id === 'smartAlertsSymbol') {
+                if (e.target.id === 'smartAlertsSymbol') {
                     launchSmartAlerts();
                 }
             }
