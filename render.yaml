@@ -4,7 +4,7 @@ services:
     name: tradewise-ai
     env: python
     plan: starter
-    buildCommand: pip install -r requirements.txt
+    buildCommand: pip install -r requirements_production.txt
     startCommand: gunicorn --bind 0.0.0.0:$PORT --workers 2 --timeout 120 main:app
     healthCheckPath: /api/health
     envVars:
@@ -53,7 +53,7 @@ services:
     name: tradewise-worker
     env: python
     plan: starter
-    buildCommand: pip install -r requirements.txt
+    buildCommand: pip install -r requirements_production.txt
     startCommand: python worker_start.py
     envVars:
       - key: ENVIRONMENT
@@ -77,8 +77,14 @@ services:
     name: tradewise-redis
     plan: starter
     maxmemoryPolicy: allkeys-lru
+    ipAllowList:
+      - source: tradewise-ai
+      - source: tradewise-worker
 
 databases:
   # PostgreSQL Database
   - name: tradewise-db
     plan: starter
+    ipAllowList:
+      - source: tradewise-ai
+      - source: tradewise-worker

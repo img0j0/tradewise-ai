@@ -101,3 +101,11 @@ logs/centralized_errors.db
 
 # Performance logs
 performance.log
+
+__pycache__/
+*.env
+*.log
+.vscode/
+node_modules/
+.DS_Store
+AppData/
