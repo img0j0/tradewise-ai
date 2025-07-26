@@ -73,6 +73,23 @@ def get_market_overview():
         }
     })
 
+@simple_core_bp.route('/api/market-data')
+def market_data():
+    """Simple market data endpoint for dashboard"""
+    return jsonify({
+        'portfolio': {
+            'value': 125430.50,
+            'change': 2.34,
+            'change_percent': 1.89
+        },
+        'top_stocks': [
+            {'symbol': 'AAPL', 'price': 191.45, 'change': 1.23},
+            {'symbol': 'MSFT', 'price': 378.42, 'change': -0.87},
+            {'symbol': 'NVDA', 'price': 442.73, 'change': 5.12}
+        ],
+        'market_status': 'open'
+    })
+
 @simple_core_bp.route('/api/health')
 def health_check():
     """Health check endpoint"""
