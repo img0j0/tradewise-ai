@@ -1,4 +1,5 @@
 import os
+import sys
 import logging
 from flask import Flask, request, redirect
 from flask_sqlalchemy import SQLAlchemy
@@ -8,8 +9,14 @@ from flask_login import LoginManager
 from flask_caching import Cache
 from flask_compress import Compress
 
-# Import error handler first to setup logging
+# Import environment validation and error handler
+from environment_validator import validate_environment_startup
 from error_handler import ErrorHandler, setup_logging
+
+# Validate environment variables at startup
+if not validate_environment_startup():
+    logger.error("Environment validation failed - stopping startup")
+    sys.exit(1)
 
 # Setup centralized logging
 logger = setup_logging()
@@ -228,6 +235,14 @@ with app.app_context():
     # Initialize centralized error handler
     error_handler = ErrorHandler(app)
     logger.info("✅ Centralized error handler initialized successfully")
+    
+    # Register health check endpoints
+    try:
+        from health_checks import health_bp
+        app.register_blueprint(health_bp)
+        logger.info("✅ Health check endpoints registered successfully")
+    except Exception as e:
+        logger.error(f"❌ Failed to register health check endpoints: {e}")
     
     # Global error handlers for professional error pages
     @app.errorhandler(404)

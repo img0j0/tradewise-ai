@@ -1,152 +1,181 @@
-# Docker Compose for TradeWise AI Local Development and Testing
-# Provides full application stack with database, cache, and services
-
 version: '3.8'
 
 services:
-  # PostgreSQL Database
-  postgres:
-    image: postgres:15-alpine
-    container_name: tradewise-postgres
-    environment:
-      POSTGRES_DB: tradewise
-      POSTGRES_USER: tradewise_user
-      POSTGRES_PASSWORD: tradewise_secure_password
-      POSTGRES_INITDB_ARGS: "--encoding=UTF-8"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./backups:/backups
-    ports:
-      - "5432:5432"
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U tradewise_user -d tradewise"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    networks:
-      - tradewise-network
-
-  # Redis Cache (Optional - for enhanced caching)
-  redis:
-    image: redis:7-alpine
-    container_name: tradewise-redis
-    command: redis-server --appendonly yes --requirepass tradewise_redis_password
-    volumes:
-      - redis_data:/data
-    ports:
-      - "6379:6379"
-    healthcheck:
-      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
-      interval: 10s
-      timeout: 3s
-      retries: 5
-    networks:
-      - tradewise-network
-
-  # Main API Application
-  api:
-    build:
+  # Main Web Application
+  web:
+    build: 
       context: .
       dockerfile: Dockerfile
-    container_name: tradewise-api
-    environment:
-      - SESSION_SECRET=development-session-secret-change-in-production
-      - DATABASE_URL=postgresql://tradewise_user:tradewise_secure_password@postgres:5432/tradewise
-      - STRIPE_SECRET_KEY=sk_test_your_stripe_test_key_here
-      - REDIS_URL=redis://:tradewise_redis_password@redis:6379/0
-      - FLASK_ENV=development
-      - PYTHONPATH=/app
-    volumes:
-      - ./logs:/app/logs
-      - ./backups:/app/backups
     ports:
-      - "5000:5000"
+      - "${PORT:-5000}:5000"
+    environment:
+      # Critical Environment Variables
+      - DATABASE_URL=${DATABASE_URL:-postgresql://postgres:${DOCKER_POSTGRES_PASSWORD:-tradewise_db_password}@db:5432/${DOCKER_POSTGRES_DB:-tradewise}}
+      - REDIS_URL=${REDIS_URL:-redis://:${DOCKER_REDIS_PASSWORD:-tradewise_redis_password}@redis:6379/0}
+      - SESSION_SECRET=${SESSION_SECRET}
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+      
+      # Optional Configuration
+      - ENVIRONMENT=${ENVIRONMENT:-development}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - ASYNC_WORKERS_ENABLED=${ASYNC_WORKERS_ENABLED:-true}
+      - ASYNC_WORKER_COUNT=${ASYNC_WORKER_COUNT:-3}
+      
+      # Error Notifications
+      - ERROR_NOTIFICATIONS_ENABLED=${ERROR_NOTIFICATIONS_ENABLED:-false}
+      - SLACK_ERROR_WEBHOOK=${SLACK_ERROR_WEBHOOK}
+      - SMTP_SERVER=${SMTP_SERVER}
+      - SMTP_PORT=${SMTP_PORT}
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_PASSWORD=${SMTP_PASSWORD}
+      - ERROR_EMAIL=${ERROR_EMAIL}
+      
+      # Health Check Configuration
+      - HEALTH_CHECK_TIMEOUT=${HEALTH_CHECK_TIMEOUT:-10}
+      - REDIS_HEALTH_CHECK_ENABLED=true
+      - DATABASE_HEALTH_CHECK_ENABLED=true
+      - API_HEALTH_CHECK_ENABLED=true
+      
+      # Performance Settings
+      - PERFORMANCE_MONITORING_ENABLED=${PERFORMANCE_MONITORING_ENABLED:-true}
+      - PREMIUM_FEATURES_ENABLED=${PREMIUM_FEATURES_ENABLED:-true}
+      
     depends_on:
-      postgres:
+      db:
         condition: service_healthy
       redis:
         condition: service_healthy
+    volumes:
+      - ./logs:/app/logs
+      - ./static:/app/static
+    networks:
+      - tradewise-network
+    restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5000/api/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health/startup"]
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 40s
-    restart: unless-stopped
-    networks:
-      - tradewise-network
+      start_period: 60s
 
-  # Async Task Workers - RQ/Celery Workers
+  # Background Worker Service
   worker:
     build:
       context: .
       dockerfile: Dockerfile.worker
-    container_name: tradewise-worker
     environment:
-      - SESSION_SECRET=development-session-secret-change-in-production
-      - DATABASE_URL=postgresql://tradewise_user:tradewise_secure_password@postgres:5432/tradewise
-      - REDIS_URL=redis://:tradewise_redis_password@redis:6379/0
-      - ASYNC_WORKERS_ENABLED=true
-      - ASYNC_WORKER_COUNT=3
-      - PYTHONPATH=/app
-    volumes:
-      - ./logs:/app/logs
+      # Same environment as web app
+      - DATABASE_URL=${DATABASE_URL:-postgresql://postgres:${DOCKER_POSTGRES_PASSWORD:-tradewise_db_password}@db:5432/${DOCKER_POSTGRES_DB:-tradewise}}
+      - REDIS_URL=${REDIS_URL:-redis://:${DOCKER_REDIS_PASSWORD:-tradewise_redis_password}@redis:6379/0}
+      - SESSION_SECRET=${SESSION_SECRET}
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+      - ENVIRONMENT=${ENVIRONMENT:-development}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - ASYNC_WORKER_COUNT=${ASYNC_WORKER_COUNT:-3}
+      - ERROR_NOTIFICATIONS_ENABLED=${ERROR_NOTIFICATIONS_ENABLED:-false}
+      - SLACK_ERROR_WEBHOOK=${SLACK_ERROR_WEBHOOK}
+      - SMTP_SERVER=${SMTP_SERVER}
+      - SMTP_PORT=${SMTP_PORT}
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_PASSWORD=${SMTP_PASSWORD}
+      - ERROR_EMAIL=${ERROR_EMAIL}
     depends_on:
-      postgres:
+      db:
         condition: service_healthy
       redis:
         condition: service_healthy
-    command: ["python", "-c", "from async_task_queue import task_queue; task_queue.start_workers(); import time; time.sleep(float('inf'))"]
-    restart: unless-stopped
-    networks:
-      - tradewise-network
-
-  # AI Pre-computation Service
-  precompute:
-    build:
-      context: .
-      dockerfile: Dockerfile.worker
-    container_name: tradewise-precompute
-    environment:
-      - SESSION_SECRET=development-session-secret-change-in-production
-      - DATABASE_URL=postgresql://tradewise_user:tradewise_secure_password@postgres:5432/tradewise
-      - REDIS_URL=redis://:tradewise_redis_password@redis:6379/0
-      - PYTHONPATH=/app
     volumes:
       - ./logs:/app/logs
-    depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    command: ["python", "-c", "from ai_precomputation_service import precomputation_service; precomputation_service.start_background_service(); import time; time.sleep(float('inf'))"]
-    restart: unless-stopped
     networks:
       - tradewise-network
+    restart: unless-stopped
+    deploy:
+      replicas: ${WORKER_REPLICAS:-2}
+    healthcheck:
+      test: ["CMD", "python", "-c", "import redis; r=redis.from_url('${REDIS_URL:-redis://:${DOCKER_REDIS_PASSWORD:-tradewise_redis_password}@redis:6379/0}'); r.ping()"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
-  # Nginx Load Balancer (Optional for local testing)
+  # PostgreSQL Database
+  db:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_DB=${DOCKER_POSTGRES_DB:-tradewise}
+      - POSTGRES_USER=${DOCKER_POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD=${DOCKER_POSTGRES_PASSWORD:-tradewise_db_password}
+      - POSTGRES_INITDB_ARGS=--auth-host=scram-sha-256
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./db-init:/docker-entrypoint-initdb.d
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    networks:
+      - tradewise-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DOCKER_POSTGRES_USER:-postgres} -d ${DOCKER_POSTGRES_DB:-tradewise}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    security_opt:
+      - no-new-privileges:true
+
+  # Redis Cache and Task Queue
+  redis:
+    image: redis:7-alpine
+    command: >
+      redis-server 
+      --requirepass ${DOCKER_REDIS_PASSWORD:-tradewise_redis_password}
+      --appendonly yes
+      --appendfsync everysec
+      --maxmemory 256mb
+      --maxmemory-policy allkeys-lru
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - tradewise-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    security_opt:
+      - no-new-privileges:true
+
+  # Nginx Reverse Proxy (Optional for Production)
   nginx:
     image: nginx:alpine
-    container_name: tradewise-nginx
+    ports:
+      - "${NGINX_PORT:-80}:80"
+      - "${NGINX_SSL_PORT:-443}:443"
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
-    ports:
-      - "80:80"
-      - "443:443"
+      - ./logs/nginx:/var/log/nginx
     depends_on:
-      - api
-    restart: unless-stopped
+      - web
     networks:
       - tradewise-network
+    restart: unless-stopped
+    profiles:
+      - production
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
-# Volumes for persistent data
 volumes:
   postgres_data:
     driver: local
   redis_data:
     driver: local
 
-# Networks
 networks:
   tradewise-network:
     driver: bridge

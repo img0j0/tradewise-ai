@@ -1,0 +1,123 @@
+# Docker Compose Override for Local Development
+# This file is automatically loaded by docker-compose for local development
+# Contains development-specific configurations and overrides
+
+version: '3.8'
+
+services:
+  web:
+    # Development specific settings
+    environment:
+      - FLASK_ENV=development
+      - FLASK_DEBUG=true
+      - LOG_LEVEL=DEBUG
+      - ENVIRONMENT=development
+    volumes:
+      # Mount source code for hot reload during development
+      - .:/app
+      - ./logs:/app/logs
+      # Exclude these directories from mounting
+      - /app/__pycache__
+      - /app/.git
+    ports:
+      # Expose additional port for debugging
+      - "5000:5000"
+      - "5001:5001"  # Debug port
+    command: >
+      sh -c "python environment_validator.py && 
+             python -m flask run --host=0.0.0.0 --port=5000 --debug"
+
+  worker:
+    # Development worker settings
+    environment:
+      - FLASK_ENV=development
+      - LOG_LEVEL=DEBUG
+      - ENVIRONMENT=development
+    volumes:
+      # Mount source code for development
+      - .:/app
+      - ./logs:/app/logs
+      - /app/__pycache__
+    # Single worker for development
+    deploy:
+      replicas: 1
+    command: >
+      sh -c "python environment_validator.py && 
+             python worker_start.py"
+
+  db:
+    # Development database settings
+    environment:
+      - POSTGRES_DB=tradewise_dev
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=dev_password
+    ports:
+      # Expose database port for external connections
+      - "5432:5432"
+    volumes:
+      # Add development SQL scripts
+      - ./db-init:/docker-entrypoint-initdb.d
+      - ./db-dev:/docker-entrypoint-initdb.d/dev
+
+  redis:
+    # Development Redis settings
+    command: >
+      redis-server 
+      --requirepass dev_redis_pass
+      --appendonly no
+      --save ""
+      --maxmemory 64mb
+    ports:
+      # Expose Redis port for external connections
+      - "6379:6379"
+
+  # Development tools and services
+  adminer:
+    # Database administration tool
+    image: adminer:latest
+    ports:
+      - "8080:8080"
+    environment:
+      - ADMINER_DEFAULT_SERVER=db
+      - ADMINER_DESIGN=pepa-linha
+    depends_on:
+      - db
+    networks:
+      - tradewise-network
+    profiles:
+      - dev-tools
+
+  redis-commander:
+    # Redis administration tool
+    image: rediscommander/redis-commander:latest
+    ports:
+      - "8081:8081"
+    environment:
+      - REDIS_HOSTS=local:redis:6379:0:dev_redis_pass
+    depends_on:
+      - redis
+    networks:
+      - tradewise-network
+    profiles:
+      - dev-tools
+
+  # Development file watcher for auto-restart
+  watcher:
+    image: node:alpine
+    working_dir: /app
+    volumes:
+      - .:/app
+    command: >
+      sh -c "npm install -g nodemon && 
+             nodemon --watch . --ext py --exec 'docker-compose restart web worker'"
+    profiles:
+      - dev-watch
+
+# Development-specific volumes
+volumes:
+  postgres_data:
+    # Use named volume for development data persistence
+    name: tradewise_dev_postgres
+  redis_data:
+    # Use named volume for development cache
+    name: tradewise_dev_redis
