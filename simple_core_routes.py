@@ -14,9 +14,9 @@ def index():
 
 @simple_core_bp.route('/dashboard')
 def dashboard():
-    """Modern SaaS Dashboard - Main Entry Point"""
+    """Dashboard - Exact Design Match"""
     try:
-        return render_template('modern_dashboard_new.html')
+        return render_template('dashboard_exact.html')
     except Exception as e:
         logger.error(f"Error loading dashboard: {e}")
         return f"Dashboard error: {str(e)}", 500
