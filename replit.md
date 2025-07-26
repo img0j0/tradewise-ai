@@ -621,6 +621,12 @@ TradeWise AI is a sophisticated stock analysis platform that provides AI-powered
 
 Preferred communication style: Simple, everyday language.
 
+## Contact Information
+
+- **Email**: tradewise.founder@gmail.com
+- **Phone**: 631-810-9473
+- **Use in contact forms and sales inquiries**
+
 ## Market Positioning Strategy
 
 Based on comprehensive market research (July 2025), TradeWise AI addresses five critical market gaps:
