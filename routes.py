@@ -679,14 +679,23 @@ def get_analysis_watchlist():
                         info = ticker.info
                         hist = ticker.history(period="5d")
                         
-                        # Calculate technical indicators
-                        if len(hist) >= 14 and 'Close' in hist.columns:
-                            delta = hist['Close'].diff()
-                            gain = (delta.where(delta > 0, 0)).rolling(window=14).mean()
-                            loss = (-delta.where(delta < 0, 0)).rolling(window=14).mean()
-                            rs = gain / loss
-                            rsi = 100 - (100 / (1 + rs))
-                            current_rsi = float(rsi.iloc[-1]) if hasattr(rsi, 'iloc') and len(rsi) > 0 and not pd.isna(rsi.iloc[-1]) else 50.0
+                        # Calculate technical indicators safely
+                        if len(hist) >= 14 and 'Close' in hist.columns and not hist.empty:
+                            try:
+                                delta = hist['Close'].diff()
+                                gain = (delta.where(delta > 0, 0)).rolling(window=14).mean()
+                                loss = (-delta.where(delta < 0, 0)).rolling(window=14).mean()
+                                rs = gain / loss
+                                rsi = 100 - (100 / (1 + rs))
+                                
+                                # Safe RSI extraction
+                                if hasattr(rsi, 'iloc') and len(rsi) > 0:
+                                    last_rsi = rsi.iloc[-1]
+                                    current_rsi = float(last_rsi) if not pd.isna(last_rsi) else 50.0
+                                else:
+                                    current_rsi = 50.0
+                            except Exception:
+                                current_rsi = 50.0
                         else:
                             current_rsi = 50.0
                         
@@ -1354,15 +1363,23 @@ def get_active_alerts():
                     avg_volume = info.get('averageVolume', 1)
                     day_change = info.get('regularMarketChangePercent', 0)
                     
-                    # Calculate technical indicators
-                    if len(hist) >= 14 and 'Close' in hist.columns:
-                        # Simple RSI calculation
-                        delta = hist['Close'].diff()
-                        gain = (delta.where(delta > 0, 0)).rolling(window=14).mean()
-                        loss = (-delta.where(delta < 0, 0)).rolling(window=14).mean()
-                        rs = gain / loss
-                        rsi = 100 - (100 / (1 + rs))
-                        current_rsi = float(rsi.iloc[-1]) if hasattr(rsi, 'iloc') and len(rsi) > 0 and not pd.isna(rsi.iloc[-1]) else 50.0
+                    # Calculate technical indicators safely
+                    if len(hist) >= 14 and 'Close' in hist.columns and not hist.empty:
+                        try:
+                            delta = hist['Close'].diff()
+                            gain = (delta.where(delta > 0, 0)).rolling(window=14).mean()
+                            loss = (-delta.where(delta < 0, 0)).rolling(window=14).mean()
+                            rs = gain / loss
+                            rsi = 100 - (100 / (1 + rs))
+                            
+                            # Safe RSI extraction
+                            if hasattr(rsi, 'iloc') and len(rsi) > 0:
+                                last_rsi = rsi.iloc[-1]
+                                current_rsi = float(last_rsi) if not pd.isna(last_rsi) else 50.0
+                            else:
+                                current_rsi = 50.0
+                        except Exception:
+                            current_rsi = 50.0
                     else:
                         current_rsi = 50.0
                     
@@ -1434,14 +1451,23 @@ def get_active_alerts():
                 avg_volume = info.get('averageVolume', 1)
                 market_cap = info.get('marketCap', 0)
                 
-                # Calculate RSI
-                if len(hist) >= 14 and 'Close' in hist.columns:
-                    delta = hist['Close'].diff()
-                    gain = (delta.where(delta > 0, 0)).rolling(window=14).mean()
-                    loss = (-delta.where(delta < 0, 0)).rolling(window=14).mean()
-                    rs = gain / loss
-                    rsi = 100 - (100 / (1 + rs))
-                    current_rsi = float(rsi.iloc[-1]) if hasattr(rsi, 'iloc') and len(rsi) > 0 and not pd.isna(rsi.iloc[-1]) else 50.0
+                # Calculate RSI safely
+                if len(hist) >= 14 and 'Close' in hist.columns and not hist.empty:
+                    try:
+                        delta = hist['Close'].diff()
+                        gain = (delta.where(delta > 0, 0)).rolling(window=14).mean()
+                        loss = (-delta.where(delta < 0, 0)).rolling(window=14).mean()
+                        rs = gain / loss
+                        rsi = 100 - (100 / (1 + rs))
+                        
+                        # Safe RSI extraction
+                        if hasattr(rsi, 'iloc') and len(rsi) > 0:
+                            last_rsi = rsi.iloc[-1]
+                            current_rsi = float(last_rsi) if not pd.isna(last_rsi) else 50.0
+                        else:
+                            current_rsi = 50.0
+                    except Exception:
+                        current_rsi = 50.0
                 else:
                     current_rsi = 50.0
                 
@@ -1751,7 +1777,7 @@ def add_favorite():
         favorite.company_name = company_name
         favorite.sector = sector
         favorite.user_session = session_id
-        favorite.created_date = datetime.utcnow()
+        favorite.timestamp = datetime.utcnow()
         
         db.session.add(favorite)
         db.session.commit()
@@ -1886,8 +1912,9 @@ def get_ai_opportunities():
         watchlist = request.args.get('watchlist', '').split(',') if request.args.get('watchlist') else None
         watchlist = [s.strip().upper() for s in watchlist if s.strip()] if watchlist else None
         
-        # Get live opportunities using AI
-        opportunities = get_live_opportunities(watchlist, user_strategy)
+        # Get live opportunities using AI (with fallback for None watchlist)
+        safe_watchlist = watchlist if watchlist is not None else []
+        opportunities = get_live_opportunities(safe_watchlist, user_strategy)
         
         return jsonify({
             'success': True,
@@ -1940,8 +1967,11 @@ def get_enhanced_ai_analysis():
             'industry': info.get('industry', 'Unknown')
         }
         
-        # Enhance with AI capabilities
-        enhanced_analysis = enhance_analysis(symbol, base_analysis, user_strategy)
+        # Enhance with AI capabilities (ensure symbol is not None)
+        if symbol:
+            enhanced_analysis = enhance_analysis(symbol, base_analysis, user_strategy)
+        else:
+            enhanced_analysis = base_analysis
         
         return jsonify({
             'success': True,
