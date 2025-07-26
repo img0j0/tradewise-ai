@@ -1,170 +1,359 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TradeWise AI - Dashboard</title>
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js with Fallback -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.min.js" 
+            onerror="console.log('Chart.js failed to load from CDN')"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.min.js" 
+            onerror="console.log('Chart.js fallback also failed')"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-{% block title %}Dashboard - TradeWise AI{% endblock %}
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f5f5f7;
+            color: #1d1d1f;
+        }
 
-{% block sidebar_dashboard %}active{% endblock %}
+        /* Navigation Bar */
+        .navbar {
+            background-color: #1d3557;
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
 
-{% block content %}
-<div class="container mx-auto px-4 py-8">
-    <!-- Dashboard Header -->
-    <div class="mb-8">
-        <h1 class="text-3xl font-bold text-gray-900 mb-2">Welcome back to TradeWise AI</h1>
-        <p class="text-gray-600">Your intelligent stock analysis platform</p>
-    </div>
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
 
-    <!-- Dashboard Grid -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-        <!-- Portfolio Overview Card -->
-        <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
-            <div class="flex items-center justify-between mb-4">
-                <div class="flex items-center gap-3">
-                    <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
-                        <i class="fas fa-chart-pie text-white text-lg"></i>
-                    </div>
-                    <h3 class="text-lg font-semibold text-gray-900">Portfolio Overview</h3>
-                </div>
-            </div>
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            color: white;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .nav-links a:hover {
+            opacity: 0.8;
+        }
+
+        /* Dashboard Container */
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .dashboard-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .dashboard-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: #1d3557;
+        }
+
+        .dashboard-header p {
+            font-size: 1.2rem;
+            color: #6c6c70;
+        }
+
+        /* Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        @media (max-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Dashboard Cards */
+        .dashboard-card {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-icon {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.25rem;
+        }
+
+        .portfolio-icon {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .insights-icon {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .market-icon {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1d1d1f;
+            margin: 0;
+        }
+
+        .card-content {
+            color: #6c6c70;
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #34c759;
+            margin: 0.5rem 0;
+        }
+
+        .metric-change {
+            color: #34c759;
+            font-weight: 600;
+        }
+
+        .negative {
+            color: #ff3b30;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 3rem;
+        }
+
+        .action-btn {
+            background: #007aff;
+            color: white;
+            border: none;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            text-decoration: none;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .action-btn:hover {
+            background: #0051d5;
+        }
+
+        .action-btn.secondary {
+            background: #f5f5f7;
+            color: #1d1d1f;
+            border: 1px solid #e5e5ea;
+        }
+
+        .action-btn.secondary:hover {
+            background: #e5e5ea;
+        }
+
+        /* Chart Container */
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: 1rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .dashboard-container {
+                margin: 1rem auto;
+                padding: 0 1rem;
+            }
             
-            <div class="space-y-3">
-                <div>
-                    <div class="text-2xl font-bold text-gray-900" id="portfolioValue">$125,420</div>
-                    <div class="text-sm text-green-600 font-medium" id="portfolioChange">+$2,847 (+2.34%) today</div>
-                </div>
-                
-                <div class="h-32 mt-4">
-                    <canvas id="portfolioChart"></canvas>
-                </div>
-            </div>
+            .navbar {
+                padding: 1rem;
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .nav-left {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-left">
+            <a href="/dashboard" class="logo">
+                <i class="fas fa-chart-line"></i>
+                TradeWise AI
+            </a>
+            <ul class="nav-links">
+                <li><a href="/dashboard">Dashboard</a></li>
+                <li><a href="/search">Stock Analysis</a></li>
+                <li><a href="#backtest">Backtest</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Dashboard Container -->
+    <div class="dashboard-container">
+        <div class="dashboard-header">
+            <h1>Welcome to TradeWise AI</h1>
+            <p>Your intelligent stock analysis platform</p>
         </div>
 
-        <!-- AI Insights Card -->
-        <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
-            <div class="flex items-center justify-between mb-4">
-                <div class="flex items-center gap-3">
-                    <div class="w-12 h-12 bg-gradient-to-r from-purple-500 to-purple-600 rounded-xl flex items-center justify-center">
-                        <i class="fas fa-brain text-white text-lg"></i>
+        <!-- Dashboard Grid -->
+        <div class="dashboard-grid">
+            <!-- Portfolio Overview -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <div class="card-icon portfolio-icon">
+                        <i class="fas fa-chart-pie"></i>
                     </div>
-                    <h3 class="text-lg font-semibold text-gray-900">AI Insights</h3>
+                    <h3 class="card-title">Portfolio Overview</h3>
+                </div>
+                <div class="card-content">
+                    <div class="metric-value" id="portfolioValue">$32,174</div>
+                    <div class="metric-change" id="portfolioChange">+3.12% (+$975) today</div>
+                    <div class="chart-container">
+                        <canvas id="portfolioChart"></canvas>
+                    </div>
                 </div>
             </div>
-            
-            <div class="space-y-3">
-                <div class="flex justify-between items-center">
-                    <span class="text-sm text-gray-600">Market Sentiment</span>
-                    <span class="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">Bullish</span>
+
+            <!-- AI Insights -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <div class="card-icon insights-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3 class="card-title">AI Insights</h3>
                 </div>
-                <div class="flex justify-between items-center">
-                    <span class="text-sm text-gray-600">Top AI Pick</span>
-                    <span class="font-medium text-gray-900">NVDA (Buy)</span>
-                </div>
-                <div class="flex justify-between items-center">
-                    <span class="text-sm text-gray-600">Risk Level</span>
-                    <span class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded-full">Moderate</span>
-                </div>
-                
-                <div class="mt-4 p-3 bg-blue-50 rounded-lg">
-                    <p class="text-xs text-blue-800 italic">
+                <div class="card-content">
+                    <p><strong>Market Sentiment:</strong> Bullish</p>
+                    <p><strong>Top Pick:</strong> AAPL (Buy)</p>
+                    <p><strong>Risk Level:</strong> Moderate</p>
+                    <p><strong>Next Earnings:</strong> 3 stocks this week</p>
+                    <p style="margin-top: 1rem; font-style: italic;">
                         "Tech sector showing strong momentum. Consider increasing allocation to growth stocks."
+                    </p>
+                </div>
+            </div>
+
+            <!-- Market Highlights -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <div class="card-icon market-icon">
+                        <i class="fas fa-globe"></i>
+                    </div>
+                    <h3 class="card-title">Market Highlights</h3>
+                </div>
+                <div class="card-content">
+                    <p><strong>S&P 500:</strong> <span class="metric-change">+1.2%</span></p>
+                    <p><strong>NASDAQ:</strong> <span class="metric-change">+2.1%</span></p>
+                    <p><strong>DOW:</strong> <span class="metric-change">+0.8%</span></p>
+                    <p><strong>VIX:</strong> <span class="metric-change negative">-5.2%</span></p>
+                    <p style="margin-top: 1rem;">
+                        <strong>Top Movers:</strong> NVDA (+8.2%), TSLA (+5.1%)
                     </p>
                 </div>
             </div>
         </div>
 
-        <!-- Market Highlights Card -->
-        <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
-            <div class="flex items-center justify-between mb-4">
-                <div class="flex items-center gap-3">
-                    <div class="w-12 h-12 bg-gradient-to-r from-green-500 to-green-600 rounded-xl flex items-center justify-center">
-                        <i class="fas fa-globe text-white text-lg"></i>
-                    </div>
-                    <h3 class="text-lg font-semibold text-gray-900">Market Highlights</h3>
-                </div>
-            </div>
-            
-            <div class="space-y-3">
-                <div class="flex justify-between items-center">
-                    <span class="text-sm text-gray-600">S&P 500</span>
-                    <span class="text-green-600 font-medium">+1.2%</span>
-                </div>
-                <div class="flex justify-between items-center">
-                    <span class="text-sm text-gray-600">NASDAQ</span>
-                    <span class="text-green-600 font-medium">+2.1%</span>
-                </div>
-                <div class="flex justify-between items-center">
-                    <span class="text-sm text-gray-600">DOW</span>
-                    <span class="text-green-600 font-medium">+0.8%</span>
-                </div>
-                <div class="flex justify-between items-center">
-                    <span class="text-sm text-gray-600">VIX</span>
-                    <span class="text-red-600 font-medium">-5.2%</span>
-                </div>
-                
-                <div class="mt-4 pt-3 border-t border-gray-200">
-                    <div class="text-xs text-gray-600 mb-1">Top Movers</div>
-                    <div class="text-sm font-medium text-gray-900">NVDA (+8.2%), TSLA (+5.1%)</div>
-                </div>
-            </div>
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <a href="/search" class="action-btn">
+                <i class="fas fa-search"></i>
+                Analyze Stock
+            </a>
+            <a href="#portfolio" class="action-btn secondary">
+                <i class="fas fa-chart-pie"></i>
+                View Portfolio
+            </a>
+            <a href="#alerts" class="action-btn secondary">
+                <i class="fas fa-bell"></i>
+                Set Alerts
+            </a>
+            <a href="#premium" class="action-btn secondary">
+                <i class="fas fa-crown"></i>
+                Upgrade to Pro
+            </a>
         </div>
     </div>
-
-    <!-- Quick Actions Section -->
-    <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
-        <h2 class="text-xl font-semibold text-gray-900 mb-6">Quick Actions</h2>
-        
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            <!-- Stock Analysis Tool -->
-            <button data-tool="stock_analysis" class="tool-action-btn group">
-                <div class="tool-icon bg-blue-100 text-blue-600 group-hover:bg-blue-600 group-hover:text-white">
-                    <i class="fas fa-search text-lg"></i>
-                </div>
-                <span class="tool-label">Analyze Stock</span>
-            </button>
-
-            <!-- Backtest Tool -->
-            <button data-tool="backtest" class="tool-action-btn group">
-                <div class="tool-icon bg-purple-100 text-purple-600 group-hover:bg-purple-600 group-hover:text-white">
-                    <i class="fas fa-chart-line text-lg"></i>
-                </div>
-                <span class="tool-label">Run Backtest</span>
-                <span class="premium-badge">PRO</span>
-            </button>
-
-            <!-- AI Insights Tool -->
-            <button data-tool="ai_insights" class="tool-action-btn group">
-                <div class="tool-icon bg-green-100 text-green-600 group-hover:bg-green-600 group-hover:text-white">
-                    <i class="fas fa-brain text-lg"></i>
-                </div>
-                <span class="tool-label">AI Insights</span>
-            </button>
-
-            <!-- Peer Comparison Tool -->
-            <button data-tool="peer_comparison" class="tool-action-btn group">
-                <div class="tool-icon bg-orange-100 text-orange-600 group-hover:bg-orange-600 group-hover:text-white">
-                    <i class="fas fa-balance-scale text-lg"></i>
-                </div>
-                <span class="tool-label">Peer Analysis</span>
-                <span class="premium-badge">PRO</span>
-            </button>
-
-            <!-- Market Scanner Tool -->
-            <button data-tool="market_scanner" class="tool-action-btn group">
-                <div class="tool-icon bg-red-100 text-red-600 group-hover:bg-red-600 group-hover:text-white">
-                    <i class="fas fa-radar text-lg"></i>
-                </div>
-                <span class="tool-label">Market Scanner</span>
-                <span class="premium-badge">PRO</span>
-            </button>
-
-            <!-- Smart Alerts Tool -->
-            <button data-tool="smart_alerts" class="tool-action-btn group">
-                <div class="tool-icon bg-yellow-100 text-yellow-600 group-hover:bg-yellow-600 group-hover:text-white">
-                    <i class="fas fa-bell text-lg"></i>
-                </div>
-                <span class="tool-label">Smart Alerts</span>
-            </button>
-        </div>
-    </div>
-</div>
 
 <style>
 .tool-action-btn {
@@ -254,88 +443,73 @@
 }
 
 .dark .tool-label {
-    @apply text-gray-300;
+    color: #d1d5db;
 }
 </style>
-{% endblock %}
 
-{% block extra_js %}
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize Portfolio Chart
-    const portfolioCtx = document.getElementById('portfolioChart');
-    if (portfolioCtx && typeof Chart !== 'undefined') {
-        new Chart(portfolioCtx, {
+    <script>
+        // Portfolio Chart - Check if Chart.js is loaded
+        const ctx = document.getElementById('portfolioChart');
+        if (ctx && typeof Chart !== 'undefined') {
+            const portfolioChart = new Chart(ctx.getContext('2d'), {
             type: 'line',
             data: {
-                labels: ['9AM', '10AM', '11AM', '12PM', '1PM', '2PM', '3PM', '4PM'],
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
                 datasets: [{
                     label: 'Portfolio Value',
-                    data: [122573, 123420, 124156, 123890, 124720, 125420, 125180, 125420],
-                    borderColor: '#3B82F6',
-                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                    borderWidth: 2,
+                    data: [28000, 29500, 31000, 30200, 31800, 32174],
+                    borderColor: '#007aff',
+                    backgroundColor: 'rgba(0, 122, 255, 0.1)',
+                    borderWidth: 3,
                     fill: true,
-                    tension: 0.4,
-                    pointRadius: 0,
-                    pointHoverRadius: 4
+                    tension: 0.4
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: { display: false }
-                },
-                scales: {
-                    x: { 
-                        display: false,
-                        grid: { display: false }
-                    },
-                    y: { 
-                        display: false,
-                        grid: { display: false }
+                    legend: {
+                        display: false
                     }
                 },
-                elements: {
-                    line: { borderWidth: 2 }
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        grid: {
+                            color: 'rgba(0,0,0,0.1)'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: 'rgba(0,0,0,0.1)'
+                        }
+                    }
                 }
             }
         });
-    }
-
-    // Load real dashboard data
-    loadDashboardData();
-});
-
-async function loadDashboardData() {
-    try {
-        const response = await fetch('/api/portfolio/summary');
-        if (response.ok) {
-            const data = await response.json();
-            
-            // Update portfolio values
-            if (data.totalValue) {
-                document.getElementById('portfolioValue').textContent = 
-                    new Intl.NumberFormat('en-US', { 
-                        style: 'currency', 
-                        currency: 'USD' 
-                    }).format(data.totalValue);
-            }
-            
-            if (data.change && data.changePercent) {
-                const changeEl = document.getElementById('portfolioChange');
-                const isPositive = data.change >= 0;
-                changeEl.textContent = `${isPositive ? '+' : ''}$${Math.abs(data.change).toLocaleString()} (${isPositive ? '+' : ''}${data.changePercent.toFixed(2)}%) today`;
-                changeEl.className = `text-sm font-medium ${isPositive ? 'text-green-600' : 'text-red-600'}`;
-            }
-            
-            console.log('Dashboard data loaded:', data);
+        } else {
+            console.log('Chart.js not loaded or chart element not found');
         }
-    } catch (error) {
-        console.log('Using demo data for dashboard');
-    }
-}
-</script>
-{% endblock %}
+
+        // Load real-time data
+        async function loadDashboardData() {
+            try {
+                const response = await fetch('/api/portfolio/summary');
+                if (response.ok) {
+                    const data = await response.json();
+                    // Update with real data when available
+                    console.log('Dashboard data loaded:', data);
+                }
+            } catch (error) {
+                console.log('Using demo data');
+            }
+        }
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', () => {
+            loadDashboardData();
+        });
+    </script>
+</body>
+</html>
