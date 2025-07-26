@@ -312,6 +312,28 @@ def premium_success():
     session_id = request.args.get('session_id')
     return render_template('premium_success.html', session_id=session_id)
 
+@main_bp.route('/contact-sales', methods=['GET', 'POST'])
+def contact_sales():
+    """Contact sales for Enterprise plan"""
+    if request.method == 'POST':
+        # Handle form submission
+        data = request.form.to_dict()
+        name = data.get('name', '')
+        email = data.get('email', '')
+        company = data.get('company', '')
+        message = data.get('message', '')
+        
+        # Log the inquiry (in production, you'd send an email or store in database)
+        logger.info(f"Enterprise sales inquiry from {name} ({email}) at {company}: {message}")
+        
+        return jsonify({
+            'success': True,
+            'message': 'Thank you for your inquiry! Our sales team will contact you within 24 hours.'
+        })
+    
+    # Show contact form
+    return render_template('contact_sales.html')
+
 @main_bp.route('/settings')
 def settings():
     """User settings page"""
