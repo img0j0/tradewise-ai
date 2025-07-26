@@ -15,7 +15,7 @@ from error_handler import ErrorHandler, setup_logging
 
 # Validate environment variables at startup
 if not validate_environment_startup():
-    logger.error("Environment validation failed - stopping startup")
+    print("Environment validation failed - stopping startup")
     sys.exit(1)
 
 # Setup centralized logging
@@ -173,8 +173,11 @@ with app.app_context():
     # Register core blueprints for full functionality
     try:
         from routes import main_bp
+        from unified_subscription_routes import subscription_bp
         app.register_blueprint(main_bp)
+        app.register_blueprint(subscription_bp)
         logger.info("✅ Main routes blueprint registered successfully")
+        logger.info("✅ Subscription routes blueprint registered successfully")
     except Exception as e:
         logger.error(f"⚠️ Error registering main routes: {e}")
     

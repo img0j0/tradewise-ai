@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upgrade to {{ plan_config.display_name }} - TradeWise AI</title>
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .checkout-container {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+            text-align: center;
+        }
+
+        .plan-icon {
+            width: 4rem;
+            height: 4rem;
+            border-radius: 50%;
+            background: {{ plan_config.color_theme }};
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin: 0 auto 1.5rem;
+        }
+
+        .checkout-header h1 {
+            font-size: 2.5rem;
+            color: #1d1d1f;
+            margin-bottom: 0.5rem;
+        }
+
+        .checkout-header p {
+            font-size: 1.2rem;
+            color: #6c6c70;
+            margin-bottom: 2rem;
+        }
+
+        .plan-details {
+            background: #f8f9fa;
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .plan-name {
+            font-size: 2rem;
+            font-weight: bold;
+            color: {{ plan_config.color_theme }};
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .plan-price {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #1d1d1f;
+            margin-bottom: 0.5rem;
+        }
+
+        .plan-price small {
+            font-size: 1.2rem;
+            color: #6c6c70;
+        }
+
+        .billing-cycle-toggle {
+            display: flex;
+            background: #e5e5ea;
+            border-radius: 12px;
+            padding: 0.25rem;
+            margin: 1.5rem 0;
+            gap: 0.25rem;
+        }
+
+        .cycle-option {
+            flex: 1;
+            padding: 0.75rem;
+            background: transparent;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .cycle-option.active {
+            background: white;
+            color: {{ plan_config.color_theme }};
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .plan-features {
+            list-style: none;
+            padding: 0;
+            text-align: left;
+            margin-top: 1.5rem;
+        }
+
+        .plan-features li {
+            padding: 0.75rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            border-bottom: 1px solid #e5e5ea;
+        }
+
+        .plan-features li:last-child {
+            border-bottom: none;
+        }
+
+        .plan-features li i {
+            color: #34C759;
+            font-size: 1rem;
+            width: 1.25rem;
+        }
+
+        .checkout-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .checkout-btn {
+            background: linear-gradient(135deg, {{ plan_config.color_theme }}, {{ plan_config.color_theme }}dd);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .checkout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .checkout-btn:disabled {
+            background: #8e8e93;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .back-btn {
+            background: transparent;
+            color: #6c6c70;
+            border: 2px solid #e5e5ea;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .back-btn:hover {
+            border-color: #6c6c70;
+            color: #1d1d1f;
+        }
+
+        .security-info {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+            color: #6c6c70;
+            font-size: 0.875rem;
+        }
+
+        .loading {
+            display: none;
+            color: #6c6c70;
+        }
+
+        .loading i {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            background: #FF3B30;
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .checkout-container {
+                padding: 2rem;
+                margin: 1rem;
+            }
+            
+            .checkout-header h1 {
+                font-size: 2rem;
+            }
+            
+            .plan-price {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="checkout-container">
+        <div class="checkout-header">
+            <div class="plan-icon">
+                <i class="{{ plan_config.icon }}"></i>
+            </div>
+            <h1>Upgrade to {{ plan_config.display_name }}</h1>
+            <p>Unlock advanced features and take your investing to the next level</p>
+        </div>
+
+        <div class="error-message" id="error-message"></div>
+
+        <div class="plan-details">
+            <div class="plan-name">
+                <i class="{{ plan_config.icon }}"></i>
+                {{ plan_config.display_name }} Plan
+            </div>
+            
+            <div class="plan-price" id="plan-price">
+                ${{ plan_config.monthly_price }}
+                <small>per month</small>
+            </div>
+
+            <div class="billing-cycle-toggle">
+                <button class="cycle-option active" data-cycle="monthly" onclick="selectBillingCycle('monthly')">
+                    Monthly
+                </button>
+                <button class="cycle-option" data-cycle="annual" onclick="selectBillingCycle('annual')">
+                    Annual <span style="font-size: 0.8em; color: #34C759;">(Save 17%)</span>
+                </button>
+            </div>
+
+            <ul class="plan-features">
+                {% if plan == 'pro' %}
+                    <li><i class="fas fa-check"></i> Advanced AI insights and analysis</li>
+                    <li><i class="fas fa-check"></i> Portfolio backtesting and optimization</li>
+                    <li><i class="fas fa-check"></i> Up to 200 watchlist items</li>
+                    <li><i class="fas fa-check"></i> 1,000 API requests per day</li>
+                    <li><i class="fas fa-check"></i> 100 real-time smart alerts</li>
+                    <li><i class="fas fa-check"></i> Custom reports and analytics</li>
+                    <li><i class="fas fa-check"></i> Priority customer support</li>
+                    <li><i class="fas fa-check"></i> 10 years of historical data</li>
+                {% elif plan == 'enterprise' %}
+                    <li><i class="fas fa-check"></i> All Pro features included</li>
+                    <li><i class="fas fa-check"></i> Team collaboration tools</li>
+                    <li><i class="fas fa-check"></i> Up to 1,000 watchlist items</li>
+                    <li><i class="fas fa-check"></i> 10,000 API requests per day</li>
+                    <li><i class="fas fa-check"></i> 500 real-time smart alerts</li>
+                    <li><i class="fas fa-check"></i> API access for integrations</li>
+                    <li><i class="fas fa-check"></i> White-label reports</li>
+                    <li><i class="fas fa-check"></i> Dedicated support manager</li>
+                {% endif %}
+            </ul>
+        </div>
+
+        <div class="checkout-actions">
+            <button class="checkout-btn" id="checkout-btn" onclick="startCheckout()">
+                <i class="fas fa-credit-card"></i>
+                Start 14-Day Free Trial
+            </button>
+            
+            <div class="loading" id="loading">
+                <i class="fas fa-spinner"></i>
+                Processing your request...
+            </div>
+
+            <button class="back-btn" onclick="goBack()">
+                <i class="fas fa-arrow-left"></i>
+                Back to Billing
+            </button>
+        </div>
+
+        <div class="security-info">
+            <i class="fas fa-shield-alt"></i>
+            Secure payment powered by Stripe
+        </div>
+    </div>
+
+    <script>
+        // Checkout Manager
+        class CheckoutManager {
+            constructor() {
+                this.plan = '{{ plan }}';
+                this.billingCycle = '{{ billing_cycle }}';
+                this.planConfig = {
+                    monthly_price: {{ plan_config.monthly_price }},
+                    annual_price: {{ plan_config.annual_price }}
+                };
+                this.updatePriceDisplay();
+            }
+
+            selectBillingCycle(cycle) {
+                this.billingCycle = cycle;
+                
+                // Update active button
+                document.querySelectorAll('.cycle-option').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                document.querySelector(`[data-cycle="${cycle}"]`).classList.add('active');
+                
+                // Update price display
+                this.updatePriceDisplay();
+            }
+
+            updatePriceDisplay() {
+                const priceEl = document.getElementById('plan-price');
+                
+                if (this.billingCycle === 'annual') {
+                    const monthlyPrice = (this.planConfig.annual_price / 12).toFixed(2);
+                    priceEl.innerHTML = `
+                        $${monthlyPrice}
+                        <small>per month</small>
+                        <div style="font-size: 1rem; color: #34C759; margin-top: 0.5rem;">
+                            Billed annually ($${this.planConfig.annual_price})
+                        </div>
+                    `;
+                } else {
+                    priceEl.innerHTML = `
+                        $${this.planConfig.monthly_price}
+                        <small>per month</small>
+                    `;
+                }
+            }
+
+            async startCheckout() {
+                try {
+                    this.setLoadingState(true);
+
+                    const response = await fetch('/subscription/api/create-checkout-session', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            plan: this.plan,
+                            billing_cycle: this.billingCycle
+                        })
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        // Redirect to Stripe checkout
+                        window.location.href = result.checkout_url;
+                    } else {
+                        this.showError(result.error || 'Checkout failed. Please try again.');
+                    }
+
+                } catch (error) {
+                    console.error('Checkout error:', error);
+                    this.showError('Network error. Please check your connection and try again.');
+                } finally {
+                    this.setLoadingState(false);
+                }
+            }
+
+            setLoadingState(loading) {
+                const checkoutBtn = document.getElementById('checkout-btn');
+                const loadingEl = document.getElementById('loading');
+
+                if (loading) {
+                    checkoutBtn.style.display = 'none';
+                    loadingEl.style.display = 'flex';
+                } else {
+                    checkoutBtn.style.display = 'flex';
+                    loadingEl.style.display = 'none';
+                }
+            }
+
+            showError(message) {
+                const errorEl = document.getElementById('error-message');
+                errorEl.textContent = message;
+                errorEl.style.display = 'block';
+                setTimeout(() => errorEl.style.display = 'none', 8000);
+            }
+
+            goBack() {
+                window.location.href = '/subscription/billing';
+            }
+        }
+
+        // Global functions for HTML onclick handlers
+        function selectBillingCycle(cycle) {
+            window.checkoutManager.selectBillingCycle(cycle);
+        }
+
+        function startCheckout() {
+            window.checkoutManager.startCheckout();
+        }
+
+        function goBack() {
+            window.checkoutManager.goBack();
+        }
+
+        // Initialize Checkout Manager when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            window.checkoutManager = new CheckoutManager();
+        });
+    </script>
+</body>
+</html>
