@@ -183,6 +183,9 @@ class ToolFeedbackManager {
                 this.handleToolClick(toolButton);
             }
         });
+        
+        // Make the entire tool feedback manager available globally
+        window.toolFeedback = this;
     }
 
     async handleToolClick(button) {
@@ -224,6 +227,11 @@ class ToolFeedbackManager {
             console.error('Tool execution error:', error);
             this.handleToolError(error.message, notificationId, button);
         }
+    }
+
+    // Alias method for backward compatibility
+    launchTool(button, params = {}) {
+        return this.handleToolClick(button);
     }
 
     getToolParameters(button) {
