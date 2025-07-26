@@ -640,36 +640,93 @@ def generate_task_result(task_id: str, task_type: str):
                 'status': 'completed',
                 'progress': 100,
                 'result': {
-                    'analysis_type': 'AI Market Insights',
+                    'analysis_type': 'Advanced AI Portfolio Intelligence',
                     'symbol': 'AAPL',  # Default symbol for demo
-                    'insights': [
-                        {
-                            'category': 'Technical Analysis',
-                            'signal': 'Bullish momentum building',
-                            'confidence': 78,
-                            'details': 'RSI trending upward from oversold levels'
+                    'portfolio_impact': {
+                        'correlation_analysis': {
+                            'portfolio_beta': 0.94,
+                            'diversification_benefit': 'Medium',
+                            'concentration_risk': 'Low - represents 8.2% of portfolio',
+                            'optimal_allocation': '6-12% based on risk profile'
                         },
-                        {
-                            'category': 'Market Sentiment', 
-                            'signal': 'Positive institutional flow',
-                            'confidence': 82,
-                            'details': 'Large volume accumulation detected'
-                        },
-                        {
-                            'category': 'Risk Assessment',
-                            'signal': 'Moderate volatility expected',
-                            'confidence': 75,
-                            'details': 'Options flow suggests controlled risk environment'
+                        'risk_contribution': {
+                            'var_contribution': '12.3% of portfolio VaR',
+                            'downside_protection': 'Strong historical resilience',
+                            'correlation_breakdown': {
+                                'tech_sector': 0.87,
+                                'sp500': 0.94,
+                                'nasdaq': 0.91
+                            }
                         }
-                    ],
-                    'overall_recommendation': 'HOLD',
-                    'confidence_score': 78,
-                    'risk_level': 'Medium',
-                    'key_factors': [
-                        'Strong earnings outlook',
-                        'Technical breakout potential',
-                        'Sector rotation favorable'
-                    ]
+                    },
+                    'market_intelligence': {
+                        'macro_environment': {
+                            'interest_rate_sensitivity': 'Moderate negative (-0.3 duration)',
+                            'inflation_hedge': 'Weak - pricing power limited',
+                            'dollar_strength_impact': 'High exposure (67% international revenue)',
+                            'recession_probability': 'Base case 28% - defensive characteristics'
+                        },
+                        'sector_rotation': {
+                            'current_phase': 'Late cycle growth transition',
+                            'sector_momentum': 'Technology showing relative strength',
+                            'style_preference': 'Quality growth favored over value',
+                            'institutional_flow': '+$2.1B net inflow last 30 days'
+                        }
+                    },
+                    'predictive_scenarios': {
+                        'bull_case': {
+                            'probability': '35%',
+                            'target_range': '$240-280',
+                            'catalyst': 'AI services acceleration + margin expansion',
+                            'timeline': '6-12 months',
+                            'conditions': 'Fed pivot + China reopening'
+                        },
+                        'base_case': {
+                            'probability': '45%',
+                            'target_range': '$200-230',
+                            'catalyst': 'Steady iPhone cycle + services growth',
+                            'timeline': '3-6 months',
+                            'conditions': 'Economic soft landing'
+                        },
+                        'bear_case': {
+                            'probability': '20%',
+                            'target_range': '$150-180',
+                            'catalyst': 'Consumer spending decline + China tensions',
+                            'timeline': '1-3 months',
+                            'conditions': 'Hard recession + trade war escalation'
+                        }
+                    },
+                    'institutional_intelligence': {
+                        'smart_money_flow': {
+                            'hedge_funds': 'Net buyers (+$890M last quarter)',
+                            'pension_funds': 'Steady accumulation',
+                            'sovereign_wealth': 'Major position increases',
+                            'insider_activity': '3 director purchases, 1 executive sale'
+                        },
+                        'options_intelligence': {
+                            'put_call_ratio': '0.67 (bullish)',
+                            'unusual_activity': 'Large Jan 2025 $250 call volume',
+                            'volatility_skew': 'Elevated downside protection demand',
+                            'max_pain': '$215 (current expiry)'
+                        }
+                    },
+                    'ai_recommendation': {
+                        'action': 'ACCUMULATE on weakness',
+                        'confidence': 84,
+                        'risk_level': 'Medium-Low',
+                        'portfolio_fit': 'Core holding - increase on 5-8% pullbacks',
+                        'time_horizon': 'Best suited for 12+ month investment',
+                        'key_risks': [
+                            'iPhone demand slowdown',
+                            'China market deterioration', 
+                            'Multiple compression risk'
+                        ],
+                        'key_catalysts': [
+                            'AI/ML monetization acceleration',
+                            'Services margin expansion',
+                            'Capital allocation optimization'
+                        ]
+                    }
                 },
                 'completion_time': time.time(),
                 'processing_duration': 8
