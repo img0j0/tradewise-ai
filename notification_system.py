@@ -1,263 +1,334 @@
 """
-Critical Error Notification System for TradeWise AI
-Sends alerts for critical system errors via Slack and Email
+Email Notification System - Phase 5
+Handles email notifications for plan upgrades/downgrades and alert triggers
 """
 
 import os
-import logging
 import smtplib
-import requests
-from datetime import datetime
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from typing import Dict, Any, Optional
-import traceback
+from datetime import datetime
+import logging
+from typing import Dict, Optional
 
 logger = logging.getLogger(__name__)
 
-class NotificationManager:
-    """Manages critical error notifications"""
+class EmailNotificationService:
+    """Service for sending email notifications"""
     
     def __init__(self):
-        self.enabled = os.getenv('ERROR_NOTIFICATIONS_ENABLED', 'false').lower() == 'true'
-        self.slack_webhook = os.getenv('SLACK_ERROR_WEBHOOK')
-        self.email_config = self._get_email_config()
+        # Email configuration - using environment variables for security
+        self.smtp_server = os.getenv('SMTP_SERVER', 'smtp.gmail.com')
+        self.smtp_port = int(os.getenv('SMTP_PORT', '587'))
+        self.email_address = os.getenv('NOTIFICATION_EMAIL', 'tradewise.founder@gmail.com')
+        self.email_password = os.getenv('NOTIFICATION_EMAIL_PASSWORD', '')
+        self.from_name = "TradeWise AI"
         
-    def _get_email_config(self) -> Optional[Dict[str, str]]:
-        """Get email configuration from environment"""
-        config = {
-            'smtp_server': os.getenv('SMTP_SERVER'),
-            'smtp_port': int(os.getenv('SMTP_PORT', '587')),
-            'smtp_user': os.getenv('SMTP_USER'),
-            'smtp_password': os.getenv('SMTP_PASSWORD'),
-            'error_email': os.getenv('ERROR_EMAIL')
-        }
-        
-        # Return None if any required config is missing
-        if not all([config['smtp_server'], config['smtp_user'], 
-                   config['smtp_password'], config['error_email']]):
-            return None
+    def send_email(self, to_email: str, subject: str, html_content: str, text_content: str = None) -> bool:
+        """Send an email notification"""
+        try:
+            # Create message
+            msg = MIMEMultipart('alternative')
+            msg['From'] = f"{self.from_name} <{self.email_address}>"
+            msg['To'] = to_email
+            msg['Subject'] = subject
             
-        return config
-    
-    def send_critical_alert(self, error: Exception, context: Dict[str, Any] = None):
-        """Send critical error alert via all configured channels"""
-        if not self.enabled:
-            logger.debug("Error notifications disabled - skipping alert")
-            return
+            # Add text version if provided
+            if text_content:
+                text_part = MIMEText(text_content, 'plain')
+                msg.attach(text_part)
             
-        error_info = {
-            'error_type': type(error).__name__,
-            'message': str(error),
-            'timestamp': datetime.utcnow().isoformat(),
-            'stack_trace': traceback.format_exc(),
-            'context': context or {}
-        }
-        
-        # Send Slack notification
-        if self.slack_webhook:
-            try:
-                self._send_slack_alert(error_info)
-                logger.info("Critical error alert sent to Slack")
-            except Exception as e:
-                logger.error(f"Failed to send Slack alert: {e}")
-        
-        # Send email notification
-        if self.email_config:
-            try:
-                self._send_email_alert(error_info)
-                logger.info("Critical error alert sent via email")
-            except Exception as e:
-                logger.error(f"Failed to send email alert: {e}")
+            # Add HTML version
+            html_part = MIMEText(html_content, 'html')
+            msg.attach(html_part)
+            
+            # Send email
+            with smtplib.SMTP(self.smtp_server, self.smtp_port) as server:
+                server.starttls()
+                if self.email_password:
+                    server.login(self.email_address, self.email_password)
+                server.send_message(msg)
+            
+            logger.info(f"✅ Email sent successfully to {to_email}: {subject}")
+            return True
+            
+        except Exception as e:
+            logger.error(f"❌ Failed to send email to {to_email}: {str(e)}")
+            return False
     
-    def _send_slack_alert(self, error_info: Dict[str, Any]):
-        """Send Slack notification for critical errors"""
-        severity_color = self._get_severity_color(error_info['error_type'])
+    def send_upgrade_notification(self, user_email: str, user_name: str, old_plan: str, new_plan: str, amount: float = None) -> bool:
+        """Send plan upgrade notification email"""
         
-        message = {
-            "text": "🚨 TradeWise AI Critical Error Alert",
-            "attachments": [
-                {
-                    "color": severity_color,
-                    "title": f"Critical Error: {error_info['error_type']}",
-                    "fields": [
-                        {
-                            "title": "Error Message",
-                            "value": error_info['message'][:500],
-                            "short": False
-                        },
-                        {
-                            "title": "Timestamp",
-                            "value": error_info['timestamp'],
-                            "short": True
-                        },
-                        {
-                            "title": "Context",
-                            "value": str(error_info['context'])[:200] if error_info['context'] else "None",
-                            "short": True
-                        }
-                    ],
-                    "footer": "TradeWise AI Error Monitor",
-                    "ts": int(datetime.utcnow().timestamp())
-                }
-            ]
-        }
+        # Email subject
+        subject = f"Welcome to TradeWise AI {new_plan}! Your upgrade is complete"
         
-        response = requests.post(
-            self.slack_webhook,
-            json=message,
-            timeout=10
-        )
-        response.raise_for_status()
-    
-    def _send_email_alert(self, error_info: Dict[str, Any]):
-        """Send email notification for critical errors"""
-        msg = MIMEMultipart()
-        msg['From'] = self.email_config['smtp_user']
-        msg['To'] = self.email_config['error_email']
-        msg['Subject'] = f"🚨 TradeWise AI Critical Error - {error_info['error_type']}"
-        
-        body = f"""
-Critical Error Alert - TradeWise AI Platform
-
-Error Details:
-═══════════════════════════════════════
-Error Type: {error_info['error_type']}
-Message: {error_info['message']}
-Timestamp: {error_info['timestamp']}
-
-Context Information:
-{self._format_context(error_info['context'])}
-
-Stack Trace:
-{error_info['stack_trace']}
-
-═══════════════════════════════════════
-This is an automated alert from TradeWise AI error monitoring system.
-Please investigate this issue immediately.
-
-Platform Status: https://your-domain.com/api/health
-Error Logs: Check logs/errors.log for additional details
+        # HTML email template
+        html_content = f"""
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Upgrade Confirmation</title>
+            <style>
+                body {{ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 0; background-color: #f5f5f7; }}
+                .container {{ max-width: 600px; margin: 0 auto; background: white; }}
+                .header {{ background: linear-gradient(135deg, #1d3557, #457b9d); color: white; padding: 32px 24px; text-align: center; }}
+                .header h1 {{ margin: 0; font-size: 28px; font-weight: 700; }}
+                .header .crown {{ font-size: 48px; margin-bottom: 16px; }}
+                .content {{ padding: 32px 24px; }}
+                .welcome-box {{ background: #f9fafb; border-left: 4px solid #10b981; padding: 20px; margin: 24px 0; border-radius: 8px; }}
+                .features {{ background: #f8fafc; padding: 24px; border-radius: 12px; margin: 24px 0; }}
+                .features h3 {{ color: #1d3557; margin-bottom: 16px; }}
+                .feature-list {{ list-style: none; padding: 0; margin: 0; }}
+                .feature-item {{ display: flex; align-items: center; padding: 8px 0; color: #374151; }}
+                .feature-item::before {{ content: '✓'; color: #10b981; font-weight: bold; margin-right: 12px; }}
+                .cta-button {{ display: inline-block; background: linear-gradient(135deg, #1d3557, #457b9d); color: white; padding: 16px 32px; text-decoration: none; border-radius: 8px; font-weight: 600; margin: 24px 0; text-align: center; }}
+                .footer {{ background: #f9fafb; padding: 24px; text-align: center; color: #6b7280; font-size: 14px; border-top: 1px solid #e5e7eb; }}
+                .upgrade-details {{ background: white; border: 2px solid #e5e7eb; border-radius: 8px; padding: 20px; margin: 20px 0; }}
+                .plan-change {{ font-size: 18px; text-align: center; margin: 16px 0; }}
+                .plan-old {{ color: #6b7280; text-decoration: line-through; }}
+                .plan-new {{ color: #1d3557; font-weight: 700; }}
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="header">
+                    <div class="crown">👑</div>
+                    <h1>Upgrade Successful!</h1>
+                    <p>Welcome to TradeWise AI {new_plan}</p>
+                </div>
+                
+                <div class="content">
+                    <div class="welcome-box">
+                        <h2 style="margin-top: 0; color: #1d3557;">Hi {user_name},</h2>
+                        <p>Thank you for upgrading to <strong>TradeWise AI {new_plan}</strong>! Your account has been successfully upgraded and you now have access to all premium features.</p>
+                    </div>
+                    
+                    <div class="upgrade-details">
+                        <div class="plan-change">
+                            <span class="plan-old">{old_plan}</span> → <span class="plan-new">{new_plan}</span>
+                        </div>
+                        {f'<p style="text-align: center; color: #6b7280;">Billing: ${amount:.2f}/month</p>' if amount else ''}
+                        <p style="text-align: center; color: #6b7280;">Upgrade Date: {datetime.now().strftime('%B %d, %Y')}</p>
+                    </div>
+                    
+                    <div class="features">
+                        <h3>🚀 Your Premium Features Are Now Active:</h3>
+                        <ul class="feature-list">
+                            <li class="feature-item">Advanced AI-powered stock analysis</li>
+                            <li class="feature-item">Unlimited portfolio backtesting</li>
+                            <li class="feature-item">Comprehensive peer comparisons</li>
+                            <li class="feature-item">Smart alerts and notifications</li>
+                            <li class="feature-item">Real-time market intelligence</li>
+                            <li class="feature-item">Priority customer support</li>
+                            <li class="feature-item">Early access to new features</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="text-align: center;">
+                        <a href="https://{os.getenv('REPLIT_DEV_DOMAIN', 'tradewise-ai.replit.app')}" class="cta-button">
+                            Start Using Your Premium Features →
+                        </a>
+                    </div>
+                    
+                    <p style="margin-top: 32px; color: #6b7280;">
+                        Questions? Reply to this email or contact us at 
+                        <a href="mailto:tradewise.founder@gmail.com" style="color: #1d3557;">tradewise.founder@gmail.com</a>
+                    </p>
+                </div>
+                
+                <div class="footer">
+                    <p><strong>TradeWise AI</strong> - Professional Stock Analysis Platform</p>
+                    <p>by SignalStackDev | tradewise.founder@gmail.com | 631-810-9473</p>
+                </div>
+            </div>
+        </body>
+        </html>
         """
         
-        msg.attach(MIMEText(body, 'plain'))
+        # Text version
+        text_content = f"""
+        Welcome to TradeWise AI {new_plan}!
         
-        # Send email
-        server = smtplib.SMTP(self.email_config['smtp_server'], self.email_config['smtp_port'])
-        server.starttls()
-        server.login(self.email_config['smtp_user'], self.email_config['smtp_password'])
-        server.send_message(msg)
-        server.quit()
-    
-    def _get_severity_color(self, error_type: str) -> str:
-        """Get color code based on error severity"""
-        critical_errors = ['DatabaseError', 'ConnectionError', 'RedisError', 'SystemError']
-        warning_errors = ['TimeoutError', 'RateLimitError', 'ValidationError']
+        Hi {user_name},
         
-        if any(critical in error_type for critical in critical_errors):
-            return "#ff0000"  # Red
-        elif any(warning in error_type for warning in warning_errors):
-            return "#ff9900"  # Orange
-        else:
-            return "#ffcc00"  # Yellow
-    
-    def _format_context(self, context: Dict[str, Any]) -> str:
-        """Format context information for email"""
-        if not context:
-            return "No additional context available"
-            
-        formatted = []
-        for key, value in context.items():
-            formatted.append(f"  {key}: {value}")
+        Thank you for upgrading to TradeWise AI {new_plan}! Your account has been successfully upgraded.
         
-        return "\n".join(formatted)
-    
-    def send_system_health_alert(self, component: str, status: str, details: str = ""):
-        """Send system health monitoring alert"""
-        if not self.enabled:
-            return
-            
-        alert_info = {
-            'component': component,
-            'status': status,
-            'details': details,
-            'timestamp': datetime.utcnow().isoformat()
-        }
+        Plan Change: {old_plan} → {new_plan}
+        {f'Billing: ${amount:.2f}/month' if amount else ''}
+        Upgrade Date: {datetime.now().strftime('%B %d, %Y')}
         
-        if status in ['DOWN', 'CRITICAL', 'FAILED']:
-            # Send critical alert
-            if self.slack_webhook:
-                self._send_slack_health_alert(alert_info)
-            if self.email_config:
-                self._send_email_health_alert(alert_info)
-    
-    def _send_slack_health_alert(self, alert_info: Dict[str, Any]):
-        """Send Slack health monitoring alert"""
-        color = "#ff0000" if alert_info['status'] in ['DOWN', 'CRITICAL'] else "#ff9900"
+        Your Premium Features Are Now Active:
+        ✓ Advanced AI-powered stock analysis
+        ✓ Unlimited portfolio backtesting
+        ✓ Comprehensive peer comparisons  
+        ✓ Smart alerts and notifications
+        ✓ Real-time market intelligence
+        ✓ Priority customer support
+        ✓ Early access to new features
         
-        message = {
-            "text": f"⚠️ TradeWise AI Health Alert - {alert_info['component']}",
-            "attachments": [
-                {
-                    "color": color,
-                    "fields": [
-                        {
-                            "title": "Component",
-                            "value": alert_info['component'],
-                            "short": True
-                        },
-                        {
-                            "title": "Status",
-                            "value": alert_info['status'],
-                            "short": True
-                        },
-                        {
-                            "title": "Details",
-                            "value": alert_info['details'] or "No additional details",
-                            "short": False
-                        }
-                    ]
-                }
-            ]
-        }
+        Start using your premium features: https://{os.getenv('REPLIT_DEV_DOMAIN', 'tradewise-ai.replit.app')}
         
-        requests.post(self.slack_webhook, json=message, timeout=10)
-    
-    def _send_email_health_alert(self, alert_info: Dict[str, Any]):
-        """Send email health monitoring alert"""
-        msg = MIMEMultipart()
-        msg['From'] = self.email_config['smtp_user']
-        msg['To'] = self.email_config['error_email']
-        msg['Subject'] = f"⚠️ TradeWise AI Health Alert - {alert_info['component']} {alert_info['status']}"
+        Questions? Contact us at tradewise.founder@gmail.com
         
-        body = f"""
-System Health Alert - TradeWise AI Platform
-
-Component: {alert_info['component']}
-Status: {alert_info['status']}
-Timestamp: {alert_info['timestamp']}
-
-Details:
-{alert_info['details'] or 'No additional details available'}
-
-Please investigate this issue and take appropriate action.
+        TradeWise AI Team
         """
         
-        msg.attach(MIMEText(body, 'plain'))
+        return self.send_email(user_email, subject, html_content, text_content)
+    
+    def send_downgrade_notification(self, user_email: str, user_name: str, old_plan: str, new_plan: str) -> bool:
+        """Send plan downgrade notification email"""
         
-        server = smtplib.SMTP(self.email_config['smtp_server'], self.email_config['smtp_port'])
-        server.starttls()
-        server.login(self.email_config['smtp_user'], self.email_config['smtp_password'])
-        server.send_message(msg)
-        server.quit()
+        subject = f"TradeWise AI Plan Updated to {new_plan}"
+        
+        html_content = f"""
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Plan Change Confirmation</title>
+            <style>
+                body {{ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 0; background-color: #f5f5f7; }}
+                .container {{ max-width: 600px; margin: 0 auto; background: white; }}
+                .header {{ background: linear-gradient(135deg, #6b7280, #9ca3af); color: white; padding: 32px 24px; text-align: center; }}
+                .header h1 {{ margin: 0; font-size: 24px; font-weight: 600; }}
+                .content {{ padding: 32px 24px; }}
+                .info-box {{ background: #f3f4f6; border-left: 4px solid #6b7280; padding: 20px; margin: 24px 0; border-radius: 8px; }}
+                .footer {{ background: #f9fafb; padding: 24px; text-align: center; color: #6b7280; font-size: 14px; border-top: 1px solid #e5e7eb; }}
+                .cta-button {{ display: inline-block; background: #1d3557; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: 600; margin: 16px 0; }}
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="header">
+                    <h1>Plan Change Confirmation</h1>
+                    <p>Your TradeWise AI plan has been updated</p>
+                </div>
+                
+                <div class="content">
+                    <div class="info-box">
+                        <h2 style="margin-top: 0; color: #374151;">Hi {user_name},</h2>
+                        <p>Your TradeWise AI plan has been successfully changed from <strong>{old_plan}</strong> to <strong>{new_plan}</strong>.</p>
+                        <p>Change Date: {datetime.now().strftime('%B %d, %Y')}</p>
+                    </div>
+                    
+                    <p>Thank you for using TradeWise AI! You can still access our core stock analysis features and upgrade again anytime.</p>
+                    
+                    <div style="text-align: center;">
+                        <a href="https://{os.getenv('REPLIT_DEV_DOMAIN', 'tradewise-ai.replit.app')}" class="cta-button">
+                            Continue Using TradeWise AI
+                        </a>
+                    </div>
+                    
+                    <p style="margin-top: 32px; color: #6b7280;">
+                        Questions? Contact us at 
+                        <a href="mailto:tradewise.founder@gmail.com" style="color: #1d3557;">tradewise.founder@gmail.com</a>
+                    </p>
+                </div>
+                
+                <div class="footer">
+                    <p><strong>TradeWise AI</strong> - Professional Stock Analysis Platform</p>
+                    <p>by SignalStackDev | tradewise.founder@gmail.com</p>
+                </div>
+            </div>
+        </body>
+        </html>
+        """
+        
+        return self.send_email(user_email, subject, html_content)
+    
+    def send_alert_notification(self, user_email: str, user_name: str, alert_data: Dict) -> bool:
+        """Send alert trigger notification email"""
+        
+        symbol = alert_data.get('symbol', 'Stock')
+        alert_type = alert_data.get('type', 'Price')
+        current_value = alert_data.get('current_value', 'N/A')
+        target_value = alert_data.get('target_value', 'N/A')
+        message = alert_data.get('message', 'Alert condition met')
+        
+        subject = f"🚨 TradeWise AI Alert: {symbol} {alert_type} Alert Triggered"
+        
+        html_content = f"""
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Alert Triggered</title>
+            <style>
+                body {{ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 0; background-color: #f5f5f7; }}
+                .container {{ max-width: 600px; margin: 0 auto; background: white; }}
+                .header {{ background: linear-gradient(135deg, #f59e0b, #d97706); color: white; padding: 32px 24px; text-align: center; }}
+                .header h1 {{ margin: 0; font-size: 24px; font-weight: 700; }}
+                .alert-icon {{ font-size: 48px; margin-bottom: 16px; }}
+                .content {{ padding: 32px 24px; }}
+                .alert-box {{ background: #fef3c7; border: 2px solid #f59e0b; border-radius: 8px; padding: 20px; margin: 24px 0; }}
+                .alert-details {{ background: #f9fafb; padding: 20px; border-radius: 8px; margin: 16px 0; }}
+                .footer {{ background: #f9fafb; padding: 24px; text-align: center; color: #6b7280; font-size: 14px; border-top: 1px solid #e5e7eb; }}
+                .cta-button {{ display: inline-block; background: #1d3557; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: 600; margin: 16px 0; }}
+                .symbol {{ font-size: 20px; font-weight: 700; color: #1d3557; }}
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="header">
+                    <div class="alert-icon">🚨</div>
+                    <h1>Alert Triggered!</h1>
+                    <p class="symbol">{symbol}</p>
+                </div>
+                
+                <div class="content">
+                    <div class="alert-box">
+                        <h2 style="margin-top: 0; color: #92400e;">Hi {user_name},</h2>
+                        <p><strong>Your {alert_type.lower()} alert for {symbol} has been triggered!</strong></p>
+                        <p>{message}</p>
+                    </div>
+                    
+                    <div class="alert-details">
+                        <h3 style="color: #374151; margin-bottom: 12px;">Alert Details:</h3>
+                        <p><strong>Symbol:</strong> {symbol}</p>
+                        <p><strong>Alert Type:</strong> {alert_type}</p>
+                        <p><strong>Target Value:</strong> {target_value}</p>
+                        <p><strong>Current Value:</strong> {current_value}</p>
+                        <p><strong>Triggered:</strong> {datetime.now().strftime('%B %d, %Y at %I:%M %p UTC')}</p>
+                    </div>
+                    
+                    <div style="text-align: center;">
+                        <a href="https://{os.getenv('REPLIT_DEV_DOMAIN', 'tradewise-ai.replit.app')}/search?q={symbol}" class="cta-button">
+                            Analyze {symbol} Now →
+                        </a>
+                    </div>
+                    
+                    <p style="margin-top: 24px; color: #6b7280; font-size: 14px;">
+                        <strong>Next Steps:</strong> Consider reviewing your position and market conditions. 
+                        Use our AI analysis tools to get comprehensive insights.
+                    </p>
+                </div>
+                
+                <div class="footer">
+                    <p><strong>TradeWise AI</strong> - Smart Alert System</p>
+                    <p>Manage your alerts: <a href="https://{os.getenv('REPLIT_DEV_DOMAIN', 'tradewise-ai.replit.app')}/alerts">View All Alerts</a></p>
+                </div>
+            </div>
+        </body>
+        </html>
+        """
+        
+        return self.send_email(user_email, subject, html_content)
 
-# Global notification manager instance
-notification_manager = NotificationManager()
+# Global notification service instance
+notification_service = EmailNotificationService()
 
-def send_critical_error_alert(error: Exception, context: Dict[str, Any] = None):
-    """Global function to send critical error alerts"""
-    notification_manager.send_critical_alert(error, context)
+def send_upgrade_email(user_email: str, user_name: str, old_plan: str, new_plan: str, amount: float = None) -> bool:
+    """Convenience function to send upgrade notification"""
+    return notification_service.send_upgrade_notification(user_email, user_name, old_plan, new_plan, amount)
 
-def send_health_alert(component: str, status: str, details: str = ""):
-    """Global function to send health monitoring alerts"""
-    notification_manager.send_system_health_alert(component, status, details)
+def send_downgrade_email(user_email: str, user_name: str, old_plan: str, new_plan: str) -> bool:
+    """Convenience function to send downgrade notification"""
+    return notification_service.send_downgrade_notification(user_email, user_name, old_plan, new_plan)
+
+def send_alert_email(user_email: str, user_name: str, alert_data: Dict) -> bool:
+    """Convenience function to send alert notification"""
+    return notification_service.send_alert_notification(user_email, user_name, alert_data)

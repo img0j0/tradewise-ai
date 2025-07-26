@@ -255,6 +255,14 @@ with app.app_context():
     except Exception as e:
         logger.warning(f"⚠️ Fuzzy search routes not available: {e}")
     
+    # Register premium notification routes for Phase 5 implementation
+    try:
+        from routes.premium_notification_routes import premium_notification_bp
+        app.register_blueprint(premium_notification_bp)
+        logger.info("✅ Premium notification routes blueprint registered successfully")
+    except Exception as e:
+        logger.warning(f"⚠️ Premium notification routes not available: {e}")
+    
     # Global error handlers for professional error pages
     @app.errorhandler(404)
     def page_not_found(error):

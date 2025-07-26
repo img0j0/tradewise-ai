@@ -11,6 +11,7 @@ from datetime import datetime, timedelta
 from flask import session, request, current_app
 from models import User, db
 from typing import Dict, Optional, List, Any
+from notification_system import send_upgrade_email, send_downgrade_email
 
 logger = logging.getLogger(__name__)
 

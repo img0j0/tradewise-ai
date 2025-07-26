@@ -39,6 +39,10 @@
     <!-- Mobile Optimization JavaScript -->
     <script src="{{ url_for('static', filename='js/mobile_optimization.js') }}?v={{ range(1000, 9999) | random }}"></script>
     
+    <!-- Premium Lock System - Phase 5 -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/premium_lock_system.css') }}?v={{ range(1000, 9999) | random }}">
+    <script src="{{ url_for('static', filename='js/premium_lock_system.js') }}?v={{ range(1000, 9999) | random }}"></script>
+    
     <!-- Additional Block for Page-Specific CSS -->
     {% block extra_css %}{% endblock %}
     

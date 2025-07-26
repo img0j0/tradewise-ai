@@ -1,0 +1,496 @@
+/* Premium Lock System CSS - Phase 5 */
+/* Premium feature locks, tooltips, and upgrade flows */
+
+/* Premium Lock Icons */
+.premium-lock-icon {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 24px;
+    height: 24px;
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 12px;
+    z-index: 10;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    cursor: help;
+}
+
+.premium-lock-icon:hover {
+    background: linear-gradient(135deg, #d97706, #b45309);
+    transform: scale(1.1);
+    transition: all 0.2s ease;
+}
+
+/* Premium Tooltip */
+.premium-tooltip {
+    position: absolute;
+    bottom: 100%;
+    right: 0;
+    background: #1f2937;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(4px);
+    transition: all 0.2s ease;
+    z-index: 1000;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.premium-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    right: 12px;
+    border: 4px solid transparent;
+    border-top-color: #1f2937;
+}
+
+.premium-lock-icon:hover .premium-tooltip,
+.premium-feature:hover .premium-tooltip {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+/* Premium Feature Container */
+.premium-feature {
+    position: relative;
+    opacity: 0.7;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.premium-feature:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+}
+
+.premium-feature.locked {
+    pointer-events: none;
+}
+
+.premium-feature.locked:not(.clickable) {
+    cursor: not-allowed;
+}
+
+.premium-feature.clickable {
+    pointer-events: all;
+    cursor: pointer;
+}
+
+/* Premium Overlay for Cards */
+.premium-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    z-index: 5;
+}
+
+.premium-feature:hover .premium-overlay {
+    opacity: 1;
+    visibility: visible;
+}
+
+.premium-overlay-content {
+    text-align: center;
+    padding: 20px;
+}
+
+.premium-overlay-icon {
+    font-size: 2rem;
+    color: #f59e0b;
+    margin-bottom: 12px;
+}
+
+.premium-overlay-text {
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 8px;
+}
+
+.premium-overlay-subtitle {
+    font-size: 12px;
+    color: #6b7280;
+    margin-bottom: 16px;
+}
+
+.premium-overlay-btn {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.premium-overlay-btn:hover {
+    background: linear-gradient(135deg, #d97706, #b45309);
+    transform: translateY(-1px);
+}
+
+/* Premium Upgrade Modal */
+.premium-upgrade-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(4px);
+}
+
+.premium-upgrade-modal.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.premium-upgrade-content {
+    background: white;
+    border-radius: 20px;
+    padding: 32px;
+    max-width: 500px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.premium-upgrade-header {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.premium-upgrade-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: #6b7280;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+}
+
+.premium-upgrade-close:hover {
+    background: #f3f4f6;
+    color: #374151;
+}
+
+.premium-upgrade-icon {
+    font-size: 3rem;
+    color: #f59e0b;
+    margin-bottom: 16px;
+}
+
+.premium-upgrade-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 8px;
+}
+
+.premium-upgrade-subtitle {
+    font-size: 1rem;
+    color: #6b7280;
+    margin-bottom: 24px;
+}
+
+/* Feature Preview */
+.feature-preview {
+    background: #f9fafb;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 24px;
+}
+
+.feature-preview-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.feature-preview-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.feature-preview-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 0;
+    color: #374151;
+    font-size: 0.9rem;
+}
+
+.feature-preview-item::before {
+    content: '✓';
+    color: #10b981;
+    font-weight: bold;
+}
+
+/* Upgrade CTA Buttons */
+.upgrade-cta-container {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+.upgrade-cta-btn {
+    flex: 1;
+    padding: 14px 20px;
+    border-radius: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    text-align: center;
+    transition: all 0.2s ease;
+    border: 2px solid transparent;
+}
+
+.upgrade-cta-primary {
+    background: linear-gradient(135deg, #1d3557, #457b9d);
+    color: white;
+}
+
+.upgrade-cta-primary:hover {
+    background: linear-gradient(135deg, #0f1c2e, #2d5a7b);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(29, 53, 87, 0.3);
+}
+
+.upgrade-cta-secondary {
+    background: transparent;
+    color: #1d3557;
+    border-color: #1d3557;
+}
+
+.upgrade-cta-secondary:hover {
+    background: #1d3557;
+    color: white;
+}
+
+/* Premium Badge */
+.premium-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Notification System */
+.notification-container {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    z-index: 10000;
+    pointer-events: none;
+}
+
+.notification {
+    background: white;
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+    border-left: 4px solid #10b981;
+    max-width: 400px;
+    pointer-events: all;
+    transform: translateX(100%);
+    transition: all 0.3s ease;
+    opacity: 0;
+}
+
+.notification.show {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+.notification.success {
+    border-left-color: #10b981;
+}
+
+.notification.error {
+    border-left-color: #ef4444;
+}
+
+.notification.warning {
+    border-left-color: #f59e0b;
+}
+
+.notification.info {
+    border-left-color: #3b82f6;
+}
+
+.notification-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.notification-icon {
+    font-size: 18px;
+}
+
+.notification-title {
+    font-weight: 600;
+    color: #1f2937;
+    font-size: 14px;
+}
+
+.notification-message {
+    color: #6b7280;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.notification-close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: none;
+    border: none;
+    color: #9ca3af;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+.notification-close:hover {
+    background: #f3f4f6;
+    color: #374151;
+}
+
+/* Mobile Optimizations */
+@media (max-width: 767px) {
+    .premium-upgrade-content {
+        margin: 20px;
+        padding: 24px;
+        max-width: none;
+        width: calc(100% - 40px);
+    }
+    
+    .upgrade-cta-container {
+        flex-direction: column;
+    }
+    
+    .notification-container {
+        top: 70px;
+        left: 10px;
+        right: 10px;
+    }
+    
+    .notification {
+        max-width: none;
+        margin-bottom: 8px;
+    }
+    
+    .premium-lock-icon {
+        width: 20px;
+        height: 20px;
+        font-size: 10px;
+        top: 8px;
+        right: 8px;
+    }
+    
+    .premium-tooltip {
+        font-size: 11px;
+        padding: 6px 10px;
+    }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark), [data-theme="dark"] {
+    .premium-upgrade-content {
+        background: #1f2937;
+        color: white;
+    }
+    
+    .premium-upgrade-title {
+        color: white;
+    }
+    
+    .feature-preview {
+        background: #374151;
+    }
+    
+    .feature-preview-title {
+        color: white;
+    }
+    
+    .feature-preview-item {
+        color: #d1d5db;
+    }
+    
+    .notification {
+        background: #1f2937;
+        color: white;
+    }
+    
+    .notification-title {
+        color: white;
+    }
+    
+    .notification-message {
+        color: #d1d5db;
+    }
+}
