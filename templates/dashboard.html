@@ -12,6 +12,8 @@
             onerror="console.log('Chart.js failed to load from CDN')"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.min.js" 
             onerror="console.log('Chart.js fallback also failed')"></script>
+    <!-- Tool Feedback System -->
+    <script src="/static/js/tool_feedback_system.js"></script>
     
     <style>
         * {
@@ -302,6 +304,13 @@
                         <i class="fas fa-brain"></i>
                     </div>
                     <h3 class="card-title">AI Insights</h3>
+                    <button class="tool-launch-btn" 
+                            data-tool="ai_insights" 
+                            data-endpoint="/tools/ai/insights"
+                            onclick="window.toolFeedback?.launchTool(this, {symbol: 'AAPL'})"
+                            title="Get AI insights for AAPL">
+                        <i class="fas fa-play"></i>
+                    </button>
                 </div>
                 <div class="card-content">
                     <p><strong>Market Sentiment:</strong> Bullish</p>
@@ -340,15 +349,21 @@
                 <i class="fas fa-search"></i>
                 Analyze Stock
             </a>
-            <a href="#portfolio" class="action-btn secondary">
+            <button class="action-btn secondary tool-action-btn" 
+                    data-tool="ai_insights" 
+                    data-endpoint="/tools/ai/insights"
+                    onclick="window.toolFeedback?.launchTool(this, {symbol: 'AAPL'})">
                 <i class="fas fa-chart-pie"></i>
-                View Portfolio
-            </a>
-            <a href="#alerts" class="action-btn secondary">
+                AI Insights
+            </button>
+            <button class="action-btn secondary tool-action-btn" 
+                    data-tool="smart_alerts" 
+                    data-endpoint="/tools/alerts/smart"
+                    onclick="window.toolFeedback?.launchTool(this, {symbol: 'NVDA'})">
                 <i class="fas fa-bell"></i>
-                Set Alerts
-            </a>
-            <a href="#premium" class="action-btn secondary">
+                Smart Alerts
+            </button>
+            <a href="/premium/upgrade" class="action-btn secondary">
                 <i class="fas fa-crown"></i>
                 Upgrade to Pro
             </a>
@@ -445,6 +460,33 @@
 .dark .tool-label {
     color: #d1d5db;
 }
+
+/* Tool Launch Button Styles */
+.tool-launch-btn {
+    background: none;
+    border: none;
+    color: #007aff;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 0.375rem;
+    transition: all 0.2s ease;
+    font-size: 0.875rem;
+}
+
+.tool-launch-btn:hover {
+    background-color: rgba(0, 122, 255, 0.1);
+    transform: scale(1.05);
+}
+
+.card-header {
+    position: relative;
+}
+
+.card-header .tool-launch-btn {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+}
 </style>
 
     <script>
@@ -509,6 +551,14 @@
         // Initialize dashboard
         document.addEventListener('DOMContentLoaded', () => {
             loadDashboardData();
+            
+            // Initialize Tool Feedback System
+            if (typeof ToolFeedbackManager !== 'undefined') {
+                window.toolFeedback = new ToolFeedbackManager();
+                console.log('Tool Feedback System initialized on dashboard');
+            } else {
+                console.log('Tool Feedback System not available');
+            }
         });
     </script>
 </body>
