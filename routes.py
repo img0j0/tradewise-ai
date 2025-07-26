@@ -231,6 +231,19 @@ def market_insights():
         logger.error(f"Error loading market insights page: {e}")
         return jsonify({'error': 'Market insights page loading error'}), 500
 
+@main_bp.route('/alerts')
+def alerts_page():
+    """Smart Alerts management page"""
+    try:
+        response = make_response(render_template('alerts_clean.html'))
+        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+        response.headers['Pragma'] = 'no-cache'
+        response.headers['Expires'] = '0'
+        return response
+    except Exception as e:
+        logger.error(f"Error loading alerts page: {e}")
+        return jsonify({'error': 'Alerts page loading error'}), 500
+
 @main_bp.route('/backtest')
 def backtest():
     """Portfolio Backtesting - Premium Feature"""

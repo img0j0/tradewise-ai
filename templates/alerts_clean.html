@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Alerts - TradeWise AI</title>
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f5f5f7;
+            color: #1d1d1f;
+        }
+
+        /* Navigation Bar - Exact match to dashboard */
+        .navbar {
+            background-color: #1d3557;
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            color: white;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .nav-links a:hover {
+            opacity: 0.8;
+        }
+
+        .nav-links a.active {
+            border-bottom: 2px solid white;
+            padding-bottom: 0.25rem;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .upgrade-btn {
+            background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+
+        .upgrade-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        /* Alerts Container */
+        .alerts-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .alerts-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .alerts-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: #1d3557;
+            font-weight: 700;
+        }
+
+        .alerts-header p {
+            font-size: 1.2rem;
+            color: #6c6c70;
+        }
+
+        /* Alerts Grid - 3 Cards Layout */
+        .alerts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        @media (max-width: 768px) {
+            .alerts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Alert Cards - Apple Style */
+        .alert-card {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .alert-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+            border-color: #007AFF;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-icon {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.25rem;
+        }
+
+        .create-icon {
+            background: linear-gradient(135deg, #007AFF, #5856D6);
+        }
+
+        .manage-icon {
+            background: linear-gradient(135deg, #34C759, #30B15A);
+        }
+
+        .history-icon {
+            background: linear-gradient(135deg, #FF9500, #FF8E00);
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1d1d1f;
+            margin: 0;
+        }
+
+        .card-subtitle {
+            font-size: 0.875rem;
+            color: #8e8e93;
+            margin: 0;
+        }
+
+        /* Create Alert Form */
+        .create-alert-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #1d1d1f;
+            font-size: 0.875rem;
+        }
+
+        .form-input, .form-select {
+            padding: 0.75rem;
+            border: 2px solid #e5e5ea;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: #007AFF;
+        }
+
+        .create-btn {
+            background: #007AFF;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .create-btn:hover {
+            background: #0056CC;
+        }
+
+        .create-btn:disabled {
+            background: #8e8e93;
+            cursor: not-allowed;
+        }
+
+        /* Active Alerts */
+        .alert-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid transparent;
+        }
+
+        .alert-item.price {
+            border-left-color: #007AFF;
+        }
+
+        .alert-item.technical {
+            border-left-color: #34C759;
+        }
+
+        .alert-item.volume {
+            border-left-color: #FF9500;
+        }
+
+        .alert-info {
+            flex: 1;
+        }
+
+        .alert-symbol {
+            font-weight: bold;
+            color: #1d1d1f;
+            font-size: 1rem;
+        }
+
+        .alert-condition {
+            font-size: 0.875rem;
+            color: #6c6c70;
+            margin-top: 0.25rem;
+        }
+
+        .alert-status {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 1rem;
+        }
+
+        .alert-status.active {
+            background: #34C759;
+            color: white;
+        }
+
+        .alert-status.triggered {
+            background: #FF3B30;
+            color: white;
+        }
+
+        .alert-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-left: 1rem;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            color: #8e8e93;
+            cursor: pointer;
+            padding: 0.25rem;
+            border-radius: 4px;
+            transition: color 0.2s;
+        }
+
+        .action-btn:hover {
+            color: #007AFF;
+        }
+
+        .action-btn.delete:hover {
+            color: #FF3B30;
+        }
+
+        /* Alert History */
+        .history-item {
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #8e8e93;
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .history-symbol {
+            font-weight: bold;
+            color: #1d1d1f;
+        }
+
+        .history-time {
+            font-size: 0.75rem;
+            color: #8e8e93;
+        }
+
+        .history-message {
+            font-size: 0.875rem;
+            color: #6c6c70;
+        }
+
+        /* Loading States */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            color: #8e8e93;
+        }
+
+        .loading i {
+            animation: spin 1s linear infinite;
+            margin-right: 0.5rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #8e8e93;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            margin-bottom: 0.5rem;
+            color: #1d1d1f;
+        }
+
+        .empty-state p {
+            color: #8e8e93;
+        }
+
+        /* Success Message */
+        .success-message {
+            background: #34C759;
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        /* Error Message */
+        .error-message {
+            background: #FF3B30;
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .alerts-container {
+                padding: 0 1rem;
+            }
+            
+            .alert-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+            
+            .alert-actions {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-left">
+            <a href="/" class="logo">
+                <i class="fas fa-chart-line"></i>
+                TradeWise AI
+            </a>
+            <ul class="nav-links">
+                <li><a href="/">Dashboard</a></li>
+                <li><a href="/search">Search</a></li>
+                <li><a href="/portfolio">Portfolio</a></li>
+                <li><a href="/ai-insights">AI Insights</a></li>
+                <li><a href="/market-insights">Market Insights</a></li>
+                <li><a href="/alerts" class="active">Smart Alerts</a></li>
+                <li><a href="/premium">Premium</a></li>
+            </ul>
+        </div>
+        <div class="nav-right">
+            <a href="/premium" class="upgrade-btn">Upgrade</a>
+        </div>
+    </nav>
+
+    <!-- Alerts Container -->
+    <div class="alerts-container">
+        <div class="alerts-header">
+            <h1>Smart Alerts</h1>
+            <p>Create, manage, and track your intelligent stock alerts</p>
+        </div>
+
+        <!-- Alerts Grid -->
+        <div class="alerts-grid">
+            <!-- Create Alert Card -->
+            <div class="alert-card">
+                <div class="card-header">
+                    <div class="card-icon create-icon">
+                        <i class="fas fa-plus"></i>
+                    </div>
+                    <div>
+                        <h3 class="card-title">Create New Alert</h3>
+                        <p class="card-subtitle">Set up intelligent alerts</p>
+                    </div>
+                </div>
+                
+                <div class="success-message" id="create-success">
+                    Alert created successfully!
+                </div>
+                
+                <div class="error-message" id="create-error">
+                    Error creating alert. Please try again.
+                </div>
+                
+                <form class="create-alert-form" id="create-alert-form">
+                    <div class="form-group">
+                        <label class="form-label" for="alert-symbol">Stock Symbol</label>
+                        <input type="text" id="alert-symbol" class="form-input" 
+                               placeholder="e.g., AAPL, TSLA, NVDA" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="alert-type">Alert Type</label>
+                        <select id="alert-type" class="form-select" required>
+                            <option value="">Select alert type</option>
+                            <option value="price_above">Price Above</option>
+                            <option value="price_below">Price Below</option>
+                            <option value="rsi_oversold">RSI Oversold</option>
+                            <option value="rsi_overbought">RSI Overbought</option>
+                            <option value="volume_spike">Volume Spike</option>
+                            <option value="moving_average">Moving Average Cross</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group" id="price-value-group" style="display: none;">
+                        <label class="form-label" for="alert-value">Target Price</label>
+                        <input type="number" id="alert-value" class="form-input" 
+                               placeholder="0.00" step="0.01" min="0">
+                    </div>
+                    
+                    <button type="submit" class="create-btn" id="create-btn">
+                        <i class="fas fa-bell"></i>
+                        Create Alert
+                    </button>
+                </form>
+            </div>
+
+            <!-- Active Alerts Card -->
+            <div class="alert-card">
+                <div class="card-header">
+                    <div class="card-icon manage-icon">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    <div>
+                        <h3 class="card-title">Active Alerts</h3>
+                        <p class="card-subtitle">Manage your alerts</p>
+                    </div>
+                </div>
+                <div id="active-alerts-container">
+                    <div class="loading">
+                        <i class="fas fa-spinner"></i>
+                        Loading alerts...
+                    </div>
+                </div>
+            </div>
+
+            <!-- Alert History Card -->
+            <div class="alert-card">
+                <div class="card-header">
+                    <div class="card-icon history-icon">
+                        <i class="fas fa-history"></i>
+                    </div>
+                    <div>
+                        <h3 class="card-title">Alert History</h3>
+                        <p class="card-subtitle">Recent triggers</p>
+                    </div>
+                </div>
+                <div id="alert-history-container">
+                    <div class="loading">
+                        <i class="fas fa-spinner"></i>
+                        Loading history...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Smart Alerts Management JavaScript
+        class SmartAlertsManager {
+            constructor() {
+                this.setupEventListeners();
+                this.loadActiveAlerts();
+                this.loadAlertHistory();
+            }
+
+            setupEventListeners() {
+                // Alert type change handler
+                const alertTypeSelect = document.getElementById('alert-type');
+                alertTypeSelect.addEventListener('change', this.handleAlertTypeChange.bind(this));
+
+                // Form submission
+                const createForm = document.getElementById('create-alert-form');
+                createForm.addEventListener('submit', this.handleCreateAlert.bind(this));
+            }
+
+            handleAlertTypeChange(event) {
+                const alertType = event.target.value;
+                const priceValueGroup = document.getElementById('price-value-group');
+                const alertValueInput = document.getElementById('alert-value');
+
+                if (alertType === 'price_above' || alertType === 'price_below') {
+                    priceValueGroup.style.display = 'flex';
+                    alertValueInput.required = true;
+                } else {
+                    priceValueGroup.style.display = 'none';
+                    alertValueInput.required = false;
+                }
+            }
+
+            async handleCreateAlert(event) {
+                event.preventDefault();
+                
+                const formData = new FormData(event.target);
+                const alertData = {
+                    symbol: document.getElementById('alert-symbol').value.trim().toUpperCase(),
+                    type: document.getElementById('alert-type').value,
+                    value: document.getElementById('alert-value').value || null
+                };
+
+                if (!alertData.symbol || !alertData.type) {
+                    this.showError('Please fill in all required fields');
+                    return;
+                }
+
+                const createBtn = document.getElementById('create-btn');
+                createBtn.disabled = true;
+                createBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating...';
+
+                try {
+                    const response = await fetch('/api/alerts/create', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(alertData)
+                    });
+
+                    if (response.ok) {
+                        const result = await response.json();
+                        this.showSuccess('Alert created successfully!');
+                        document.getElementById('create-alert-form').reset();
+                        this.handleAlertTypeChange({ target: { value: '' } }); // Hide price input
+                        await this.loadActiveAlerts(); // Refresh active alerts
+                    } else {
+                        const error = await response.json();
+                        this.showError(error.message || 'Failed to create alert');
+                    }
+                } catch (error) {
+                    console.error('Error creating alert:', error);
+                    this.showError('Network error. Please try again.');
+                } finally {
+                    createBtn.disabled = false;
+                    createBtn.innerHTML = '<i class="fas fa-bell"></i> Create Alert';
+                }
+            }
+
+            async loadActiveAlerts() {
+                try {
+                    const response = await fetch('/api/alerts/active');
+                    const container = document.getElementById('active-alerts-container');
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        this.displayActiveAlerts(data.alerts || []);
+                    } else {
+                        this.displayDemoActiveAlerts();
+                    }
+                } catch (error) {
+                    console.error('Error loading active alerts:', error);
+                    this.displayDemoActiveAlerts();
+                }
+            }
+
+            displayActiveAlerts(alerts) {
+                const container = document.getElementById('active-alerts-container');
+                
+                if (alerts.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-bell-slash"></i>
+                            <h3>No Active Alerts</h3>
+                            <p>Create your first alert to get started</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                const alertsHTML = alerts.map(alert => `
+                    <div class="alert-item ${alert.type}">
+                        <div class="alert-info">
+                            <div class="alert-symbol">${alert.symbol}</div>
+                            <div class="alert-condition">${this.formatAlertCondition(alert)}</div>
+                        </div>
+                        <div class="alert-status ${alert.status}">${alert.status.toUpperCase()}</div>
+                        <div class="alert-actions">
+                            <button class="action-btn" onclick="editAlert('${alert.id}')" title="Edit">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="action-btn delete" onclick="deleteAlert('${alert.id}')" title="Delete">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+
+                container.innerHTML = alertsHTML;
+            }
+
+            displayDemoActiveAlerts() {
+                const demoAlerts = [
+                    { id: '1', symbol: 'AAPL', type: 'price_above', value: 220, status: 'active' },
+                    { id: '2', symbol: 'TSLA', type: 'rsi_oversold', status: 'active' },
+                    { id: '3', symbol: 'NVDA', type: 'volume_spike', status: 'triggered' },
+                    { id: '4', symbol: 'MSFT', type: 'price_below', value: 400, status: 'active' }
+                ];
+                this.displayActiveAlerts(demoAlerts);
+            }
+
+            async loadAlertHistory() {
+                try {
+                    const response = await fetch('/api/alerts/history');
+                    const container = document.getElementById('alert-history-container');
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        this.displayAlertHistory(data.history || []);
+                    } else {
+                        this.displayDemoAlertHistory();
+                    }
+                } catch (error) {
+                    console.error('Error loading alert history:', error);
+                    this.displayDemoAlertHistory();
+                }
+            }
+
+            displayAlertHistory(history) {
+                const container = document.getElementById('alert-history-container');
+                
+                if (history.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-history"></i>
+                            <h3>No Alert History</h3>
+                            <p>Your triggered alerts will appear here</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                const historyHTML = history.map(item => `
+                    <div class="history-item">
+                        <div class="history-header">
+                            <span class="history-symbol">${item.symbol}</span>
+                            <span class="history-time">${this.formatTime(item.timestamp)}</span>
+                        </div>
+                        <div class="history-message">${item.message}</div>
+                    </div>
+                `).join('');
+
+                container.innerHTML = historyHTML;
+            }
+
+            displayDemoAlertHistory() {
+                const demoHistory = [
+                    { 
+                        symbol: 'NVDA', 
+                        message: 'Volume spike detected: 150% above average', 
+                        timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000) 
+                    },
+                    { 
+                        symbol: 'AAPL', 
+                        message: 'Price reached $218.50 (target: $220.00)', 
+                        timestamp: new Date(Date.now() - 6 * 60 * 60 * 1000) 
+                    },
+                    { 
+                        symbol: 'TSLA', 
+                        message: 'RSI dropped to 28 (oversold threshold)', 
+                        timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000) 
+                    }
+                ];
+                this.displayAlertHistory(demoHistory);
+            }
+
+            formatAlertCondition(alert) {
+                switch (alert.type) {
+                    case 'price_above':
+                        return `Price above $${alert.value}`;
+                    case 'price_below':
+                        return `Price below $${alert.value}`;
+                    case 'rsi_oversold':
+                        return 'RSI oversold (< 30)';
+                    case 'rsi_overbought':
+                        return 'RSI overbought (> 70)';
+                    case 'volume_spike':
+                        return 'Volume spike detection';
+                    case 'moving_average':
+                        return 'Moving average crossover';
+                    default:
+                        return alert.type;
+                }
+            }
+
+            formatTime(timestamp) {
+                const date = new Date(timestamp);
+                const now = new Date();
+                const diffInHours = (now - date) / (1000 * 60 * 60);
+
+                if (diffInHours < 1) {
+                    const minutes = Math.floor(diffInHours * 60);
+                    return `${minutes}m ago`;
+                } else if (diffInHours < 24) {
+                    return `${Math.floor(diffInHours)}h ago`;
+                } else {
+                    return date.toLocaleDateString();
+                }
+            }
+
+            showSuccess(message) {
+                const successEl = document.getElementById('create-success');
+                const errorEl = document.getElementById('create-error');
+                
+                errorEl.style.display = 'none';
+                successEl.textContent = message;
+                successEl.style.display = 'block';
+                
+                setTimeout(() => {
+                    successEl.style.display = 'none';
+                }, 5000);
+            }
+
+            showError(message) {
+                const successEl = document.getElementById('create-success');
+                const errorEl = document.getElementById('create-error');
+                
+                successEl.style.display = 'none';
+                errorEl.textContent = message;
+                errorEl.style.display = 'block';
+                
+                setTimeout(() => {
+                    errorEl.style.display = 'none';
+                }, 5000);
+            }
+        }
+
+        // Global functions for alert actions
+        async function deleteAlert(alertId) {
+            if (!confirm('Are you sure you want to delete this alert?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/alerts/${alertId}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    window.smartAlertsManager.showSuccess('Alert deleted successfully');
+                    await window.smartAlertsManager.loadActiveAlerts();
+                } else {
+                    window.smartAlertsManager.showError('Failed to delete alert');
+                }
+            } catch (error) {
+                console.error('Error deleting alert:', error);
+                window.smartAlertsManager.showError('Network error. Please try again.');
+            }
+        }
+
+        function editAlert(alertId) {
+            // For now, show a message that editing is coming soon
+            alert('Edit functionality coming soon! You can delete and recreate the alert for now.');
+        }
+
+        // Initialize Smart Alerts Manager when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            window.smartAlertsManager = new SmartAlertsManager();
+        });
+    </script>
+</body>
+</html>
