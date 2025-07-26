@@ -479,7 +479,7 @@ class ModernBacktest {
                     <button onclick="this.closest('.premium-modal').remove()" class="flex-1 saas-button-secondary">
                         Maybe Later
                     </button>
-                    <button onclick="window.location.href='/premium/upgrade'" class="flex-1 saas-button-primary">
+                    <button onclick="window.location.href='/subscription/checkout?plan=pro'" class="flex-1 saas-button-primary">
                         Upgrade to Pro - $29.99/mo
                     </button>
                 </div>

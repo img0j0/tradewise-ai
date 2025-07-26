@@ -119,7 +119,7 @@ class PremiumFeaturesManager {
                         <!-- Features will be populated dynamically -->
                     </div>
                     <div class="upsell-modal-actions">
-                        <a href="/premium/upgrade" class="upsell-upgrade-btn">
+                        <a href="/subscription/checkout?plan=pro" class="upsell-upgrade-btn">
                             <i class="fas fa-crown mr-2"></i>Upgrade to Pro
                         </a>
                         <button class="upsell-cancel-btn" onclick="premiumManager.closeUpsellModal()">
@@ -368,7 +368,7 @@ class PremiumFeaturesManager {
                 body: JSON.stringify({
                     plan: planType,
                     success_url: window.location.origin + '/premium/success',
-                    cancel_url: window.location.origin + '/premium/upgrade'
+                    cancel_url: window.location.origin + '/subscription/checkout?plan=pro'
                 })
             });
             
