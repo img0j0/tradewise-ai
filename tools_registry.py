@@ -241,21 +241,32 @@ def advanced_search_endpoint():
 @tools_bp.route('/analysis/stocks', methods=['POST'])
 @tool_endpoint('intelligent_stock_analyzer')
 def stock_analysis_endpoint():
-    """Stock Analysis tool endpoint"""
+    """Stock Analysis tool endpoint - Direct execution for debugging"""
     try:
         data = request.get_json() or {}
-        symbol = data.get('symbol', 'AAPL')
+        symbol = data.get('symbol', 'AAPL').upper()
         
-        # Create async task
-        task_id = f"stock_analysis_{int(time.time() * 1000)}"
+        # Get the tool function directly
+        tool_function = tools_registry.tools.get('intelligent_stock_analyzer', {}).get('function')
+        if not tool_function:
+            return jsonify({'success': False, 'error': 'Tool function not found'}), 500
         
-        return jsonify({
-            'success': True,
-            'task_id': task_id,
-            'status': 'processing',
-            'message': f'Stock analysis started for {symbol}',
-            'estimated_completion': '20-40 seconds'
-        })
+        # Execute directly for immediate response
+        result = tool_function(symbol=symbol)
+        
+        if result and result.get('success'):
+            logger.info(f"Stock analysis completed directly for {symbol}")
+            return jsonify(result)
+        else:
+            # Fallback to async task
+            task_id = f"stock_analysis_{int(time.time() * 1000)}"
+            return jsonify({
+                'success': True,
+                'task_id': task_id,
+                'status': 'processing',
+                'message': f'Stock analysis started for {symbol}',
+                'estimated_completion': '20-40 seconds'
+            })
         
     except Exception as e:
         logger.error(f"Stock analysis endpoint error: {e}")

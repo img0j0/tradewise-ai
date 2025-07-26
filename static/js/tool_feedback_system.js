@@ -614,3 +614,22 @@ additionalStyles.textContent = `
     }
 `;
 document.head.appendChild(additionalStyles);
+
+// Initialize and expose the global instance
+window.toolFeedback = new ToolFeedbackManager();
+console.log('Tool Feedback Manager initialized');
+
+// Expose launchTool method for backwards compatibility
+window.toolFeedback.launchTool = function(toolName, params = {}) {
+    // Find button with matching tool name or create a virtual one
+    let button = document.querySelector(`[data-tool="${toolName}"]`);
+    if (!button) {
+        // Create virtual button for programmatic tool launching
+        button = document.createElement('button');
+        button.dataset.tool = toolName;
+        Object.keys(params).forEach(key => {
+            button.dataset[key] = params[key];
+        });
+    }
+    return this.handleToolClick(button);
+};

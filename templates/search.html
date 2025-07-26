@@ -511,13 +511,9 @@
             
             try {
                 console.log('Sending analysis request for:', mappedSymbol);
-                const response = await fetch('/tools/analysis/stocks', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ symbol: mappedSymbol })
-                });
+                
+                // Use direct analysis for immediate results
+                const response = await fetch(`/api/stock-analysis-direct/${mappedSymbol}`);
                 
                 console.log('Response status:', response.status);
                 
@@ -526,11 +522,11 @@
                 }
                 
                 const data = await response.json();
-                console.log('Analysis data received:', data);
+                console.log('Direct analysis data received:', data);
                 
-                if (data.success && data.task_id) {
-                    // Show tool feedback and poll for results
-                    showTaskProgress(data.task_id, mappedSymbol);
+                if (data.success && data.analysis) {
+                    // Handle direct analysis response
+                    displayResults(data);
                 } else {
                     displayError(data.error || 'Analysis failed');
                 }
@@ -574,6 +570,10 @@
                         return;
                     } else if (attempts >= maxAttempts) {
                         displayError('Analysis timed out. Please try again.');
+                        return;
+                    } else if (data.status === 'processing' && attempts > 20) {
+                        // Force completion after reasonable time for demo purposes
+                        displayError('Analysis is taking longer than expected. Please try again.');
                         return;
                     }
                     

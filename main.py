@@ -1,4 +1,8 @@
 from app import app
+from stock_search_direct import direct_search_bp
+
+# Register direct search blueprint for debugging
+app.register_blueprint(direct_search_bp)
 
 # Comment out other blueprints temporarily to avoid conflicts
 # from search_routes import search_bp
