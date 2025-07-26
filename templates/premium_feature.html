@@ -1,0 +1,113 @@
+{% extends "base_new.html" %}
+
+{% block title %}{{ title }} - TradeWise AI{% endblock %}
+
+{% block content %}
+<div class="text-center py-16">
+    <div class="max-w-2xl mx-auto">
+        <!-- Premium Feature Icon -->
+        <div class="w-24 h-24 mx-auto mb-8 bg-gradient-to-r from-premium-500 to-secondary-500 rounded-full flex items-center justify-center">
+            <i class="fas fa-crown text-3xl text-white"></i>
+        </div>
+        
+        <!-- Feature Title -->
+        <h1 class="text-display mb-4">{{ title }}</h1>
+        <p class="text-body-large text-gray-600 mb-8">{{ description }}</p>
+        
+        <!-- Premium Lock Message -->
+        <div class="bg-premium-50 border border-premium-200 rounded-xl p-8 mb-8">
+            <div class="flex items-center justify-center gap-3 mb-4">
+                <i class="fas fa-lock text-premium-500 text-xl"></i>
+                <h3 class="text-subtitle text-premium-800">Premium Feature</h3>
+            </div>
+            <p class="text-body text-premium-700 mb-6">
+                This feature requires a Pro subscription to unlock advanced capabilities and institutional-grade analysis tools.
+            </p>
+            
+            <!-- Feature Benefits -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                {% if feature == 'backtest' %}
+                <div class="text-left">
+                    <div class="flex items-center gap-2 mb-2">
+                        <i class="fas fa-check text-success-500"></i>
+                        <span class="font-semibold">Historical Analysis</span>
+                    </div>
+                    <p class="text-sm text-gray-600">Test strategies against 10+ years of market data</p>
+                </div>
+                <div class="text-left">
+                    <div class="flex items-center gap-2 mb-2">
+                        <i class="fas fa-check text-success-500"></i>
+                        <span class="font-semibold">Risk Metrics</span>
+                    </div>
+                    <p class="text-sm text-gray-600">Sharpe ratio, max drawdown, volatility analysis</p>
+                </div>
+                <div class="text-left">
+                    <div class="flex items-center gap-2 mb-2">
+                        <i class="fas fa-check text-success-500"></i>
+                        <span class="font-semibold">Strategy Comparison</span>
+                    </div>
+                    <p class="text-sm text-gray-600">Compare multiple strategies side-by-side</p>
+                </div>
+                <div class="text-left">
+                    <div class="flex items-center gap-2 mb-2">
+                        <i class="fas fa-check text-success-500"></i>
+                        <span class="font-semibold">Benchmark Analysis</span>
+                    </div>
+                    <p class="text-sm text-gray-600">Compare against S&P 500, NASDAQ, and custom benchmarks</p>
+                </div>
+                {% elif feature == 'peer-analysis' %}
+                <div class="text-left">
+                    <div class="flex items-center gap-2 mb-2">
+                        <i class="fas fa-check text-success-500"></i>
+                        <span class="font-semibold">Industry Comparison</span>
+                    </div>
+                    <p class="text-sm text-gray-600">Compare against 50+ industry peers</p>
+                </div>
+                <div class="text-left">
+                    <div class="flex items-center gap-2 mb-2">
+                        <i class="fas fa-check text-success-500"></i>
+                        <span class="font-semibold">Financial Metrics</span>
+                    </div>
+                    <p class="text-sm text-gray-600">Revenue, margins, growth rates, and ratios</p>
+                </div>
+                <div class="text-left">
+                    <div class="flex items-center gap-2 mb-2">
+                        <i class="fas fa-check text-success-500"></i>
+                        <span class="font-semibold">Competitive Position</span>
+                    </div>
+                    <p class="text-sm text-gray-600">Market share, competitive advantages analysis</p>
+                </div>
+                <div class="text-left">
+                    <div class="flex items-center gap-2 mb-2">
+                        <i class="fas fa-check text-success-500"></i>
+                        <span class="font-semibold">Sector Rankings</span>
+                    </div>
+                    <p class="text-sm text-gray-600">Percentile rankings across key performance metrics</p>
+                </div>
+                {% endif %}
+            </div>
+            
+            <!-- Upgrade CTA -->
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="/premium/upgrade" class="btn btn-premium">
+                    <i class="fas fa-crown mr-2"></i>Upgrade to Pro - $29.99/mo
+                </a>
+                <a href="/search" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left mr-2"></i>Back to Search
+                </a>
+            </div>
+        </div>
+        
+        <!-- Demo Preview -->
+        <div class="bg-gray-50 rounded-xl p-6">
+            <h4 class="text-subtitle mb-4">Feature Preview</h4>
+            <div class="bg-white rounded-lg p-8 border-2 border-dashed border-gray-300">
+                <div class="text-gray-400">
+                    <i class="fas fa-chart-line text-4xl mb-4"></i>
+                    <p class="text-body">Interactive {{ title.lower() }} interface will appear here after upgrade</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

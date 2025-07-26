@@ -65,13 +65,14 @@ cache = Cache(app, config={
     'CACHE_THRESHOLD': 1000  # Maximum cached items
 })
 
-# Initialize performance monitoring
-from performance_monitor import monitor
-monitor.init_app(app)
+# Initialize performance monitoring - DISABLED FOR UI TESTING
+# from performance_monitor import monitor
+# monitor.init_app(app)
 
-# Initialize optimization services after app setup
+# Initialize optimization services after app setup - DISABLED FOR UI TESTING
 def initialize_optimization_services():
-    """Initialize pre-computation and async task services"""
+    """Initialize pre-computation and async task services - DISABLED"""
+    return  # Temporarily disabled to fix context errors
     try:
         from ai_precomputation_service import precomputation_service
         from async_task_queue import task_queue
@@ -115,9 +116,9 @@ def add_security_headers(response):
     response.headers['X-Response-Time'] = getattr(response, '_response_time', '0ms')
     return response
 
-# Start optimization services in background
-import threading
-threading.Thread(target=initialize_optimization_services, daemon=True).start()
+# Start optimization services in background - DISABLED FOR UI TESTING
+# import threading  
+# threading.Thread(target=initialize_optimization_services, daemon=True).start()
 
 # Initialize compression - temporarily disabled for debugging
 # compress = Compress(app)

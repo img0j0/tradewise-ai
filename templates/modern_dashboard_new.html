@@ -1,0 +1,650 @@
+{% extends "base_new.html" %}
+
+{% block title %}Dashboard - TradeWise AI{% endblock %}
+{% block nav_dashboard %}active{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Dashboard-specific styles */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+@media (max-width: 1024px) {
+    .dashboard-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+}
+
+.dashboard-card {
+    background: var(--surface);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--gray-200);
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.dashboard-card:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+}
+
+.card-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--gray-100);
+}
+
+.card-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.card-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 0.875rem;
+}
+
+.card-title-text {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--gray-900);
+}
+
+.card-subtitle {
+    color: var(--gray-600);
+    font-size: 0.875rem;
+}
+
+.card-content {
+    padding: 1.5rem;
+}
+
+.sparkline-container {
+    height: 120px;
+    margin: 1rem 0;
+}
+
+.insight-item {
+    display: flex;
+    align-items: start;
+    gap: 1rem;
+    padding: 1rem;
+    border-radius: var(--radius-lg);
+    margin-bottom: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.insight-item:hover {
+    transform: translateX(4px);
+}
+
+.insight-icon {
+    width: 2rem;
+    height: 2rem;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: white;
+    font-size: 0.75rem;
+}
+
+.insight-content {
+    flex: 1;
+}
+
+.insight-title {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.insight-description {
+    font-size: 0.875rem;
+    color: var(--gray-600);
+    line-height: 1.4;
+}
+
+.market-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem;
+    border-radius: var(--radius-md);
+    margin-bottom: 0.5rem;
+    background: var(--gray-50);
+}
+
+.market-symbol {
+    font-weight: 600;
+    color: var(--gray-900);
+}
+
+.market-price {
+    font-size: 0.875rem;
+    color: var(--gray-600);
+}
+
+.performance-positive {
+    color: var(--success-600);
+    font-weight: 600;
+}
+
+.performance-negative {
+    color: var(--error-600);
+    font-weight: 600;
+}
+
+.sector-chart-container {
+    height: 150px;
+    margin-top: 1rem;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-header mb-8">
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-headline mb-2">Welcome back to TradeWise AI</h1>
+            <p class="text-body-large text-gray-600">Your intelligent investment companion</p>
+        </div>
+        <div class="flex items-center gap-4">
+            <div class="text-right">
+                <div class="text-body-small text-gray-500">Last updated</div>
+                <div class="text-body-medium font-semibold" id="last-updated">Just now</div>
+            </div>
+            <button class="btn btn-primary" onclick="refreshDashboard()">
+                <i class="fas fa-sync-alt mr-2"></i>Refresh
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="dashboard-grid">
+    <!-- Portfolio Overview Card -->
+    <div class="dashboard-card">
+        <div class="card-header">
+            <div class="card-title">
+                <div class="card-icon" style="background: linear-gradient(135deg, #059669, #10b981);">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div>
+                    <div class="card-title-text">Portfolio Overview</div>
+                    <div class="card-subtitle">Past 30 days performance</div>
+                </div>
+            </div>
+        </div>
+        <div class="card-content">
+            <div class="grid grid-cols-2 gap-4 mb-4">
+                <div class="text-center">
+                    <div class="text-2xl font-bold text-gray-900" id="portfolio-value">$0</div>
+                    <div class="text-sm text-gray-500">Total Value</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-2xl font-bold" id="portfolio-change">+0%</div>
+                    <div class="text-sm text-gray-500">30d Change</div>
+                </div>
+            </div>
+            
+            <div class="sparkline-container">
+                <canvas id="portfolio-sparkline"></canvas>
+            </div>
+            
+            <div class="flex justify-between items-center mt-4">
+                <a href="/portfolio" class="text-primary-600 hover:text-primary-700 font-medium text-sm">
+                    View Details →
+                </a>
+                <div class="flex gap-2">
+                    <button class="btn btn-sm btn-secondary" onclick="addPosition()">
+                        <i class="fas fa-plus mr-1"></i>Add Position
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- AI Insights Card -->
+    <div class="dashboard-card">
+        <div class="card-header">
+            <div class="card-title">
+                <div class="card-icon" style="background: linear-gradient(135deg, #7c3aed, #8b5cf6);">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <div>
+                    <div class="card-title-text">AI Insights</div>
+                    <div class="card-subtitle">Personalized recommendations</div>
+                </div>
+            </div>
+        </div>
+        <div class="card-content">
+            <div id="ai-insights-container">
+                <div class="insight-item" style="background: linear-gradient(135deg, #ecfdf5, #f0fdf4);" onclick="analyzeStock('NVDA')">
+                    <div class="insight-icon" style="background: linear-gradient(135deg, #059669, #10b981);">
+                        <i class="fas fa-arrow-up"></i>
+                    </div>
+                    <div class="insight-content">
+                        <div class="insight-title" style="color: #065f46;">Strong Buy Signal</div>
+                        <div class="insight-description">NVDA showing bullish momentum with strong earnings growth and AI sector leadership</div>
+                    </div>
+                </div>
+                
+                <div class="insight-item" style="background: linear-gradient(135deg, #fef3c7, #fef9c3);" onclick="analyzeStock('TSLA')">
+                    <div class="insight-icon" style="background: linear-gradient(135deg, #f59e0b, #fbbf24);">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="insight-content">
+                        <div class="insight-title" style="color: #92400e;">Market Volatility Alert</div>
+                        <div class="insight-description">Tech sector experiencing increased volatility - monitor positions carefully</div>
+                    </div>
+                </div>
+                
+                <div class="insight-item" style="background: linear-gradient(135deg, #dbeafe, #eff6ff);" onclick="exploreOpportunity('dividend')">
+                    <div class="insight-icon" style="background: linear-gradient(135deg, #2563eb, #3b82f6);">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <div class="insight-content">
+                        <div class="insight-title" style="color: #1e40af;">Investment Opportunity</div>
+                        <div class="insight-description">Dividend aristocrats showing attractive yields and stable growth prospects</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-6">
+                <a href="/search" class="btn btn-primary w-full">
+                    <i class="fas fa-search mr-2"></i>Explore AI Analysis
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Market Highlights Card -->
+    <div class="dashboard-card">
+        <div class="card-header">
+            <div class="card-title">
+                <div class="card-icon" style="background: linear-gradient(135deg, #dc2626, #ef4444);">
+                    <i class="fas fa-globe"></i>
+                </div>
+                <div>
+                    <div class="card-title-text">Market Highlights</div>
+                    <div class="card-subtitle">Live market data</div>
+                </div>
+            </div>
+        </div>
+        <div class="card-content">
+            <!-- Major Indices -->
+            <div class="mb-6">
+                <h4 class="font-semibold text-gray-700 mb-3">Major Indices</h4>
+                <div class="space-y-2">
+                    <div class="market-item">
+                        <div>
+                            <div class="market-symbol">S&P 500</div>
+                            <div class="market-price">5,847.87</div>
+                        </div>
+                        <div class="performance-positive">+0.8%</div>
+                    </div>
+                    <div class="market-item">
+                        <div>
+                            <div class="market-symbol">NASDAQ</div>
+                            <div class="market-price">19,630.20</div>
+                        </div>
+                        <div class="performance-positive">+1.2%</div>
+                    </div>
+                    <div class="market-item">
+                        <div>
+                            <div class="market-symbol">Dow Jones</div>
+                            <div class="market-price">43,239.05</div>
+                        </div>
+                        <div class="performance-negative">-0.3%</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Top Movers -->
+            <div class="mb-6">
+                <h4 class="font-semibold text-gray-700 mb-3">Top Movers</h4>
+                <div class="space-y-2">
+                    <div class="market-item" onclick="analyzeStock('NVDA')">
+                        <div>
+                            <div class="market-symbol">NVDA</div>
+                            <div class="market-price">$167.03</div>
+                        </div>
+                        <div class="performance-positive">+5.2%</div>
+                    </div>
+                    <div class="market-item" onclick="analyzeStock('TSLA')">
+                        <div>
+                            <div class="market-symbol">TSLA</div>
+                            <div class="market-price">$436.58</div>
+                        </div>
+                        <div class="performance-negative">-3.1%</div>
+                    </div>
+                    <div class="market-item" onclick="analyzeStock('AAPL')">
+                        <div>
+                            <div class="market-symbol">AAPL</div>
+                            <div class="market-price">$214.40</div>
+                        </div>
+                        <div class="performance-positive">+2.4%</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sector Performance Chart -->
+            <div>
+                <h4 class="font-semibold text-gray-700 mb-3">Sector Performance</h4>
+                <div class="sector-chart-container">
+                    <canvas id="sector-performance-chart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions Section -->
+<div class="mt-12">
+    <h2 class="text-title mb-6">Quick Actions</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        <button class="btn btn-secondary flex-col py-6" onclick="window.location.href='/search'">
+            <i class="fas fa-search text-2xl mb-2"></i>
+            <span>Search Stocks</span>
+        </button>
+        
+        <button class="btn btn-secondary flex-col py-6" onclick="showFeature('backtest')">
+            <i class="fas fa-chart-bar text-2xl mb-2"></i>
+            <span>Backtest Strategy</span>
+            <span class="premium-lock" data-feature="backtest"></span>
+        </button>
+        
+        <button class="btn btn-secondary flex-col py-6" onclick="showFeature('peer-analysis')">
+            <i class="fas fa-balance-scale text-2xl mb-2"></i>
+            <span>Peer Analysis</span>
+            <span class="premium-lock" data-feature="peer-analysis"></span>
+        </button>
+        
+        <button class="btn btn-secondary flex-col py-6" onclick="showFeature('alerts')">
+            <i class="fas fa-bell text-2xl mb-2"></i>
+            <span>Set Alerts</span>
+            <span class="premium-lock" data-feature="alerts"></span>
+        </button>
+        
+        <button class="btn btn-secondary flex-col py-6" onclick="showFeature('scanner')">
+            <i class="fas fa-radar text-2xl mb-2"></i>
+            <span>AI Scanner</span>
+            <span class="premium-lock" data-feature="scanner"></span>
+        </button>
+        
+        <button class="btn btn-premium flex-col py-6" onclick="window.location.href='/premium/upgrade'">
+            <i class="fas fa-crown text-2xl mb-2"></i>
+            <span>Upgrade to Pro</span>
+        </button>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Dashboard-specific JavaScript
+let portfolioChart = null;
+let sectorChart = null;
+
+// Initialize dashboard
+function initDashboard() {
+    loadPortfolioData();
+    loadMarketData();
+    initCharts();
+    updateLastUpdated();
+    
+    // Auto-refresh every 5 minutes
+    setInterval(() => {
+        refreshDashboard();
+    }, 5 * 60 * 1000);
+}
+
+// Load portfolio data
+async function loadPortfolioData() {
+    try {
+        const response = await fetch('/api/portfolio/summary');
+        if (response.ok) {
+            const data = await response.json();
+            updatePortfolioDisplay(data);
+        }
+    } catch (error) {
+        console.error('Failed to load portfolio data:', error);
+        // Show demo data
+        updatePortfolioDisplay({
+            totalValue: 125420.50,
+            change: 2.34,
+            changePercent: 1.9,
+            sparklineData: generateSparklineData()
+        });
+    }
+}
+
+// Update portfolio display
+function updatePortfolioDisplay(data) {
+    document.getElementById('portfolio-value').textContent = 
+        SaaSApp.formatCurrency(data.totalValue);
+    
+    const changeElement = document.getElementById('portfolio-change');
+    const changeText = `${data.change >= 0 ? '+' : ''}${data.changePercent.toFixed(2)}%`;
+    changeElement.textContent = changeText;
+    changeElement.className = `text-2xl font-bold ${data.change >= 0 ? 'performance-positive' : 'performance-negative'}`;
+    
+    // Update sparkline chart
+    if (portfolioChart && data.sparklineData) {
+        portfolioChart.data.datasets[0].data = data.sparklineData;
+        portfolioChart.update('none');
+    }
+}
+
+// Load market data
+async function loadMarketData() {
+    try {
+        const response = await fetch('/api/market/overview');
+        if (response.ok) {
+            const data = await response.json();
+            updateMarketDisplay(data);
+        }
+    } catch (error) {
+        console.error('Failed to load market data:', error);
+    }
+}
+
+// Initialize charts
+function initCharts() {
+    initPortfolioSparkline();
+    initSectorChart();
+}
+
+// Initialize portfolio sparkline
+function initPortfolioSparkline() {
+    const ctx = document.getElementById('portfolio-sparkline');
+    if (!ctx) return;
+    
+    portfolioChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: Array.from({length: 30}, (_, i) => i + 1),
+            datasets: [{
+                data: generateSparklineData(),
+                borderColor: '#10b981',
+                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.4,
+                pointRadius: 0,
+                pointHoverRadius: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: { display: false },
+                y: { display: false }
+            },
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    mode: 'index',
+                    intersect: false,
+                    callbacks: {
+                        title: (context) => `Day ${context[0].label}`,
+                        label: (context) => `Value: ${SaaSApp.formatCurrency(context.parsed.y)}`
+                    }
+                }
+            },
+            interaction: {
+                mode: 'index',
+                intersect: false
+            }
+        }
+    });
+}
+
+// Initialize sector performance chart
+function initSectorChart() {
+    const ctx = document.getElementById('sector-performance-chart');
+    if (!ctx) return;
+    
+    sectorChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Tech', 'Health', 'Finance', 'Energy', 'Consumer', 'Industrial'],
+            datasets: [{
+                data: [2.4, 1.8, -0.5, 3.2, 1.1, 0.8],
+                backgroundColor: [
+                    '#10b981', '#10b981', '#ef4444', '#10b981', '#10b981', '#10b981'
+                ],
+                borderRadius: 4,
+                borderSkipped: false
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: {
+                    grid: { display: false },
+                    ticks: { font: { size: 11 } }
+                },
+                y: {
+                    grid: { color: 'rgba(0,0,0,0.1)' },
+                    ticks: { 
+                        callback: (value) => `${value}%`,
+                        font: { size: 11 }
+                    }
+                }
+            },
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: (context) => `${context.parsed.y}% today`
+                    }
+                }
+            }
+        }
+    });
+}
+
+// Generate sample sparkline data
+function generateSparklineData() {
+    let value = 100000;
+    const data = [];
+    
+    for (let i = 0; i < 30; i++) {
+        value += (Math.random() - 0.4) * 2000;
+        data.push(Math.max(value, 90000));
+    }
+    
+    return data;
+}
+
+// Refresh dashboard
+async function refreshDashboard() {
+    const button = document.querySelector('[onclick="refreshDashboard()"]');
+    const icon = button.querySelector('i');
+    
+    // Show loading state
+    icon.classList.add('fa-spin');
+    button.disabled = true;
+    
+    try {
+        await Promise.all([
+            loadPortfolioData(),
+            loadMarketData()
+        ]);
+        
+        updateLastUpdated();
+        SaaSApp.showToast('Dashboard updated', 'success');
+        
+    } catch (error) {
+        console.error('Refresh failed:', error);
+        SaaSApp.showToast('Failed to refresh data', 'error');
+    } finally {
+        // Remove loading state
+        icon.classList.remove('fa-spin');
+        button.disabled = false;
+    }
+}
+
+// Update last updated time
+function updateLastUpdated() {
+    const now = new Date();
+    document.getElementById('last-updated').textContent = 
+        now.toLocaleTimeString('en-US', { 
+            hour: '2-digit', 
+            minute: '2-digit' 
+        });
+}
+
+// Navigation functions
+function analyzeStock(symbol) {
+    window.location.href = `/search?q=${symbol}`;
+}
+
+function exploreOpportunity(strategy) {
+    window.location.href = `/search?strategy=${strategy}`;
+}
+
+function addPosition() {
+    // For now, redirect to search
+    window.location.href = '/search';
+}
+
+function showFeature(feature) {
+    // Check if user has access
+    if (SaaSApp.state.userPlan === 'free') {
+        PremiumSystem.showUpsellModal(feature);
+    } else {
+        // Navigate to feature
+        window.location.href = `/${feature}`;
+    }
+}
+</script>
+{% endblock %}
+
+{% block page_init %}
+// Initialize dashboard when page loads
+initDashboard();
+{% endblock %}

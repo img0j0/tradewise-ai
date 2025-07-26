@@ -1,297 +1,557 @@
-{% extends "base.html" %}
+{% extends "base_new.html" %}
 
 {% block title %}Upgrade to Pro - TradeWise AI{% endblock %}
 
 {% block extra_css %}
 <style>
-    .pricing-card {
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    
-    .pricing-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-    }
-    
-    .feature-check {
-        color: var(--success);
-    }
-    
-    .popular-badge {
-        background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple));
-        color: white;
-        padding: 0.5rem 1rem;
-        border-radius: 9999px;
-        font-size: 0.875rem;
-        font-weight: 600;
-        position: absolute;
-        top: -0.5rem;
-        left: 50%;
-        transform: translateX(-50%);
-    }
+.pricing-card {
+    background: var(--surface);
+    border: 2px solid var(--gray-200);
+    border-radius: var(--radius-xl);
+    padding: 2rem;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.pricing-card.popular {
+    border-color: var(--premium-500);
+    box-shadow: 0 0 0 4px rgb(168 85 247 / 0.1);
+}
+
+.pricing-card:hover {
+    box-shadow: var(--shadow-xl);
+    transform: translateY(-4px);
+}
+
+.popular-badge {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, var(--premium-500), var(--secondary-500));
+    color: white;
+    padding: 0.5rem 1.5rem;
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.plan-price {
+    font-size: 3rem;
+    font-weight: 800;
+    line-height: 1;
+    background: linear-gradient(135deg, var(--premium-600), var(--secondary-600));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.plan-period {
+    color: var(--gray-500);
+    font-size: var(--font-size-lg);
+}
+
+.feature-list {
+    list-style: none;
+    padding: 0;
+    margin: 2rem 0;
+}
+
+.feature-list li {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3) 0;
+    border-bottom: 1px solid var(--gray-100);
+}
+
+.feature-list li:last-child {
+    border-bottom: none;
+}
+
+.feature-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.feature-icon.included {
+    background: var(--success-100);
+    color: var(--success-600);
+}
+
+.feature-icon.excluded {
+    background: var(--gray-100);
+    color: var(--gray-400);
+}
+
+.testimonial-card {
+    background: var(--gray-50);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    text-align: center;
+}
+
+.testimonial-author {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-3);
+    margin-top: 1.5rem;
+}
+
+.author-avatar {
+    width: 3rem;
+    height: 3rem;
+    border-radius: var(--radius-full);
+    background: linear-gradient(135deg, var(--primary-500), var(--secondary-500));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+}
+
+.faq-item {
+    border-bottom: 1px solid var(--gray-200);
+    padding: var(--space-4) 0;
+}
+
+.faq-question {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--gray-900);
+}
+
+.faq-answer {
+    margin-top: var(--space-3);
+    color: var(--gray-600);
+    line-height: 1.6;
+    display: none;
+}
+
+.faq-answer.open {
+    display: block;
+}
+
+.faq-toggle {
+    transition: transform 0.3s ease;
+}
+
+.faq-toggle.open {
+    transform: rotate(180deg);
+}
 </style>
 {% endblock %}
 
 {% block content %}
-    <!-- Pricing Hero -->
-    <div class="text-center mb-16">
-        <h1 class="text-4xl md:text-6xl font-bold text-gray-800 mb-6">
-            Choose Your <span class="bg-gradient-to-r from-brand-blue to-brand-purple bg-clip-text text-transparent">Trading Edge</span>
-        </h1>
-        <p class="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-            From free analysis to institutional-grade insights. Scale your investment research with plans designed for every trader.
-        </p>
+<!-- Hero Section -->
+<div class="text-center py-16">
+    <h1 class="text-display mb-4">Choose Your Plan</h1>
+    <p class="text-body-large text-gray-600 max-w-2xl mx-auto">
+        Unlock the full power of TradeWise AI with institutional-grade analysis tools and advanced features
+    </p>
+</div>
+
+<!-- Pricing Cards -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-6xl mx-auto mb-16">
+    <!-- Free Plan -->
+    <div class="pricing-card">
+        <div class="text-center mb-6">
+            <h3 class="text-title mb-2">Free</h3>
+            <div class="plan-price">$0</div>
+            <div class="plan-period">forever</div>
+        </div>
         
-        <!-- Toggle -->
-        <div class="flex items-center justify-center gap-4 mb-8">
-            <span class="text-gray-600">Monthly</span>
-            <label class="relative inline-flex items-center cursor-pointer">
-                <input type="checkbox" id="billing-toggle" class="sr-only peer">
-                <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-brand-blue peer-checked:to-brand-purple"></div>
-            </label>
-            <span class="text-gray-600">Annual <span class="text-green-600 font-medium">(Save 20%)</span></span>
-        </div>
-    </div>
-
-    <!-- Pricing Cards -->
-    <div class="grid md:grid-cols-3 gap-8 mb-16">
-        <!-- Free Plan -->
-        <div class="pricing-card bg-white rounded-2xl p-8 border border-gray-200">
-            <div class="text-center mb-8">
-                <h3 class="text-2xl font-bold text-gray-800 mb-2">Free</h3>
-                <div class="text-5xl font-bold text-gray-800 mb-2">$0</div>
-                <div class="text-gray-600">Forever free</div>
-            </div>
-            
-            <ul class="space-y-4 mb-8">
-                <li class="flex items-center gap-3">
-                    <i class="fas fa-check feature-check"></i>
-                    <span class="text-gray-700">5 stock analyses per month</span>
-                </li>
-                <li class="flex items-center gap-3">
-                    <i class="fas fa-check feature-check"></i>
-                    <span class="text-gray-700">Basic AI insights</span>
-                </li>
-                <li class="flex items-center gap-3">
-                    <i class="fas fa-check feature-check"></i>
-                    <span class="text-gray-700">Real-time market data</span>
-                </li>
-                <li class="flex items-center gap-3">
-                    <i class="fas fa-check feature-check"></i>
-                    <span class="text-gray-700">Email support</span>
-                </li>
-            </ul>
-            
-            <button class="w-full py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
-                Current Plan
-            </button>
-        </div>
-
-        <!-- Pro Plan -->
-        <div class="pricing-card bg-white rounded-2xl p-8 border-2 border-brand-blue relative">
-            <div class="popular-badge">Most Popular</div>
-            
-            <div class="text-center mb-8">
-                <h3 class="text-2xl font-bold text-gray-800 mb-2">Pro</h3>
-                <div class="text-5xl font-bold text-gray-800 mb-2">
-                    <span id="pro-price">$29.99</span>
+        <ul class="feature-list">
+            <li>
+                <div class="feature-icon included">
+                    <i class="fas fa-check"></i>
                 </div>
-                <div class="text-gray-600">
-                    <span id="pro-period">per month</span>
+                <span>Basic stock search</span>
+            </li>
+            <li>
+                <div class="feature-icon included">
+                    <i class="fas fa-check"></i>
                 </div>
-            </div>
-            
-            <ul class="space-y-4 mb-8">
-                <li class="flex items-center gap-3">
-                    <i class="fas fa-check feature-check"></i>
-                    <span class="text-gray-700">Unlimited stock analyses</span>
-                </li>
-                <li class="flex items-center gap-3">
-                    <i class="fas fa-check feature-check"></i>
-                    <span class="text-gray-700">Advanced AI insights</span>
-                </li>
-                <li class="flex items-center gap-3">
-                    <i class="fas fa-check feature-check"></i>
-                    <span class="text-gray-700">Portfolio backtesting</span>
-                </li>
-                <li class="flex items-center gap-3">
-                    <i class="fas fa-check feature-check"></i>
-                    <span class="text-gray-700">Peer comparison tools</span>
-                </li>
-                <li class="flex items-center gap-3">
-                    <i class="fas fa-check feature-check"></i>
-                    <span class="text-gray-700">Smart alerts</span>
-                </li>
-                <li class="flex items-center gap-3">
-                    <i class="fas fa-check feature-check"></i>
-                    <span class="text-gray-700">Priority support</span>
-                </li>
-            </ul>
-            
-            <button onclick="upgradeToPro()" class="w-full py-3 bg-gradient-to-r from-brand-blue to-brand-purple text-white rounded-lg hover:shadow-lg transition-all">
-                Upgrade to Pro
-            </button>
-        </div>
-
-        <!-- Enterprise Plan -->
-        <div class="pricing-card bg-white rounded-2xl p-8 border border-gray-200">
-            <div class="text-center mb-8">
-                <h3 class="text-2xl font-bold text-gray-800 mb-2">Enterprise</h3>
-                <div class="text-5xl font-bold text-gray-800 mb-2">
-                    <span id="enterprise-price">$99.99</span>
+                <span>5 AI analyses per day</span>
+            </li>
+            <li>
+                <div class="feature-icon included">
+                    <i class="fas fa-check"></i>
                 </div>
-                <div class="text-gray-600">
-                    <span id="enterprise-period">per month</span>
+                <span>Real-time stock prices</span>
+            </li>
+            <li>
+                <div class="feature-icon excluded">
+                    <i class="fas fa-times"></i>
                 </div>
-            </div>
-            
-            <ul class="space-y-4 mb-8">
-                <li class="flex items-center gap-3">
-                    <i class="fas fa-check feature-check"></i>
-                    <span class="text-gray-700">Everything in Pro</span>
-                </li>
-                <li class="flex items-center gap-3">
-                    <i class="fas fa-check feature-check"></i>
-                    <span class="text-gray-700">Team management (up to 10 users)</span>
-                </li>
-                <li class="flex items-center gap-3">
-                    <i class="fas fa-check feature-check"></i>
-                    <span class="text-gray-700">Custom AI models</span>
-                </li>
-                <li class="flex items-center gap-3">
-                    <i class="fas fa-check feature-check"></i>
-                    <span class="text-gray-700">API access</span>
-                </li>
-                <li class="flex items-center gap-3">
-                    <i class="fas fa-check feature-check"></i>
-                    <span class="text-gray-700">White-label options</span>
-                </li>
-                <li class="flex items-center gap-3">
-                    <i class="fas fa-check feature-check"></i>
-                    <span class="text-gray-700">Dedicated support</span>
-                </li>
-            </ul>
-            
-            <button onclick="upgradeToEnterprise()" class="w-full py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
-                Contact Sales
-            </button>
-        </div>
-    </div>
-
-    <!-- Feature Comparison -->
-    <div class="bg-white rounded-2xl p-8 border border-gray-200 mb-16">
-        <h3 class="text-2xl font-bold text-gray-800 mb-8 text-center">Feature Comparison</h3>
+                <span>Portfolio backtesting</span>
+            </li>
+            <li>
+                <div class="feature-icon excluded">
+                    <i class="fas fa-times"></i>
+                </div>
+                <span>Peer comparison</span>
+            </li>
+            <li>
+                <div class="feature-icon excluded">
+                    <i class="fas fa-times"></i>
+                </div>
+                <span>Smart alerts</span>
+            </li>
+        </ul>
         
-        <div class="overflow-x-auto">
-            <table class="w-full">
-                <thead>
-                    <tr class="border-b border-gray-200">
-                        <th class="text-left py-4 px-6 font-semibold text-gray-800">Features</th>
-                        <th class="text-center py-4 px-6 font-semibold text-gray-800">Free</th>
-                        <th class="text-center py-4 px-6 font-semibold text-gray-800">Pro</th>
-                        <th class="text-center py-4 px-6 font-semibold text-gray-800">Enterprise</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-200">
-                    <tr>
-                        <td class="py-4 px-6 text-gray-700">Stock Analyses</td>
-                        <td class="py-4 px-6 text-center">5/month</td>
-                        <td class="py-4 px-6 text-center">Unlimited</td>
-                        <td class="py-4 px-6 text-center">Unlimited</td>
-                    </tr>
-                    <tr>
-                        <td class="py-4 px-6 text-gray-700">AI Insights</td>
-                        <td class="py-4 px-6 text-center">Basic</td>
-                        <td class="py-4 px-6 text-center">Advanced</td>
-                        <td class="py-4 px-6 text-center">Custom</td>
-                    </tr>
-                    <tr>
-                        <td class="py-4 px-6 text-gray-700">Portfolio Backtesting</td>
-                        <td class="py-4 px-6 text-center">❌</td>
-                        <td class="py-4 px-6 text-center">✅</td>
-                        <td class="py-4 px-6 text-center">✅</td>
-                    </tr>
-                    <tr>
-                        <td class="py-4 px-6 text-gray-700">Peer Comparison</td>
-                        <td class="py-4 px-6 text-center">❌</td>
-                        <td class="py-4 px-6 text-center">✅</td>
-                        <td class="py-4 px-6 text-center">✅</td>
-                    </tr>
-                    <tr>
-                        <td class="py-4 px-6 text-gray-700">Team Management</td>
-                        <td class="py-4 px-6 text-center">❌</td>
-                        <td class="py-4 px-6 text-center">❌</td>
-                        <td class="py-4 px-6 text-center">Up to 10 users</td>
-                    </tr>
-                    <tr>
-                        <td class="py-4 px-6 text-gray-700">API Access</td>
-                        <td class="py-4 px-6 text-center">❌</td>
-                        <td class="py-4 px-6 text-center">❌</td>
-                        <td class="py-4 px-6 text-center">✅</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+        <button class="btn btn-secondary w-full" disabled>
+            Current Plan
+        </button>
     </div>
-
-    <!-- FAQ Section -->
-    <div class="mb-16">
-        <h3 class="text-2xl font-bold text-gray-800 mb-8 text-center">Frequently Asked Questions</h3>
+    
+    <!-- Pro Plan -->
+    <div class="pricing-card popular">
+        <div class="popular-badge">Most Popular</div>
         
-        <div class="max-w-3xl mx-auto space-y-6">
-            <div class="bg-white rounded-lg border border-gray-200 p-6">
-                <h4 class="font-semibold text-gray-800 mb-2">Can I change plans anytime?</h4>
-                <p class="text-gray-600">Yes, you can upgrade, downgrade, or cancel your subscription at any time. Changes take effect at the next billing cycle.</p>
+        <div class="text-center mb-6">
+            <h3 class="text-title mb-2">Pro</h3>
+            <div class="plan-price">$29</div>
+            <div class="plan-period">/month</div>
+        </div>
+        
+        <ul class="feature-list">
+            <li>
+                <div class="feature-icon included">
+                    <i class="fas fa-check"></i>
+                </div>
+                <span>Everything in Free</span>
+            </li>
+            <li>
+                <div class="feature-icon included">
+                    <i class="fas fa-check"></i>
+                </div>
+                <span>Unlimited AI analyses</span>
+            </li>
+            <li>
+                <div class="feature-icon included">
+                    <i class="fas fa-check"></i>
+                </div>
+                <span>Portfolio backtesting</span>
+            </li>
+            <li>
+                <div class="feature-icon included">
+                    <i class="fas fa-check"></i>
+                </div>
+                <span>Peer comparison analysis</span>
+            </li>
+            <li>
+                <div class="feature-icon included">
+                    <i class="fas fa-check"></i>
+                </div>
+                <span>Smart market alerts</span>
+            </li>
+            <li>
+                <div class="feature-icon included">
+                    <i class="fas fa-check"></i>
+                </div>
+                <span>AI market scanner</span>
+            </li>
+            <li>
+                <div class="feature-icon included">
+                    <i class="fas fa-check"></i>
+                </div>
+                <span>Priority support</span>
+            </li>
+        </ul>
+        
+        <button class="btn btn-premium w-full" onclick="startCheckout('pro')">
+            <i class="fas fa-crown mr-2"></i>Upgrade to Pro
+        </button>
+    </div>
+    
+    <!-- Enterprise Plan -->
+    <div class="pricing-card">
+        <div class="text-center mb-6">
+            <h3 class="text-title mb-2">Enterprise</h3>
+            <div class="plan-price">$99</div>
+            <div class="plan-period">/month</div>
+        </div>
+        
+        <ul class="feature-list">
+            <li>
+                <div class="feature-icon included">
+                    <i class="fas fa-check"></i>
+                </div>
+                <span>Everything in Pro</span>
+            </li>
+            <li>
+                <div class="feature-icon included">
+                    <i class="fas fa-check"></i>
+                </div>
+                <span>Team management (10 users)</span>
+            </li>
+            <li>
+                <div class="feature-icon included">
+                    <i class="fas fa-check"></i>
+                </div>
+                <span>Custom reports</span>
+            </li>
+            <li>
+                <div class="feature-icon included">
+                    <i class="fas fa-check"></i>
+                </div>
+                <span>API access</span>
+            </li>
+            <li>
+                <div class="feature-icon included">
+                    <i class="fas fa-check"></i>
+                </div>
+                <span>White-label options</span>
+            </li>
+            <li>
+                <div class="feature-icon included">
+                    <i class="fas fa-check"></i>
+                </div>
+                <span>Dedicated support</span>
+            </li>
+        </ul>
+        
+        <button class="btn btn-secondary w-full" onclick="startCheckout('enterprise')">
+            <i class="fas fa-building mr-2"></i>Upgrade to Enterprise
+        </button>
+    </div>
+</div>
+
+<!-- Social Proof -->
+<div class="bg-gray-50 rounded-xl p-8 mb-16">
+    <div class="text-center mb-8">
+        <h2 class="text-title mb-4">Trusted by Thousands of Investors</h2>
+        <p class="text-body text-gray-600">Join successful investors who rely on TradeWise AI for smarter decisions</p>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="testimonial-card">
+            <p class="text-body italic mb-4">
+                "TradeWise AI has transformed my investment process. The backtesting feature saved me from a costly mistake."
+            </p>
+            <div class="testimonial-author">
+                <div class="author-avatar">MK</div>
+                <div>
+                    <div class="font-semibold">Michael K.</div>
+                    <div class="text-sm text-gray-500">Portfolio Manager</div>
+                </div>
             </div>
-            
-            <div class="bg-white rounded-lg border border-gray-200 p-6">
-                <h4 class="font-semibold text-gray-800 mb-2">Is there a free trial for Pro?</h4>
-                <p class="text-gray-600">We offer a 7-day free trial for new Pro subscribers. No credit card required.</p>
+        </div>
+        
+        <div class="testimonial-card">
+            <p class="text-body italic mb-4">
+                "The peer comparison analysis is incredible. I can now see exactly how my stocks stack up against competitors."
+            </p>
+            <div class="testimonial-author">
+                <div class="author-avatar">JD</div>
+                <div>
+                    <div class="font-semibold">Jennifer D.</div>
+                    <div class="text-sm text-gray-500">Independent Investor</div>
+                </div>
             </div>
-            
-            <div class="bg-white rounded-lg border border-gray-200 p-6">
-                <h4 class="font-semibold text-gray-800 mb-2">What payment methods do you accept?</h4>
-                <p class="text-gray-600">We accept all major credit cards, PayPal, and bank transfers for Enterprise plans.</p>
-            </div>
-            
-            <div class="bg-white rounded-lg border border-gray-200 p-6">
-                <h4 class="font-semibold text-gray-800 mb-2">Do you offer refunds?</h4>
-                <p class="text-gray-600">Yes, we offer a 30-day money-back guarantee for all paid plans.</p>
+        </div>
+        
+        <div class="testimonial-card">
+            <p class="text-body italic mb-4">
+                "The AI insights are spot-on. I've improved my returns by 23% since upgrading to Pro."
+            </p>
+            <div class="testimonial-author">
+                <div class="author-avatar">RP</div>
+                <div>
+                    <div class="font-semibold">Robert P.</div>
+                    <div class="text-sm text-gray-500">Day Trader</div>
+                </div>
             </div>
         </div>
     </div>
+</div>
 
-    <script>
-        // Billing toggle functionality
-        const billingToggle = document.getElementById('billing-toggle');
-        const proPrice = document.getElementById('pro-price');
-        const proPeriod = document.getElementById('pro-period');
-        const enterprisePrice = document.getElementById('enterprise-price');
-        const enterprisePeriod = document.getElementById('enterprise-period');
+<!-- FAQ Section -->
+<div class="max-w-3xl mx-auto mb-16">
+    <h2 class="text-title text-center mb-8">Frequently Asked Questions</h2>
+    
+    <div class="space-y-0">
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFAQ(this)">
+                <span>Can I cancel my subscription anytime?</span>
+                <i class="fas fa-chevron-down faq-toggle"></i>
+            </div>
+            <div class="faq-answer">
+                Yes, you can cancel your subscription at any time. You'll continue to have access to Pro features until the end of your billing period.
+            </div>
+        </div>
         
-        billingToggle.addEventListener('change', function() {
-            if (this.checked) {
-                // Annual billing
-                proPrice.textContent = '$23.99';
-                proPeriod.textContent = 'per month (billed annually)';
-                enterprisePrice.textContent = '$79.99';
-                enterprisePeriod.textContent = 'per month (billed annually)';
-            } else {
-                // Monthly billing
-                proPrice.textContent = '$29.99';
-                proPeriod.textContent = 'per month';
-                enterprisePrice.textContent = '$99.99';
-                enterprisePeriod.textContent = 'per month';
-            }
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFAQ(this)">
+                <span>Is there a free trial available?</span>
+                <i class="fas fa-chevron-down faq-toggle"></i>
+            </div>
+            <div class="faq-answer">
+                We offer a generous free plan that includes 5 AI analyses per day. You can upgrade to Pro anytime to unlock unlimited analyses and advanced features.
+            </div>
+        </div>
+        
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFAQ(this)">
+                <span>What payment methods do you accept?</span>
+                <i class="fas fa-chevron-down faq-toggle"></i>
+            </div>
+            <div class="faq-answer">
+                We accept all major credit cards (Visa, MasterCard, American Express) through our secure Stripe payment processor.
+            </div>
+        </div>
+        
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFAQ(this)">
+                <span>How accurate are the AI predictions?</span>
+                <i class="fas fa-chevron-down faq-toggle"></i>
+            </div>
+            <div class="faq-answer">
+                Our AI models are trained on vast amounts of market data and provide insights, not predictions. Past performance doesn't guarantee future results. Always do your own research before investing.
+            </div>
+        </div>
+        
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFAQ(this)">
+                <span>Do you offer customer support?</span>
+                <i class="fas fa-chevron-down faq-toggle"></i>
+            </div>
+            <div class="faq-answer">
+                Yes! Free users get community support, Pro users get priority email support, and Enterprise users get dedicated phone support.
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Final CTA -->
+<div class="text-center bg-gradient-to-r from-primary-50 to-secondary-50 rounded-xl p-12">
+    <h2 class="text-title mb-4">Ready to Upgrade Your Investment Game?</h2>
+    <p class="text-body-large text-gray-600 mb-8 max-w-2xl mx-auto">
+        Join thousands of successful investors who trust TradeWise AI for smarter investment decisions
+    </p>
+    
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <button class="btn btn-premium btn-lg" onclick="startCheckout('pro')">
+            <i class="fas fa-crown mr-2"></i>Start Pro Trial - $29/month
+        </button>
+        <a href="/search" class="btn btn-secondary btn-lg">
+            <i class="fas fa-arrow-left mr-2"></i>Continue with Free Plan
+        </a>
+    </div>
+    
+    <p class="text-sm text-gray-500 mt-4">
+        30-day money-back guarantee • Cancel anytime • Secure payments by Stripe
+    </p>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// FAQ toggle functionality
+function toggleFAQ(element) {
+    const answer = element.nextElementSibling;
+    const toggle = element.querySelector('.faq-toggle');
+    
+    // Close all other FAQs
+    document.querySelectorAll('.faq-answer').forEach(faq => {
+        if (faq !== answer) {
+            faq.classList.remove('open');
+        }
+    });
+    
+    document.querySelectorAll('.faq-toggle').forEach(icon => {
+        if (icon !== toggle) {
+            icon.classList.remove('open');
+        }
+    });
+    
+    // Toggle current FAQ
+    answer.classList.toggle('open');
+    toggle.classList.toggle('open');
+}
+
+// Checkout functionality
+async function startCheckout(plan) {
+    // Show loading state
+    const button = event.target;
+    const originalText = button.innerHTML;
+    button.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Processing...';
+    button.disabled = true;
+    
+    try {
+        // Create checkout session
+        const response = await fetch('/create-checkout-session', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ plan: plan })
         });
         
-        // Upgrade functions
-        function upgradeToPro() {
-            window.location.href = '/api/billing/create-checkout-session?plan=pro';
+        if (response.ok) {
+            // Redirect to Stripe checkout
+            const data = await response.json();
+            if (data.url) {
+                window.location.href = data.url;
+            } else {
+                throw new Error('No checkout URL returned');
+            }
+        } else {
+            throw new Error('Failed to create checkout session');
         }
         
-        function upgradeToEnterprise() {
-            window.location.href = '/contact?plan=enterprise';
+    } catch (error) {
+        console.error('Checkout error:', error);
+        SaaSApp.showToast('Checkout failed. Please try again.', 'error');
+        
+        // Restore button
+        button.innerHTML = originalText;
+        button.disabled = false;
+    }
+}
+
+// Track plan selection
+function trackPlanSelection(plan) {
+    if (typeof gtag !== 'undefined') {
+        gtag('event', 'plan_selection', {
+            plan: plan,
+            page_location: window.location.href
+        });
+    }
+}
+
+// Initialize page
+document.addEventListener('DOMContentLoaded', function() {
+    // Track page view
+    if (typeof gtag !== 'undefined') {
+        gtag('event', 'page_view', {
+            page_title: 'Premium Upgrade',
+            page_location: window.location.href
+        });
+    }
+    
+    // Highlight popular plan
+    setTimeout(() => {
+        const popularCard = document.querySelector('.pricing-card.popular');
+        if (popularCard) {
+            popularCard.style.transform = 'scale(1.02)';
+            setTimeout(() => {
+                popularCard.style.transform = '';
+            }, 1000);
         }
-    </script>
+    }, 500);
+});
+</script>
 {% endblock %}

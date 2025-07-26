@@ -1,0 +1,99 @@
+1. Remove Legacy UI
+Delete all outdated templates (simple_main.html, desktop_dashboard.html, test_clean.html, etc.) and redundant CSS/JS files (style.css, layout_fix.css, ai_stock_search_clean.js, etc.).
+
+Keep only one design system: modern_saas_theme.css (will be rebuilt as part of this prompt).
+
+Standardize all templates to extend from a unified base.html.
+
+2. Apply New SaaS Design (Mockup Style)
+Color Palette:
+
+White/light gray background
+
+Deep blue & purple accents
+
+Premium accent color (gold/teal) for upgrade CTAs
+
+Typography: Google Fonts (Inter/Manrope), clear hierarchy (18px base).
+
+Buttons & Cards: Rounded corners, subtle shadows, hover effects.
+
+3. NavBar (Top-Fixed)
+Persistent NavBar in base.html:
+
+Left: SignalStackDev logo + brand text.
+
+Center: links → Dashboard, Search, Backtest, Peer Comparison.
+
+Right:
+
+Plan badge (Free/Pro/Enterprise).
+
+Dark mode toggle.
+
+User menu (Profile, Settings, Logout).
+
+Upgrade button for Free users in premium accent color.
+
+Search bar integrated into NavBar for global use.
+
+4. Dashboard (3-Column Grid)
+Redesign modern_dashboard.html:
+
+Left Card: Portfolio Overview with sparkline chart (past 30 days performance).
+
+Center Card: AI Insights – 3 clickable summaries with category icons.
+
+Right Card: Market Highlights – top movers list and sector bar chart.
+
+Cards must match the mockup: rounded, shadowed, clean typography.
+
+Grid collapses to 2 columns on tablets, 1 column on mobile.
+
+5. Search Experience
+Build a unified search system (modern_search.js, enhanced_search.css):
+
+Fuzzy matching (partial names, symbols, typo tolerance).
+
+Autocomplete dropdown:
+
+Show company logo, symbol, name, sector.
+
+Keyboard & mouse selection supported.
+
+Use Redis caching for <100ms results.
+
+Search bar integrated directly in NavBar, consistent across all pages.
+
+6. Premium Indicators & Upsell Flow
+Lock icons + tooltips on all Pro/Enterprise-only features.
+
+Upsell modal:
+
+Triggered when Free users click locked features.
+
+Preview feature benefits with images.
+
+Upgrade Now button → Stripe checkout.
+
+Plan badge in NavBar dynamically updates with user plan.
+
+7. Dark Mode
+Add a dark mode toggle (moon/sun icon) in NavBar:
+
+All pages, cards, charts, and modals adapt to dark mode.
+
+Save preference in localStorage.
+
+8. Final QA & Optimization
+Test all pages on desktop, tablet, and mobile:
+
+Ensure desktop-first layout with max-width 1440px.
+
+Sidebar/columns collapse gracefully.
+
+Cross-browser testing (Chrome, Safari, Edge, Firefox).
+
+Minify CSS/JS for faster load times.
+
+Validate caching & performance metrics.

@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, jsonify, request, make_response, g, send_from_directory
+from flask import Blueprint, render_template, jsonify, request, make_response, g, send_from_directory, redirect, url_for
 from app import app, db
 from datetime import datetime, timedelta
 from sqlalchemy import text
@@ -26,15 +26,15 @@ logger = logging.getLogger(__name__)
 # Initialize core AI services for competitive features
 ai_engine = AIInsightsEngine()
 
-# Create main blueprint
-main_bp = Blueprint('main', __name__)
+# Create main blueprint with unique name
+main_bp = Blueprint('main_routes', __name__)
 
 @main_bp.route('/login', methods=['GET', 'POST'])
 def login():
     """Basic login page for Flask-Login compatibility"""
     if request.method == 'POST':
         # Handle basic login logic here if needed
-        return redirect(url_for('main.index'))
+        return redirect(url_for('main_routes.index'))
     return render_template('login.html')
 
 # Simple demo watchlist for stock analysis tracking
@@ -163,9 +163,14 @@ def health_check():
 
 @main_bp.route('/')
 def index():
+    """Redirect to dashboard"""
+    return redirect(url_for('main_routes.dashboard'))
+
+@main_bp.route('/dashboard')
+def dashboard():
     """Modern SaaS Dashboard - Main Entry Point"""
     try:
-        response = make_response(render_template('modern_dashboard.html'))
+        response = make_response(render_template('modern_dashboard_new.html'))
         response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
         response.headers['Pragma'] = 'no-cache'
         response.headers['Expires'] = '0'
@@ -173,6 +178,87 @@ def index():
     except Exception as e:
         logger.error(f"Error loading dashboard: {e}")
         return jsonify({'error': 'Dashboard loading error'}), 500
+
+@main_bp.route('/search')
+def search():
+    """Modern Search Interface"""
+    try:
+        response = make_response(render_template('modern_search_new.html'))
+        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+        response.headers['Pragma'] = 'no-cache'
+        response.headers['Expires'] = '0'
+        return response
+    except Exception as e:
+        logger.error(f"Error loading search page: {e}")
+        return jsonify({'error': 'Search page loading error'}), 500
+
+@main_bp.route('/backtest')
+def backtest():
+    """Portfolio Backtesting - Premium Feature"""
+    # For now, return a simple page that shows premium upsell
+    return render_template('premium_feature.html', 
+                         feature='backtest',
+                         title='Portfolio Backtesting',
+                         description='Test your investment strategies against historical data')
+
+@main_bp.route('/peer_comparison')
+def peer_comparison():
+    """Peer Comparison Analysis - Premium Feature"""
+    return render_template('premium_feature.html',
+                         feature='peer-analysis', 
+                         title='Peer Comparison',
+                         description='Compare stocks against industry peers')
+
+@main_bp.route('/premium/upgrade')
+def premium_upgrade():
+    """Premium upgrade page"""
+    return render_template('premium_upgrade_new.html')
+
+@main_bp.route('/settings')
+def settings():
+    """User settings page"""
+    return render_template('account_settings.html')
+
+@main_bp.route('/help')
+def help_page():
+    """Help and support page"""
+    return render_template('help.html')
+
+@main_bp.route('/api/user/plan')
+def get_user_plan():
+    """Get current user's subscription plan"""
+    # For now, return free plan
+    return jsonify({'plan': 'free', 'features': ['basic_search', 'limited_analysis']})
+
+@main_bp.route('/api/portfolio/summary')
+def get_portfolio_summary():
+    """Get portfolio summary data for dashboard"""
+    # Sample portfolio data
+    return jsonify({
+        'totalValue': 125420.50,
+        'change': 2847.32,
+        'changePercent': 2.34,
+        'sparklineData': [100000, 102000, 98000, 105000, 110000, 108000, 115000, 120000, 125420]
+    })
+
+@main_bp.route('/api/market/overview')
+def get_market_overview():
+    """Get market overview data"""
+    return jsonify({
+        'indices': {
+            'sp500': {'value': 5847.87, 'change': 0.8},
+            'nasdaq': {'value': 19630.20, 'change': 1.2},
+            'dow': {'value': 43239.05, 'change': -0.3}
+        },
+        'sectors': {
+            'technology': 2.4,
+            'healthcare': 1.8,
+            'finance': -0.5,
+            'energy': 3.2,
+            'consumer': 1.1,
+            'industrial': 0.8
+        }
+    })
 
 @main_bp.route('/strategy-demo')
 def strategy_demo():

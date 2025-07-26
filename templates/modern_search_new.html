@@ -1,0 +1,762 @@
+{% extends "base_new.html" %}
+
+{% block title %}Search Stocks - TradeWise AI{% endblock %}
+{% block nav_search %}active{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Search page specific styles */
+.search-hero {
+    text-align: center;
+    padding: 3rem 0;
+    background: linear-gradient(135deg, var(--primary-50), var(--secondary-50));
+    border-radius: var(--radius-xl);
+    margin-bottom: 3rem;
+}
+
+.search-hero h1 {
+    background: linear-gradient(135deg, var(--primary-600), var(--secondary-600));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 1rem;
+}
+
+.main-search-container {
+    max-width: 600px;
+    margin: 0 auto;
+    position: relative;
+}
+
+.main-search-input {
+    width: 100%;
+    padding: 1rem 1.5rem;
+    font-size: 1.125rem;
+    border: 2px solid var(--gray-200);
+    border-radius: var(--radius-xl);
+    background: white;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow-md);
+}
+
+.main-search-input:focus {
+    outline: none;
+    border-color: var(--primary-500);
+    box-shadow: 0 0 0 4px rgb(59 130 246 / 0.1), var(--shadow-lg);
+}
+
+.search-suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-xl);
+    z-index: 1000;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.suggestion-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+    border-bottom: 1px solid var(--gray-100);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.suggestion-item:hover,
+.suggestion-item.selected {
+    background: var(--primary-50);
+    transform: translateX(4px);
+}
+
+.suggestion-item:last-child {
+    border-bottom: none;
+}
+
+.suggestion-content {
+    flex: 1;
+}
+
+.suggestion-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.25rem;
+}
+
+.suggestion-symbol {
+    font-weight: 700;
+    font-size: 1.125rem;
+    color: var(--gray-900);
+}
+
+.suggestion-name {
+    color: var(--gray-700);
+    margin-bottom: 0.25rem;
+}
+
+.suggestion-meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 0.875rem;
+}
+
+.sector {
+    color: var(--gray-500);
+}
+
+.price {
+    font-weight: 600;
+    color: var(--gray-700);
+}
+
+.price-change {
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+
+.price-change.positive {
+    color: var(--success-600);
+}
+
+.price-change.negative {
+    color: var(--error-600);
+}
+
+.match-badge {
+    font-size: 0.75rem;
+    padding: 0.125rem 0.5rem;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.match-badge.exact {
+    background: var(--success-100);
+    color: var(--success-700);
+}
+
+.match-badge.starts {
+    background: var(--primary-100);
+    color: var(--primary-700);
+}
+
+.match-badge.contains {
+    background: var(--secondary-100);
+    color: var(--secondary-700);
+}
+
+.match-badge.fuzzy {
+    background: var(--gray-100);
+    color: var(--gray-700);
+}
+
+.search-highlight {
+    background: var(--premium-200);
+    color: var(--premium-800);
+    padding: 0 0.125rem;
+    border-radius: 0.125rem;
+}
+
+.trending-section {
+    margin-top: 3rem;
+}
+
+.trending-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.trending-item {
+    background: white;
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow-sm);
+}
+
+.trending-item:hover {
+    border-color: var(--primary-300);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+}
+
+.trending-symbol {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--gray-900);
+    margin-bottom: 0.5rem;
+}
+
+.trending-name {
+    color: var(--gray-600);
+    margin-bottom: 0.75rem;
+    font-size: 0.875rem;
+}
+
+.trending-performance {
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+
+.results-container {
+    margin-top: 2rem;
+    display: none;
+}
+
+.results-container.visible {
+    display: block;
+}
+
+.result-card {
+    background: white;
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+    margin-bottom: 2rem;
+}
+
+.result-header {
+    background: linear-gradient(135deg, var(--primary-50), var(--secondary-50));
+    padding: 2rem;
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.result-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.stock-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.stock-symbol {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--gray-900);
+}
+
+.stock-name {
+    color: var(--gray-700);
+    font-size: 1.125rem;
+}
+
+.stock-price {
+    text-align: right;
+}
+
+.current-price {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--gray-900);
+}
+
+.price-change-large {
+    font-weight: 600;
+    font-size: 1.125rem;
+}
+
+.no-results {
+    text-align: center;
+    padding: 3rem;
+    color: var(--gray-500);
+}
+
+.no-results-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    color: var(--gray-400);
+}
+
+.error-suggestion {
+    text-align: center;
+    padding: 2rem;
+    color: var(--error-600);
+}
+
+.error-icon {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Search Hero Section -->
+<div class="search-hero">
+    <h1 class="text-display">Discover Your Next Investment</h1>
+    <p class="text-body-large text-gray-600 mb-8">
+        Search thousands of stocks with AI-powered insights and real-time data
+    </p>
+    
+    <div class="main-search-container">
+        <form id="main-search-form">
+            <input
+                type="text"
+                id="main-search-input"
+                class="main-search-input"
+                placeholder="Search by symbol (AAPL) or company name (Apple)..."
+                autocomplete="off"
+                autofocus
+            />
+            <div id="main-search-suggestions" class="search-suggestions hidden"></div>
+        </form>
+        
+        <div class="flex justify-center mt-4 gap-4 text-body-small text-gray-500">
+            <span><i class="fas fa-arrow-up mr-1"></i>Use arrow keys to navigate</span>
+            <span><i class="fas fa-corner-down-left mr-1"></i>Enter to search</span>
+            <span><i class="fas fa-times mr-1"></i>Esc to close</span>
+        </div>
+    </div>
+</div>
+
+<!-- Search Results Container -->
+<div id="search-results" class="results-container">
+    <!-- Results will be populated here -->
+</div>
+
+<!-- Trending Stocks Section -->
+<div class="trending-section" id="trending-section">
+    <div class="text-center mb-8">
+        <h2 class="text-title mb-4">Trending Stocks</h2>
+        <p class="text-body text-gray-600">Popular stocks with high trading volume and investor interest</p>
+    </div>
+    
+    <div class="trending-grid">
+        <div class="trending-item" onclick="searchStock('AAPL')">
+            <div class="trending-symbol">AAPL</div>
+            <div class="trending-name">Apple Inc.</div>
+            <div class="trending-performance performance-positive">+2.4%</div>
+        </div>
+        
+        <div class="trending-item" onclick="searchStock('TSLA')">
+            <div class="trending-symbol">TSLA</div>
+            <div class="trending-name">Tesla, Inc.</div>
+            <div class="trending-performance performance-positive">+5.1%</div>
+        </div>
+        
+        <div class="trending-item" onclick="searchStock('NVDA')">
+            <div class="trending-symbol">NVDA</div>
+            <div class="trending-name">NVIDIA Corp.</div>
+            <div class="trending-performance performance-positive">+3.8%</div>
+        </div>
+        
+        <div class="trending-item" onclick="searchStock('MSFT')">
+            <div class="trending-symbol">MSFT</div>
+            <div class="trending-name">Microsoft Corp.</div>
+            <div class="trending-performance performance-negative">-1.2%</div>
+        </div>
+        
+        <div class="trending-item" onclick="searchStock('GOOGL')">
+            <div class="trending-symbol">GOOGL</div>
+            <div class="trending-name">Alphabet Inc.</div>
+            <div class="trending-performance performance-positive">+2.1%</div>
+        </div>
+        
+        <div class="trending-item" onclick="searchStock('AMZN')">
+            <div class="trending-symbol">AMZN</div>
+            <div class="trending-name">Amazon.com Inc.</div>
+            <div class="trending-performance performance-positive">+1.8%</div>
+        </div>
+    </div>
+</div>
+
+<!-- Search Tips Section -->
+<div class="mt-12 text-center">
+    <div class="card max-w-4xl mx-auto">
+        <div class="card-content">
+            <h3 class="text-subtitle mb-4">Search Tips</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
+                <div>
+                    <div class="flex items-center gap-2 mb-2">
+                        <i class="fas fa-search text-primary-500"></i>
+                        <span class="font-semibold">By Symbol</span>
+                    </div>
+                    <p class="text-body-small text-gray-600">
+                        Search using ticker symbols like "AAPL", "TSLA", or "NVDA"
+                    </p>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2 mb-2">
+                        <i class="fas fa-building text-primary-500"></i>
+                        <span class="font-semibold">By Company</span>
+                    </div>
+                    <p class="text-body-small text-gray-600">
+                        Search by company name like "Apple", "Tesla", or "Microsoft"
+                    </p>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2 mb-2">
+                        <i class="fas fa-industry text-primary-500"></i>
+                        <span class="font-semibold">By Sector</span>
+                    </div>
+                    <p class="text-body-small text-gray-600">
+                        Find stocks by sector like "tech", "healthcare", or "finance"
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Search page specific JavaScript
+let searchTimeout = null;
+let currentQuery = '';
+
+// Initialize search page
+function initSearchPage() {
+    setupMainSearch();
+    handleUrlParams();
+    
+    // Focus search input
+    document.getElementById('main-search-input').focus();
+}
+
+// Setup main search functionality
+function setupMainSearch() {
+    const input = document.getElementById('main-search-input');
+    const form = document.getElementById('main-search-form');
+    
+    // Setup search system for main input
+    SearchSystem.setupSearchInput(input, 'main');
+    
+    // Form submission
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const query = input.value.trim();
+        if (query) {
+            performSearch(query);
+        }
+    });
+    
+    // Clear results when input is cleared
+    input.addEventListener('input', (e) => {
+        if (!e.target.value.trim()) {
+            hideResults();
+            showTrendingSection();
+        }
+    });
+}
+
+// Handle URL parameters for direct searches
+function handleUrlParams() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const query = urlParams.get('q') || urlParams.get('symbol');
+    
+    if (query) {
+        document.getElementById('main-search-input').value = query;
+        performSearch(query);
+    }
+}
+
+// Perform stock search
+async function performSearch(query) {
+    if (!query || query.trim() === currentQuery) return;
+    
+    currentQuery = query.trim();
+    showSearchLoading();
+    hideTrendingSection();
+    
+    try {
+        const response = await fetch(`/api/stock-analysis?symbol=${encodeURIComponent(currentQuery)}`);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            displaySearchResults(data, currentQuery);
+        } else {
+            showNoResults(currentQuery);
+        }
+        
+        // Update URL without reloading
+        const newUrl = `${window.location.pathname}?q=${encodeURIComponent(currentQuery)}`;
+        window.history.pushState({ query: currentQuery }, '', newUrl);
+        
+        // Track search
+        trackSearch(currentQuery);
+        
+    } catch (error) {
+        console.error('Search error:', error);
+        showSearchError();
+    }
+}
+
+// Display search results
+function displaySearchResults(data, query) {
+    const container = document.getElementById('search-results');
+    const analysis = data.analysis || {};
+    const stockInfo = data.stock_info || {};
+    
+    const html = `
+        <div class="result-card fade-in">
+            <div class="result-header">
+                <div class="result-title">
+                    <div class="stock-info">
+                        <div>
+                            <div class="stock-symbol">${stockInfo.symbol || query.toUpperCase()}</div>
+                            <div class="stock-name">${stockInfo.longName || stockInfo.shortName || 'Company Name'}</div>
+                        </div>
+                    </div>
+                    <div class="stock-price">
+                        <div class="current-price">$${(stockInfo.currentPrice || stockInfo.regularMarketPrice || 0).toFixed(2)}</div>
+                        <div class="price-change-large ${(stockInfo.regularMarketChangePercent || 0) >= 0 ? 'performance-positive' : 'performance-negative'}">
+                            ${(stockInfo.regularMarketChangePercent || 0) >= 0 ? '+' : ''}${(stockInfo.regularMarketChangePercent || 0).toFixed(2)}%
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex gap-4 text-body-small">
+                    <span><strong>Sector:</strong> ${stockInfo.sector || 'N/A'}</span>
+                    <span><strong>Industry:</strong> ${stockInfo.industry || 'N/A'}</span>
+                    <span><strong>Market Cap:</strong> ${formatMarketCap(stockInfo.marketCap)}</span>
+                </div>
+            </div>
+            
+            <div class="card-content">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- AI Analysis -->
+                    <div>
+                        <h3 class="text-subtitle mb-4">AI Analysis</h3>
+                        
+                        <div class="space-y-4">
+                            <div class="p-4 bg-gray-50 rounded-lg">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <i class="fas fa-robot text-primary-500"></i>
+                                    <span class="font-semibold">AI Recommendation</span>
+                                </div>
+                                <div class="text-lg font-bold mb-2">
+                                    ${analysis.ai_recommendation || 'HOLD'}
+                                </div>
+                                <div class="text-body-small text-gray-600">
+                                    ${analysis.ai_reasoning || 'Analysis based on current market conditions and company fundamentals.'}
+                                </div>
+                            </div>
+                            
+                            <div class="p-4 bg-blue-50 rounded-lg">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <i class="fas fa-chart-line text-blue-500"></i>
+                                    <span class="font-semibold">Technical Analysis</span>
+                                </div>
+                                <div class="grid grid-cols-2 gap-4 text-body-small">
+                                    <div>
+                                        <span class="text-gray-600">RSI:</span>
+                                        <span class="font-semibold">${analysis.rsi || 'N/A'}</span>
+                                    </div>
+                                    <div>
+                                        <span class="text-gray-600">MACD:</span>
+                                        <span class="font-semibold">${analysis.macd_signal || 'N/A'}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Key Metrics -->
+                    <div>
+                        <h3 class="text-subtitle mb-4">Key Metrics</h3>
+                        
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="p-3 bg-gray-50 rounded-lg text-center">
+                                <div class="text-body-small text-gray-600">P/E Ratio</div>
+                                <div class="text-body font-bold">${(stockInfo.trailingPE || 0).toFixed(2)}</div>
+                            </div>
+                            <div class="p-3 bg-gray-50 rounded-lg text-center">
+                                <div class="text-body-small text-gray-600">Dividend Yield</div>
+                                <div class="text-body font-bold">${((stockInfo.dividendYield || 0) * 100).toFixed(2)}%</div>
+                            </div>
+                            <div class="p-3 bg-gray-50 rounded-lg text-center">
+                                <div class="text-body-small text-gray-600">52W High</div>
+                                <div class="text-body font-bold">$${(stockInfo.fiftyTwoWeekHigh || 0).toFixed(2)}</div>
+                            </div>
+                            <div class="p-3 bg-gray-50 rounded-lg text-center">
+                                <div class="text-body-small text-gray-600">52W Low</div>
+                                <div class="text-body font-bold">$${(stockInfo.fiftyTwoWeekLow || 0).toFixed(2)}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-6">
+                            <button class="btn btn-primary w-full" onclick="showDetailedAnalysis('${query}')">
+                                <i class="fas fa-chart-bar mr-2"></i>View Detailed Analysis
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    container.innerHTML = html;
+    container.classList.add('visible');
+    
+    // Scroll to results
+    container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// Show search loading state
+function showSearchLoading() {
+    const container = document.getElementById('search-results');
+    container.innerHTML = `
+        <div class="result-card">
+            <div class="card-content text-center py-12">
+                <div class="loading-spinner mx-auto mb-4"></div>
+                <div class="text-body text-gray-600">Analyzing stock data...</div>
+            </div>
+        </div>
+    `;
+    container.classList.add('visible');
+}
+
+// Show no results
+function showNoResults(query) {
+    const container = document.getElementById('search-results');
+    container.innerHTML = `
+        <div class="result-card">
+            <div class="card-content">
+                <div class="no-results">
+                    <div class="no-results-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <h3 class="text-subtitle mb-2">No results found for "${query}"</h3>
+                    <p class="text-body text-gray-600 mb-6">
+                        Try searching with a different symbol or company name
+                    </p>
+                    <div class="flex justify-center gap-4">
+                        <button class="btn btn-secondary" onclick="clearSearch()">
+                            <i class="fas fa-times mr-2"></i>Clear Search
+                        </button>
+                        <button class="btn btn-primary" onclick="showPopularStocks()">
+                            <i class="fas fa-fire mr-2"></i>View Trending
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    container.classList.add('visible');
+}
+
+// Show search error
+function showSearchError() {
+    const container = document.getElementById('search-results');
+    container.innerHTML = `
+        <div class="result-card">
+            <div class="card-content">
+                <div class="error-suggestion">
+                    <div class="error-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <h3 class="text-subtitle mb-2">Search Temporarily Unavailable</h3>
+                    <p class="text-body text-gray-600 mb-6">
+                        We're experiencing technical difficulties. Please try again in a moment.
+                    </p>
+                    <button class="btn btn-primary" onclick="retrySearch()">
+                        <i class="fas fa-redo mr-2"></i>Try Again
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    container.classList.add('visible');
+}
+
+// Hide results
+function hideResults() {
+    const container = document.getElementById('search-results');
+    container.classList.remove('visible');
+    container.innerHTML = '';
+}
+
+// Show/hide trending section
+function showTrendingSection() {
+    document.getElementById('trending-section').style.display = 'block';
+}
+
+function hideTrendingSection() {
+    document.getElementById('trending-section').style.display = 'none';
+}
+
+// Navigation functions
+function searchStock(symbol) {
+    document.getElementById('main-search-input').value = symbol;
+    performSearch(symbol);
+}
+
+function clearSearch() {
+    document.getElementById('main-search-input').value = '';
+    hideResults();
+    showTrendingSection();
+    currentQuery = '';
+}
+
+function retrySearch() {
+    if (currentQuery) {
+        performSearch(currentQuery);
+    }
+}
+
+function showDetailedAnalysis(symbol) {
+    // For now, just show more analysis (could be a modal or new page)
+    SaaSApp.showToast(`Detailed analysis for ${symbol} - Premium feature`, 'info');
+}
+
+function showPopularStocks() {
+    clearSearch();
+    document.getElementById('main-search-input').focus();
+}
+
+// Utility functions
+function formatMarketCap(marketCap) {
+    if (!marketCap) return 'N/A';
+    
+    if (marketCap >= 1e12) {
+        return `$${(marketCap / 1e12).toFixed(1)}T`;
+    } else if (marketCap >= 1e9) {
+        return `$${(marketCap / 1e9).toFixed(1)}B`;
+    } else if (marketCap >= 1e6) {
+        return `$${(marketCap / 1e6).toFixed(1)}M`;
+    }
+    
+    return `$${marketCap.toLocaleString()}`;
+}
+
+function trackSearch(query) {
+    if (typeof gtag !== 'undefined') {
+        gtag('event', 'search', {
+            search_term: query,
+            page_location: window.location.href
+        });
+    }
+}
+</script>
+{% endblock %}
+
+{% block page_init %}
+// Initialize search page when it loads
+initSearchPage();
+{% endblock %}

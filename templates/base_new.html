@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="TradeWise AI - Professional stock analysis platform with AI-powered insights">
+    <title>{% block title %}TradeWise AI - Intelligent Stock Analysis{% endblock %}</title>
+    
+    <!-- Preload Critical Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- Modern SaaS Design System -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/modern_saas_design.css') }}">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Chart.js for Data Visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.min.js"></script>
+    
+    <!-- Page-Specific Styles -->
+    {% block extra_css %}{% endblock %}
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📈</text></svg>">
+</head>
+<body>
+    <!-- Fixed Navigation Bar -->
+    <nav class="navbar" id="main-navbar">
+        <div class="navbar-container">
+            <!-- Brand Logo & Text -->
+            <a href="{{ url_for('simple_core.dashboard') }}" class="navbar-brand">
+                <div class="navbar-logo">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <span>SignalStackDev</span>
+            </a>
+            
+            <!-- Main Navigation Links -->
+            <ul class="navbar-nav desktop-visible">
+                <li>
+                    <a href="{{ url_for('simple_core.dashboard') }}" class="navbar-nav-link {% block nav_dashboard %}{% endblock %}">
+                        <i class="fas fa-home mr-2"></i>Dashboard
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('simple_core.search') }}" class="navbar-nav-link {% block nav_search %}{% endblock %}">
+                        <i class="fas fa-search mr-2"></i>Search
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="navbar-nav-link {% block nav_backtest %}{% endblock %}" onclick="showPremiumModal('backtest')">
+                        <i class="fas fa-chart-bar mr-2"></i>Backtest
+                        <span class="premium-lock" data-feature="backtest">
+                            <span class="premium-tooltip">Pro Feature - Upgrade to unlock</span>
+                        </span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="navbar-nav-link {% block nav_peer %}{% endblock %}" onclick="showPremiumModal('peer-analysis')">
+                        <i class="fas fa-balance-scale mr-2"></i>Peer Analysis
+                        <span class="premium-lock" data-feature="peer-analysis">
+                            <span class="premium-tooltip">Pro Feature - Upgrade to unlock</span>
+                        </span>
+                    </a>
+                </li>
+            </ul>
+            
+            <!-- Global Search Bar -->
+            <div class="navbar-search desktop-visible">
+                <form id="global-search-form" class="relative">
+                    <input
+                        type="text"
+                        id="global-search-input"
+                        class="navbar-search-input"
+                        placeholder="Search stocks, companies... (Ctrl+K)"
+                        autocomplete="off"
+                    />
+                    <div id="search-suggestions" class="search-suggestions hidden"></div>
+                </form>
+            </div>
+            
+            <!-- Right Actions -->
+            <div class="navbar-actions">
+                <!-- Plan Badge -->
+                <div class="plan-badge" id="plan-badge">Free</div>
+                
+                <!-- Dark Mode Toggle -->
+                <button class="dark-mode-toggle" id="dark-mode-toggle" title="Toggle dark mode (Ctrl+D)">
+                    <i class="fas fa-moon dark-icon"></i>
+                    <i class="fas fa-sun light-icon hidden"></i>
+                </button>
+                
+                <!-- User Menu Dropdown -->
+                <div class="relative" id="user-menu">
+                    <button class="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 transition-colors" id="user-menu-toggle">
+                        <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-medium text-sm">
+                            U
+                        </div>
+                        <i class="fas fa-chevron-down text-xs text-gray-500"></i>
+                    </button>
+                    
+                    <div class="user-dropdown hidden" id="user-dropdown">
+                        <div class="dropdown-header">
+                            <div class="text-body-medium text-gray-900">Welcome back!</div>
+                            <div class="text-caption text-gray-500">Free Plan</div>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <a href="/settings" class="dropdown-item">
+                            <i class="fas fa-cog"></i>Settings
+                        </a>
+                        <a href="/help" class="dropdown-item">
+                            <i class="fas fa-question-circle"></i>Help & Support
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="/premium/upgrade" class="dropdown-item premium-item">
+                            <i class="fas fa-crown"></i>Upgrade to Pro
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="/logout" class="dropdown-item">
+                            <i class="fas fa-sign-out-alt"></i>Logout
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Upgrade Button (Free Users Only) -->
+                <a href="/premium/upgrade" class="upgrade-btn desktop-visible" id="upgrade-btn">
+                    <i class="fas fa-crown mr-2"></i>Upgrade
+                </a>
+                
+                <!-- Mobile Menu Toggle -->
+                <button class="mobile-menu-toggle mobile-visible" id="mobile-menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div class="mobile-menu hidden" id="mobile-menu">
+            <div class="mobile-search">
+                <input
+                    type="text"
+                    id="mobile-search-input"
+                    class="navbar-search-input"
+                    placeholder="Search stocks..."
+                />
+            </div>
+            <div class="mobile-nav-links">
+                <a href="{{ url_for('dashboard') }}" class="mobile-nav-link">
+                    <i class="fas fa-home"></i>Dashboard
+                </a>
+                <a href="{{ url_for('search') }}" class="mobile-nav-link">
+                    <i class="fas fa-search"></i>Search
+                </a>
+                <a href="{{ url_for('backtest') }}" class="mobile-nav-link">
+                    <i class="fas fa-chart-bar"></i>Backtest <span class="premium-badge">Pro</span>
+                </a>
+                <a href="{{ url_for('peer_comparison') }}" class="mobile-nav-link">
+                    <i class="fas fa-balance-scale"></i>Peer Analysis <span class="premium-badge">Pro</span>
+                </a>
+                <div class="mobile-nav-divider"></div>
+                <a href="/settings" class="mobile-nav-link">
+                    <i class="fas fa-cog"></i>Settings
+                </a>
+                <a href="/premium/upgrade" class="mobile-nav-link premium-link">
+                    <i class="fas fa-crown"></i>Upgrade to Pro
+                </a>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Main Content Wrapper -->
+    <main class="page-wrapper">
+        <div class="container">
+            <div class="content-area">
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+    </main>
+    
+    <!-- Premium Upsell Modal -->
+    <div class="modal-overlay hidden" id="premium-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="text-title">Unlock Premium Features</h3>
+                <button class="modal-close" id="premium-modal-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="feature-preview" id="feature-preview">
+                    <!-- Dynamic content based on clicked feature -->
+                </div>
+                <div class="upgrade-benefits">
+                    <h4 class="text-subtitle mb-4">Pro Plan Benefits:</h4>
+                    <ul class="benefits-list">
+                        <li><i class="fas fa-check text-success-500"></i>Advanced Portfolio Backtesting</li>
+                        <li><i class="fas fa-check text-success-500"></i>Peer Comparison Analysis</li>
+                        <li><i class="fas fa-check text-success-500"></i>Real-time Market Alerts</li>
+                        <li><i class="fas fa-check text-success-500"></i>AI Market Scanner</li>
+                        <li><i class="fas fa-check text-success-500"></i>Premium Support</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="modal-cancel">Maybe Later</button>
+                <a href="/premium/upgrade" class="btn btn-premium">
+                    <i class="fas fa-crown mr-2"></i>Upgrade Now - $29.99/mo
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toast-container"></div>
+    
+    <!-- Core JavaScript -->
+    <script src="{{ url_for('static', filename='js/modern_saas_core.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/search_system.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/premium_system.js') }}"></script>
+    
+    <!-- Page-Specific JavaScript -->
+    {% block extra_js %}{% endblock %}
+    
+    <!-- Initialize App -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize core app functionality
+            SaaSApp.init();
+            SearchSystem.init();
+            PremiumSystem.init();
+            
+            // Set active navigation state
+            const currentPath = window.location.pathname;
+            document.querySelectorAll('.navbar-nav-link').forEach(link => {
+                if (link.getAttribute('href') === currentPath) {
+                    link.classList.add('active');
+                }
+            });
+            
+            // Page-specific initialization
+            {% block page_init %}{% endblock %}
+        });
+    </script>
+</body>
+</html>
