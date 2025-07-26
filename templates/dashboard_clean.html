@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TradeWise AI - Dashboard</title>
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.min.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f5f5f7;
+            color: #1d1d1f;
+        }
+
+        /* Navigation Bar */
+        .navbar {
+            background-color: #1d3557;
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            color: white;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .nav-links a:hover {
+            opacity: 0.8;
+        }
+
+        /* Dashboard Container */
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .dashboard-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .dashboard-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: #1d3557;
+        }
+
+        .dashboard-header p {
+            font-size: 1.2rem;
+            color: #6c6c70;
+        }
+
+        /* Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        @media (max-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Dashboard Cards */
+        .dashboard-card {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-icon {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.25rem;
+        }
+
+        .portfolio-icon {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .insights-icon {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .market-icon {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1d1d1f;
+            margin: 0;
+        }
+
+        .card-content {
+            color: #6c6c70;
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #34c759;
+            margin: 0.5rem 0;
+        }
+
+        .metric-change {
+            color: #34c759;
+            font-weight: 600;
+        }
+
+        .negative {
+            color: #ff3b30;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 3rem;
+        }
+
+        .action-btn {
+            background: #007aff;
+            color: white;
+            border: none;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            text-decoration: none;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .action-btn:hover {
+            background: #0051d5;
+        }
+
+        .action-btn.secondary {
+            background: #f5f5f7;
+            color: #1d1d1f;
+            border: 1px solid #e5e5ea;
+        }
+
+        .action-btn.secondary:hover {
+            background: #e5e5ea;
+        }
+
+        /* Chart Container */
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: 1rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .dashboard-container {
+                margin: 1rem auto;
+                padding: 0 1rem;
+            }
+            
+            .navbar {
+                padding: 1rem;
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .nav-left {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-left">
+            <a href="/dashboard" class="logo">
+                <i class="fas fa-chart-line"></i>
+                TradeWise AI
+            </a>
+            <ul class="nav-links">
+                <li><a href="/dashboard">Dashboard</a></li>
+                <li><a href="/search">Stock Analysis</a></li>
+                <li><a href="#backtest">Backtest</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Dashboard Container -->
+    <div class="dashboard-container">
+        <div class="dashboard-header">
+            <h1>Welcome to TradeWise AI</h1>
+            <p>Your intelligent stock analysis platform</p>
+        </div>
+
+        <!-- Dashboard Grid -->
+        <div class="dashboard-grid">
+            <!-- Portfolio Overview -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <div class="card-icon portfolio-icon">
+                        <i class="fas fa-chart-pie"></i>
+                    </div>
+                    <h3 class="card-title">Portfolio Overview</h3>
+                </div>
+                <div class="card-content">
+                    <div class="metric-value" id="portfolioValue">$32,174</div>
+                    <div class="metric-change" id="portfolioChange">+3.12% (+$975) today</div>
+                    <div class="chart-container">
+                        <canvas id="portfolioChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Insights -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <div class="card-icon insights-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3 class="card-title">AI Insights</h3>
+                </div>
+                <div class="card-content">
+                    <p><strong>Market Sentiment:</strong> Bullish</p>
+                    <p><strong>Top Pick:</strong> AAPL (Buy)</p>
+                    <p><strong>Risk Level:</strong> Moderate</p>
+                    <p><strong>Next Earnings:</strong> 3 stocks this week</p>
+                    <p style="margin-top: 1rem; font-style: italic;">
+                        "Tech sector showing strong momentum. Consider increasing allocation to growth stocks."
+                    </p>
+                </div>
+            </div>
+
+            <!-- Market Highlights -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <div class="card-icon market-icon">
+                        <i class="fas fa-globe"></i>
+                    </div>
+                    <h3 class="card-title">Market Highlights</h3>
+                </div>
+                <div class="card-content">
+                    <p><strong>S&P 500:</strong> <span class="metric-change">+1.2%</span></p>
+                    <p><strong>NASDAQ:</strong> <span class="metric-change">+2.1%</span></p>
+                    <p><strong>DOW:</strong> <span class="metric-change">+0.8%</span></p>
+                    <p><strong>VIX:</strong> <span class="metric-change negative">-5.2%</span></p>
+                    <p style="margin-top: 1rem;">
+                        <strong>Top Movers:</strong> NVDA (+8.2%), TSLA (+5.1%)
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <a href="/search" class="action-btn">
+                <i class="fas fa-search"></i>
+                Analyze Stock
+            </a>
+            <a href="#portfolio" class="action-btn secondary">
+                <i class="fas fa-chart-pie"></i>
+                View Portfolio
+            </a>
+            <a href="#alerts" class="action-btn secondary">
+                <i class="fas fa-bell"></i>
+                Set Alerts
+            </a>
+            <a href="#premium" class="action-btn secondary">
+                <i class="fas fa-crown"></i>
+                Upgrade to Pro
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Portfolio Chart
+        const ctx = document.getElementById('portfolioChart').getContext('2d');
+        const portfolioChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [{
+                    label: 'Portfolio Value',
+                    data: [28000, 29500, 31000, 30200, 31800, 32174],
+                    borderColor: '#007aff',
+                    backgroundColor: 'rgba(0, 122, 255, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        grid: {
+                            color: 'rgba(0,0,0,0.1)'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: 'rgba(0,0,0,0.1)'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Load real-time data
+        async function loadDashboardData() {
+            try {
+                const response = await fetch('/api/portfolio/summary');
+                if (response.ok) {
+                    const data = await response.json();
+                    // Update with real data when available
+                    console.log('Dashboard data loaded:', data);
+                }
+            } catch (error) {
+                console.log('Using demo data');
+            }
+        }
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', () => {
+            loadDashboardData();
+        });
+    </script>
+</body>
+</html>

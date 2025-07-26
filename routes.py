@@ -168,9 +168,9 @@ def index():
 
 @main_bp.route('/dashboard')
 def dashboard():
-    """Modern SaaS Dashboard - Main Entry Point"""
+    """Clean Dashboard - Main Entry Point"""
     try:
-        response = make_response(render_template('modern_dashboard_new.html'))
+        response = make_response(render_template('dashboard_clean.html'))
         response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
         response.headers['Pragma'] = 'no-cache'
         response.headers['Expires'] = '0'
@@ -181,9 +181,9 @@ def dashboard():
 
 @main_bp.route('/search')
 def search():
-    """Modern Search Interface"""
+    """Clean Search Interface"""
     try:
-        response = make_response(render_template('modern_search_new.html'))
+        response = make_response(render_template('search.html'))
         response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
         response.headers['Pragma'] = 'no-cache'
         response.headers['Expires'] = '0'

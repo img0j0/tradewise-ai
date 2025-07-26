@@ -7,23 +7,23 @@ logger = logging.getLogger(__name__)
 # Create simple core routes blueprint
 simple_core_bp = Blueprint('simple_core', __name__)
 
-@simple_core_bp.route('/')
-def index():
-    """Redirect to dashboard"""
-    return redirect(url_for('simple_core.dashboard'))
+@simple_core_bp.route('/simple-home')
+def simple_home():
+    """Simple home redirect"""
+    return redirect(url_for('simple_core.dashboard_exact'))
 
-@simple_core_bp.route('/dashboard')
-def dashboard():
-    """Dashboard - Exact Design Match"""
+@simple_core_bp.route('/dashboard-exact')
+def dashboard_exact():
+    """Dashboard - Exact Design Match (alternative route)"""
     try:
         return render_template('dashboard_exact.html')
     except Exception as e:
         logger.error(f"Error loading dashboard: {e}")
         return f"Dashboard error: {str(e)}", 500
 
-@simple_core_bp.route('/search')
-def search():
-    """Stock Search Interface"""
+@simple_core_bp.route('/search-simple')
+def search_simple():
+    """Stock Search Interface (alternative route)"""
     try:
         return render_template('search.html')
     except Exception as e:

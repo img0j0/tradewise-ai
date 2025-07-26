@@ -30,7 +30,7 @@
     <nav class="navbar" id="main-navbar">
         <div class="navbar-container">
             <!-- Brand Logo & Text -->
-            <a href="{{ url_for('simple_core.dashboard') }}" class="navbar-brand">
+            <a href="{{ url_for('main_routes.dashboard') }}" class="navbar-brand">
                 <div class="navbar-logo">
                     <i class="fas fa-chart-line"></i>
                 </div>
@@ -40,12 +40,12 @@
             <!-- Main Navigation Links -->
             <ul class="navbar-nav desktop-visible">
                 <li>
-                    <a href="{{ url_for('simple_core.dashboard') }}" class="navbar-nav-link {% block nav_dashboard %}{% endblock %}">
+                    <a href="{{ url_for('main_routes.dashboard') }}" class="navbar-nav-link {% block nav_dashboard %}{% endblock %}">
                         <i class="fas fa-home mr-2"></i>Dashboard
                     </a>
                 </li>
                 <li>
-                    <a href="{{ url_for('simple_core.search') }}" class="navbar-nav-link {% block nav_search %}{% endblock %}">
+                    <a href="{{ url_for('main_routes.search') }}" class="navbar-nav-link {% block nav_search %}{% endblock %}">
                         <i class="fas fa-search mr-2"></i>Search
                     </a>
                 </li>
@@ -147,10 +147,10 @@
                 />
             </div>
             <div class="mobile-nav-links">
-                <a href="{{ url_for('simple_core.dashboard') }}" class="mobile-nav-link">
+                <a href="{{ url_for('main_routes.dashboard') }}" class="mobile-nav-link">
                     <i class="fas fa-home"></i>Dashboard
                 </a>
-                <a href="{{ url_for('simple_core.search') }}" class="mobile-nav-link">
+                <a href="{{ url_for('main_routes.search') }}" class="mobile-nav-link">
                     <i class="fas fa-search"></i>Search
                 </a>
                 <a href="#" class="mobile-nav-link" onclick="showPremiumModal('backtest')">
