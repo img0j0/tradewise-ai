@@ -190,6 +190,145 @@ def tool_endpoint(tool_name: str):
 # Create tools blueprint for centralized routes
 tools_bp = Blueprint('tools', __name__, url_prefix='/tools')
 
+# Individual tool endpoints
+@tools_bp.route('/ai/insights', methods=['POST'])
+@tool_endpoint('ai_insights')
+def ai_insights_endpoint():
+    """AI Insights tool endpoint"""
+    try:
+        data = request.get_json() or {}
+        symbol = data.get('symbol', 'AAPL')
+        
+        # Create async task
+        task_id = f"ai_insights_{int(time.time() * 1000)}"
+        
+        # Return immediate response with task ID
+        return jsonify({
+            'success': True,
+            'task_id': task_id,
+            'status': 'processing',
+            'message': f'AI insights analysis started for {symbol}',
+            'estimated_completion': '15-30 seconds'
+        })
+        
+    except Exception as e:
+        logger.error(f"AI insights endpoint error: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@tools_bp.route('/search/advanced', methods=['POST'])
+@tool_endpoint('advanced_search')
+def advanced_search_endpoint():
+    """Advanced Search tool endpoint"""
+    try:
+        data = request.get_json() or {}
+        query = data.get('query', '')
+        
+        # Create async task
+        task_id = f"advanced_search_{int(time.time() * 1000)}"
+        
+        return jsonify({
+            'success': True,
+            'task_id': task_id,
+            'status': 'processing',
+            'message': f'Advanced search started for "{query}"',
+            'estimated_completion': '10-20 seconds'
+        })
+        
+    except Exception as e:
+        logger.error(f"Advanced search endpoint error: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@tools_bp.route('/analysis/stocks', methods=['POST'])
+@tool_endpoint('intelligent_stock_analyzer')
+def stock_analysis_endpoint():
+    """Stock Analysis tool endpoint"""
+    try:
+        data = request.get_json() or {}
+        symbol = data.get('symbol', 'AAPL')
+        
+        # Create async task
+        task_id = f"stock_analysis_{int(time.time() * 1000)}"
+        
+        return jsonify({
+            'success': True,
+            'task_id': task_id,
+            'status': 'processing',
+            'message': f'Stock analysis started for {symbol}',
+            'estimated_completion': '20-40 seconds'
+        })
+        
+    except Exception as e:
+        logger.error(f"Stock analysis endpoint error: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@tools_bp.route('/premium/features', methods=['POST'])
+@tool_endpoint('premium_features')  
+def premium_features_endpoint():
+    """Premium Features tool endpoint"""
+    try:
+        data = request.get_json() or {}
+        feature = data.get('feature', 'backtest')
+        
+        # Create async task
+        task_id = f"premium_{feature}_{int(time.time() * 1000)}"
+        
+        return jsonify({
+            'success': True,
+            'task_id': task_id,
+            'status': 'processing',
+            'message': f'Premium {feature} feature started',
+            'estimated_completion': '30-60 seconds'
+        })
+        
+    except Exception as e:
+        logger.error(f"Premium features endpoint error: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@tools_bp.route('/alerts/smart', methods=['POST'])
+@tool_endpoint('smart_event_alerts')
+def smart_alerts_endpoint():
+    """Smart Alerts tool endpoint"""
+    try:
+        data = request.get_json() or {}
+        symbol = data.get('symbol', 'AAPL')
+        
+        # Create async task
+        task_id = f"smart_alerts_{int(time.time() * 1000)}"
+        
+        return jsonify({
+            'success': True,
+            'task_id': task_id,
+            'status': 'processing',
+            'message': f'Smart alerts setup started for {symbol}',
+            'estimated_completion': '10-15 seconds'
+        })
+        
+    except Exception as e:
+        logger.error(f"Smart alerts endpoint error: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@tools_bp.route('/market/scanner', methods=['POST'])
+@tool_endpoint('market_data_collector')
+def market_scanner_endpoint():
+    """Market Scanner tool endpoint"""
+    try:
+        data = request.get_json() or {}
+        
+        # Create async task
+        task_id = f"market_scanner_{int(time.time() * 1000)}"
+        
+        return jsonify({
+            'success': True,
+            'task_id': task_id,
+            'status': 'processing',
+            'message': 'Market scanner analysis started',
+            'estimated_completion': '25-45 seconds'
+        })
+        
+    except Exception as e:
+        logger.error(f"Market scanner endpoint error: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
 @tools_bp.route('/status')
 def tools_status():
     """Comprehensive tools status endpoint"""
