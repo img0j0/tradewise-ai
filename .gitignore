@@ -1,0 +1,103 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environments
+venv/
+env/
+ENV/
+.venv/
+.env
+
+# Environment Variables
+.env
+.env.local
+.env.production
+.env.development
+
+# Logs
+logs/
+*.log
+performance.log
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+instance/
+
+# Cache
+.cache/
+__pycache__/
+.pytest_cache/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Backup files
+backups/
+*.bak
+*.backup
+
+# Dependencies (managed by Replit)
+# requirements.txt should be committed
+
+# Secrets (never commit)
+secrets.json
+config/secrets.py
+
+# Testing
+.coverage
+htmlcov/
+.tox/
+.pytest_cache/
+
+# Archive and backups
+archive/
+old/
+
+# Monitoring databases (will be recreated)
+logs/admin_alerts.db
+logs/system_metrics.db
+logs/centralized_errors.db
+
+# Performance logs
+performance.log
