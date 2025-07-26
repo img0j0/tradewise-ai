@@ -266,6 +266,16 @@ with app.app_context():
     except Exception as e:
         logger.warning(f"⚠️ Premium notification routes not available: {e}")
     
+    # Register admin monitoring system for Phase 6 implementation
+    try:
+        from admin_monitoring_system import admin_bp, monitoring_system
+        app.register_blueprint(admin_bp)
+        # Start monitoring system
+        monitoring_system.start_monitoring()
+        logger.info("✅ Admin monitoring system registered and started successfully")
+    except Exception as e:
+        logger.warning(f"⚠️ Admin monitoring system not available: {e}")
+    
     # Global error handlers for professional error pages
     @app.errorhandler(404)
     def page_not_found(error):

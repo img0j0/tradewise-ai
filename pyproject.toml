@@ -45,4 +45,5 @@ dependencies = [
     "qrcode>=8.2",
     "rapidfuzz>=3.13.0",
     "requests-cache>=1.2.1",
+    "sendgrid>=6.12.4",
 ]

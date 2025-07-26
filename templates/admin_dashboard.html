@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - TradeWise AI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Admin Dashboard Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: #f8fafc;
+            color: #1a202c;
+        }
+
+        .admin-header {
+            background: linear-gradient(135deg, #1e40af, #3b82f6);
+            color: white;
+            padding: 1.5rem 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .admin-header h1 {
+            font-size: 1.75rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .admin-header p {
+            opacity: 0.9;
+            font-size: 0.95rem;
+        }
+
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .status-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e5e7eb;
+        }
+
+        .status-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .status-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            color: white;
+        }
+
+        .status-icon.healthy { background: #10b981; }
+        .status-icon.warning { background: #f59e0b; }
+        .status-icon.critical { background: #ef4444; }
+
+        .status-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #1f2937;
+        }
+
+        .status-label {
+            color: #6b7280;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+
+        .metrics-section {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-container {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e5e7eb;
+        }
+
+        .chart-header {
+            display: flex;
+            align-items: center;
+            justify-content: between;
+            margin-bottom: 1rem;
+        }
+
+        .chart-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .chart-refresh {
+            background: #f3f4f6;
+            border: none;
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            color: #6b7280;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .chart-refresh:hover {
+            background: #e5e7eb;
+            color: #374151;
+        }
+
+        .alerts-section {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e5e7eb;
+        }
+
+        .alerts-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .alerts-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .alert-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+            border-left: 4px solid;
+        }
+
+        .alert-item.critical {
+            background: #fef2f2;
+            border-left-color: #ef4444;
+        }
+
+        .alert-item.warning {
+            background: #fffbeb;
+            border-left-color: #f59e0b;
+        }
+
+        .alert-item.info {
+            background: #eff6ff;
+            border-left-color: #3b82f6;
+        }
+
+        .alert-icon {
+            margin-right: 1rem;
+            font-size: 1.125rem;
+        }
+
+        .alert-content {
+            flex: 1;
+        }
+
+        .alert-message {
+            font-weight: 500;
+            color: #1f2937;
+            margin-bottom: 0.25rem;
+        }
+
+        .alert-time {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        .alert-component {
+            display: inline-block;
+            background: #f3f4f6;
+            color: #374151;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            margin-left: 0.5rem;
+        }
+
+        .monitoring-controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .control-btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .control-btn:hover {
+            background: #2563eb;
+        }
+
+        .control-btn.secondary {
+            background: #6b7280;
+        }
+
+        .control-btn.secondary:hover {
+            background: #4b5563;
+        }
+
+        .control-btn.danger {
+            background: #ef4444;
+        }
+
+        .control-btn.danger:hover {
+            background: #dc2626;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3b82f6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            border-radius: 8px;
+            padding: 1rem;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid #10b981;
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        @media (max-width: 768px) {
+            .admin-container {
+                padding: 1rem;
+            }
+            
+            .metrics-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .monitoring-controls {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-header">
+        <h1><i class="fas fa-shield-alt"></i> TradeWise AI Admin Dashboard</h1>
+        <p>System monitoring and alerting console</p>
+    </div>
+
+    <div class="admin-container">
+        <!-- Monitoring Controls -->
+        <div class="monitoring-controls">
+            <button class="control-btn" onclick="startMonitoring()">
+                <i class="fas fa-play"></i> Start Monitoring
+            </button>
+            <button class="control-btn secondary" onclick="stopMonitoring()">
+                <i class="fas fa-pause"></i> Stop Monitoring
+            </button>
+            <button class="control-btn secondary" onclick="refreshDashboard()">
+                <i class="fas fa-sync-alt"></i> Refresh Data
+            </button>
+            <button class="control-btn danger" onclick="testAlert()">
+                <i class="fas fa-exclamation-triangle"></i> Test Alert
+            </button>
+        </div>
+
+        <!-- System Status Cards -->
+        <div class="status-grid">
+            <div class="status-card">
+                <div class="status-card-header">
+                    <div class="status-icon {{ 'healthy' if summary.system_status == 'healthy' else ('warning' if summary.system_status == 'warning' else 'critical') }}">
+                        <i class="fas fa-heartbeat"></i>
+                    </div>
+                </div>
+                <div class="status-value">{{ summary.system_status|title }}</div>
+                <div class="status-label">System Status</div>
+            </div>
+
+            <div class="status-card">
+                <div class="status-card-header">
+                    <div class="status-icon warning">
+                        <i class="fas fa-exclamation-circle"></i>
+                    </div>
+                </div>
+                <div class="status-value">{{ summary.active_alerts or 0 }}</div>
+                <div class="status-label">Active Alerts</div>
+            </div>
+
+            <div class="status-card">
+                <div class="status-card-header">
+                    <div class="status-icon critical">
+                        <i class="fas fa-times-circle"></i>
+                    </div>
+                </div>
+                <div class="status-value">{{ summary.critical_alerts or 0 }}</div>
+                <div class="status-label">Critical Alerts</div>
+            </div>
+
+            <div class="status-card">
+                <div class="status-card-header">
+                    <div class="status-icon {{ 'healthy' if summary.monitoring_active else 'warning' }}">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                </div>
+                <div class="status-value">{{ 'Active' if summary.monitoring_active else 'Inactive' }}</div>
+                <div class="status-label">Monitoring Status</div>
+            </div>
+        </div>
+
+        <!-- Metrics and Alerts Section -->
+        <div class="metrics-section">
+            <!-- System Metrics Chart -->
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h3 class="chart-title">System Performance</h3>
+                    <button class="chart-refresh" onclick="refreshMetrics()">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                </div>
+                <canvas id="metricsChart" width="400" height="200"></canvas>
+            </div>
+
+            <!-- Recent Alerts -->
+            <div class="alerts-section">
+                <div class="alerts-header">
+                    <h3 class="alerts-title">Recent Alerts</h3>
+                    <span class="status-label">Last 24 hours</span>
+                </div>
+                
+                <div id="alertsList">
+                    {% if recent_alerts %}
+                        {% for alert in recent_alerts[:10] %}
+                        <div class="alert-item {{ alert.severity.lower() }}">
+                            <div class="alert-icon">
+                                {% if alert.severity == 'CRITICAL' %}
+                                    <i class="fas fa-times-circle" style="color: #ef4444;"></i>
+                                {% elif alert.severity == 'WARNING' %}
+                                    <i class="fas fa-exclamation-triangle" style="color: #f59e0b;"></i>
+                                {% else %}
+                                    <i class="fas fa-info-circle" style="color: #3b82f6;"></i>
+                                {% endif %}
+                            </div>
+                            <div class="alert-content">
+                                <div class="alert-message">{{ alert.message }}</div>
+                                <div class="alert-time">
+                                    {{ alert.timestamp }} 
+                                    <span class="alert-component">{{ alert.component }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="alert-item info">
+                            <div class="alert-icon">
+                                <i class="fas fa-check-circle" style="color: #10b981;"></i>
+                            </div>
+                            <div class="alert-content">
+                                <div class="alert-message">No alerts in the last 24 hours</div>
+                                <div class="alert-time">System running smoothly</div>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Current System Metrics -->
+        {% if summary.current_metrics %}
+        <div class="chart-container">
+            <h3 class="chart-title">Current System Metrics</h3>
+            <div class="status-grid">
+                <div class="status-card">
+                    <div class="status-value">{{ "%.1f"|format(summary.current_metrics.cpu_percent) }}%</div>
+                    <div class="status-label">CPU Usage</div>
+                </div>
+                <div class="status-card">
+                    <div class="status-value">{{ "%.1f"|format(summary.current_metrics.memory_percent) }}%</div>
+                    <div class="status-label">Memory Usage</div>
+                </div>
+                <div class="status-card">
+                    <div class="status-value">{{ summary.current_metrics.redis_status|title }}</div>
+                    <div class="status-label">Redis Status</div>
+                </div>
+                <div class="status-card">
+                    <div class="status-value">{{ summary.current_metrics.database_status|title }}</div>
+                    <div class="status-label">Database Status</div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Notification Container -->
+    <div id="notification" class="notification" style="display: none;">
+        <div id="notificationMessage"></div>
+    </div>
+
+    <script>
+        // Admin Dashboard JavaScript
+        let metricsChart;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeMetricsChart();
+            startAutoRefresh();
+        });
+
+        function initializeMetricsChart() {
+            const ctx = document.getElementById('metricsChart').getContext('2d');
+            
+            metricsChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [
+                        {
+                            label: 'CPU %',
+                            data: [],
+                            borderColor: '#ef4444',
+                            backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                            tension: 0.4
+                        },
+                        {
+                            label: 'Memory %',
+                            data: [],
+                            borderColor: '#f59e0b',
+                            backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                            tension: 0.4
+                        },
+                        {
+                            label: 'API Response (ms/10)',
+                            data: [],
+                            borderColor: '#3b82f6',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            tension: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+
+            loadMetricsData();
+        }
+
+        async function loadMetricsData() {
+            try {
+                const response = await fetch('/admin/api/metrics?hours=6');
+                const metrics = await response.json();
+                
+                const labels = [];
+                const cpuData = [];
+                const memoryData = [];
+                const apiData = [];
+                
+                metrics.reverse().forEach(metric => {
+                    const time = new Date(metric.timestamp);
+                    labels.push(time.toLocaleTimeString());
+                    cpuData.push(metric.cpu_percent);
+                    memoryData.push(metric.memory_percent);
+                    apiData.push(metric.api_response_time / 10); // Scale down for chart
+                });
+                
+                metricsChart.data.labels = labels.slice(-20); // Show last 20 points
+                metricsChart.data.datasets[0].data = cpuData.slice(-20);
+                metricsChart.data.datasets[1].data = memoryData.slice(-20);
+                metricsChart.data.datasets[2].data = apiData.slice(-20);
+                metricsChart.update();
+                
+            } catch (error) {
+                console.error('Error loading metrics:', error);
+            }
+        }
+
+        async function startMonitoring() {
+            try {
+                const response = await fetch('/admin/api/start-monitoring', {
+                    method: 'POST'
+                });
+                const result = await response.json();
+                showNotification('Monitoring started successfully', 'success');
+                setTimeout(refreshDashboard, 1000);
+            } catch (error) {
+                showNotification('Failed to start monitoring', 'error');
+            }
+        }
+
+        async function stopMonitoring() {
+            try {
+                const response = await fetch('/admin/api/stop-monitoring', {
+                    method: 'POST'
+                });
+                const result = await response.json();
+                showNotification('Monitoring stopped', 'warning');
+                setTimeout(refreshDashboard, 1000);
+            } catch (error) {
+                showNotification('Failed to stop monitoring', 'error');
+            }
+        }
+
+        async function testAlert() {
+            try {
+                const response = await fetch('/admin/api/test-alert', {
+                    method: 'POST'
+                });
+                const result = await response.json();
+                showNotification('Test alert sent successfully', 'success');
+            } catch (error) {
+                showNotification('Failed to send test alert', 'error');
+            }
+        }
+
+        function refreshDashboard() {
+            location.reload();
+        }
+
+        function refreshMetrics() {
+            loadMetricsData();
+            showNotification('Metrics refreshed', 'info');
+        }
+
+        function startAutoRefresh() {
+            setInterval(() => {
+                loadMetricsData();
+            }, 60000); // Refresh every minute
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.getElementById('notification');
+            const messageEl = document.getElementById('notificationMessage');
+            
+            messageEl.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.style.display = 'block';
+            
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 100);
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    notification.style.display = 'none';
+                }, 300);
+            }, 3000);
+        }
+
+        // Health check indicator
+        function updateHealthIndicator() {
+            fetch('/admin/api/summary')
+                .then(response => response.json())
+                .then(data => {
+                    const indicators = document.querySelectorAll('.status-icon');
+                    if (data.system_status === 'critical') {
+                        document.title = '🚨 Admin Dashboard - TradeWise AI';
+                    } else {
+                        document.title = 'Admin Dashboard - TradeWise AI';
+                    }
+                })
+                .catch(error => console.error('Health check failed:', error));
+        }
+
+        // Update health indicator every 30 seconds
+        setInterval(updateHealthIndicator, 30000);
+    </script>
+</body>
+</html>
