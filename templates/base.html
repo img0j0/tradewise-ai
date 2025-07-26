@@ -33,6 +33,12 @@
     <!-- UI Optimization for Enhanced Readability -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/ui_optimization.css') }}?v={{ range(1000, 9999) | random }}">
     
+    <!-- Mobile Optimization - Phase 4 -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile_optimization.css') }}?v={{ range(1000, 9999) | random }}">
+    
+    <!-- Mobile Optimization JavaScript -->
+    <script src="{{ url_for('static', filename='js/mobile_optimization.js') }}?v={{ range(1000, 9999) | random }}"></script>
+    
     <!-- Additional Block for Page-Specific CSS -->
     {% block extra_css %}{% endblock %}
     
@@ -94,6 +100,11 @@
             </div>
             
             <div class="flex items-center gap-4">
+                <!-- Mobile Search Toggle -->
+                <button class="mobile-search-toggle" id="mobile-search-toggle" aria-label="Open search">
+                    <i class="fas fa-search"></i>
+                </button>
+                
                 <!-- Desktop Navigation -->
                 <ul class="saas-nav-links hidden lg:flex">
                     <li><a href="/" class="saas-nav-link {% block nav_dashboard %}{% endblock %}">
@@ -122,6 +133,11 @@
                         <i class="fas fa-crown"></i>Upgrade to Pro
                     </a>
                 </div>
+                
+                <!-- Mobile Navigation Toggle -->
+                <button class="mobile-nav-toggle" id="mobile-nav-toggle" aria-label="Open navigation menu">
+                    <i class="fas fa-bars"></i>
+                </button>
                 
                 <!-- User Menu -->
                 <div class="relative">

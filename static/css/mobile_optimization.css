@@ -1,0 +1,456 @@
+/* Mobile Optimization CSS - Phase 4 */
+/* Mobile-First Responsive Design for TradeWise AI */
+
+/* Mobile Search Modal */
+.mobile-search-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    backdrop-filter: blur(4px);
+}
+
+.mobile-search-modal.active {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 20px;
+}
+
+.mobile-search-content {
+    background: white;
+    width: 95%;
+    max-width: 500px;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    position: relative;
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.mobile-search-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.mobile-search-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1d3557;
+}
+
+.mobile-search-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #6b7280;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 8px;
+    transition: background-color 0.2s;
+}
+
+.mobile-search-close:hover {
+    background-color: #f3f4f6;
+}
+
+.mobile-search-input {
+    width: 100%;
+    padding: 16px;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    font-size: 16px; /* Prevents iOS zoom */
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.mobile-search-input:focus {
+    border-color: #1d3557;
+    box-shadow: 0 0 0 3px rgba(29, 53, 87, 0.1);
+}
+
+/* Mobile Navigation Enhancements */
+.mobile-nav-toggle {
+    display: none;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 8px;
+    transition: background-color 0.2s;
+}
+
+.mobile-nav-toggle:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.mobile-search-toggle {
+    display: none;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.25rem;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 8px;
+    transition: background-color 0.2s;
+}
+
+.mobile-search-toggle:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Mobile Navigation Menu */
+.mobile-nav-menu {
+    display: none;
+    position: fixed;
+    top: 70px;
+    left: 0;
+    right: 0;
+    background: white;
+    border-top: 1px solid #e5e7eb;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    max-height: calc(100vh - 70px);
+    overflow-y: auto;
+}
+
+.mobile-nav-menu.active {
+    display: block;
+    animation: slideDown 0.3s ease-out;
+}
+
+.mobile-nav-links {
+    padding: 20px;
+}
+
+.mobile-nav-link {
+    display: flex;
+    align-items: center;
+    padding: 16px 0;
+    color: #374151;
+    text-decoration: none;
+    border-bottom: 1px solid #f3f4f6;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.mobile-nav-link:hover {
+    color: #1d3557;
+}
+
+.mobile-nav-link i {
+    margin-right: 12px;
+    width: 20px;
+    text-align: center;
+}
+
+/* Mobile Dashboard Grid - Mobile First */
+.dashboard-grid {
+    display: grid;
+    gap: 20px;
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Mobile: Stack all cards vertically */
+@media (max-width: 767px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+        padding: 16px;
+        gap: 16px;
+    }
+    
+    .dashboard-card {
+        padding: 20px !important;
+        margin-bottom: 0;
+    }
+    
+    .card-header h3 {
+        font-size: 1.1rem;
+    }
+    
+    .card-metrics {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .metric-item {
+        text-align: center;
+    }
+}
+
+/* Tablet: 2 columns */
+@media (min-width: 768px) and (max-width: 1023px) {
+    .dashboard-grid {
+        grid-template-columns: repeat(2, 1fr);
+        padding: 24px;
+        gap: 20px;
+    }
+}
+
+/* Desktop: 3 columns */
+@media (min-width: 1024px) {
+    .dashboard-grid {
+        grid-template-columns: repeat(3, 1fr);
+        padding: 32px;
+        gap: 24px;
+    }
+}
+
+/* Mobile Card Optimizations */
+@media (max-width: 767px) {
+    .dashboard-card {
+        border-radius: 12px !important;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+    }
+    
+    .card-icon {
+        width: 48px !important;
+        height: 48px !important;
+        font-size: 1.2rem !important;
+    }
+    
+    .card-content h3 {
+        font-size: 1.1rem !important;
+        margin-bottom: 8px !important;
+    }
+    
+    .card-value {
+        font-size: 1.8rem !important;
+        margin-bottom: 8px !important;
+    }
+    
+    .card-change {
+        font-size: 0.9rem !important;
+    }
+    
+    .card-button {
+        padding: 12px 20px !important;
+        font-size: 0.95rem !important;
+        margin-top: 16px !important;
+    }
+}
+
+/* Table Scroll Containers for Mobile */
+.table-scroll-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    margin: 16px 0;
+}
+
+.mobile-table {
+    min-width: 600px;
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+}
+
+.mobile-table th,
+.mobile-table td {
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid #f3f4f6;
+    white-space: nowrap;
+}
+
+.mobile-table th {
+    background-color: #f9fafb;
+    font-weight: 600;
+    color: #374151;
+    font-size: 0.875rem;
+}
+
+/* Mobile Spacing & Padding Adjustments */
+@media (max-width: 767px) {
+    .navbar {
+        padding: 12px 16px !important;
+    }
+    
+    .nav-left {
+        gap: 12px !important;
+    }
+    
+    .logo {
+        font-size: 1.25rem !important;
+    }
+    
+    /* Show mobile controls */
+    .mobile-nav-toggle,
+    .mobile-search-toggle {
+        display: block;
+    }
+    
+    /* Hide desktop search */
+    .hidden.md\\:flex {
+        display: none !important;
+    }
+    
+    /* Hide desktop navigation */
+    .saas-nav-links {
+        display: none !important;
+    }
+    
+    /* Hide desktop upgrade button */
+    .hidden.md\\:flex.items-center {
+        display: none !important;
+    }
+    
+    /* Container padding adjustments */
+    .container,
+    .dashboard-container {
+        padding-left: 16px !important;
+        padding-right: 16px !important;
+    }
+    
+    /* Content spacing */
+    .content-section {
+        margin-bottom: 24px;
+    }
+    
+    /* Button improvements */
+    .btn,
+    .button {
+        min-height: 44px; /* iOS touch target minimum */
+        padding: 12px 20px;
+        font-size: 16px; /* Prevents iOS zoom */
+    }
+    
+    /* Form input improvements */
+    input,
+    select,
+    textarea {
+        min-height: 44px;
+        font-size: 16px; /* Prevents iOS zoom */
+        padding: 12px 16px;
+    }
+}
+
+/* Tablet Optimizations */
+@media (min-width: 768px) and (max-width: 1023px) {
+    .dashboard-grid {
+        padding: 24px;
+    }
+    
+    .dashboard-card {
+        padding: 24px;
+    }
+    
+    .navbar {
+        padding: 16px 24px;
+    }
+}
+
+/* Touch-Friendly Interactions */
+@media (hover: none) and (pointer: coarse) {
+    .card-button,
+    .nav-link,
+    .mobile-nav-link {
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    /* Remove hover effects on touch devices */
+    .card-button:hover,
+    .nav-link:hover,
+    .mobile-nav-link:hover {
+        transform: none;
+        background-color: initial;
+    }
+    
+    /* Add active states for touch feedback */
+    .card-button:active {
+        background-color: rgba(29, 53, 87, 0.9);
+        transform: scale(0.98);
+    }
+}
+
+/* Dark Mode Mobile Optimizations */
+@media (prefers-color-scheme: dark), [data-theme="dark"] {
+    .mobile-search-content {
+        background: #1f2937;
+        color: white;
+    }
+    
+    .mobile-search-input {
+        background: #374151;
+        border-color: #4b5563;
+        color: white;
+    }
+    
+    .mobile-search-input:focus {
+        border-color: #60a5fa;
+    }
+    
+    .mobile-nav-menu {
+        background: #1f2937;
+        border-top-color: #374151;
+    }
+    
+    .mobile-nav-link {
+        color: #d1d5db;
+        border-bottom-color: #374151;
+    }
+    
+    .mobile-nav-link:hover {
+        color: #f9fafb;
+    }
+}
+
+/* iOS Safari Specific Fixes */
+@supports (-webkit-touch-callout: none) {
+    .mobile-search-modal {
+        /* Fix for iOS Safari viewport height */
+        height: -webkit-fill-available;
+    }
+    
+    .mobile-nav-menu {
+        /* Fix for iOS Safari safe area */
+        padding-bottom: env(safe-area-inset-bottom);
+    }
+}
+
+/* Landscape Mobile Adjustments */
+@media (max-width: 767px) and (orientation: landscape) {
+    .mobile-search-modal {
+        align-items: center;
+        padding-top: 10px;
+    }
+    
+    .dashboard-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+    }
+}
+
+/* Ultra-wide screens */
+@media (min-width: 1440px) {
+    .dashboard-grid {
+        max-width: 1400px;
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
