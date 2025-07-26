@@ -141,6 +141,23 @@ with app.app_context():
     import models  # noqa: F401
     db.create_all()
     
+    # Initialize centralized tools registry
+    try:
+        from tools_registry import initialize_tools_registry, tools_bp
+        tools_registry = initialize_tools_registry()
+        app.register_blueprint(tools_bp)
+        logger.info("✅ Centralized tools registry initialized successfully")
+    except Exception as e:
+        logger.error(f"❌ Failed to initialize tools registry: {e}")
+    
+    # Register route audit system
+    try:
+        from route_audit import audit_bp
+        app.register_blueprint(audit_bp)
+        logger.info("✅ Route audit system registered successfully")
+    except Exception as e:
+        logger.error(f"❌ Failed to register route audit system: {e}")
+
     # Register core blueprints for full functionality
     try:
         from routes import main_bp
