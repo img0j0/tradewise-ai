@@ -214,6 +214,104 @@ def premium_upgrade():
     """Premium upgrade page"""
     return render_template('premium_upgrade_new.html')
 
+@main_bp.route('/create-checkout-session', methods=['POST', 'GET'])
+def create_checkout_session():
+    """Create Stripe checkout session for premium subscription"""
+    import stripe
+    import os
+    
+    # Set Stripe API key
+    stripe.api_key = os.environ.get('STRIPE_SECRET_KEY')
+    
+    if not stripe.api_key:
+        if request.method == 'GET':
+            return redirect(url_for('main_routes.premium_upgrade') + '?error=payment_not_configured')
+        return jsonify({
+            'success': False,
+            'error': 'Payment system not configured'
+        }), 500
+    
+    try:
+        # Handle both GET and POST requests
+        plan_type = 'pro'
+        price_amount = 2999  # $29.99 in cents
+        
+        if request.method == 'POST':
+            # Try to get JSON data, fallback to form data
+            try:
+                data = request.get_json() or {}
+            except:
+                data = request.form.to_dict()
+            plan_type = data.get('plan', 'pro')
+            price_amount = 2999 if plan_type == 'pro' else 9999  # Pro: $29.99, Enterprise: $99.99
+        
+        # Get domain for redirect URLs
+        if os.environ.get('REPLIT_DEPLOYMENT'):
+            domain = f"https://{os.environ.get('REPLIT_DEV_DOMAIN')}"
+        else:
+            domains = os.environ.get('REPLIT_DOMAINS', 'localhost:5000')
+            domain = f"https://{domains.split(',')[0]}"
+        
+        # Create Stripe checkout session
+        checkout_session = stripe.checkout.Session.create(
+            payment_method_types=['card'],
+            line_items=[{
+                'price_data': {
+                    'currency': 'usd',
+                    'unit_amount': price_amount,
+                    'product_data': {
+                        'name': f'TradeWise AI {plan_type.title()} Plan',
+                        'description': f'Monthly subscription to TradeWise AI {plan_type.title()} features',
+                    },
+                    'recurring': {
+                        'interval': 'month',
+                    },
+                },
+                'quantity': 1,
+            }],
+            mode='subscription',
+            success_url=f'{domain}/premium/success?session_id={{CHECKOUT_SESSION_ID}}',
+            cancel_url=f'{domain}/premium/upgrade?canceled=true',
+            metadata={
+                'plan': plan_type,
+                'subscription_type': 'premium'
+            }
+        )
+        
+        logger.info(f"Created Stripe checkout session: {checkout_session.id}")
+        
+        if request.method == 'GET':
+            # Redirect directly to Stripe checkout
+            return redirect(checkout_session.url)
+        else:
+            # Return JSON response for AJAX calls
+            return jsonify({
+                'success': True,
+                'checkout_url': checkout_session.url,
+                'session_id': checkout_session.id
+            })
+    
+    except stripe.error.StripeError as e:
+        logger.error(f"Stripe error: {str(e)}")
+        return jsonify({
+            'success': False,
+            'error': 'Payment processing error. Please try again.',
+            'details': str(e)
+        }), 500
+    except Exception as e:
+        logger.error(f"Checkout session error: {str(e)}")
+        return jsonify({
+            'success': False,
+            'error': 'Unable to create checkout session',
+            'details': str(e)
+        }), 500
+
+@main_bp.route('/premium/success')
+def premium_success():
+    """Premium subscription success page"""
+    session_id = request.args.get('session_id')
+    return render_template('premium_success.html', session_id=session_id)
+
 @main_bp.route('/settings')
 def settings():
     """User settings page"""
