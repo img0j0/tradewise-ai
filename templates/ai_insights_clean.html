@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Insights - TradeWise AI</title>
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f5f5f7;
+            color: #1d1d1f;
+        }
+
+        /* Navigation Bar - Exact match to dashboard */
+        .navbar {
+            background-color: #1d3557;
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            color: white;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .nav-links a:hover {
+            opacity: 0.8;
+        }
+
+        .nav-links a.active {
+            border-bottom: 2px solid white;
+            padding-bottom: 0.25rem;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .upgrade-btn {
+            background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+
+        .upgrade-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        /* AI Insights Container */
+        .insights-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .insights-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .insights-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: #1d3557;
+            font-weight: 700;
+        }
+
+        .insights-header p {
+            font-size: 1.2rem;
+            color: #6c6c70;
+        }
+
+        /* AI Insights Grid - 3 Cards Layout like Dashboard */
+        .insights-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        @media (max-width: 768px) {
+            .insights-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* AI Insights Cards - Apple Style like Dashboard */
+        .insights-card {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .insights-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+            border-color: #007AFF;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-icon {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.25rem;
+        }
+
+        .brain-icon {
+            background: linear-gradient(135deg, #007AFF, #5856D6);
+        }
+
+        .search-icon {
+            background: linear-gradient(135deg, #34C759, #30B15A);
+        }
+
+        .analysis-icon {
+            background: linear-gradient(135deg, #FF9500, #FF8E00);
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1d1d1f;
+            margin: 0;
+        }
+
+        .card-subtitle {
+            font-size: 0.875rem;
+            color: #8e8e93;
+            margin: 0;
+        }
+
+        /* Search Form */
+        .search-form {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #1d1d1f;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #007AFF;
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+        }
+
+        .btn {
+            background: #007AFF;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            width: 100%;
+        }
+
+        .btn:hover {
+            background: #0056CC;
+        }
+
+        .btn:disabled {
+            background: #8e8e93;
+            cursor: not-allowed;
+        }
+
+        /* Analysis Results */
+        .analysis-results {
+            max-height: 500px;
+            overflow-y: auto;
+            margin-top: 1rem;
+        }
+
+        .insight-item {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid #007AFF;
+        }
+
+        .insight-item h4 {
+            color: #1d1d1f;
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .insight-item p {
+            color: #6c6c70;
+            font-size: 0.875rem;
+            line-height: 1.4;
+        }
+
+        .confidence-badge {
+            background: #34C759;
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 0.5rem;
+        }
+
+        .confidence-medium {
+            background: #FF9500;
+        }
+
+        .confidence-low {
+            background: #FF3B30;
+        }
+
+        /* Quick Examples */
+        .quick-examples {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 0.5rem;
+        }
+
+        .example-chip {
+            background: #e5e5ea;
+            color: #1d1d1f;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .example-chip:hover {
+            background: #d1d1d6;
+        }
+
+        /* Loading States */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            color: #8e8e93;
+        }
+
+        .loading i {
+            animation: spin 1s linear infinite;
+            margin-right: 0.5rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #8e8e93;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+            color: #1d1d1f;
+        }
+
+        .empty-state p {
+            font-size: 1rem;
+        }
+
+        /* Recent Insights */
+        .recent-insights {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .recent-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .recent-item:last-child {
+            border-bottom: none;
+        }
+
+        .recent-info h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1d1d1f;
+            margin: 0 0 0.25rem 0;
+        }
+
+        .recent-info p {
+            font-size: 0.875rem;
+            color: #8e8e93;
+            margin: 0;
+        }
+
+        .recent-action {
+            color: #007AFF;
+            font-size: 0.875rem;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .recent-action:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-left">
+            <a href="/" class="logo">
+                <i class="fas fa-chart-line"></i>
+                TradeWise AI
+            </a>
+            <ul class="nav-links">
+                <li><a href="/">Dashboard</a></li>
+                <li><a href="/search">Search</a></li>
+                <li><a href="/portfolio">Portfolio</a></li>
+                <li><a href="/ai-insights" class="active">AI Insights</a></li>
+                <li><a href="/premium">Premium</a></li>
+            </ul>
+        </div>
+        <div class="nav-right">
+            <a href="/premium" class="upgrade-btn">Upgrade</a>
+        </div>
+    </nav>
+
+    <!-- AI Insights Container -->
+    <div class="insights-container">
+        <div class="insights-header">
+            <h1>AI Insights</h1>
+            <p>Comprehensive AI-powered stock analysis and market intelligence</p>
+        </div>
+
+        <!-- AI Insights Grid -->
+        <div class="insights-grid">
+            <!-- Stock Analysis Card -->
+            <div class="insights-card">
+                <div class="card-header">
+                    <div class="card-icon search-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <div>
+                        <h3 class="card-title">Stock Analysis</h3>
+                        <p class="card-subtitle">AI-powered stock insights</p>
+                    </div>
+                </div>
+                <div class="search-form">
+                    <div class="form-group">
+                        <label for="stock-symbol">Stock Symbol or Company Name</label>
+                        <input type="text" id="stock-symbol" name="stock-symbol" placeholder="e.g., AAPL, Apple, Tesla, NVDA" autocomplete="off">
+                        <div class="quick-examples">
+                            <span class="example-chip" onclick="analyzeStock('AAPL')">AAPL</span>
+                            <span class="example-chip" onclick="analyzeStock('TSLA')">TSLA</span>
+                            <span class="example-chip" onclick="analyzeStock('NVDA')">NVDA</span>
+                            <span class="example-chip" onclick="analyzeStock('GOOGL')">GOOGL</span>
+                            <span class="example-chip" onclick="analyzeStock('MSFT')">MSFT</span>
+                        </div>
+                    </div>
+                    <button type="button" id="analyze-btn" class="btn" onclick="performAnalysis()">
+                        <i class="fas fa-brain"></i> Get AI Insights
+                    </button>
+                </div>
+            </div>
+
+            <!-- Analysis Results Card -->
+            <div class="insights-card">
+                <div class="card-header">
+                    <div class="card-icon analysis-icon">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <div>
+                        <h3 class="card-title">Analysis Results</h3>
+                        <p class="card-subtitle">AI findings and recommendations</p>
+                    </div>
+                </div>
+                <div id="analysis-results-container">
+                    <div class="empty-state">
+                        <i class="fas fa-brain"></i>
+                        <h3>Ready for Analysis</h3>
+                        <p>Enter a stock symbol to get AI-powered insights</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Insights Card -->
+            <div class="insights-card">
+                <div class="card-header">
+                    <div class="card-icon brain-icon">
+                        <i class="fas fa-history"></i>
+                    </div>
+                    <div>
+                        <h3 class="card-title">Recent Insights</h3>
+                        <p class="card-subtitle">Your analysis history</p>
+                    </div>
+                </div>
+                <div id="recent-insights-container">
+                    <div class="empty-state">
+                        <i class="fas fa-history"></i>
+                        <h3>No Recent Insights</h3>
+                        <p>Your analysis history will appear here</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // AI Insights Management JavaScript
+        class AIInsightsManager {
+            constructor() {
+                this.loadRecentInsights();
+                this.setupEventListeners();
+            }
+
+            setupEventListeners() {
+                const input = document.getElementById('stock-symbol');
+                input.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        this.performAnalysis();
+                    }
+                });
+
+                input.addEventListener('input', (e) => {
+                    const value = e.target.value.trim();
+                    const btn = document.getElementById('analyze-btn');
+                    btn.disabled = !value;
+                });
+            }
+
+            async performAnalysis() {
+                const symbol = document.getElementById('stock-symbol').value.trim().toUpperCase();
+                if (!symbol) return;
+
+                const btn = document.getElementById('analyze-btn');
+                const resultsContainer = document.getElementById('analysis-results-container');
+                
+                // Show loading state
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing...';
+                resultsContainer.innerHTML = '<div class="loading"><i class="fas fa-spinner"></i> Getting AI insights...</div>';
+
+                try {
+                    const response = await fetch('/api/stock-analysis', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ symbol: symbol })
+                    });
+
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        this.displayAnalysisResults(data);
+                        this.addToRecentInsights(symbol, data);
+                    } else {
+                        this.showError(data.message || 'Analysis failed');
+                    }
+                } catch (error) {
+                    console.error('Error performing analysis:', error);
+                    this.showError('Network error. Please try again.');
+                } finally {
+                    // Reset button
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-brain"></i> Get AI Insights';
+                }
+            }
+
+            displayAnalysisResults(data) {
+                const container = document.getElementById('analysis-results-container');
+                const analysis = data.analysis || {};
+                const recommendation = analysis.recommendation || 'HOLD';
+                const confidence = analysis.confidence || 50;
+                const investmentThesis = analysis.analysis || 'Analysis not available';
+
+                const confidenceClass = confidence >= 75 ? 'confidence-high' : 
+                                       confidence >= 50 ? 'confidence-medium' : 'confidence-low';
+
+                container.innerHTML = `
+                    <div class="analysis-results">
+                        <div class="insight-item">
+                            <div class="confidence-badge ${confidenceClass}">${confidence}% Confidence</div>
+                            <h4>Recommendation: ${recommendation}</h4>
+                            <p>${investmentThesis}</p>
+                        </div>
+                        
+                        ${analysis.market_sentiment ? `
+                        <div class="insight-item">
+                            <h4>Market Sentiment</h4>
+                            <p>${analysis.market_sentiment}</p>
+                        </div>
+                        ` : ''}
+                        
+                        ${analysis.risk_level ? `
+                        <div class="insight-item">
+                            <h4>Risk Level</h4>
+                            <p>${analysis.risk_level}</p>
+                        </div>
+                        ` : ''}
+                        
+                        ${analysis.fundamental_score ? `
+                        <div class="insight-item">
+                            <h4>Fundamental Score</h4>
+                            <p>${analysis.fundamental_score}/100</p>
+                        </div>
+                        ` : ''}
+                        
+                        ${analysis.technical_score ? `
+                        <div class="insight-item">
+                            <h4>Technical Score</h4>
+                            <p>${analysis.technical_score}/100</p>
+                        </div>
+                        ` : ''}
+                    </div>
+                `;
+            }
+
+            showError(message) {
+                const container = document.getElementById('analysis-results-container');
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-exclamation-triangle" style="color: #FF3B30;"></i>
+                        <h3>Analysis Error</h3>
+                        <p>${message}</p>
+                    </div>
+                `;
+            }
+
+            addToRecentInsights(symbol, data) {
+                // Get existing insights from localStorage
+                let recentInsights = JSON.parse(localStorage.getItem('recentInsights') || '[]');
+                
+                // Add new insight
+                const newInsight = {
+                    symbol: symbol,
+                    timestamp: new Date().toISOString(),
+                    recommendation: data.analysis?.recommendation || 'HOLD',
+                    confidence: data.analysis?.confidence || 50
+                };
+                
+                // Remove duplicate symbol if exists
+                recentInsights = recentInsights.filter(insight => insight.symbol !== symbol);
+                
+                // Add to beginning and limit to 10
+                recentInsights.unshift(newInsight);
+                recentInsights = recentInsights.slice(0, 10);
+                
+                // Save back to localStorage
+                localStorage.setItem('recentInsights', JSON.stringify(recentInsights));
+                
+                // Update display
+                this.displayRecentInsights(recentInsights);
+            }
+
+            loadRecentInsights() {
+                const recentInsights = JSON.parse(localStorage.getItem('recentInsights') || '[]');
+                this.displayRecentInsights(recentInsights);
+            }
+
+            displayRecentInsights(insights) {
+                const container = document.getElementById('recent-insights-container');
+                
+                if (!insights || insights.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-history"></i>
+                            <h3>No Recent Insights</h3>
+                            <p>Your analysis history will appear here</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                const insightsHTML = insights.map(insight => {
+                    const timeAgo = this.getTimeAgo(new Date(insight.timestamp));
+                    return `
+                        <div class="recent-item">
+                            <div class="recent-info">
+                                <h4>${insight.symbol}</h4>
+                                <p>${insight.recommendation} • ${insight.confidence}% • ${timeAgo}</p>
+                            </div>
+                            <a href="#" class="recent-action" onclick="analyzeStock('${insight.symbol}')">
+                                Re-analyze
+                            </a>
+                        </div>
+                    `;
+                }).join('');
+
+                container.innerHTML = `<div class="recent-insights">${insightsHTML}</div>`;
+            }
+
+            getTimeAgo(date) {
+                const now = new Date();
+                const diffInMinutes = Math.floor((now - date) / (1000 * 60));
+                
+                if (diffInMinutes < 1) return 'Just now';
+                if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
+                
+                const diffInHours = Math.floor(diffInMinutes / 60);
+                if (diffInHours < 24) return `${diffInHours}h ago`;
+                
+                const diffInDays = Math.floor(diffInHours / 24);
+                return `${diffInDays}d ago`;
+            }
+        }
+
+        // Global functions for compatibility
+        function analyzeStock(symbol) {
+            document.getElementById('stock-symbol').value = symbol;
+            window.aiInsightsManager.performAnalysis();
+        }
+
+        function performAnalysis() {
+            window.aiInsightsManager.performAnalysis();
+        }
+
+        // Initialize AI Insights Manager when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            window.aiInsightsManager = new AIInsightsManager();
+        });
+    </script>
+</body>
+</html>

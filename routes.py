@@ -205,6 +205,19 @@ def portfolio():
         logger.error(f"Error loading portfolio page: {e}")
         return jsonify({'error': 'Portfolio page loading error'}), 500
 
+@main_bp.route('/ai-insights')
+def ai_insights():
+    """AI Insights page"""
+    try:
+        response = make_response(render_template('ai_insights_clean.html'))
+        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+        response.headers['Pragma'] = 'no-cache'
+        response.headers['Expires'] = '0'
+        return response
+    except Exception as e:
+        logger.error(f"Error loading AI insights page: {e}")
+        return jsonify({'error': 'AI insights page loading error'}), 500
+
 @main_bp.route('/backtest')
 def backtest():
     """Portfolio Backtesting - Premium Feature"""

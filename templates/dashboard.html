@@ -281,6 +281,8 @@
             <ul class="nav-links">
                 <li><a href="/dashboard">Dashboard</a></li>
                 <li><a href="/search">Stock Analysis</a></li>
+                <li><a href="/portfolio">Portfolio</a></li>
+                <li><a href="/ai-insights">AI Insights</a></li>
                 <li><a href="#backtest">Backtest</a></li>
             </ul>
         </div>
@@ -321,18 +323,16 @@
             </div>
 
             <!-- AI Insights -->
-            <div class="dashboard-card">
+            <div class="dashboard-card clickable-card" onclick="window.location.href='/ai-insights'" style="cursor: pointer;">
                 <div class="card-header">
                     <div class="card-icon insights-icon">
                         <i class="fas fa-brain"></i>
                     </div>
                     <h3 class="card-title">AI Insights</h3>
                     <button class="tool-launch-btn" 
-                            data-tool="ai_insights" 
-                            data-endpoint="/tools/ai/insights"
-                            onclick="window.toolFeedback?.launchTool(this, {symbol: 'AAPL'})"
-                            title="Get AI insights for AAPL">
-                        <i class="fas fa-play"></i>
+                            onclick="event.stopPropagation(); window.location.href='/ai-insights'"
+                            title="Open AI Insights page">
+                        <i class="fas fa-external-link-alt"></i>
                     </button>
                 </div>
                 <div class="card-content">
@@ -343,6 +343,9 @@
                     <p style="margin-top: 1rem; font-style: italic;">
                         "Tech sector showing strong momentum. Consider increasing allocation to growth stocks."
                     </p>
+                    <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #e5e5ea; text-align: center;">
+                        <small style="color: #86868b;">Click to access comprehensive AI insights</small>
+                    </div>
                 </div>
             </div>
 
