@@ -283,6 +283,7 @@
                 <li><a href="/search">Stock Analysis</a></li>
                 <li><a href="/portfolio">Portfolio</a></li>
                 <li><a href="/ai-insights">AI Insights</a></li>
+                <li><a href="/market-insights">Market Insights</a></li>
                 <li><a href="#backtest">Backtest</a></li>
             </ul>
         </div>
@@ -350,12 +351,17 @@
             </div>
 
             <!-- Market Highlights -->
-            <div class="dashboard-card">
+            <div class="dashboard-card clickable-card" onclick="window.location.href='/market-insights'" style="cursor: pointer;">
                 <div class="card-header">
                     <div class="card-icon market-icon">
                         <i class="fas fa-globe"></i>
                     </div>
                     <h3 class="card-title">Market Highlights</h3>
+                    <button class="tool-launch-btn" 
+                            onclick="event.stopPropagation(); window.location.href='/market-insights'"
+                            title="View detailed market insights">
+                        <i class="fas fa-external-link-alt"></i>
+                    </button>
                 </div>
                 <div class="card-content">
                     <p><strong>S&P 500:</strong> <span class="metric-change">+1.2%</span></p>
@@ -365,6 +371,9 @@
                     <p style="margin-top: 1rem;">
                         <strong>Top Movers:</strong> NVDA (+8.2%), TSLA (+5.1%)
                     </p>
+                    <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #e5e5ea; text-align: center;">
+                        <small style="color: #86868b;">Click for comprehensive market analysis</small>
+                    </div>
                 </div>
             </div>
         </div>

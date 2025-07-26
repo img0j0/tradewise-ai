@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Market Insights - TradeWise AI</title>
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f5f5f7;
+            color: #1d1d1f;
+        }
+
+        /* Navigation Bar - Exact match to dashboard */
+        .navbar {
+            background-color: #1d3557;
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            color: white;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .nav-links a:hover {
+            opacity: 0.8;
+        }
+
+        .nav-links a.active {
+            border-bottom: 2px solid white;
+            padding-bottom: 0.25rem;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .upgrade-btn {
+            background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+
+        .upgrade-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        /* Market Insights Container */
+        .insights-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .insights-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .insights-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: #1d3557;
+            font-weight: 700;
+        }
+
+        .insights-header p {
+            font-size: 1.2rem;
+            color: #6c6c70;
+        }
+
+        /* Market Insights Grid - 3 Cards Layout like Dashboard */
+        .insights-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        @media (max-width: 768px) {
+            .insights-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Market Insights Cards - Apple Style like Dashboard */
+        .insights-card {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .insights-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+            border-color: #007AFF;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-icon {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.25rem;
+        }
+
+        .market-icon {
+            background: linear-gradient(135deg, #007AFF, #5856D6);
+        }
+
+        .sectors-icon {
+            background: linear-gradient(135deg, #34C759, #30B15A);
+        }
+
+        .trends-icon {
+            background: linear-gradient(135deg, #FF9500, #FF8E00);
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1d1d1f;
+            margin: 0;
+        }
+
+        .card-subtitle {
+            font-size: 0.875rem;
+            color: #8e8e93;
+            margin: 0;
+        }
+
+        /* Market Data Display */
+        .market-metric {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .market-metric:last-child {
+            border-bottom: none;
+        }
+
+        .metric-name {
+            font-weight: 600;
+            color: #1d1d1f;
+        }
+
+        .metric-value {
+            font-weight: 600;
+            color: #34c759;
+        }
+
+        .metric-value.negative {
+            color: #ff3b30;
+        }
+
+        /* Sector Performance */
+        .sector-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid transparent;
+        }
+
+        .sector-item.positive {
+            border-left-color: #34c759;
+        }
+
+        .sector-item.negative {
+            border-left-color: #ff3b30;
+        }
+
+        .sector-name {
+            font-weight: 600;
+            color: #1d1d1f;
+        }
+
+        .sector-change {
+            font-weight: 600;
+            color: #34c759;
+        }
+
+        .sector-change.negative {
+            color: #ff3b30;
+        }
+
+        /* Top Movers */
+        .mover-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .mover-item:last-child {
+            border-bottom: none;
+        }
+
+        .mover-symbol {
+            font-weight: bold;
+            color: #1d1d1f;
+        }
+
+        .mover-price {
+            text-align: right;
+        }
+
+        .mover-change {
+            font-weight: 600;
+            color: #34c759;
+        }
+
+        .mover-change.negative {
+            color: #ff3b30;
+        }
+
+        /* Loading States */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            color: #8e8e93;
+        }
+
+        .loading i {
+            animation: spin 1s linear infinite;
+            margin-right: 0.5rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Refresh Button */
+        .refresh-btn {
+            background: #007AFF;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-left: auto;
+        }
+
+        .refresh-btn:hover {
+            background: #0056CC;
+        }
+
+        .refresh-btn:disabled {
+            background: #8e8e93;
+            cursor: not-allowed;
+        }
+
+        /* News Items */
+        .news-item {
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #007AFF;
+        }
+
+        .news-title {
+            font-weight: 600;
+            color: #1d1d1f;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .news-time {
+            font-size: 0.75rem;
+            color: #8e8e93;
+        }
+
+        /* Market Status */
+        .market-status {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .market-status.open {
+            background: #34c759;
+            color: white;
+        }
+
+        .market-status.closed {
+            background: #ff3b30;
+            color: white;
+        }
+
+        .market-status.pre-market {
+            background: #ff9500;
+            color: white;
+        }
+
+        /* Update Time */
+        .update-time {
+            text-align: center;
+            color: #8e8e93;
+            font-size: 0.875rem;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-left">
+            <a href="/" class="logo">
+                <i class="fas fa-chart-line"></i>
+                TradeWise AI
+            </a>
+            <ul class="nav-links">
+                <li><a href="/">Dashboard</a></li>
+                <li><a href="/search">Search</a></li>
+                <li><a href="/portfolio">Portfolio</a></li>
+                <li><a href="/ai-insights">AI Insights</a></li>
+                <li><a href="/market-insights" class="active">Market Insights</a></li>
+                <li><a href="/premium">Premium</a></li>
+            </ul>
+        </div>
+        <div class="nav-right">
+            <a href="/premium" class="upgrade-btn">Upgrade</a>
+        </div>
+    </nav>
+
+    <!-- Market Insights Container -->
+    <div class="insights-container">
+        <div class="insights-header">
+            <h1>Market Insights</h1>
+            <p>Comprehensive market data and sector analysis</p>
+        </div>
+
+        <!-- Market Insights Grid -->
+        <div class="insights-grid">
+            <!-- Market Overview Card -->
+            <div class="insights-card">
+                <div class="card-header">
+                    <div class="card-icon market-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div>
+                        <h3 class="card-title">Market Overview</h3>
+                        <p class="card-subtitle">Major indices performance</p>
+                    </div>
+                    <button class="refresh-btn" onclick="refreshMarketData()">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                </div>
+                <div class="market-status open">Market Open</div>
+                <div id="market-overview-container">
+                    <div class="loading">
+                        <i class="fas fa-spinner"></i>
+                        Loading market data...
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sector Performance Card -->
+            <div class="insights-card">
+                <div class="card-header">
+                    <div class="card-icon sectors-icon">
+                        <i class="fas fa-industry"></i>
+                    </div>
+                    <div>
+                        <h3 class="card-title">Sector Performance</h3>
+                        <p class="card-subtitle">Today's sector leaders</p>
+                    </div>
+                </div>
+                <div id="sector-performance-container">
+                    <div class="loading">
+                        <i class="fas fa-spinner"></i>
+                        Loading sector data...
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top Movers Card -->
+            <div class="insights-card">
+                <div class="card-header">
+                    <div class="card-icon trends-icon">
+                        <i class="fas fa-trending-up"></i>
+                    </div>
+                    <div>
+                        <h3 class="card-title">Top Movers</h3>
+                        <p class="card-subtitle">Biggest gainers and losers</p>
+                    </div>
+                </div>
+                <div id="top-movers-container">
+                    <div class="loading">
+                        <i class="fas fa-spinner"></i>
+                        Loading movers data...
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="update-time" id="last-update">
+            Last updated: Loading...
+        </div>
+    </div>
+
+    <script>
+        // Market Insights Management JavaScript
+        class MarketInsightsManager {
+            constructor() {
+                this.loadMarketData();
+                this.setupAutoRefresh();
+            }
+
+            async loadMarketData() {
+                try {
+                    await Promise.all([
+                        this.loadMarketOverview(),
+                        this.loadSectorPerformance(),
+                        this.loadTopMovers()
+                    ]);
+                    this.updateLastRefreshTime();
+                } catch (error) {
+                    console.error('Error loading market data:', error);
+                    this.showError('Failed to load market data');
+                }
+            }
+
+            async loadMarketOverview() {
+                try {
+                    const response = await fetch('/api/market/overview');
+                    if (response.ok) {
+                        const data = await response.json();
+                        this.displayMarketOverview(data);
+                    } else {
+                        this.displayDemoMarketOverview();
+                    }
+                } catch (error) {
+                    this.displayDemoMarketOverview();
+                }
+            }
+
+            displayMarketOverview(data) {
+                const container = document.getElementById('market-overview-container');
+                const markets = data.markets || this.getDemoMarketData();
+                
+                const marketHTML = markets.map(market => `
+                    <div class="market-metric">
+                        <span class="metric-name">${market.name}</span>
+                        <div>
+                            <span class="metric-value ${market.change >= 0 ? '' : 'negative'}">
+                                ${market.change >= 0 ? '+' : ''}${market.change}%
+                            </span>
+                        </div>
+                    </div>
+                `).join('');
+
+                container.innerHTML = marketHTML;
+            }
+
+            displayDemoMarketOverview() {
+                const demoData = { markets: this.getDemoMarketData() };
+                this.displayMarketOverview(demoData);
+            }
+
+            getDemoMarketData() {
+                return [
+                    { name: 'S&P 500', change: 1.2 },
+                    { name: 'NASDAQ', change: 2.1 },
+                    { name: 'DOW', change: 0.8 },
+                    { name: 'VIX', change: -5.2 },
+                    { name: 'Russell 2000', change: 1.5 },
+                    { name: '10Y Treasury', change: -0.3 }
+                ];
+            }
+
+            async loadSectorPerformance() {
+                try {
+                    const response = await fetch('/api/market/sectors');
+                    if (response.ok) {
+                        const data = await response.json();
+                        this.displaySectorPerformance(data);
+                    } else {
+                        this.displayDemoSectorPerformance();
+                    }
+                } catch (error) {
+                    this.displayDemoSectorPerformance();
+                }
+            }
+
+            displaySectorPerformance(data) {
+                const container = document.getElementById('sector-performance-container');
+                const sectors = data.sectors || this.getDemoSectorData();
+                
+                const sectorHTML = sectors.map(sector => `
+                    <div class="sector-item ${sector.change >= 0 ? 'positive' : 'negative'}">
+                        <span class="sector-name">${sector.name}</span>
+                        <span class="sector-change ${sector.change >= 0 ? '' : 'negative'}">
+                            ${sector.change >= 0 ? '+' : ''}${sector.change}%
+                        </span>
+                    </div>
+                `).join('');
+
+                container.innerHTML = sectorHTML;
+            }
+
+            displayDemoSectorPerformance() {
+                const demoData = { sectors: this.getDemoSectorData() };
+                this.displaySectorPerformance(demoData);
+            }
+
+            getDemoSectorData() {
+                return [
+                    { name: 'Technology', change: 2.8 },
+                    { name: 'Healthcare', change: 1.5 },
+                    { name: 'Financial', change: 0.9 },
+                    { name: 'Consumer Discretionary', change: -0.5 },
+                    { name: 'Energy', change: -1.2 },
+                    { name: 'Utilities', change: 0.3 }
+                ];
+            }
+
+            async loadTopMovers() {
+                try {
+                    const response = await fetch('/api/market/movers');
+                    if (response.ok) {
+                        const data = await response.json();
+                        this.displayTopMovers(data);
+                    } else {
+                        this.displayDemoTopMovers();
+                    }
+                } catch (error) {
+                    this.displayDemoTopMovers();
+                }
+            }
+
+            displayTopMovers(data) {
+                const container = document.getElementById('top-movers-container');
+                const movers = data.movers || this.getDemoMoversData();
+                
+                const moversHTML = movers.map(mover => `
+                    <div class="mover-item">
+                        <div>
+                            <div class="mover-symbol">${mover.symbol}</div>
+                            <div style="font-size: 0.875rem; color: #8e8e93;">${mover.name}</div>
+                        </div>
+                        <div class="mover-price">
+                            <div>$${mover.price}</div>
+                            <div class="mover-change ${mover.change >= 0 ? '' : 'negative'}">
+                                ${mover.change >= 0 ? '+' : ''}${mover.change}%
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+
+                container.innerHTML = moversHTML;
+            }
+
+            displayDemoTopMovers() {
+                const demoData = { movers: this.getDemoMoversData() };
+                this.displayTopMovers(demoData);
+            }
+
+            getDemoMoversData() {
+                return [
+                    { symbol: 'NVDA', name: 'NVIDIA Corp', price: '875.50', change: 8.2 },
+                    { symbol: 'TSLA', name: 'Tesla Inc', price: '245.30', change: 5.1 },
+                    { symbol: 'AMD', name: 'Advanced Micro Devices', price: '158.75', change: 3.8 },
+                    { symbol: 'META', name: 'Meta Platforms', price: '485.20', change: -2.1 },
+                    { symbol: 'NFLX', name: 'Netflix Inc', price: '682.50', change: -3.5 },
+                    { symbol: 'INTC', name: 'Intel Corp', price: '42.85', change: -4.2 }
+                ];
+            }
+
+            async refreshMarketData() {
+                const refreshBtn = document.querySelector('.refresh-btn');
+                refreshBtn.disabled = true;
+                refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Refreshing...';
+
+                await this.loadMarketData();
+
+                refreshBtn.disabled = false;
+                refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh';
+            }
+
+            updateLastRefreshTime() {
+                const now = new Date();
+                const timeString = now.toLocaleTimeString();
+                document.getElementById('last-update').textContent = `Last updated: ${timeString}`;
+            }
+
+            setupAutoRefresh() {
+                // Auto-refresh every 5 minutes
+                setInterval(() => {
+                    this.loadMarketData();
+                }, 5 * 60 * 1000);
+            }
+
+            showError(message) {
+                const containers = [
+                    'market-overview-container',
+                    'sector-performance-container', 
+                    'top-movers-container'
+                ];
+                
+                containers.forEach(containerId => {
+                    const container = document.getElementById(containerId);
+                    if (container) {
+                        container.innerHTML = `
+                            <div style="text-align: center; color: #ff3b30; padding: 2rem;">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <p>${message}</p>
+                            </div>
+                        `;
+                    }
+                });
+            }
+        }
+
+        // Global functions
+        function refreshMarketData() {
+            if (window.marketInsightsManager) {
+                window.marketInsightsManager.refreshMarketData();
+            }
+        }
+
+        // Initialize Market Insights Manager when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            window.marketInsightsManager = new MarketInsightsManager();
+        });
+    </script>
+</body>
+</html>

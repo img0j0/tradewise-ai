@@ -218,6 +218,19 @@ def ai_insights():
         logger.error(f"Error loading AI insights page: {e}")
         return jsonify({'error': 'AI insights page loading error'}), 500
 
+@main_bp.route('/market-insights')
+def market_insights():
+    """Market Insights page"""
+    try:
+        response = make_response(render_template('market_insights_clean.html'))
+        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+        response.headers['Pragma'] = 'no-cache'
+        response.headers['Expires'] = '0'
+        return response
+    except Exception as e:
+        logger.error(f"Error loading market insights page: {e}")
+        return jsonify({'error': 'Market insights page loading error'}), 500
+
 @main_bp.route('/backtest')
 def backtest():
     """Portfolio Backtesting - Premium Feature"""
