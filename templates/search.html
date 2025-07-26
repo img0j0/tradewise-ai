@@ -511,7 +511,7 @@
             
             try {
                 console.log('Sending analysis request for:', mappedSymbol);
-                const response = await fetch('/api/stock-analysis', {
+                const response = await fetch('/tools/analysis/stocks', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -528,8 +528,9 @@
                 const data = await response.json();
                 console.log('Analysis data received:', data);
                 
-                if (data.success) {
-                    displayResults(data);
+                if (data.success && data.task_id) {
+                    // Show tool feedback and poll for results
+                    showTaskProgress(data.task_id, mappedSymbol);
                 } else {
                     displayError(data.error || 'Analysis failed');
                 }
@@ -540,6 +541,64 @@
             } finally {
                 document.getElementById('loadingState').style.display = 'none';
             }
+        }
+
+        async function showTaskProgress(taskId, symbol) {
+            let attempts = 0;
+            const maxAttempts = 120; // 5 minutes
+            const pollInterval = 2500; // 2.5 seconds
+            
+            const pollForResults = async () => {
+                try {
+                    attempts++;
+                    const response = await fetch(`/tools/task-status/${taskId}`);
+                    const data = await response.json();
+                    
+                    if (data.status === 'completed' && data.results) {
+                        // Convert tool results to expected format
+                        const convertedResults = {
+                            success: true,
+                            analysis: data.results.analysis || data.results,
+                            stock_info: data.results.stock_info || {
+                                symbol: symbol,
+                                current_price: data.results.current_price || 0,
+                                change: data.results.change || 0,
+                                change_percent: data.results.change_percent || 0,
+                                company_name: data.results.company_name || symbol
+                            }
+                        };
+                        displayResults(convertedResults);
+                        return;
+                    } else if (data.status === 'failed') {
+                        displayError(data.error || 'Analysis failed');
+                        return;
+                    } else if (attempts >= maxAttempts) {
+                        displayError('Analysis timed out. Please try again.');
+                        return;
+                    }
+                    
+                    // Update loading message with progress
+                    const loadingDiv = document.getElementById('loadingState');
+                    if (loadingDiv && data.progress) {
+                        loadingDiv.innerHTML = `
+                            <i class="fas fa-spinner fa-spin"></i>
+                            Analyzing ${symbol}... ${data.progress}% complete
+                        `;
+                    }
+                    
+                    // Continue polling
+                    setTimeout(pollForResults, pollInterval);
+                } catch (error) {
+                    console.error('Error polling task status:', error);
+                    if (attempts >= maxAttempts) {
+                        displayError('Analysis failed. Please try again.');
+                    } else {
+                        setTimeout(pollForResults, pollInterval);
+                    }
+                }
+            };
+            
+            pollForResults();
         }
         
         function displayResults(data) {

@@ -179,7 +179,7 @@ class SmartEventDetector:
             # Get earnings calendar
             calendar = ticker.calendar
             
-            if calendar is not None and not calendar.empty:
+            if calendar is not None and hasattr(calendar, 'empty') and not calendar.empty:
                 next_earnings = calendar.index[0] if len(calendar.index) > 0 else None
                 
                 if next_earnings:
