@@ -196,6 +196,126 @@
             color: #ff3b30;
         }
 
+        /* Enhanced Analysis with Historical Chart */
+        .historical-chart-container {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+        }
+        
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .chart-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1d1d1f;
+        }
+        
+        .chart-timeframe {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .timeframe-btn {
+            padding: 0.375rem 0.75rem;
+            border: 1px solid #e5e5ea;
+            background: white;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #6c6c70;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .timeframe-btn.active {
+            background: #007aff;
+            color: white;
+            border-color: #007aff;
+        }
+        
+        /* Summary Cards Grid */
+        .summary-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .summary-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+            border-left: 4px solid;
+        }
+        
+        .summary-card.profitability { border-left-color: #34c759; }
+        .summary-card.risk { border-left-color: #ff9500; }
+        .summary-card.sector { border-left-color: #007aff; }
+        
+        .card-metric-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        
+        .card-metric-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            color: white;
+        }
+        
+        .card-metric-icon.profitability { background: linear-gradient(135deg, #34c759, #30d158); }
+        .card-metric-icon.risk { background: linear-gradient(135deg, #ff9500, #ffad33); }
+        .card-metric-icon.sector { background: linear-gradient(135deg, #007aff, #4da6ff); }
+        
+        .card-metric-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #1d1d1f;
+        }
+        
+        .card-metric-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        
+        .card-metric-description {
+            font-size: 0.875rem;
+            color: #6c6c70;
+            line-height: 1.4;
+        }
+        
+        .metric-score {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+        
+        .metric-score.excellent { background: #e8f5e8; color: #34c759; }
+        .metric-score.good { background: #e8f4ff; color: #007aff; }
+        .metric-score.moderate { background: #fff2e8; color: #ff9500; }
+        
         /* Analysis Grid */
         .analysis-grid {
             display: grid;
@@ -390,6 +510,75 @@
 
         <!-- Results Container -->
         <div id="resultsContainer" style="display: none;"></div>
+        
+        <!-- Enhanced Results Template (Hidden) -->
+        <div id="enhancedResultsTemplate" style="display: none;">
+            <!-- Historical Price Chart -->
+            <div class="historical-chart-container">
+                <div class="chart-header">
+                    <h3 class="chart-title">30-Day Price History</h3>
+                    <div class="chart-timeframe">
+                        <button class="timeframe-btn active">30D</button>
+                        <button class="timeframe-btn">90D</button>
+                        <button class="timeframe-btn">1Y</button>
+                    </div>
+                </div>
+                <div class="chart-content">
+                    <canvas id="historicalChart" width="600" height="300"></canvas>
+                </div>
+            </div>
+            
+            <!-- Summary Cards -->
+            <div class="summary-cards-grid">
+                <div class="summary-card profitability">
+                    <div class="card-metric-header">
+                        <div class="card-metric-icon profitability">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div>
+                            <h4 class="card-metric-title">Profitability</h4>
+                        </div>
+                    </div>
+                    <div class="card-metric-value">A+</div>
+                    <div class="card-metric-description">
+                        Strong revenue growth and expanding margins indicate excellent profitability outlook.
+                        <span class="metric-score excellent">Excellent</span>
+                    </div>
+                </div>
+                
+                <div class="summary-card risk">
+                    <div class="card-metric-header">
+                        <div class="card-metric-icon risk">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <div>
+                            <h4 class="card-metric-title">Risk Assessment</h4>
+                        </div>
+                    </div>
+                    <div class="card-metric-value">Medium</div>
+                    <div class="card-metric-description">
+                        Moderate volatility with well-diversified business model and strong fundamentals.
+                        <span class="metric-score good">Good</span>
+                    </div>
+                </div>
+                
+                <div class="summary-card sector">
+                    <div class="card-metric-header">
+                        <div class="card-metric-icon sector">
+                            <i class="fas fa-industry"></i>
+                        </div>
+                        <div>
+                            <h4 class="card-metric-title">Sector Ranking</h4>
+                        </div>
+                    </div>
+                    <div class="card-metric-value">#3</div>
+                    <div class="card-metric-description">
+                        Top 10% performance within sector peers, consistently outperforming benchmarks.
+                        <span class="metric-score excellent">Top Tier</span>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>

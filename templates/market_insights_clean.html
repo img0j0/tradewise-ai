@@ -246,7 +246,48 @@
             color: #ff3b30;
         }
 
-        /* Top Movers */
+        /* Enhanced Top Movers with Charts */
+        .movers-container {
+            position: relative;
+        }
+        
+        .movers-chart-container {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            height: 200px;
+            position: relative;
+        }
+        
+        .movers-table-container {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .movers-table {
+            width: 100%;
+            min-width: 600px;
+            border-collapse: collapse;
+        }
+        
+        .movers-table th {
+            background: #f8f9fa;
+            padding: 0.75rem;
+            text-align: left;
+            font-weight: 600;
+            color: #1d1d1f;
+            border-bottom: 2px solid #e5e5ea;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+        
+        .movers-table td {
+            padding: 0.75rem;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
         .mover-item {
             display: flex;
             justify-content: space-between;
@@ -257,6 +298,43 @@
 
         .mover-item:last-child {
             border-bottom: none;
+        }
+        
+        /* Mobile Scrollable Tables */
+        @media (max-width: 768px) {
+            .movers-table-container {
+                margin: 0 -1rem;
+                padding: 0 1rem;
+                border-radius: 0;
+            }
+            
+            .movers-table {
+                min-width: 500px;
+            }
+            
+            .movers-table th,
+            .movers-table td {
+                padding: 0.5rem;
+                font-size: 0.875rem;
+            }
+            
+            .mobile-scroll-hint {
+                text-align: center;
+                color: #8e8e93;
+                font-size: 0.75rem;
+                margin-top: 0.5rem;
+                display: block;
+            }
+            
+            .mobile-scroll-hint::before {
+                content: "← Scroll horizontally for more data →";
+            }
+        }
+        
+        @media (min-width: 769px) {
+            .mobile-scroll-hint {
+                display: none;
+            }
         }
 
         .mover-symbol {
@@ -453,7 +531,7 @@
                 </div>
             </div>
 
-            <!-- Top Movers Card -->
+            <!-- Top Movers Card with Enhanced Charts -->
             <div class="insights-card">
                 <div class="card-header">
                     <div class="card-icon trends-icon">
@@ -461,13 +539,24 @@
                     </div>
                     <div>
                         <h3 class="card-title">Top Movers</h3>
-                        <p class="card-subtitle">Biggest gainers and losers</p>
+                        <p class="card-subtitle">Biggest gainers and losers with chart</p>
                     </div>
                 </div>
-                <div id="top-movers-container">
-                    <div class="loading">
-                        <i class="fas fa-spinner"></i>
-                        Loading movers data...
+                <div class="movers-container">
+                    <!-- Movers Chart -->
+                    <div class="movers-chart-container">
+                        <canvas id="moversChart" width="400" height="150"></canvas>
+                    </div>
+                    
+                    <!-- Scrollable Table for Mobile -->
+                    <div class="movers-table-container">
+                        <div id="top-movers-container">
+                            <div class="loading">
+                                <i class="fas fa-spinner"></i>
+                                Loading movers data...
+                            </div>
+                        </div>
+                        <div class="mobile-scroll-hint"></div>
                     </div>
                 </div>
             </div>
