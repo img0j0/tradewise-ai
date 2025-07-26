@@ -168,9 +168,9 @@ def index():
 
 @main_bp.route('/dashboard')
 def dashboard():
-    """Clean Dashboard - Main Entry Point"""
+    """Enhanced Dashboard with Tool Integration"""
     try:
-        response = make_response(render_template('dashboard_clean.html'))
+        response = make_response(render_template('dashboard.html'))
         response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
         response.headers['Pragma'] = 'no-cache'
         response.headers['Expires'] = '0'

@@ -1,0 +1,295 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - TradeWise AI{% endblock %}
+
+{% block sidebar_dashboard %}active{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <!-- Dashboard Header -->
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">Welcome back to TradeWise AI</h1>
+        <p class="text-gray-600">Your intelligent stock analysis platform</p>
+    </div>
+
+    <!-- Dashboard Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        <!-- Portfolio Overview Card -->
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-chart-pie text-white text-lg"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900">Portfolio Overview</h3>
+                </div>
+            </div>
+            
+            <div class="space-y-3">
+                <div>
+                    <div class="text-2xl font-bold text-gray-900" id="portfolioValue">$125,420</div>
+                    <div class="text-sm text-green-600 font-medium" id="portfolioChange">+$2,847 (+2.34%) today</div>
+                </div>
+                
+                <div class="h-32 mt-4">
+                    <canvas id="portfolioChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Insights Card -->
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 bg-gradient-to-r from-purple-500 to-purple-600 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-brain text-white text-lg"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900">AI Insights</h3>
+                </div>
+            </div>
+            
+            <div class="space-y-3">
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-600">Market Sentiment</span>
+                    <span class="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">Bullish</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-600">Top AI Pick</span>
+                    <span class="font-medium text-gray-900">NVDA (Buy)</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-600">Risk Level</span>
+                    <span class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded-full">Moderate</span>
+                </div>
+                
+                <div class="mt-4 p-3 bg-blue-50 rounded-lg">
+                    <p class="text-xs text-blue-800 italic">
+                        "Tech sector showing strong momentum. Consider increasing allocation to growth stocks."
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Market Highlights Card -->
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 bg-gradient-to-r from-green-500 to-green-600 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-globe text-white text-lg"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900">Market Highlights</h3>
+                </div>
+            </div>
+            
+            <div class="space-y-3">
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-600">S&P 500</span>
+                    <span class="text-green-600 font-medium">+1.2%</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-600">NASDAQ</span>
+                    <span class="text-green-600 font-medium">+2.1%</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-600">DOW</span>
+                    <span class="text-green-600 font-medium">+0.8%</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-600">VIX</span>
+                    <span class="text-red-600 font-medium">-5.2%</span>
+                </div>
+                
+                <div class="mt-4 pt-3 border-t border-gray-200">
+                    <div class="text-xs text-gray-600 mb-1">Top Movers</div>
+                    <div class="text-sm font-medium text-gray-900">NVDA (+8.2%), TSLA (+5.1%)</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions Section -->
+    <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
+        <h2 class="text-xl font-semibold text-gray-900 mb-6">Quick Actions</h2>
+        
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            <!-- Stock Analysis Tool -->
+            <button data-tool="stock_analysis" class="tool-action-btn group">
+                <div class="tool-icon bg-blue-100 text-blue-600 group-hover:bg-blue-600 group-hover:text-white">
+                    <i class="fas fa-search text-lg"></i>
+                </div>
+                <span class="tool-label">Analyze Stock</span>
+            </button>
+
+            <!-- Backtest Tool -->
+            <button data-tool="backtest" class="tool-action-btn group">
+                <div class="tool-icon bg-purple-100 text-purple-600 group-hover:bg-purple-600 group-hover:text-white">
+                    <i class="fas fa-chart-line text-lg"></i>
+                </div>
+                <span class="tool-label">Run Backtest</span>
+                <span class="premium-badge">PRO</span>
+            </button>
+
+            <!-- AI Insights Tool -->
+            <button data-tool="ai_insights" class="tool-action-btn group">
+                <div class="tool-icon bg-green-100 text-green-600 group-hover:bg-green-600 group-hover:text-white">
+                    <i class="fas fa-brain text-lg"></i>
+                </div>
+                <span class="tool-label">AI Insights</span>
+            </button>
+
+            <!-- Peer Comparison Tool -->
+            <button data-tool="peer_comparison" class="tool-action-btn group">
+                <div class="tool-icon bg-orange-100 text-orange-600 group-hover:bg-orange-600 group-hover:text-white">
+                    <i class="fas fa-balance-scale text-lg"></i>
+                </div>
+                <span class="tool-label">Peer Analysis</span>
+                <span class="premium-badge">PRO</span>
+            </button>
+
+            <!-- Market Scanner Tool -->
+            <button data-tool="market_scanner" class="tool-action-btn group">
+                <div class="tool-icon bg-red-100 text-red-600 group-hover:bg-red-600 group-hover:text-white">
+                    <i class="fas fa-radar text-lg"></i>
+                </div>
+                <span class="tool-label">Market Scanner</span>
+                <span class="premium-badge">PRO</span>
+            </button>
+
+            <!-- Smart Alerts Tool -->
+            <button data-tool="smart_alerts" class="tool-action-btn group">
+                <div class="tool-icon bg-yellow-100 text-yellow-600 group-hover:bg-yellow-600 group-hover:text-white">
+                    <i class="fas fa-bell text-lg"></i>
+                </div>
+                <span class="tool-label">Smart Alerts</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<style>
+.tool-action-btn {
+    @apply relative flex flex-col items-center p-4 bg-white border border-gray-200 rounded-xl hover:border-gray-300 hover:shadow-sm transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
+}
+
+.tool-icon {
+    @apply w-12 h-12 rounded-xl flex items-center justify-center mb-2 transition-all duration-200;
+}
+
+.tool-label {
+    @apply text-sm font-medium text-gray-700 text-center;
+}
+
+.premium-badge {
+    @apply absolute top-2 right-2 px-2 py-1 bg-gradient-to-r from-yellow-400 to-yellow-500 text-white text-xs font-bold rounded-full;
+}
+
+/* Loading state styles */
+.tool-action-btn.loading {
+    @apply opacity-70 cursor-not-allowed;
+}
+
+.tool-action-btn.loading .tool-icon {
+    @apply animate-pulse;
+}
+
+/* Success state styles */
+.tool-action-btn.success .tool-icon {
+    @apply bg-green-600 text-white;
+}
+
+/* Error state styles */
+.tool-action-btn.error .tool-icon {
+    @apply bg-red-600 text-white;
+}
+
+/* Dark mode support */
+.dark .tool-action-btn {
+    @apply bg-gray-800 border-gray-700 hover:border-gray-600;
+}
+
+.dark .tool-label {
+    @apply text-gray-300;
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Portfolio Chart
+    const portfolioCtx = document.getElementById('portfolioChart');
+    if (portfolioCtx && typeof Chart !== 'undefined') {
+        new Chart(portfolioCtx, {
+            type: 'line',
+            data: {
+                labels: ['9AM', '10AM', '11AM', '12PM', '1PM', '2PM', '3PM', '4PM'],
+                datasets: [{
+                    label: 'Portfolio Value',
+                    data: [122573, 123420, 124156, 123890, 124720, 125420, 125180, 125420],
+                    borderColor: '#3B82F6',
+                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 0,
+                    pointHoverRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    x: { 
+                        display: false,
+                        grid: { display: false }
+                    },
+                    y: { 
+                        display: false,
+                        grid: { display: false }
+                    }
+                },
+                elements: {
+                    line: { borderWidth: 2 }
+                }
+            }
+        });
+    }
+
+    // Load real dashboard data
+    loadDashboardData();
+});
+
+async function loadDashboardData() {
+    try {
+        const response = await fetch('/api/portfolio/summary');
+        if (response.ok) {
+            const data = await response.json();
+            
+            // Update portfolio values
+            if (data.totalValue) {
+                document.getElementById('portfolioValue').textContent = 
+                    new Intl.NumberFormat('en-US', { 
+                        style: 'currency', 
+                        currency: 'USD' 
+                    }).format(data.totalValue);
+            }
+            
+            if (data.change && data.changePercent) {
+                const changeEl = document.getElementById('portfolioChange');
+                const isPositive = data.change >= 0;
+                changeEl.textContent = `${isPositive ? '+' : ''}$${Math.abs(data.change).toLocaleString()} (${isPositive ? '+' : ''}${data.changePercent.toFixed(2)}%) today`;
+                changeEl.className = `text-sm font-medium ${isPositive ? 'text-green-600' : 'text-red-600'}`;
+            }
+            
+            console.log('Dashboard data loaded:', data);
+        }
+    } catch (error) {
+        console.log('Using demo data for dashboard');
+    }
+}
+</script>
+{% endblock %}
