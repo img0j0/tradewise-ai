@@ -245,6 +245,19 @@ def alerts_page():
         return jsonify({'error': 'Alerts page loading error'}), 500
 
 @main_bp.route('/backtest')
+def backtest_page():
+    """Portfolio Backtest page"""
+    try:
+        response = make_response(render_template('backtest_clean.html'))
+        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+        response.headers['Pragma'] = 'no-cache'
+        response.headers['Expires'] = '0'
+        return response
+    except Exception as e:
+        logger.error(f"Error loading backtest page: {e}")
+        return jsonify({'error': 'Backtest page loading error'}), 500
+
+@main_bp.route('/backtest')
 def backtest():
     """Portfolio Backtesting - Premium Feature"""
     # For now, return a simple page that shows premium upsell
