@@ -78,13 +78,11 @@ services:
     plan: starter
     maxmemoryPolicy: allkeys-lru
     ipAllowList:
-      - source: tradewise-ai
-      - source: tradewise-worker
+      - source: 0.0.0.0/0   # Allow all IPs for now
 
 databases:
   # PostgreSQL Database
   - name: tradewise-db
     plan: starter
     ipAllowList:
-      - source: tradewise-ai
-      - source: tradewise-worker
+      - source: 0.0.0.0/0   # Allow all IPs for now
