@@ -369,7 +369,7 @@ class ToolFeedbackManager {
         });
         
         // Display results based on tool type
-        this.displayToolResults(result, toolName);
+        this.displayToolResults(result, toolName, button);
         
         // Add success indicator to button
         this.showButtonSuccess(button);
@@ -523,7 +523,9 @@ class ToolFeedbackManager {
                         </div>
                     </div>
                 `;
-                notification.insertAdjacentHTML('beforeend', progressHtml);
+                if (notification.querySelector('.notification-message')) {
+                    notification.querySelector('.notification-message').insertAdjacentHTML('afterend', progressHtml);
+                }
             } else if (!updates.showProgress && progressEl) {
                 progressEl.remove();
             }
@@ -556,26 +558,203 @@ class ToolFeedbackManager {
         }
     }
 
-    displayToolResults(result, toolName) {
-        // This will be implemented to show results in appropriate UI components
+    displayToolResults(result, toolName, button) {
         console.log('Tool results:', toolName, result);
         
-        // For now, show a basic results notification
-        if (result && typeof result === 'object') {
-            let resultMessage = 'Analysis complete';
-            
-            if (result.recommendation) {
-                resultMessage = `Recommendation: ${result.recommendation}`;
-            } else if (result.analysis && result.analysis.recommendation) {
-                resultMessage = `Recommendation: ${result.analysis.recommendation}`;
+        // Get the symbol from button data or result
+        const symbol = button?.dataset?.symbol || result.symbol || 'Unknown';
+        
+        if (toolName === 'ai_insights') {
+            this.showAIInsightsResults(symbol, result);
+        } else if (toolName === 'smart_alerts') {
+            this.showSmartAlertsResults(symbol, result);
+        } else {
+            // Fallback for other tools
+            this.showGenericResults(toolName, result);
+        }
+    }
+
+    showAIInsightsResults(symbol, result) {
+        const resultsModal = this.createResultsModal('AI Insights Results', symbol, result, 'insights');
+        document.body.appendChild(resultsModal);
+        resultsModal.style.display = 'flex';
+    }
+
+    showSmartAlertsResults(symbol, result) {
+        const resultsModal = this.createResultsModal('Smart Alerts Created', symbol, result, 'alerts');
+        document.body.appendChild(resultsModal);
+        resultsModal.style.display = 'flex';
+    }
+
+    showGenericResults(toolName, result) {
+        this.showNotification({
+            type: 'success',
+            title: 'Results Ready',
+            message: `${this.getToolDisplayName(toolName)} completed successfully`,
+            autoClose: 8000
+        });
+    }
+
+    createResultsModal(title, symbol, result, type) {
+        const modal = document.createElement('div');
+        modal.className = 'tool-modal results-modal';
+        modal.innerHTML = `
+            <div class="modal-content results-content">
+                <div class="modal-header">
+                    <h3>
+                        <i class="fas fa-${type === 'insights' ? 'chart-pie' : 'bell'}"></i> 
+                        ${title} - ${symbol.toUpperCase()}
+                    </h3>
+                    <button class="modal-close" onclick="this.closest('.tool-modal').remove()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    ${this.generateResultsContent(result, type, symbol)}
+                </div>
+                <div class="modal-footer">
+                    <button class="btn-secondary" onclick="this.closest('.tool-modal').remove()">Close</button>
+                    <button class="btn-primary" onclick="window.location.href='/search?symbol=${symbol}'">
+                        <i class="fas fa-search"></i> Detailed Analysis
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        // Close on background click
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.remove();
             }
+        });
+        
+        return modal;
+    }
+
+    generateResultsContent(result, type, symbol) {
+        if (type === 'insights') {
+            return this.generateInsightsContent(result, symbol);
+        } else if (type === 'alerts') {
+            return this.generateAlertsContent(result, symbol);
+        }
+    }
+
+    generateInsightsContent(result, symbol) {
+        const data = result.data || {};
+        const recommendations = result.recommendations || [];
+        const analysis = result.analysis || 'Analysis completed successfully';
+        
+        const recommendationColor = this.getRecommendationColor(data.recommendation);
+        const riskColor = this.getRiskColor(data.risk_level);
+        
+        return `
+            <div class="results-summary">
+                <div class="summary-grid">
+                    <div class="summary-card">
+                        <div class="summary-label">Recommendation</div>
+                        <div class="summary-value" style="color: ${recommendationColor}">
+                            <strong>${data.recommendation || 'N/A'}</strong>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-label">Confidence Score</div>
+                        <div class="summary-value">
+                            <strong>${data.confidence_score || 'N/A'}%</strong>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-label">Risk Level</div>
+                        <div class="summary-value" style="color: ${riskColor}">
+                            <strong>${data.risk_level || 'N/A'}</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
             
-            this.showNotification({
-                type: 'success',
-                title: 'Results Ready',
-                message: resultMessage,
-                autoClose: 8000
-            });
+            <div class="results-section">
+                <h4><i class="fas fa-brain"></i> AI Analysis</h4>
+                <p class="analysis-text">${analysis}</p>
+            </div>
+            
+            ${recommendations.length > 0 ? `
+            <div class="results-section">
+                <h4><i class="fas fa-lightbulb"></i> Key Recommendations</h4>
+                <ul class="recommendations-list">
+                    ${recommendations.map(rec => `<li>${rec}</li>`).join('')}
+                </ul>
+            </div>
+            ` : ''}
+            
+            <div class="results-footer">
+                <p class="disclaimer">
+                    <i class="fas fa-info-circle"></i>
+                    This analysis is for informational purposes only and should not be considered as financial advice.
+                </p>
+            </div>
+        `;
+    }
+
+    generateAlertsContent(result, symbol) {
+        const data = result.data || {};
+        const recommendations = result.recommendations || [];
+        const analysis = result.analysis || 'Smart alerts have been configured successfully';
+        
+        return `
+            <div class="results-summary">
+                <div class="alert-status">
+                    <i class="fas fa-check-circle" style="color: #28a745; font-size: 2rem;"></i>
+                    <h3>Alert Successfully Created!</h3>
+                    <p>You'll be notified when conditions are met for ${symbol.toUpperCase()}</p>
+                </div>
+            </div>
+            
+            <div class="results-section">
+                <h4><i class="fas fa-bell"></i> Alert Configuration</h4>
+                <p class="analysis-text">${analysis}</p>
+                
+                <div class="alert-details">
+                    <div class="alert-detail-item">
+                        <span class="detail-label">Confidence Level:</span>
+                        <span class="detail-value">${data.confidence_score || 'High'}%</span>
+                    </div>
+                    <div class="alert-detail-item">
+                        <span class="detail-label">Risk Assessment:</span>
+                        <span class="detail-value">${data.risk_level || 'Moderate'}</span>
+                    </div>
+                </div>
+            </div>
+            
+            ${recommendations.length > 0 ? `
+            <div class="results-section">
+                <h4><i class="fas fa-tasks"></i> Monitoring Suggestions</h4>
+                <ul class="recommendations-list">
+                    ${recommendations.map(rec => `<li>${rec}</li>`).join('')}
+                </ul>
+            </div>
+            ` : ''}
+            
+            <div class="results-footer">
+                <p class="disclaimer">
+                    <i class="fas fa-info-circle"></i>
+                    Alerts are delivered via browser notifications. Ensure notifications are enabled for the best experience.
+                </p>
+            </div>
+        `;
+    }
+
+    getRecommendationColor(recommendation) {
+        switch (recommendation?.toUpperCase()) {
+            case 'BUY': return '#28a745';
+            case 'SELL': return '#dc3545';
+            case 'HOLD': return '#ffc107';
+            default: return '#6c757d';
+        }
+    }
+
+    getRiskColor(riskLevel) {
+        switch (riskLevel?.toLowerCase()) {
+            case 'low': return '#28a745';
+            case 'moderate': case 'medium': return '#ffc107';
+            case 'high': return '#dc3545';
+            default: return '#6c757d';
         }
     }
 
