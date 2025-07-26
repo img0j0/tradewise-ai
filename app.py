@@ -257,7 +257,10 @@ with app.app_context():
     
     # Register premium notification routes for Phase 5 implementation
     try:
-        from routes.premium_notification_routes import premium_notification_bp
+        import sys
+        import os
+        sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+        from premium_notification_routes import premium_notification_bp
         app.register_blueprint(premium_notification_bp)
         logger.info("✅ Premium notification routes blueprint registered successfully")
     except Exception as e:
