@@ -140,49 +140,49 @@ with app.app_context():
     import models  # noqa: F401
     db.create_all()
     
-    # Register blueprints after database setup
-    from routes import main_bp
-    from premium_routes import premium_bp
-    from comprehensive_billing_routes import billing_bp
-    from oauth_auth import oauth_bp, create_oauth_blueprints
-    from two_factor_auth import twofa_bp
+    # Register blueprints after database setup - DISABLED FOR SIMPLE ROUTING
+    # from routes import main_bp
+    # from premium_routes import premium_bp
+    # from comprehensive_billing_routes import billing_bp
+    # from oauth_auth import oauth_bp, create_oauth_blueprints
+    # from two_factor_auth import twofa_bp
     
-    app.register_blueprint(main_bp)
-    app.register_blueprint(premium_bp)
-    app.register_blueprint(billing_bp)
-    app.register_blueprint(oauth_bp)
-    app.register_blueprint(twofa_bp)
+    # app.register_blueprint(main_bp)
+    # app.register_blueprint(premium_bp)
+    # app.register_blueprint(billing_bp)
+    # app.register_blueprint(oauth_bp)
+    # app.register_blueprint(twofa_bp)
     
-    # Register missing API endpoints
-    from missing_api_endpoints import missing_api_bp
-    app.register_blueprint(missing_api_bp)
+    # Register missing API endpoints - DISABLED FOR SIMPLE ROUTING
+    # from missing_api_endpoints import missing_api_bp
+    # app.register_blueprint(missing_api_bp)
     
-    # Register user engagement features
-    from user_engagement_routes import engagement_bp
-    app.register_blueprint(engagement_bp)
+    # Register user engagement features - DISABLED FOR SIMPLE ROUTING
+    # from user_engagement_routes import engagement_bp
+    # app.register_blueprint(engagement_bp)
     
-    # Register modern UI routes
-    from modern_ui_routes import modern_ui_bp
-    app.register_blueprint(modern_ui_bp)
+    # Register modern UI routes - DISABLED FOR SIMPLE ROUTING
+    # from modern_ui_routes import modern_ui_bp
+    # app.register_blueprint(modern_ui_bp)
     
-    # Register enhanced search routes
-    from enhanced_search_routes import enhanced_search_bp
-    app.register_blueprint(enhanced_search_bp)
+    # Register enhanced search routes - DISABLED FOR SIMPLE ROUTING
+    # from enhanced_search_routes import enhanced_search_bp
+    # app.register_blueprint(enhanced_search_bp)
     
-    # Initialize OAuth blueprints
-    try:
-        create_oauth_blueprints(app)
-        logging.info("OAuth blueprints initialized successfully")
-    except Exception as e:
-        logging.warning(f"OAuth initialization failed: {e}")
+    # Initialize OAuth blueprints - DISABLED FOR SIMPLE ROUTING
+    # try:
+    #     create_oauth_blueprints(app)
+    #     logging.info("OAuth blueprints initialized successfully")
+    # except Exception as e:
+    #     logging.warning(f"OAuth initialization failed: {e}")
     
-    # Initialize billing system
-    try:
-        from enhanced_stripe_billing import billing_manager
-        billing_manager.initialize_plan_configurations()
-        logging.info("Billing system initialized successfully")
-    except Exception as e:
-        logging.warning(f"Billing initialization failed: {e}")
+    # Initialize billing system - DISABLED FOR SIMPLE ROUTING
+    # try:
+    #     from enhanced_stripe_billing import billing_manager
+    #     billing_manager.initialize_plan_configurations()
+    #     logging.info("Billing system initialized successfully")
+    # except Exception as e:
+    #     logging.warning(f"Billing initialization failed: {e}")
     
     # Add security headers (with proper type annotation)
     try:

@@ -147,16 +147,16 @@
                 />
             </div>
             <div class="mobile-nav-links">
-                <a href="{{ url_for('dashboard') }}" class="mobile-nav-link">
+                <a href="{{ url_for('simple_core.dashboard') }}" class="mobile-nav-link">
                     <i class="fas fa-home"></i>Dashboard
                 </a>
-                <a href="{{ url_for('search') }}" class="mobile-nav-link">
+                <a href="{{ url_for('simple_core.search') }}" class="mobile-nav-link">
                     <i class="fas fa-search"></i>Search
                 </a>
-                <a href="{{ url_for('backtest') }}" class="mobile-nav-link">
+                <a href="#" class="mobile-nav-link" onclick="showPremiumModal('backtest')">
                     <i class="fas fa-chart-bar"></i>Backtest <span class="premium-badge">Pro</span>
                 </a>
-                <a href="{{ url_for('peer_comparison') }}" class="mobile-nav-link">
+                <a href="#" class="mobile-nav-link" onclick="showPremiumModal('peer-analysis')">
                     <i class="fas fa-balance-scale"></i>Peer Analysis <span class="premium-badge">Pro</span>
                 </a>
                 <div class="mobile-nav-divider"></div>
