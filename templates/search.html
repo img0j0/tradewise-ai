@@ -321,6 +321,7 @@
             document.getElementById('resultsContainer').style.display = 'none';
             
             try {
+                console.log('Sending analysis request for:', query);
                 const response = await fetch('/api/stock-analysis', {
                     method: 'POST',
                     headers: {
@@ -329,7 +330,14 @@
                     body: JSON.stringify({ symbol: query })
                 });
                 
+                console.log('Response status:', response.status);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: Unable to connect to analysis service`);
+                }
+                
                 const data = await response.json();
+                console.log('Analysis data received:', data);
                 
                 if (data.success) {
                     displayResults(data);
@@ -339,7 +347,7 @@
                 
             } catch (error) {
                 console.error('Search error:', error);
-                displayError('Unable to connect to analysis service');
+                displayError(`Unable to connect to analysis service: ${error.message}`);
             } finally {
                 document.getElementById('loadingState').style.display = 'none';
             }
@@ -430,7 +438,8 @@
             container.innerHTML = `
                 <div class="error-message">
                     <i class="fas fa-exclamation-triangle"></i>
-                    ${message}
+                    <strong>Connection Issue:</strong> ${message}
+                    <br><small>Analysis service is running. Try refreshing the page or check your internet connection.</small>
                 </div>
             `;
             container.style.display = 'block';
