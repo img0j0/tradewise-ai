@@ -7,8 +7,11 @@
     
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.min.js"></script>
+    <!-- Chart.js with Fallback -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.min.js" 
+            onerror="console.log('Chart.js failed to load from CDN')"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.min.js" 
+            onerror="console.log('Chart.js fallback also failed')"></script>
     
     <style>
         * {
@@ -353,9 +356,10 @@
     </div>
 
     <script>
-        // Portfolio Chart
-        const ctx = document.getElementById('portfolioChart').getContext('2d');
-        const portfolioChart = new Chart(ctx, {
+        // Portfolio Chart - Check if Chart.js is loaded
+        const ctx = document.getElementById('portfolioChart');
+        if (ctx && typeof Chart !== 'undefined') {
+            const portfolioChart = new Chart(ctx.getContext('2d'), {
             type: 'line',
             data: {
                 labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
@@ -392,6 +396,9 @@
                 }
             }
         });
+        } else {
+            console.log('Chart.js not loaded or chart element not found');
+        }
 
         // Load real-time data
         async function loadDashboardData() {
