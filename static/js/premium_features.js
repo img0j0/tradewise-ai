@@ -367,7 +367,7 @@ class PremiumFeaturesManager {
                 },
                 body: JSON.stringify({
                     plan: planType,
-                    success_url: window.location.origin + '/premium/success',
+                    success_url: window.location.origin + '/subscription/success',
                     cancel_url: window.location.origin + '/subscription/checkout?plan=pro'
                 })
             });

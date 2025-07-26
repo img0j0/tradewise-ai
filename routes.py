@@ -290,7 +290,7 @@ def create_checkout_session():
     
     if not stripe.api_key:
         if request.method == 'GET':
-            return redirect(url_for('main_routes.premium_upgrade') + '?error=payment_not_configured')
+            return redirect('/subscription/checkout?plan=pro&error=payment_not_configured')
         return jsonify({
             'success': False,
             'error': 'Payment system not configured'
